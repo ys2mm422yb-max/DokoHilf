@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f6f5" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>DokoHilf – Arbeitswege schnell finden</title>
+  <link rel="stylesheet" href="assets/v4/styles.css?v=20260805-4" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand" aria-label="DokoHilf Startseite">
+        <span class="brand-mark">D</span>
+        <span class="brand-copy"><strong>DokoHilf</strong><small>Unabhängige Bedienungshilfe</small></span>
+      </div>
+
+      <form class="global-search" id="globalSearch" role="search">
+        <label class="sr-only" for="searchInput">Anleitung suchen</label>
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="searchInput" name="q" autocomplete="off" placeholder="Was möchtest du machen?" />
+        <button class="voice-button" id="voiceButton" type="button" aria-label="Per Sprache suchen" aria-pressed="false">
+          <span class="mic-icon" aria-hidden="true"></span>
+          <span class="voice-label">Sprechen</span>
+        </button>
+      </form>
+
+      <button class="icon-button" id="favoritesButton" type="button" aria-label="Merkliste öffnen">
+        <span aria-hidden="true">♡</span><span class="desktop-only">Merkliste</span>
+      </button>
+    </header>
+
+    <nav class="module-tabs" id="moduleTabs" aria-label="Arbeitsbereiche">
+      <button data-area="berichte" class="active"><span class="tab-dot"></span>Berichte</button>
+      <button data-area="doku">Doku</button>
+      <button data-area="doku-erweitert">Doku erweitert</button>
+      <button data-area="planung">Planung</button>
+      <button data-area="aufgaben">Aufgaben</button>
+      <button data-area="analyse">Analyse</button>
+      <button data-area="bewohner">Bewohner</button>
+    </nav>
+
+    <main>
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-copy">
+          <h1 id="heroTitle">Sag oder tippe,<br />was du erledigen willst.</h1>
+          <p>DokoHilf zeigt dir den passenden Weg durch die Oberfläche – mit klaren Schritten, schematischen Bildern und optionaler Sprachausgabe.</p>
+          <div class="hero-actions">
+            <button class="primary-button" type="button" data-open-guide="bericht-neu">Neuen Bericht eintragen</button>
+            <button class="secondary-button" type="button" id="startVoiceHero"><span class="mic-icon small"></span> Sprachsuche starten</button>
+          </div>
+          <p class="privacy-note"><strong>Öffentliche Demo:</strong> nur Fantasiedaten. Sprich keine echten Namen oder Gesundheitsdaten ein.</p>
+        </div>
+        <div class="hero-workbench" aria-label="Schematische Vorschau der Berichtsfunktion">
+          <div class="workbench-window">
+            <div class="window-chrome"><span></span><span></span><span></span><b>Dokumentation · Demo</b></div>
+            <div class="workbench-tabs"><span class="selected">Berichte</span><span>Doku</span><span>Doku erweitert</span><span>Planung</span></div>
+            <div class="workbench-body">
+              <aside><div class="avatar-placeholder">D1</div><b>Bewohner Demo 01</b><small>Übungsdatensatz</small></aside>
+              <section>
+                <button class="plus-button" aria-hidden="true">＋</button>
+                <div class="fake-report"><span>Heute · 13:40</span><b>Allgemeiner Bericht</b><p>Fiktiver Beispieltext für die öffentliche Demo.</p></div>
+                <div class="fake-report muted"><span>Gestern · 19:10</span><b>Übergaberelevant</b><p>Beispielinhalt ohne Personenbezug.</p></div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-strip" aria-labelledby="quickTitle">
+        <div>
+          <h2 id="quickTitle">Am häufigsten gebraucht</h2>
+          <p>Direkt zum richtigen Arbeitsweg.</p>
+        </div>
+        <div class="quick-actions" id="quickActions"></div>
+      </section>
+
+      <section class="workspace" aria-labelledby="workspaceTitle">
+        <aside class="area-sidebar">
+          <div class="sidebar-heading">
+            <span>Arbeitsbereiche</span>
+            <button type="button" id="showAllButton">Alle</button>
+          </div>
+          <div id="areaNavigation" class="area-navigation"></div>
+          <div class="voice-card">
+            <span class="voice-orb"><span class="mic-icon"></span></span>
+            <div><strong>Per Sprache finden</strong><p>Zum Beispiel: „Wie storniere ich einen Durchführungsnachweis?“</p></div>
+            <button type="button" id="voiceCardButton">Starten</button>
+          </div>
+        </aside>
+
+        <div class="guide-browser">
+          <div class="browser-heading">
+            <div>
+              <span class="eyebrow" id="browserEyebrow">Berichte</span>
+              <h2 id="workspaceTitle">Passende Anleitungen</h2>
+              <p id="resultSummary">Die wichtigsten Wege rund um Berichtseinträge.</p>
+            </div>
+            <div class="view-controls" aria-label="Ansicht wählen">
+              <button class="active" data-view-mode="list" aria-label="Listenansicht">☷</button>
+              <button data-view-mode="compact" aria-label="Kompakte Ansicht">▦</button>
+            </div>
+          </div>
+          <div class="guide-list" id="guideList" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Unabhängige interne Arbeitshilfe · nicht vom Hersteller der eingesetzten Dokumentationssoftware entwickelt oder geprüft.</p>
+      <p>Öffentliche Demo mit ausschließlich erfundenen Inhalten.</p>
+    </footer>
+  </div>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden>
+    <article class="guide-drawer" id="guideDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <header class="drawer-header">
+        <div class="drawer-path" id="drawerPath"></div>
+        <div class="drawer-tools">
+          <button type="button" id="speakGuideButton"><span aria-hidden="true">◖</span> Vorlesen</button>
+          <button type="button" id="favoriteGuideButton" aria-label="Anleitung merken">♡</button>
+          <button type="button" id="closeDrawerButton" aria-label="Schließen">×</button>
+        </div>
+      </header>
+      <div class="drawer-layout">
+        <section class="drawer-intro">
+          <span class="eyebrow" id="drawerArea"></span>
+          <h2 id="drawerTitle"></h2>
+          <p id="drawerDescription"></p>
+          <div class="guide-meta" id="drawerMeta"></div>
+          <div class="route-box"><span>Weg</span><strong id="drawerRoute"></strong></div>
+          <div class="step-navigation" id="stepNavigation"></div>
+        </section>
+        <section class="drawer-content">
+          <div class="schematic-stage" id="schematicStage"></div>
+          <div class="step-copy">
+            <div class="step-counter" id="stepCounter"></div>
+            <h3 id="stepTitle"></h3>
+            <p id="stepText"></p>
+            <div class="step-note" id="stepNote"></div>
+            <div class="drawer-actions">
+              <button type="button" id="previousStepButton">← Zurück</button>
+              <button type="button" id="nextStepButton" class="primary-button">Weiter →</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
+  </div>
+
+  <div class="voice-panel" id="voicePanel" hidden role="dialog" aria-modal="true" aria-labelledby="voicePanelTitle">
+    <div class="voice-dialog">
+      <button type="button" class="voice-close" id="voiceCloseButton" aria-label="Sprachsuche schließen">×</button>
+      <div class="voice-pulse"><span class="mic-icon large"></span></div>
+      <h2 id="voicePanelTitle">Ich höre zu …</h2>
+      <p id="voiceStatus">Sag zum Beispiel: „Neuen Bericht schreiben“</p>
+      <div class="voice-transcript" id="voiceTranscript">…</div>
+      <p class="voice-privacy">Die Erkennung kommt vom Browser/Betriebssystem. Je nach Gerät kann Audio an einen Spracherkennungsdienst übertragen werden. DokoHilf speichert die Aufnahme nicht.</p>
+      <button type="button" id="stopVoiceButton">Beenden</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="assets/v4/app.js?v=20260805-4" defer></script>
+</body>
+</html>
