@@ -22,23 +22,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build static site
+      - name: Validate and build static site
         run: |
           set -euo pipefail
           mkdir -p _site/assets
           cp index.html manifest.webmanifest icon.svg _site/
-          cp assets/styles.css assets/gemini.css assets/app.js assets/workflows.js _site/assets/
+          cp assets/styles.css assets/app.js _site/assets/
           touch _site/.nojekyll
 
           test -s _site/index.html
           test -s _site/assets/styles.css
-          test -s _site/assets/gemini.css
           test -s _site/assets/app.js
-          test -s _site/assets/workflows.js
-          grep -q "DokoHilf – KI-Gesprächshilfe" _site/index.html
-          grep -q "Gemini-KI aktiv" _site/index.html
-          grep -q "dokohilf-ai" _site/assets/app.js
+          test -s _site/icon.svg
+          grep -q "DokoHilf – KI-Bedienungshilfe" _site/index.html
+          grep -q "Schutzfilter prüft jede Eingabe" _site/index.html
+          grep -q "AI_ENDPOINT" _site/assets/app.js
+          grep -q "sessionStorage\|dokohilf-ai-history" _site/assets/app.js && exit 1 || true
           grep -q "PLACEHOLDER" _site/index.html && exit 1 || true
+          node --check _site/assets/app.js
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
