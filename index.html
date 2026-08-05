@@ -9,20 +9,22 @@
   <meta name="apple-mobile-web-app-title" content="DokoHilf">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>DokoHilf – Gesprächshilfe</title>
+  <title>DokoHilf – KI-Gesprächshilfe</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="assets/styles.css?v=20260805-3">
+  <link rel="stylesheet" href="assets/styles.css?v=20260805-4">
+  <link rel="stylesheet" href="assets/gemini.css?v=20260805-1">
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
       <a class="brand" href="./" aria-label="DokoHilf Startseite">
         <span class="brand-mark" aria-hidden="true">D</span>
-        <span><strong>DokoHilf</strong><small>Gesprächshilfe</small></span>
+        <span><strong>DokoHilf</strong><small>KI-Gesprächshilfe</small></span>
       </a>
       <div class="top-actions">
+        <div class="ai-status" data-status="ready" aria-live="polite"><span aria-hidden="true"></span><b id="aiStatusText">Gemini-KI aktiv</b></div>
         <button class="quiet-button" id="speechToggle" type="button" aria-pressed="false" title="Antworten automatisch vorlesen">
           <span aria-hidden="true">🔈</span><span class="button-label">Vorlesen aus</span>
         </button>
@@ -34,13 +36,13 @@
 
     <main class="main-content">
       <section class="welcome" id="welcomeBlock" aria-labelledby="welcomeTitle">
-        <p class="privacy-line">Kostenlose Gesprächshilfe · keine Eingaben werden übertragen</p>
+        <p class="privacy-line">Gemini-KI-Test · nur Fantasiedaten verwenden</p>
         <h1 id="welcomeTitle">Hallo! Was möchtest du machen?</h1>
-        <p>Schreib oder sag es einfach so, wie du es einem Kollegen erklären würdest.</p>
+        <p>Schreib oder sag es einfach so, wie du es einem Kollegen erklären würdest. DokoHilf merkt sich den Gesprächsverlauf in dieser Sitzung.</p>
 
         <button class="voice-start" id="voiceStart" type="button">
           <span class="voice-symbol" aria-hidden="true">🎙</span>
-          <span><strong>Gespräch per Sprache starten</strong><small>Ich höre zu und lese die nächsten Schritte vor.</small></span>
+          <span><strong>Mit DokoHilf sprechen</strong><small>Du sprichst, DokoHilf antwortet und hört danach weiter zu.</small></span>
         </button>
 
         <div class="quick-title">Häufig gebraucht</div>
@@ -52,6 +54,7 @@
           <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite</button>
           <button type="button" data-prompt="Wo finde ich EasyPlan?">EasyPlan</button>
         </div>
+        <div class="privacy-warning" role="note"><strong>Wichtig:</strong> Eingaben werden für die Antwort an Google Gemini übertragen. Keine echten Namen, Berichte, Diagnosen, Medikamente oder anderen Gesundheitsdaten eingeben.</div>
       </section>
 
       <section class="conversation" aria-label="Gespräch mit DokoHilf">
@@ -70,17 +73,17 @@
     <footer class="composer-wrap">
       <form class="composer" id="chatForm">
         <label class="sr-only" for="chatInput">Nachricht an DokoHilf</label>
-        <textarea id="chatInput" rows="1" placeholder="Zum Beispiel: Ich möchte einen Bericht schreiben" autocomplete="off"></textarea>
+        <textarea id="chatInput" rows="1" placeholder="Frag DokoHilf, was du machen möchtest" autocomplete="off"></textarea>
         <button class="mic-button" id="micButton" type="button" aria-label="Spracheingabe starten" title="Spracheingabe">
           <span aria-hidden="true">🎙</span>
         </button>
         <button class="send-button" type="submit" aria-label="Nachricht senden">Senden</button>
       </form>
-      <p class="composer-help">Du kannst auch „weiter“, „zurück“, „nochmal“ oder „ich finde das nicht“ sagen.</p>
+      <p class="composer-help">Nur Fantasiedaten eingeben. Bei Sprache antwortet DokoHilf automatisch laut.</p>
     </footer>
   </div>
 
-  <script src="assets/workflows.js?v=20260805-3" defer></script>
-  <script src="assets/app.js?v=20260805-3" defer></script>
+  <script src="assets/workflows.js?v=20260805-4" defer></script>
+  <script src="assets/app.js?v=20260805-4" defer></script>
 </body>
 </html>
