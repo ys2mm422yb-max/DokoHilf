@@ -27,25 +27,29 @@ jobs:
           set -euo pipefail
           mkdir -p _site/assets
           cp index.html manifest.webmanifest icon.svg service-worker.js _site/
-          cp assets/styles.css assets/app.js _site/assets/
+          cp assets/styles.css assets/mobile-audio-fix.js assets/app.js _site/assets/
           touch _site/.nojekyll
 
           test -s _site/index.html
           test -s _site/assets/styles.css
+          test -s _site/assets/mobile-audio-fix.js
           test -s _site/assets/app.js
           test -s _site/service-worker.js
           test -s _site/icon.svg
           grep -q "Sprachgespräch" _site/index.html
           grep -q "data-select-mode=\"chat\"" _site/index.html
           grep -q "Hauptmenü" _site/index.html
+          grep -q "mobile-audio-fix.js" _site/index.html
           grep -q "serviceWorker.register" _site/assets/app.js
           grep -q "TTS_ENDPOINT" _site/assets/app.js
-          grep -q "AudioContext" _site/assets/app.js
+          grep -q "TTS_TIMEOUT_MS" _site/assets/mobile-audio-fix.js
+          grep -q "decodeAudioData" _site/assets/mobile-audio-fix.js
           grep -q "SKIP_WAITING" _site/service-worker.js
           grep -q "Schutzfilter prüft jede Eingabe" _site/index.html
           grep -q "AI_ENDPOINT" _site/assets/app.js
           grep -q "sessionStorage\|localStorage\|dokohilf-ai-history" _site/assets/app.js && exit 1 || true
           grep -q "PLACEHOLDER" _site/index.html && exit 1 || true
+          node --check _site/assets/mobile-audio-fix.js
           node --check _site/assets/app.js
           node --check _site/service-worker.js
 
