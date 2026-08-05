@@ -13,78 +13,116 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="assets/styles.css?v=20260805-5">
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-  <div class="app-shell" id="appShell" data-voice-state="idle">
+  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle">
     <header class="topbar">
-      <a class="brand" href="./" aria-label="DokoHilf Startseite">
-        <img src="icon.svg" alt="" width="48" height="48">
+      <button class="brand-button" id="homeButton" type="button" aria-label="Zur Startauswahl">
+        <img src="icon.svg" alt="" width="44" height="44">
         <span><strong>DokoHilf</strong><small>KI-Bedienungshilfe</small></span>
-      </a>
-      <button class="reset-button" id="resetButton" type="button" aria-label="Neues Gespräch starten">Neu</button>
+      </button>
+      <button class="new-button" id="resetButton" type="button" hidden>Neues Gespräch</button>
     </header>
 
     <main class="main-content">
-      <section class="hero" id="welcomeBlock" aria-labelledby="welcomeTitle">
-        <h1 id="welcomeTitle">Wobei brauchst du Hilfe?</h1>
-        <p>Frag einfach in deinen eigenen Worten. DokoHilf führt dich immer nur durch den nächsten Schritt.</p>
-        <div class="safety-banner" role="note">
-          <strong>Nur Bedienfragen.</strong> Niemals Namen, Berichte, Diagnosen, Medikamente, Vitalwerte oder andere Echtdaten eingeben.
+      <section class="start-screen" id="startScreen" aria-labelledby="startTitle">
+        <div class="start-copy">
+          <h1 id="startTitle">Wie möchtest du DokoHilf nutzen?</h1>
+          <p>Wähle ein flüssiges Sprachgespräch oder einen klassischen Chat.</p>
         </div>
-      </section>
 
-      <section class="voice-stage" aria-label="Sprachbedienung">
-        <button class="voice-orb" id="voiceButton" type="button" aria-label="Sprachbedienung starten">
-          <span class="orb-rings" aria-hidden="true"></span>
-          <span class="mic-icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64"><rect x="23" y="8" width="18" height="31" rx="9"/><path d="M16 30v3c0 9 7 16 16 16s16-7 16-16v-3M32 49v8M23 57h18"/></svg>
-          </span>
-          <span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-        </button>
-        <div class="voice-copy" aria-live="polite">
-          <strong id="voiceStatus">Tippen und sprechen</strong>
-          <span id="voiceHint">Oder unten eine Frage schreiben.</span>
+        <div class="mode-grid" aria-label="Bedienart auswählen">
+          <button class="mode-card voice-card" type="button" data-select-mode="voice">
+            <span class="mode-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48"><rect x="17" y="7" width="14" height="23" rx="7"/><path d="M11 24v2c0 7 6 13 13 13s13-6 13-13v-2M24 39v5M17 44h14"/></svg>
+            </span>
+            <span class="mode-text"><strong>Sprachgespräch</strong><small>Du sprichst. DokoHilf antwortet laut und hört danach automatisch weiter zu.</small></span>
+            <span class="mode-arrow" aria-hidden="true">›</span>
+          </button>
+
+          <button class="mode-card chat-card" type="button" data-select-mode="chat">
+            <span class="mode-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48"><path d="M9 10h30v23H22l-9 7v-7H9z"/><path d="M16 18h16M16 24h11"/></svg>
+            </span>
+            <span class="mode-text"><strong>Chat</strong><small>Schreiben oder diktieren. Antworten bleiben übersichtlich zum Nachlesen.</small></span>
+            <span class="mode-arrow" aria-hidden="true">›</span>
+          </button>
         </div>
-      </section>
 
-      <section class="quick-start" id="quickStart" aria-label="Häufige Fragen">
-        <h2>Häufig gebraucht</h2>
-        <div class="quick-grid">
-          <button type="button" data-prompt="Ich möchte einen neuen Bericht schreiben">Neuer Bericht</button>
-          <button type="button" data-prompt="Ich habe mich in einem Bericht verschrieben">Bericht korrigieren</button>
-          <button type="button" data-prompt="Ich möchte einen Durchführungsnachweis bearbeiten">Durchführungsnachweis</button>
+        <div class="examples">
+          <span>Zum Beispiel:</span>
+          <button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe</button>
+          <button type="button" data-prompt="Ich möchte einen Bericht schreiben">Bericht</button>
           <button type="button" data-prompt="Wo finde ich die Vitalwerte?">Vitalwerte</button>
-          <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite</button>
-          <button type="button" data-prompt="Wo finde ich EasyPlan?">EasyPlan</button>
+        </div>
+
+        <div class="safety-note" role="note">
+          <strong>Keine Echtdaten.</strong>
+          <span>Niemals Namen, Berichte, Diagnosen, Medikamente, Vitalwerte oder andere persönliche Angaben eingeben.</span>
         </div>
       </section>
 
-      <section class="conversation" id="conversation" aria-label="Gespräch mit DokoHilf">
-        <div class="messages" id="messages" aria-live="polite" aria-relevant="additions"></div>
-        <div class="command-row" id="commandRow" hidden aria-label="Schnelle Antworten">
-          <button type="button" data-command="weiter">Weiter</button>
-          <button type="button" data-command="nochmal">Nochmal</button>
-          <button type="button" data-command="ich finde das nicht">Ich finde das nicht</button>
-          <button type="button" data-command="zurück">Zurück</button>
-        </div>
+      <section class="workspace" id="workspace" hidden>
+        <nav class="mode-switch" aria-label="Bedienart wechseln">
+          <button type="button" data-switch-mode="voice"><span aria-hidden="true">●</span> Sprechen</button>
+          <button type="button" data-switch-mode="chat"><span aria-hidden="true">▰</span> Chat</button>
+        </nav>
+
+        <section class="voice-console" id="voiceConsole" hidden aria-label="Sprachgespräch">
+          <button class="voice-orb" id="voiceButton" type="button" aria-label="Sprachgespräch starten oder pausieren">
+            <span class="orb-rings" aria-hidden="true"></span>
+            <span class="mic-symbol" aria-hidden="true">
+              <svg viewBox="0 0 64 64"><rect x="23" y="8" width="18" height="31" rx="9"/><path d="M16 30v3c0 9 7 16 16 16s16-7 16-16v-3M32 49v8M23 57h18"/></svg>
+            </span>
+            <span class="voice-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+          </button>
+          <div class="voice-copy" aria-live="polite">
+            <strong id="voiceStatus">Bereit</strong>
+            <span id="voiceHint">Tippe auf das Mikrofon und sprich los.</span>
+          </div>
+          <button class="pause-button" id="pauseVoiceButton" type="button">Gespräch pausieren</button>
+        </section>
+
+        <section class="chat-head" id="chatHead" hidden>
+          <h1>Frag DokoHilf</h1>
+          <p>Schreib ganz normal. DokoHilf versteht freie Formulierungen und fragt nach, wenn etwas unklar ist.</p>
+          <div class="quick-prompts">
+            <button type="button" data-prompt="Wie komme ich zur Übergabe?">Zur Übergabe</button>
+            <button type="button" data-prompt="Ich habe mich in einem Bericht verschrieben">Bericht korrigieren</button>
+            <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite anlegen</button>
+          </div>
+        </section>
+
+        <section class="conversation" aria-label="Gespräch mit DokoHilf">
+          <div class="messages" id="messages" aria-live="polite" aria-relevant="additions"></div>
+          <div class="command-row" id="commandRow" hidden aria-label="Schnelle Antworten">
+            <button type="button" data-command="weiter">Weiter</button>
+            <button type="button" data-command="nochmal">Nochmal</button>
+            <button type="button" data-command="ich finde das nicht">Ich finde das nicht</button>
+            <button type="button" data-command="zurück">Zurück</button>
+          </div>
+        </section>
       </section>
 
       <footer class="legal-note">Diese Anwendung ist eine unabhängige interne Arbeitshilfe der Einrichtung. Sie wurde nicht vom Hersteller der eingesetzten Dokumentationssoftware entwickelt, betrieben oder geprüft.</footer>
     </main>
 
-    <footer class="composer-wrap">
+    <footer class="composer-wrap" id="composerWrap" hidden>
       <form class="composer" id="chatForm">
         <label class="sr-only" for="chatInput">Nachricht an DokoHilf</label>
-        <textarea id="chatInput" rows="1" maxlength="350" placeholder="Zum Beispiel: Wie schreibe ich einen Bericht?" autocomplete="off" autocapitalize="sentences"></textarea>
-        <button class="small-mic" id="smallMicButton" type="button" aria-label="Spracheingabe starten">
+        <textarea id="chatInput" rows="1" maxlength="350" placeholder="Schreib deine Bedienfrage …" autocomplete="off" autocapitalize="sentences"></textarea>
+        <button class="small-mic" id="smallMicButton" type="button" aria-label="Frage diktieren">
           <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="4" width="10" height="15" rx="5"/><path d="M7 15v1c0 5 4 9 9 9s9-4 9-9v-1M16 25v4"/></svg>
         </button>
         <button class="send-button" type="submit">Senden</button>
       </form>
       <p>Gespräch wird nicht gespeichert. Der Schutzfilter prüft jede Eingabe vor der KI.</p>
     </footer>
+
+    <div class="update-toast" id="updateToast" hidden aria-live="polite">DokoHilf wurde automatisch aktualisiert.</div>
   </div>
-  <script src="assets/app.js?v=20260805-5" defer></script>
+
+  <script src="assets/app.js" defer></script>
 </body>
 </html>
