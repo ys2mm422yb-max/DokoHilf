@@ -1,0 +1,41 @@
+name: Materialize DokoHilf v4
+
+on:
+  push:
+    branches:
+      - feature/reporting-voice-guides
+    paths:
+      - .github/workflows/materialize-dokohilf-v4.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/reporting-voice-guides
+
+      - name: Materialize verified static files
+        shell: bash
+        run: |
+          cat .build-payload/part*.txt | tr -d '\n' | base64 --decode | tar -xz
+          node --check assets/v4/app.js
+          test -s app-v4.html
+          test -s assets/v4/styles.css
+          test -s assets/v4/app.js
+
+      - name: Commit generated files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -r .build-payload
+          git rm .github/workflows/materialize-dokohilf-v4.yml
+          git add app-v4.html assets/v4/styles.css assets/v4/app.js
+          git commit -m "feat: add reporting, voice and schematic guides"
+          git push origin HEAD:feature/reporting-voice-guides
