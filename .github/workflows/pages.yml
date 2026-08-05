@@ -37,7 +37,10 @@ jobs:
           test -s _site/icon.svg
           grep -q "Sprachgespräch" _site/index.html
           grep -q "data-select-mode=\"chat\"" _site/index.html
+          grep -q "Hauptmenü" _site/index.html
           grep -q "serviceWorker.register" _site/assets/app.js
+          grep -q "TTS_ENDPOINT" _site/assets/app.js
+          grep -q "AudioContext" _site/assets/app.js
           grep -q "SKIP_WAITING" _site/service-worker.js
           grep -q "Schutzfilter prüft jede Eingabe" _site/index.html
           grep -q "AI_ENDPOINT" _site/assets/app.js
