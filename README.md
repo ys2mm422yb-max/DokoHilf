@@ -2,6 +2,12 @@
 
 DokoHilf ist ein sicherer Prototyp für interne Schritt-für-Schritt-Anleitungen zu Dokumentationsabläufen.
 
+## Fester öffentlicher Hauptlink
+
+**https://ys2mm422yb-max.github.io/DokoHilf/**
+
+Das ist der einzige feste öffentliche Link von DokoHilf. Er wird nicht als „Testlink“ bezeichnet. Veröffentlichte Änderungen werden ausschließlich dort bereitgestellt. Keine wechselnden Vorschau-, Versions-, Cache- oder Ausweichlinks gegenüber Nutzern nennen.
+
 ## Aktueller Stand
 
 - privates, eigenständiges GitHub-Repository
