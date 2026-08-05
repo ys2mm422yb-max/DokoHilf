@@ -45,6 +45,7 @@
       .guide-progress-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
       .guide-progress-actions button{min-height:38px;padding:0 11px;border:1px solid rgba(11,107,82,.2);border-radius:11px;background:#fff;color:#174f40;font-size:12px;font-weight:750}
       .guide-progress-actions button:active{transform:scale(.97)}
+      .guide-progress-actions button:disabled{cursor:not-allowed;opacity:.48;transform:none}
       @media(max-width:700px){.guide-progress{grid-template-columns:1fr}.guide-progress-actions{justify-content:stretch}.guide-progress-actions button{flex:1 1 30%;padding:0 8px;font-size:11px}}
       @media(max-width:390px){.guide-progress-actions{display:grid;grid-template-columns:1fr 1fr}.guide-progress-actions button:last-child{grid-column:1/-1}}
     `;
@@ -97,8 +98,10 @@
     const bar = ensureProgressBar();
     const title = document.getElementById('guideProgressTitle');
     const step = document.getElementById('guideProgressStep');
+    const back = bar.querySelector('[data-guide-action="back"]');
     if (title) title.textContent = guide.guideTitle || guide.guideSlug;
     if (step) step.textContent = formatProgress(guide.guideStep, guide.guideStepCount);
+    if (back instanceof HTMLButtonElement) back.disabled = Number(guide.guideStep) <= 1;
     bar.hidden = false;
     syncCommandRow();
   }
@@ -162,12 +165,10 @@
     window.__DOKOHILF_GUIDE_PROGRESS_PATCH__ = true;
   }
 
-  function resetWithoutGreeting({ keepMode }) {
+  function goToMainMenu() {
     const api = window.DokoHilf;
     if (!api) return;
-    api.resetConversation({ keepMode });
-    const messages = document.getElementById('messages');
-    if (messages) messages.innerHTML = '';
+    api.resetConversation({ keepMode: false });
     clearGuide();
   }
 
@@ -176,18 +177,14 @@
     if (!api || !currentGuide) return;
 
     if (action === 'back') {
-      api.sendMessage('zurück');
+      if (Number(currentGuide.guideStep) > 1) api.sendMessage('zurück');
       return;
     }
     if (action === 'restart') {
-      const title = currentGuide.guideTitle;
-      resetWithoutGreeting({ keepMode: true });
-      window.setTimeout(() => api.sendMessage(title), 80);
+      api.sendMessage(currentGuide.guideTitle || currentGuide.guideSlug);
       return;
     }
-    if (action === 'change') {
-      resetWithoutGreeting({ keepMode: false });
-    }
+    if (action === 'change') goToMainMenu();
   }
 
   function installUiObservers() {
