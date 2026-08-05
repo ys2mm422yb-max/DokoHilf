@@ -6,7 +6,8 @@ const ALLOWED_ORIGINS = new Set([
 
 const PRIMARY_MODEL = 'gemini-3.1-flash-tts-preview';
 const FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts';
-const VOICE_NAME = 'Achird';
+const VOICE_NAME = 'Sulafat';
+const VOICE_STYLE = 'warm-conversational';
 const MAX_TEXT_CHARS = 900;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 10;
@@ -21,7 +22,7 @@ function corsHeaders(origin: string | null): Record<string, string> {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'content-type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-Voice-Mode',
+    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style',
     'Vary': 'Origin',
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
@@ -106,10 +107,11 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
 
 async function requestAudio(apiKey: string, model: string, text: string): Promise<Uint8Array> {
   const prompt = [
-    'Lies den folgenden deutschen Text wie eine freundliche Kollegin oder ein freundlicher Kollege in einem normalen Gespräch vor.',
-    'Die Stimme soll warm, locker, ruhig und glaubwürdig klingen, ohne Werbestimme, Ansagerstil oder künstliche Überbetonung.',
-    'Sprich in natürlichem Alltagstempo mit kurzen sinnvollen Pausen. Keine zusätzlichen Wörter, Erklärungen oder Begrüßungen.',
-    'Lies ausschließlich den Text nach TRANSKRIPT vor.',
+    'Sprich den folgenden deutschen Text wie eine hilfsbereite Kollegin in einem ruhigen direkten Gespräch.',
+    'Klinge warm, gelassen und menschlich. Vermeide Ansagerstimme, Werbeton, überdeutliche Silben und gleichförmige Roboter-Melodie.',
+    'Nutze natürliches Alltagstempo. Setze kurze Pausen an Satzzeichen und betone nur die Wörter, die für den nächsten Bedienungsschritt wichtig sind.',
+    'Kurze Rückfragen am Ende sollen freundlich und nicht prüfend klingen.',
+    'Füge keine Wörter, Erklärungen oder Begrüßungen hinzu. Lies ausschließlich das TRANSKRIPT vor.',
     `TRANSKRIPT: ${text}`,
   ].join('\n');
 
@@ -187,6 +189,7 @@ Deno.serve(async (req: Request) => {
       'X-DokoHilf-Voice': VOICE_NAME,
       'X-DokoHilf-TTS-Model': model,
       'X-DokoHilf-Voice-Mode': 'natural-cloud',
+      'X-DokoHilf-Voice-Style': VOICE_STYLE,
     },
   });
 });
