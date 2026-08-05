@@ -1,8 +1,9 @@
-const CACHE_NAME = 'dokohilf-shell-v20260805-8';
+const CACHE_NAME = 'dokohilf-shell-v20260805-9';
 const CORE_FILES = [
   './',
   './index.html',
   './assets/styles.css',
+  './assets/mobile-audio-fix.js',
   './assets/app.js',
   './manifest.webmanifest',
   './icon.svg',
