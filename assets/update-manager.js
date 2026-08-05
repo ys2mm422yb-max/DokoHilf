@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const BUILD_ID = '20260805-14';
+  const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
   const VERSION_URL = './version.json';
   const RELOAD_KEY = 'dokohilf-build-reload';
   const CHECK_INTERVAL_MS = 5 * 60 * 1000;
