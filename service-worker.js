@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dokohilf-shell-v20260805-9';
+const CACHE_NAME = 'dokohilf-shell-v20260805-10';
 const CORE_FILES = [
   './',
   './index.html',
