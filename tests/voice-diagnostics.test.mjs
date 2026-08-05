@@ -24,7 +24,8 @@ test('aktive natürliche Stimme und Gerätestimmen-Fallback sind sichtbar', () =
   assert.match(diagnostics, /Natürliche Stimme/);
   assert.match(diagnostics, /Gerätestimme als Ersatz/);
   assert.match(diagnostics, /X-DokoHilf-Voice/);
-  assert.match(diagnostics, /data-voice-engine/);
+  assert.match(diagnostics, /dataset\.voiceEngine/);
+  assert.match(diagnostics, /dataset\.fallbackReason/);
 });
 
 test('mobile Lebenszyklen und Safe-Area werden überwacht', () => {
