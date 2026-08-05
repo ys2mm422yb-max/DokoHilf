@@ -18,11 +18,17 @@
 <body>
   <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle">
     <header class="topbar">
-      <button class="brand-button" id="homeButton" type="button" aria-label="Zur Startauswahl">
+      <div class="brand" aria-label="DokoHilf">
         <img src="icon.svg" alt="" width="44" height="44">
         <span><strong>DokoHilf</strong><small>KI-Bedienungshilfe</small></span>
-      </button>
-      <button class="new-button" id="resetButton" type="button" hidden>Neues Gespräch</button>
+      </div>
+      <div class="top-actions">
+        <button class="home-button" id="homeButton" type="button" hidden aria-label="Zum Hauptmenü">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></svg>
+          <span>Hauptmenü</span>
+        </button>
+        <button class="new-button" id="resetButton" type="button" hidden aria-label="Neues Gespräch starten">Neu</button>
+      </div>
     </header>
 
     <main class="main-content">
@@ -37,7 +43,7 @@
             <span class="mode-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48"><rect x="17" y="7" width="14" height="23" rx="7"/><path d="M11 24v2c0 7 6 13 13 13s13-6 13-13v-2M24 39v5M17 44h14"/></svg>
             </span>
-            <span class="mode-text"><strong>Sprachgespräch</strong><small>Du sprichst. DokoHilf antwortet laut und hört danach automatisch weiter zu.</small></span>
+            <span class="mode-text"><strong>Sprachgespräch</strong><small>Du sprichst. DokoHilf antwortet mit einer natürlichen Stimme und hört danach weiter zu.</small></span>
             <span class="mode-arrow" aria-hidden="true">›</span>
           </button>
 
