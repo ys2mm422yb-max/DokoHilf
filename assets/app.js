@@ -2,467 +2,280 @@
   'use strict';
 
   const AI_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai';
-  const WORKFLOWS = window.DOKOHILF_WORKFLOWS || {};
-  const MAX_HISTORY = 14;
+  const MAX_HISTORY = 12;
+  const BLOCK_MESSAGE = 'Diese Eingabe wird nicht an die KI übertragen. Bitte stelle nur eine allgemeine Bedienfrage und entferne alle echten Personen-, Fall- oder Gesundheitsdaten.';
 
   const state = {
-    history: readSessionHistory(),
-    autoSpeak: readSetting('dokohilf-auto-speak') === 'true',
-    speechMode: false,
+    history: [],
+    activeGuide: null,
     recognition: null,
     pending: false,
-    lastAssistantText: '',
-    fallbackWorkflowId: null,
-    fallbackStepIndex: 0,
+    conversationMode: false,
+    autoListenAfterSpeech: false,
   };
 
-  const elements = {
+  const el = {
+    shell: document.getElementById('appShell'),
+    welcome: document.getElementById('welcomeBlock'),
+    quickStart: document.getElementById('quickStart'),
     messages: document.getElementById('messages'),
     form: document.getElementById('chatForm'),
     input: document.getElementById('chatInput'),
-    mic: document.getElementById('micButton'),
-    voiceStart: document.getElementById('voiceStart'),
-    speechToggle: document.getElementById('speechToggle'),
-    reset: document.getElementById('resetButton'),
-    welcome: document.getElementById('welcomeBlock'),
-    listeningBar: document.getElementById('listeningBar'),
-    stopListening: document.getElementById('stopListening'),
-    quickActions: document.getElementById('quickActions'),
     send: document.querySelector('.send-button'),
-    statusText: document.getElementById('aiStatusText'),
+    voiceButton: document.getElementById('voiceButton'),
+    smallMic: document.getElementById('smallMicButton'),
+    voiceStatus: document.getElementById('voiceStatus'),
+    voiceHint: document.getElementById('voiceHint'),
+    quickButtons: document.querySelector('.quick-grid'),
+    commandRow: document.getElementById('commandRow'),
+    reset: document.getElementById('resetButton'),
   };
 
-  function readSetting(key) {
-    try { return window.localStorage.getItem(key); } catch { return null; }
-  }
-
-  function writeSetting(key, value) {
-    try { window.localStorage.setItem(key, value); } catch { /* optional */ }
-  }
-
-  function readSessionHistory() {
-    try {
-      const parsed = JSON.parse(window.sessionStorage.getItem('dokohilf-ai-history') || '[]');
-      return Array.isArray(parsed) ? parsed.slice(-MAX_HISTORY) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveSessionHistory() {
-    try {
-      window.sessionStorage.setItem('dokohilf-ai-history', JSON.stringify(state.history.slice(-MAX_HISTORY)));
-    } catch { /* optional */ }
-  }
-
-  function clearSessionHistory() {
-    state.history = [];
-    try { window.sessionStorage.removeItem('dokohilf-ai-history'); } catch { /* optional */ }
-  }
-
   function escapeHtml(value) {
-    return String(value).replace(/[&<>'"]/g, char => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-    }[char]));
+    return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   }
 
-  function formatAiText(value) {
-    const safe = escapeHtml(value).trim();
-    return safe
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .split(/\n{2,}/)
-      .map(paragraph => paragraph.replace(/\n/g, '<br>'))
-      .join('</p><p>');
-  }
-
-  function stripMarkup(value) {
-    const holder = document.createElement('div');
-    holder.innerHTML = value;
-    return holder.textContent || '';
+  function formatText(value) {
+    return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
   }
 
   function normalize(value) {
-    return String(value || '')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/ß/g, 'ss')
-      .replace(/[^a-z0-9äöü\s-]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+    return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g,'ss').replace(/\s+/g,' ').trim();
   }
 
-  function setWelcomeVisible(visible) {
-    elements.welcome.hidden = !visible;
+  function setVoiceState(mode, title, hint = '') {
+    el.shell.dataset.voiceState = mode;
+    el.voiceStatus.textContent = title;
+    el.voiceHint.textContent = hint;
   }
 
-  function scrollToLatest() {
-    requestAnimationFrame(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+  function revealConversation() {
+    el.welcome.hidden = true;
+    el.quickStart.hidden = true;
+    el.commandRow.hidden = false;
   }
 
-  function setBusy(busy) {
-    state.pending = busy;
-    elements.form.setAttribute('aria-busy', String(busy));
-    elements.input.disabled = busy;
-    elements.mic.disabled = busy;
-    elements.send.disabled = busy;
-    elements.send.textContent = busy ? 'Warte …' : 'Senden';
+  function scrollLatest() {
+    requestAnimationFrame(() => window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'}));
   }
 
-  function addUserMessage(text) {
-    setWelcomeVisible(false);
+  function addMessage(role, text, cssClass = '') {
+    revealConversation();
     const node = document.createElement('div');
-    node.className = 'message user';
-    node.innerHTML = `<div class="bubble"><p>${escapeHtml(text)}</p></div>`;
-    elements.messages.append(node);
-    scrollToLatest();
-  }
-
-  function addAssistantMessage(text, { plain = false, speakAfter = true, cssClass = '' } = {}) {
-    setWelcomeVisible(false);
-    const html = plain ? formatAiText(text) : text;
-    state.lastAssistantText = stripMarkup(html);
-
-    const node = document.createElement('div');
-    node.className = `message assistant ${cssClass}`.trim();
-    node.innerHTML = `<div class="avatar" aria-hidden="true">D</div><div class="bubble"><p>${html}</p></div>`;
-    elements.messages.append(node);
-
-    if (speakAfter && (state.autoSpeak || state.speechMode)) {
-      speak(state.lastAssistantText, { listenAfter: state.speechMode });
+    node.className = `message ${role} ${cssClass}`.trim();
+    if (role === 'assistant') {
+      node.innerHTML = `<div class="avatar" aria-hidden="true">D</div><div class="bubble"><p>${formatText(text)}</p></div>`;
+    } else {
+      node.innerHTML = `<div class="bubble"><p>${escapeHtml(text)}</p></div>`;
     }
-    scrollToLatest();
+    el.messages.append(node);
+    scrollLatest();
     return node;
   }
 
-  function addTypingIndicator() {
+  function addTyping() {
     const node = document.createElement('div');
-    node.className = 'message assistant typing-message';
-    node.innerHTML = '<div class="avatar" aria-hidden="true">D</div><div class="bubble typing-bubble"><span></span><span></span><span></span><em>DokoHilf denkt nach …</em></div>';
-    elements.messages.append(node);
-    scrollToLatest();
+    node.className = 'message assistant typing';
+    node.innerHTML = '<div class="avatar" aria-hidden="true">D</div><div class="bubble"><i></i><i></i><i></i></div>';
+    el.messages.append(node);
+    scrollLatest();
     return node;
   }
 
-  function speak(text, { listenAfter = false } = {}) {
-    if (!('speechSynthesis' in window) || !text) {
-      if (listenAfter) startListening({ silent: true });
+  function clientPrivacyGuard(text) {
+    const raw = String(text || '').trim();
+    const n = normalize(raw);
+    const direct = [
+      /\b[\w.+-]+@[\w.-]+\.[a-z]{2,}\b/i,
+      /\b(?:\+49|0)[\d\s/()-]{7,}\b/,
+      /\b\d{1,2}\.\d{1,2}\.\d{2,4}\b/,
+      /\b(?:herr|frau|bewohner(?:in)?|klient(?:in)?|patient(?:in)?)\s+[a-zäöüß-]{2,}/i,
+      /\b(?:straße|strasse|weg|platz|allee)\s*\d+/i,
+      /\b(?:geburtsdatum|telefonnummer|adresse|aktenzeichen|versichertennummer)\b/i,
+      /\b\d{5}\s+[a-zäöüß-]{3,}/i,
+    ];
+    if (direct.some(re => re.test(raw))) return true;
+    const health = /\b(diagnose|blutdruck|puls|temperatur|medikament|dosis|mg|ml|insulin|schmerz|wunde|berichtstext|übergabeinhalt)\b/i.test(n);
+    const caseLanguage = /\b(hat|bekommt|nimmt|leidet|war heute|ist gestürzt|verweigert|bewohner|klient|patient)\b/i.test(n);
+    if (health && (caseLanguage || /\d/.test(raw))) return true;
+    return raw.length > 260;
+  }
+
+  function setBusy(value) {
+    state.pending = value;
+    el.input.disabled = value;
+    el.send.disabled = value;
+    el.smallMic.disabled = value;
+    el.voiceButton.disabled = value;
+    el.send.textContent = value ? 'Warte …' : 'Senden';
+  }
+
+  async function sendMessage(rawText, {fromVoice = false} = {}) {
+    const text = String(rawText || '').trim();
+    if (!text || state.pending) return;
+    addMessage('user', text);
+    el.input.value = '';
+    resizeInput();
+
+    if (clientPrivacyGuard(text)) {
+      addMessage('assistant', BLOCK_MESSAGE, 'blocked');
+      setVoiceState('error', 'Eingabe geschützt', 'Die Nachricht wurde nicht übertragen.');
       return;
     }
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'de-DE';
-    utterance.rate = 0.93;
-    utterance.pitch = 1;
-    utterance.onend = () => {
-      if (listenAfter && state.speechMode && !state.pending) {
-        window.setTimeout(() => startListening({ silent: true }), 250);
-      }
-    };
-    window.speechSynthesis.speak(utterance);
-  }
-
-  function updateSpeechToggle() {
-    elements.speechToggle.setAttribute('aria-pressed', String(state.autoSpeak));
-    elements.speechToggle.querySelector('[aria-hidden]').textContent = state.autoSpeak ? '🔊' : '🔈';
-    elements.speechToggle.querySelector('.button-label').textContent = state.autoSpeak ? 'Vorlesen an' : 'Vorlesen aus';
-  }
-
-  function toggleAutoSpeak(forceValue, announce = true) {
-    state.autoSpeak = typeof forceValue === 'boolean' ? forceValue : !state.autoSpeak;
-    writeSetting('dokohilf-auto-speak', String(state.autoSpeak));
-    updateSpeechToggle();
-    if (announce && state.autoSpeak) speak('Vorlesen ist eingeschaltet.');
-    if (!state.autoSpeak && 'speechSynthesis' in window) window.speechSynthesis.cancel();
-  }
-
-  function updateAiStatus(text, mode = 'ready') {
-    if (!elements.statusText) return;
-    elements.statusText.textContent = text;
-    elements.statusText.closest('.ai-status')?.setAttribute('data-status', mode);
-  }
-
-  function privacyGuard(text) {
-    const normalized = normalize(text);
-    const riskyPatterns = [
-      /\b(geboren|geburtsdatum|adresse|telefonnummer|diagnose|medikation|medikament)\b/,
-      /\b\d{1,2}\.\d{1,2}\.\d{2,4}\b/,
-      /\b(herr|frau)\s+[a-zäöüß-]{2,}\b/,
-    ];
-    return riskyPatterns.some(pattern => pattern.test(normalized));
-  }
-
-  async function askGemini(text) {
-    state.history.push({ role: 'user', content: text });
+    state.history.push({role:'user', content:text});
     state.history = state.history.slice(-MAX_HISTORY);
-    saveSessionHistory();
-
-    const typing = addTypingIndicator();
+    const typing = addTyping();
     setBusy(true);
-    updateAiStatus('KI antwortet …', 'busy');
+    setVoiceState('thinking', 'DokoHilf denkt nach …', 'Die Antwort kommt gleich.');
 
     try {
       const response = await fetch(AI_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: state.history }),
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({messages:state.history, guideSlug:state.activeGuide}),
       });
-
       const payload = await response.json().catch(() => ({}));
-      if (!response.ok || typeof payload.reply !== 'string') {
-        throw new Error(payload.error || 'Die KI konnte gerade nicht antworten.');
-      }
-
-      const reply = payload.reply.trim();
-      state.history.push({ role: 'assistant', content: reply });
-      state.history = state.history.slice(-MAX_HISTORY);
-      saveSessionHistory();
       typing.remove();
-      addAssistantMessage(reply, { plain: true });
-      updateAiStatus('Gemini-KI aktiv', 'ready');
+
+      if (response.status === 422 || payload.blocked) {
+        state.history.pop();
+        addMessage('assistant', BLOCK_MESSAGE, 'blocked');
+        setVoiceState('error', 'Eingabe geschützt', 'Die Nachricht wurde nicht an Gemini übertragen.');
+        return;
+      }
+      if (!response.ok || typeof payload.reply !== 'string') throw new Error(payload.error || 'Die KI ist gerade nicht erreichbar.');
+
+      state.activeGuide = payload.guideSlug || state.activeGuide;
+      state.history.push({role:'assistant', content:payload.reply});
+      state.history = state.history.slice(-MAX_HISTORY);
+      addMessage('assistant', payload.reply);
+      setVoiceState('idle', 'Bereit für deine Antwort', 'Sag zum Beispiel „weiter“ oder „ich finde das nicht“.');
+
+      if (fromVoice || state.conversationMode) {
+        state.autoListenAfterSpeech = true;
+        speak(payload.reply);
+      }
     } catch (error) {
       typing.remove();
-      updateAiStatus('Einfache Hilfe aktiv', 'fallback');
       const message = error instanceof Error ? error.message : 'Die KI ist gerade nicht erreichbar.';
-      addAssistantMessage(`<strong>Die KI ist gerade nicht erreichbar.</strong><br>${escapeHtml(message)}<br><br>Ich nutze solange die einfache Schritt-Hilfe.`, { speakAfter: false, cssClass: 'error-message' });
-      handleFallback(text);
+      addMessage('assistant', `Die KI ist gerade nicht erreichbar. ${message}`);
+      setVoiceState('error', 'Verbindung unterbrochen', 'Du kannst es gleich noch einmal versuchen.');
     } finally {
       setBusy(false);
-      elements.input.focus();
     }
   }
 
-  function matchWorkflow(text) {
-    const normalized = normalize(text);
-    let best = null;
-    let bestScore = 0;
-    for (const [id, workflow] of Object.entries(WORKFLOWS)) {
-      if (!Array.isArray(workflow.aliases)) continue;
-      let score = 0;
-      for (const alias of workflow.aliases) {
-        const candidate = normalize(alias);
-        if (normalized.includes(candidate)) score += candidate.split(' ').length * 4;
-        else score += candidate.split(' ').filter(word => word.length > 3 && normalized.includes(word)).length;
-      }
-      if (score > bestScore) {
-        best = id;
-        bestScore = score;
-      }
+  function speak(text) {
+    if (!('speechSynthesis' in window)) {
+      setVoiceState('idle','Antwort angezeigt','Vorlesen wird von diesem Browser nicht unterstützt.');
+      return;
     }
-    return bestScore >= 2 ? best : null;
-  }
-
-  function showFallbackStep() {
-    const workflow = WORKFLOWS[state.fallbackWorkflowId];
-    const step = workflow?.steps?.[state.fallbackStepIndex];
-    if (!workflow || !step) return;
-    addAssistantMessage(`<strong>${escapeHtml(step.text)}</strong><br>Wenn du dort bist, sag „weiter“.`);
-  }
-
-  function startFallbackWorkflow(id) {
-    if (!WORKFLOWS[id]) return;
-    state.fallbackWorkflowId = id;
-    state.fallbackStepIndex = 0;
-    showFallbackStep();
-  }
-
-  function handleFallback(text) {
-    const normalized = normalize(text);
-    const workflow = state.fallbackWorkflowId ? WORKFLOWS[state.fallbackWorkflowId] : null;
-
-    if (workflow && ['weiter', 'bin dort', 'ja', 'ok', 'okay', 'gemacht'].some(command => normalized === command || normalized.startsWith(`${command} `))) {
-      if (state.fallbackStepIndex < workflow.steps.length - 1) {
-        state.fallbackStepIndex += 1;
-        showFallbackStep();
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(String(text).replace(/\*\*/g,''));
+    utterance.lang = 'de-DE';
+    utterance.rate = .92;
+    utterance.pitch = 1;
+    utterance.onstart = () => setVoiceState('speaking','DokoHilf spricht …','Du kannst gleich antworten.');
+    utterance.onend = () => {
+      if (state.conversationMode && state.autoListenAfterSpeech) {
+        state.autoListenAfterSpeech = false;
+        setTimeout(() => startListening(true), 350);
       } else {
-        addAssistantMessage('Geschafft. Die Anleitung ist abgeschlossen.');
-        state.fallbackWorkflowId = null;
-        state.fallbackStepIndex = 0;
+        setVoiceState('idle','Bereit für deine Antwort','Sag „weiter“ oder stelle eine Rückfrage.');
       }
-      return;
-    }
-
-    if (workflow && (normalized.includes('finde') || normalized.includes('sehe') || normalized.includes('geht nicht'))) {
-      const step = workflow.steps[state.fallbackStepIndex];
-      addAssistantMessage(`<strong>Kein Problem.</strong> ${escapeHtml(step.stuck || 'Schau bitte noch einmal beim markierten Menüpunkt nach.')}`);
-      return;
-    }
-
-    const matched = matchWorkflow(text);
-    if (matched) {
-      startFallbackWorkflow(matched);
-      return;
-    }
-
-    addAssistantMessage('Dazu habe ich in der einfachen Hilfe noch keine sichere Anleitung. Versuch es bitte später erneut mit der KI.');
+    };
+    utterance.onerror = () => setVoiceState('idle','Antwort angezeigt','Du kannst unten weiterschreiben.');
+    window.speechSynthesis.speak(utterance);
   }
 
-  function handleMessage(rawText) {
-    const text = String(rawText || '').trim();
-    if (!text || state.pending) return;
-    addUserMessage(text);
-    const normalized = normalize(text);
-
-    if (normalized.includes('nicht mehr vorlesen') || normalized === 'stopp vorlesen') {
-      toggleAutoSpeak(false, false);
-      addAssistantMessage('Vorlesen ist ausgeschaltet.', { speakAfter: false });
-      return;
-    }
-
-    if (normalized === 'vorlesen' || normalized.includes('lies vor')) {
-      toggleAutoSpeak(true, false);
-      if (state.lastAssistantText) speak(state.lastAssistantText);
-      else addAssistantMessage('Vorlesen ist eingeschaltet.');
-      return;
-    }
-
-    if (normalized === 'neu' || normalized.includes('neue unterhaltung') || normalized.includes('neu anfangen')) {
-      resetConversation();
-      return;
-    }
-
-    if (privacyGuard(text)) {
-      addAssistantMessage('Bitte entferne echte Personen- oder Gesundheitsdaten. Für diesen Test nur Fantasiedaten verwenden.');
-      return;
-    }
-
-    askGemini(text);
-  }
-
-  function setupRecognition() {
+  function recognitionFactory() {
     const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!Recognition) return null;
-
     const recognition = new Recognition();
     recognition.lang = 'de-DE';
     recognition.interimResults = false;
     recognition.continuous = false;
     recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => {
-      elements.listeningBar.hidden = false;
-      elements.mic.classList.add('listening');
-      elements.mic.setAttribute('aria-label', 'Spracheingabe läuft');
-    };
-
+    recognition.onstart = () => setVoiceState('listening','Ich höre zu …','Sprich jetzt deine Bedienfrage.');
     recognition.onresult = event => {
       const transcript = event.results?.[0]?.[0]?.transcript || '';
-      elements.input.value = '';
-      autoResizeInput();
-      handleMessage(transcript);
+      if (transcript) sendMessage(transcript,{fromVoice:true});
     };
-
     recognition.onerror = event => {
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        state.speechMode = false;
-        addAssistantMessage('Der Mikrofonzugriff wurde nicht erlaubt. Nutze das Mikrofon auf der iPhone-Tastatur oder tippe deine Frage ein.');
+        state.conversationMode = false;
+        setVoiceState('error','Mikrofon nicht freigegeben','Erlaube den Zugriff oder nutze das Mikrofon der iPhone-Tastatur.');
       } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
-        addAssistantMessage('Ich konnte dich gerade nicht verstehen. Versuch es bitte noch einmal.');
+        setVoiceState('error','Nicht verstanden','Tippe erneut auf das Mikrofon und sprich langsam.');
+      } else {
+        setVoiceState('idle','Bereit','Tippe erneut, sobald du sprechen möchtest.');
       }
     };
-
     recognition.onend = () => {
-      elements.listeningBar.hidden = true;
-      elements.mic.classList.remove('listening');
-      elements.mic.setAttribute('aria-label', 'Spracheingabe starten');
+      if (el.shell.dataset.voiceState === 'listening') setVoiceState('idle','Bereit','Tippe erneut zum Sprechen.');
     };
-
     return recognition;
   }
 
-  function startListening({ conversationMode = false, silent = false } = {}) {
+  function startListening(conversationMode = false) {
     if (state.pending) return;
-    if (!state.recognition) state.recognition = setupRecognition();
-
+    if (conversationMode) state.conversationMode = true;
+    if (!state.recognition) state.recognition = recognitionFactory();
     if (!state.recognition) {
-      state.speechMode = false;
-      if (!silent) {
-        toggleAutoSpeak(true, false);
-        addAssistantMessage('Direktes Zuhören wird von diesem Browser nicht angeboten. Tippe auf das Mikrofon der iPhone-Tastatur zum Diktieren; meine Antworten lese ich dir trotzdem vor.');
-      }
-      elements.input.focus();
+      state.conversationMode = false;
+      setVoiceState('error','Direktes Zuhören fehlt','Nutze das Mikrofon auf der iPhone-Tastatur. Antworten kann DokoHilf trotzdem vorlesen.');
+      el.input.focus();
       return;
     }
-
-    if (conversationMode) {
-      state.speechMode = true;
-      toggleAutoSpeak(true, false);
-      addAssistantMessage('Gut, wir sprechen jetzt miteinander. Ich höre zu.', { speakAfter: false });
-    }
-
-    try { state.recognition.start(); } catch { /* already active */ }
-  }
-
-  function stopConversationMode() {
-    state.speechMode = false;
-    state.recognition?.abort();
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    elements.listeningBar.hidden = true;
+    try { state.recognition.start(); } catch { /* already started */ }
   }
 
   function resetConversation() {
-    stopConversationMode();
-    clearSessionHistory();
-    state.fallbackWorkflowId = null;
-    state.fallbackStepIndex = 0;
-    elements.messages.innerHTML = '';
-    setWelcomeVisible(true);
-    updateAiStatus('Gemini-KI aktiv', 'ready');
+    state.history = [];
+    state.activeGuide = null;
+    state.conversationMode = false;
+    state.autoListenAfterSpeech = false;
+    state.recognition?.abort();
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    el.messages.innerHTML = '';
+    el.welcome.hidden = false;
+    el.quickStart.hidden = false;
+    el.commandRow.hidden = true;
+    setVoiceState('idle','Tippen und sprechen','Oder unten eine Frage schreiben.');
+    el.input.value = '';
   }
 
-  function autoResizeInput() {
-    elements.input.style.height = 'auto';
-    elements.input.style.height = `${Math.min(elements.input.scrollHeight, 150)}px`;
+  function resizeInput() {
+    el.input.style.height = 'auto';
+    el.input.style.height = `${Math.min(el.input.scrollHeight,130)}px`;
   }
 
-  function restoreConversation() {
-    if (!state.history.length) return;
-    setWelcomeVisible(false);
-    for (const message of state.history) {
-      if (message.role === 'user') addUserMessage(message.content);
-      else addAssistantMessage(message.content, { plain: true, speakAfter: false });
-    }
-  }
-
-  elements.form.addEventListener('submit', event => {
+  el.form.addEventListener('submit', event => {
     event.preventDefault();
-    const text = elements.input.value.trim();
-    elements.input.value = '';
-    autoResizeInput();
-    handleMessage(text);
+    sendMessage(el.input.value);
   });
-
-  elements.input.addEventListener('input', autoResizeInput);
-  elements.input.addEventListener('keydown', event => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      elements.form.requestSubmit();
-    }
+  el.input.addEventListener('input', resizeInput);
+  el.input.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); el.form.requestSubmit(); }
   });
-
-  elements.mic.addEventListener('click', () => startListening());
-  elements.voiceStart.addEventListener('click', () => startListening({ conversationMode: true }));
-  elements.stopListening.addEventListener('click', stopConversationMode);
-  elements.speechToggle.addEventListener('click', () => toggleAutoSpeak());
-  elements.reset.addEventListener('click', resetConversation);
-  elements.quickActions.addEventListener('click', event => {
+  el.voiceButton.addEventListener('click', () => startListening(true));
+  el.smallMic.addEventListener('click', () => startListening(false));
+  el.quickButtons.addEventListener('click', event => {
     const button = event.target.closest('[data-prompt]');
-    if (button) handleMessage(button.dataset.prompt);
+    if (button) sendMessage(button.dataset.prompt);
+  });
+  el.commandRow.addEventListener('click', event => {
+    const button = event.target.closest('[data-command]');
+    if (button) sendMessage(button.dataset.command,{fromVoice:state.conversationMode});
+  });
+  el.reset.addEventListener('click', resetConversation);
+
+  window.addEventListener('pagehide', () => {
+    state.history = [];
+    state.activeGuide = null;
   });
 
-  updateSpeechToggle();
-  restoreConversation();
-
-  window.DokoHilf = {
-    handleMessage,
-    resetConversation,
-    startListening,
-    getState: () => ({
-      historyLength: state.history.length,
-      autoSpeak: state.autoSpeak,
-      speechMode: state.speechMode,
-      pending: state.pending,
-    }),
-  };
+  window.DokoHilf = {sendMessage, resetConversation, getState:() => ({historyLength:state.history.length,activeGuide:state.activeGuide,pending:state.pending,conversationMode:state.conversationMode})};
 })();
