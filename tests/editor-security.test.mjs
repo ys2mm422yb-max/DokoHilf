@@ -2,12 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [html, js, css, edge, migration, rollout] = await Promise.all([
+const [html, js, css, edge, migration, hardening, rollout] = await Promise.all([
   readFile(new URL('../editor.html', import.meta.url), 'utf8'),
   readFile(new URL('../assets/editor.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/editor.css', import.meta.url), 'utf8'),
   readFile(new URL('../supabase/functions/dokohilf-editor/index.ts', import.meta.url), 'utf8'),
   readFile(new URL('../supabase/migrations/20260805224500_dokohilf_editor_rbac.sql', import.meta.url), 'utf8'),
+  readFile(new URL('../supabase/migrations/20260805230000_dokohilf_editor_security_hardening.sql', import.meta.url), 'utf8'),
   readFile(new URL('../docs/EDITOR_ROLLOUT.md', import.meta.url), 'utf8'),
 ]);
 
@@ -66,6 +67,15 @@ test('Migration enthält Rollen, RLS, Versionsverlauf und Prüfintervalle', () =
   assert.match(migration, /dokohilf_guides_delete_admin/);
   assert.match(migration, /review_interval_days between 30 and 730/);
   assert.match(migration, /dokohilf_guides_archive_version/);
+});
+
+test('Rollenfunktionen liegen nach Advisor-Prüfung außerhalb des exponierten public-Schemas', () => {
+  assert.match(hardening, /create schema if not exists dokohilf_private/);
+  assert.match(hardening, /dokohilf_private\.role_for/);
+  assert.match(hardening, /dokohilf_private\.has_role/);
+  assert.match(hardening, /drop function if exists public\.dokohilf_role_for/);
+  assert.match(hardening, /dokohilf_editor_audit_deny_anon/);
+  assert.match(hardening, /dokohilf_editor_audit_deny_authenticated/);
 });
 
 test('Einladungs-Hook ist vorbereitet und echter Rollout bleibt gesondert freigabepflichtig', () => {
