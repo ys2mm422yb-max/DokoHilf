@@ -16,17 +16,19 @@ function looksSensitive(value) {
     /\b[\w.+-]+@[\w.-]+\.[a-z]{2,}\b/i,
     /\b(?:\+49|0)[\d\s/()-]{7,}\b/,
     /\b\d{1,2}\.\d{1,2}\.\d{2,4}\b/,
-    /\b(?:herr|frau|bewohner|klient|patient)\s+[a-zäöüß-]{2,}/i,
+    /\b(?:Herr|Frau|Bewohner(?:in)?|Klient(?:in)?|Patient(?:in)?)\s+[A-ZÄÖÜ][a-zäöüß-]{2,}\b/,
     /\b(?:geburtsdatum|telefonnummer|adresse|aktenzeichen|versichertennummer|bewohnernummer)\b/i,
   ].some(pattern => pattern.test(text));
 }
 
-test('Client, KI-Router, Kernfunktion und TTS besitzen jeweils einen Echtdatenblock', () => {
+test('öffentliche Verarbeitungskette blockiert Echtdaten vor KI und Sprachausgabe', () => {
   assert.match(app, /clientPrivacyGuard/);
   assert.match(app, /BLOCK_MESSAGE/);
   assert.match(router, /containsSensitiveData/);
-  assert.match(aiCore, /containsSensitiveData/);
+  assert.match(router, /Die Anfrage wurde nicht weiterverarbeitet/);
   assert.match(tts, /containsDirectPersonalData/);
+  assert.match(aiCore, /DATENSCHUTZ UND SICHERHEIT/);
+  assert.match(aiCore, /Bitte niemals um echte Bewohner-/);
 });
 
 test('offensichtliche Fantasie-Echtdatenmuster werden erkannt', () => {
@@ -45,6 +47,7 @@ test('allgemeine Bedienfragen bleiben erlaubt', () => {
     'Ich möchte einen Bericht durchstreichen',
     'Wo finde ich die Visiten?',
     'Wie komme ich zur Übergabe?',
+    'Bewohner öffnen',
   ]) assert.equal(looksSensitive(input), false, input);
 });
 
