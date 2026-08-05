@@ -42,12 +42,23 @@ jobs:
           grep -q "mobile-audio-fix.js" _site/index.html
           grep -q "serviceWorker.register" _site/assets/app.js
           grep -q "TTS_ENDPOINT" _site/assets/app.js
-          grep -q "TTS_TIMEOUT_MS" _site/assets/mobile-audio-fix.js
-          grep -q "decodeAudioData" _site/assets/mobile-audio-fix.js
+          grep -q "instant_system_voice" _site/assets/mobile-audio-fix.js
+          grep -q "notfallblattButton" _site/assets/mobile-audio-fix.js
+          grep -q "Wie öffne ich das Notfallblatt" _site/assets/mobile-audio-fix.js
+          grep -q "dokohilf-shell-v20260805-10" _site/service-worker.js
           grep -q "SKIP_WAITING" _site/service-worker.js
           grep -q "Schutzfilter prüft jede Eingabe" _site/index.html
           grep -q "AI_ENDPOINT" _site/assets/app.js
-          grep -q "sessionStorage\|localStorage\|dokohilf-ai-history" _site/assets/app.js && exit 1 || true
+
+          # Das Gespräch darf sich nur innerhalb der laufenden Sitzung erinnern.
+          grep -q "const MAX_HISTORY = 12" _site/assets/app.js
+          grep -q "function resetConversation" _site/assets/app.js
+          grep -q "window.addEventListener('pagehide'" _site/assets/app.js
+          test "$(grep -c "state.history = \[\]" _site/assets/app.js)" -ge 2
+          grep -q "state.activeGuide = null" _site/assets/app.js
+
+          # Keine dauerhafte Speicherung von Gesprächsverläufen.
+          grep -q "sessionStorage\|localStorage\|indexedDB\|dokohilf-ai-history" _site/assets/app.js && exit 1 || true
           grep -q "PLACEHOLDER" _site/index.html && exit 1 || true
           node --check _site/assets/mobile-audio-fix.js
           node --check _site/assets/app.js
