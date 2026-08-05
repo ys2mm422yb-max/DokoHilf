@@ -2,6 +2,7 @@
   'use strict';
 
   const AI_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai';
+  const TTS_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-tts';
   const MAX_HISTORY = 12;
   const BLOCK_MESSAGE = 'Diese Eingabe wird nicht an die KI übertragen. Bitte stelle nur eine allgemeine Bedienfrage und entferne alle echten Personen-, Fall- oder Gesundheitsdaten.';
 
@@ -15,6 +16,11 @@
     speaking: false,
     shouldListenAfterSpeech: false,
     reloadingForUpdate: false,
+    audioContext: null,
+    audioSource: null,
+    ttsAbort: null,
+    speechRequestId: 0,
+    preferredSystemVoice: null,
   };
 
   const el = {
@@ -40,15 +46,25 @@
   };
 
   function escapeHtml(value) {
-    return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    return String(value).replace(/[&<>"']/g, char => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[char]));
   }
 
   function formatText(value) {
-    return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    return escapeHtml(value)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
   }
 
   function normalize(value) {
-    return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss').replace(/\s+/g, ' ').trim();
+    return String(value || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ß/g, 'ss')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   function setVoiceState(mode, title, hint = '') {
@@ -65,17 +81,21 @@
     el.voiceConsole.hidden = mode !== 'voice';
     el.chatHead.hidden = mode !== 'chat';
     el.composerWrap.hidden = mode !== 'chat';
+    el.home.hidden = mode === 'start';
     el.reset.hidden = mode === 'start';
 
     if (mode === 'start') {
       pauseVoiceConversation();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     if (mode === 'chat') {
       pauseVoiceConversation();
       setVoiceState('idle', 'Chatmodus', 'Schreib deine Frage unten.');
-      if (greet && !state.history.length) addMessage('assistant', 'Hallo! Schreib einfach, was du in der Dokumentation machen möchtest.');
+      if (greet && !state.history.length) {
+        addMessage('assistant', 'Hallo! Schreib einfach, was du in der Dokumentation machen möchtest.');
+      }
       setTimeout(() => el.input.focus(), 80);
       return;
     }
@@ -98,7 +118,10 @@
   }
 
   function scrollLatest() {
-    requestAnimationFrame(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+    requestAnimationFrame(() => window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    }));
   }
 
   function addMessage(role, text, cssClass = '') {
@@ -188,7 +211,9 @@
         if (fromVoice || state.mode === 'voice') speak(BLOCK_MESSAGE);
         return;
       }
-      if (!response.ok || typeof payload.reply !== 'string') throw new Error(payload.error || 'Die KI ist gerade nicht erreichbar.');
+      if (!response.ok || typeof payload.reply !== 'string') {
+        throw new Error(payload.error || 'Die KI ist gerade nicht erreichbar.');
+      }
 
       state.activeGuide = payload.guideSlug || null;
       state.history.push({ role: 'assistant', content: payload.reply });
@@ -213,32 +238,140 @@
     }
   }
 
-  function speak(text) {
-    if (!('speechSynthesis' in window)) {
-      setVoiceState('idle', 'Antwort angezeigt', 'Vorlesen wird von diesem Browser nicht unterstützt.');
+  function cleanSpeechText(text) {
+    return String(text || '')
+      .replace(/\*\*/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function chooseBestSystemVoice() {
+    if (!('speechSynthesis' in window)) return null;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return null;
+
+    const score = voice => {
+      const name = `${voice.name} ${voice.voiceURI}`.toLowerCase();
+      const language = String(voice.lang || '').toLowerCase();
+      let points = 0;
+      if (language === 'de-de') points += 80;
+      else if (language.startsWith('de')) points += 60;
+      if (voice.localService) points += 8;
+      if (/anna|petra|marlene|helena|katja|google.*deutsch|google.*german|siri/.test(name)) points += 25;
+      if (/premium|enhanced|natural/.test(name)) points += 18;
+      if (/compact|espeak/.test(name)) points -= 25;
+      return points;
+    };
+
+    return [...voices].sort((a, b) => score(b) - score(a))[0] || null;
+  }
+
+  function refreshSystemVoice() {
+    state.preferredSystemVoice = chooseBestSystemVoice();
+  }
+
+  async function unlockAudioEngine() {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    if (!state.audioContext) state.audioContext = new AudioContextClass();
+    if (state.audioContext.state === 'suspended') {
+      try { await state.audioContext.resume(); } catch { return null; }
+    }
+    return state.audioContext;
+  }
+
+  function cancelSpeech() {
+    state.speechRequestId += 1;
+    state.ttsAbort?.abort();
+    state.ttsAbort = null;
+    if (state.audioSource) {
+      try { state.audioSource.stop(); } catch { /* already stopped */ }
+      try { state.audioSource.disconnect(); } catch { /* no-op */ }
+      state.audioSource = null;
+    }
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    state.speaking = false;
+  }
+
+  function finishSpeech(requestId) {
+    if (requestId !== state.speechRequestId) return;
+    state.speaking = false;
+    state.audioSource = null;
+    state.ttsAbort = null;
+
+    if (state.mode === 'voice' && state.shouldListenAfterSpeech && !state.voicePaused) {
+      state.shouldListenAfterSpeech = false;
+      setTimeout(startListening, 320);
+    } else {
+      setVoiceState(
+        'idle',
+        'Bereit',
+        state.mode === 'voice' ? 'Tippe auf das Mikrofon.' : 'Du kannst weiterschreiben.',
+      );
+    }
+  }
+
+  function speakWithSystemVoice(text, requestId) {
+    if (!('speechSynthesis' in window) || requestId !== state.speechRequestId) {
+      finishSpeech(requestId);
       return;
     }
-    state.speaking = true;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(String(text).replace(/\*\*/g, ''));
+
+    refreshSystemVoice();
+    const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'de-DE';
-    utterance.rate = 0.94;
+    utterance.rate = 0.97;
     utterance.pitch = 1;
-    utterance.onstart = () => setVoiceState('speaking', 'DokoHilf spricht …', 'Danach höre ich automatisch weiter zu.');
-    utterance.onend = () => {
-      state.speaking = false;
-      if (state.mode === 'voice' && state.shouldListenAfterSpeech && !state.voicePaused) {
-        state.shouldListenAfterSpeech = false;
-        setTimeout(startListening, 320);
-      } else {
-        setVoiceState('idle', 'Bereit', state.mode === 'voice' ? 'Tippe auf das Mikrofon.' : 'Du kannst weiterschreiben.');
+    if (state.preferredSystemVoice) utterance.voice = state.preferredSystemVoice;
+    utterance.onstart = () => {
+      if (requestId === state.speechRequestId) {
+        setVoiceState('speaking', 'DokoHilf spricht …', 'Danach höre ich automatisch weiter zu.');
       }
     };
-    utterance.onerror = () => {
-      state.speaking = false;
-      setVoiceState('idle', 'Antwort angezeigt', 'Tippe zum Weitersprechen.');
-    };
+    utterance.onend = () => finishSpeech(requestId);
+    utterance.onerror = () => finishSpeech(requestId);
     window.speechSynthesis.speak(utterance);
+  }
+
+  async function speak(text) {
+    const clean = cleanSpeechText(text);
+    if (!clean) return;
+
+    cancelSpeech();
+    const requestId = state.speechRequestId;
+    state.speaking = true;
+    setVoiceState('thinking', 'Natürliche Stimme wird vorbereitet …', 'Einen kurzen Moment bitte.');
+
+    const controller = new AbortController();
+    state.ttsAbort = controller;
+
+    try {
+      const response = await fetch(TTS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: clean }),
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new Error('tts_unavailable');
+      const audioBytes = await response.arrayBuffer();
+      if (requestId !== state.speechRequestId) return;
+
+      const context = await unlockAudioEngine();
+      if (!context) throw new Error('audio_context_unavailable');
+      const audioBuffer = await context.decodeAudioData(audioBytes.slice(0));
+      if (requestId !== state.speechRequestId) return;
+
+      const source = context.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(context.destination);
+      source.onended = () => finishSpeech(requestId);
+      state.audioSource = source;
+      setVoiceState('speaking', 'DokoHilf spricht natürlich …', 'Danach höre ich automatisch weiter zu.');
+      source.start(0);
+    } catch (error) {
+      if (requestId !== state.speechRequestId || error?.name === 'AbortError') return;
+      speakWithSystemVoice(clean, requestId);
+    }
   }
 
   function recognitionFactory() {
@@ -265,7 +398,9 @@
       }
     };
     recognition.onend = () => {
-      if (el.shell.dataset.voiceState === 'listening') setVoiceState('idle', 'Bereit', 'Tippe erneut zum Sprechen.');
+      if (el.shell.dataset.voiceState === 'listening') {
+        setVoiceState('idle', 'Bereit', 'Tippe erneut zum Sprechen.');
+      }
     };
     return recognition;
   }
@@ -277,10 +412,9 @@
     if (!state.recognition) state.recognition = recognitionFactory();
     if (!state.recognition) {
       state.voicePaused = true;
-      setVoiceState('error', 'Direktes Zuhören fehlt', 'Wechsle zum Chat und nutze dort das iPhone-Diktiermikrofon.');
+      setVoiceState('error', 'Direktes Zuhören fehlt', 'Wechsle zum Chat und nutze dort das Tastatur-Mikrofon.');
       return;
     }
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     try { state.recognition.start(); } catch { /* already active */ }
   }
 
@@ -288,12 +422,15 @@
     state.voicePaused = true;
     state.shouldListenAfterSpeech = false;
     state.recognition?.abort();
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    cancelSpeech();
     if (el.pauseVoice) el.pauseVoice.textContent = 'Gespräch fortsetzen';
-    if (state.mode === 'voice') setVoiceState('idle', 'Gespräch pausiert', 'Tippe auf das Mikrofon zum Fortsetzen.');
+    if (state.mode === 'voice') {
+      setVoiceState('idle', 'Gespräch pausiert', 'Tippe auf das Mikrofon zum Fortsetzen.');
+    }
   }
 
-  function toggleVoicePause() {
+  async function toggleVoicePause() {
+    await unlockAudioEngine();
     if (state.voicePaused) startListening();
     else pauseVoiceConversation();
   }
@@ -328,6 +465,7 @@
     event.preventDefault();
     sendMessage(el.input.value);
   });
+
   el.input.addEventListener('input', resizeInput);
   el.input.addEventListener('keydown', event => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -335,24 +473,40 @@
       el.form.requestSubmit();
     }
   });
+
   document.addEventListener('click', event => {
     const modeButton = event.target.closest('[data-select-mode]');
-    if (modeButton) return setMode(modeButton.dataset.selectMode);
+    if (modeButton) {
+      const mode = modeButton.dataset.selectMode;
+      if (mode === 'voice') unlockAudioEngine();
+      return setMode(mode);
+    }
+
     const switchButton = event.target.closest('[data-switch-mode]');
-    if (switchButton) return setMode(switchButton.dataset.switchMode, { greet: false });
+    if (switchButton) {
+      const mode = switchButton.dataset.switchMode;
+      if (mode === 'voice') unlockAudioEngine();
+      return setMode(mode, { greet: false });
+    }
+
     const promptButton = event.target.closest('[data-prompt]');
     if (promptButton) return handlePromptButton(promptButton);
+
     const commandButton = event.target.closest('[data-command]');
-    if (commandButton) return sendMessage(commandButton.dataset.command, { fromVoice: state.mode === 'voice' });
+    if (commandButton) {
+      return sendMessage(commandButton.dataset.command, { fromVoice: state.mode === 'voice' });
+    }
   });
+
   el.voiceButton.addEventListener('click', toggleVoicePause);
   el.pauseVoice.addEventListener('click', toggleVoicePause);
+
   el.smallMic.addEventListener('click', () => {
     if (state.mode !== 'chat') return;
     const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!Recognition) {
       el.input.focus();
-      el.input.placeholder = 'Nutze das Mikrofon der iPhone-Tastatur …';
+      el.input.placeholder = 'Nutze das Mikrofon deiner Tastatur …';
       return;
     }
     const dictation = new Recognition();
@@ -363,14 +517,16 @@
       resizeInput();
       el.input.focus();
     };
-    try { dictation.start(); } catch { /* noop */ }
+    try { dictation.start(); } catch { /* no-op */ }
   });
+
   el.reset.addEventListener('click', () => resetConversation({ keepMode: true }));
   el.home.addEventListener('click', () => resetConversation({ keepMode: false }));
 
   window.addEventListener('pagehide', () => {
     state.history = [];
     state.activeGuide = null;
+    cancelSpeech();
   });
 
   async function registerAutoUpdate() {
@@ -384,7 +540,9 @@
     });
 
     try {
-      const registration = await navigator.serviceWorker.register('./service-worker.js', { updateViaCache: 'none' });
+      const registration = await navigator.serviceWorker.register('./service-worker.js', {
+        updateViaCache: 'none',
+      });
       const activateWaiting = () => registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
       activateWaiting();
       registration.addEventListener('updatefound', () => {
@@ -401,6 +559,12 @@
     } catch { /* App remains usable without offline update support. */ }
   }
 
+  if ('speechSynthesis' in window) {
+    refreshSystemVoice();
+    window.speechSynthesis.addEventListener?.('voiceschanged', refreshSystemVoice);
+    window.speechSynthesis.onvoiceschanged = refreshSystemVoice;
+  }
+
   registerAutoUpdate();
   setMode('start', { greet: false });
 
@@ -408,6 +572,14 @@
     sendMessage,
     setMode,
     resetConversation,
-    getState: () => ({ mode: state.mode, historyLength: state.history.length, activeGuide: state.activeGuide, pending: state.pending, voicePaused: state.voicePaused }),
+    speak,
+    getState: () => ({
+      mode: state.mode,
+      historyLength: state.history.length,
+      activeGuide: state.activeGuide,
+      pending: state.pending,
+      voicePaused: state.voicePaused,
+      speaking: state.speaking,
+    }),
   };
 })();
