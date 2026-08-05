@@ -26,11 +26,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p _site/assets artifacts
-          cp index.html manifest.webmanifest icon.svg service-worker.js version.json _site/
-          cp assets/styles.css assets/update-manager.js assets/mobile-audio-fix.js assets/voice-diagnostics.js assets/routing-fix.js assets/clarification-ui.js assets/guide-progress.js assets/app.js _site/assets/
+          cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _site/
+          cp assets/styles.css assets/update-manager.js assets/mobile-audio-fix.js assets/voice-diagnostics.js assets/routing-fix.js assets/clarification-ui.js assets/guide-progress.js assets/app.js assets/editor.css assets/editor.js _site/assets/
           touch _site/.nojekyll
 
           test -s _site/index.html
+          test -s _site/editor.html
           test -s _site/version.json
           test -s _site/assets/styles.css
           test -s _site/assets/update-manager.js
@@ -40,11 +41,16 @@ jobs:
           test -s _site/assets/clarification-ui.js
           test -s _site/assets/guide-progress.js
           test -s _site/assets/app.js
+          test -s _site/assets/editor.css
+          test -s _site/assets/editor.js
           test -s _site/service-worker.js
           test -s _site/icon.svg
           test -s supabase/functions/dokohilf-guide-state/index.ts
           test -s supabase/functions/dokohilf-ai-router/index.ts
           test -s supabase/functions/dokohilf-tts/index.ts
+          test -s supabase/functions/dokohilf-editor/index.ts
+          test -s supabase/migrations/20260805224500_dokohilf_editor_rbac.sql
+          test -s docs/EDITOR_ROLLOUT.md
           test -s tests/fixtures/routing-fixtures.mjs
           test -s tests/helpers/routing-contract.mjs
           test -s scripts/run-behavior-regressions.mjs
@@ -53,15 +59,26 @@ jobs:
           grep -q "Sprachgespräch" _site/index.html
           grep -q "data-select-mode=\"chat\"" _site/index.html
           grep -q "Hauptmenü" _site/index.html
-          grep -q "dokohilf-build\" content=\"20260805-17" _site/index.html
-          grep -q "update-manager.js?v=20260805-17" _site/index.html
-          grep -q "mobile-audio-fix.js?v=20260805-17" _site/index.html
-          grep -q "voice-diagnostics.js?v=20260805-17" _site/index.html
-          grep -q "routing-fix.js?v=20260805-17" _site/index.html
-          grep -q "clarification-ui.js?v=20260805-17" _site/index.html
-          grep -q "guide-progress.js?v=20260805-17" _site/index.html
-          grep -q "app.js?v=20260805-17" _site/index.html
-          grep -q '"buildId": "20260805-17"' _site/version.json
+          grep -q "dokohilf-build\" content=\"20260805-18" _site/index.html
+          grep -q "update-manager.js?v=20260805-18" _site/index.html
+          grep -q "mobile-audio-fix.js?v=20260805-18" _site/index.html
+          grep -q "voice-diagnostics.js?v=20260805-18" _site/index.html
+          grep -q "routing-fix.js?v=20260805-18" _site/index.html
+          grep -q "clarification-ui.js?v=20260805-18" _site/index.html
+          grep -q "guide-progress.js?v=20260805-18" _site/index.html
+          grep -q "app.js?v=20260805-18" _site/index.html
+          grep -q '"buildId": "20260805-18"' _site/version.json
+
+          grep -q "Redaktion anmelden" _site/editor.html
+          grep -q "keine öffentliche Registrierung" _site/editor.html
+          grep -q "editor.css?v=20260805-18" _site/editor.html
+          grep -q "editor.js?v=20260805-18" _site/editor.html
+          grep -q "grant_type=password" _site/assets/editor.js
+          grep -q "sessionStorage" _site/assets/editor.js
+          grep -q "dokohilf-editor" _site/assets/editor.js
+          grep -q "Beispielperson A" _site/assets/editor.js
+          grep -q "auth/v1/signup\|signUp(" _site/assets/editor.js && exit 1 || true
+          grep -q "SUPABASE_SERVICE_ROLE_KEY\|service_role" _site/assets/editor.js && exit 1 || true
 
           grep -q "serviceWorker.register" _site/assets/app.js
           grep -q "TTS_ENDPOINT" _site/assets/app.js
@@ -109,10 +126,19 @@ jobs:
           grep -q "dokohilf-guide-state" _site/assets/guide-progress.js
           grep -q "guideStepCount" supabase/functions/dokohilf-guide-state/index.ts
 
-          grep -q "BUILD_ID = '20260805-17'" _site/service-worker.js
-          grep -q "voice-diagnostics.js?v=20260805-17" _site/service-worker.js
-          grep -q "clarification-ui.js?v=20260805-17" _site/service-worker.js
-          grep -q "guide-progress.js?v=20260805-17" _site/service-worker.js
+          grep -q "type EditorRole = 'staff' | 'editor' | 'admin'" supabase/functions/dokohilf-editor/index.ts
+          grep -q "guide_status_forbidden" supabase/functions/dokohilf-editor/index.ts
+          grep -q "containsSensitiveData" supabase/functions/dokohilf-editor/index.ts
+          grep -q "dokohilf_user_roles" supabase/migrations/20260805224500_dokohilf_editor_rbac.sql
+          grep -q "dokohilf_guide_versions" supabase/migrations/20260805224500_dokohilf_editor_rbac.sql
+          grep -q "enable row level security" supabase/migrations/20260805224500_dokohilf_editor_rbac.sql
+          grep -q "dokohilf_reject_public_signup" supabase/migrations/20260805224500_dokohilf_editor_rbac.sql
+          grep -q "Before User Created" docs/EDITOR_ROLLOUT.md
+
+          grep -q "BUILD_ID = '20260805-18'" _site/service-worker.js
+          grep -q "voice-diagnostics.js?v=20260805-18" _site/service-worker.js
+          grep -q "clarification-ui.js?v=20260805-18" _site/service-worker.js
+          grep -q "guide-progress.js?v=20260805-18" _site/service-worker.js
           grep -q "DOKOHILF_UPDATED" _site/service-worker.js
           grep -q "clients.claim" _site/service-worker.js
           grep -q "version.json" _site/service-worker.js
@@ -138,6 +164,7 @@ jobs:
           node --check _site/assets/clarification-ui.js
           node --check _site/assets/guide-progress.js
           node --check _site/assets/app.js
+          node --check _site/assets/editor.js
           node --check _site/service-worker.js
 
       - name: Run deterministic behavior regressions
@@ -153,7 +180,8 @@ jobs:
             tests/voice-diagnostics.test.mjs \
             tests/behavior-regression.test.mjs \
             tests/mobile-layout-contract.test.mjs \
-            tests/privacy-contract.test.mjs
+            tests/privacy-contract.test.mjs \
+            tests/editor-security.test.mjs
 
       - name: Check active DokoHilf router
         run: node scripts/live-routing-smoke.mjs
