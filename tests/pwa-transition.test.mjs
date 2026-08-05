@@ -29,8 +29,8 @@ test('HTML, Versionsquelle und Service Worker verwenden denselben Build', () => 
 });
 
 test('alte Caches werden beim Aktivieren entfernt', () => {
-  assert.match(serviceWorker, /keys\.filter\(key => key !== CACHE_NAME\)/);
-  assert.match(serviceWorker, /caches\.delete/);
+  assert.match(serviceWorker, /\.filter\(key => key !== CACHE_NAME\)/);
+  assert.match(serviceWorker, /\.map\(key => caches\.delete\(key\)\)/);
   assert.match(serviceWorker, /clients\.claim/);
 });
 
