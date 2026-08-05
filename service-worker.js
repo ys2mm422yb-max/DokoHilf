@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dokohilf-shell-v20260805-7';
+const CACHE_NAME = 'dokohilf-shell-v20260805-8';
 const CORE_FILES = [
   './',
   './index.html',
@@ -9,7 +9,11 @@ const CORE_FILES = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_FILES)).then(() => self.skipWaiting()));
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(CORE_FILES))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', event => {
@@ -39,7 +43,8 @@ self.addEventListener('fetch', event => {
       }
       return response;
     } catch {
-      return (await caches.match(request)) || (request.mode === 'navigate' ? await caches.match('./index.html') : Response.error());
+      return (await caches.match(request))
+        || (request.mode === 'navigate' ? await caches.match('./index.html') : Response.error());
     }
   })());
 });
