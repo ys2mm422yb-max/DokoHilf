@@ -91,8 +91,13 @@ Testdaten müssen vollständig erfunden sein und dürfen keiner realen Person na
 - Keine internen Screenshots oder Fallinformationen in Issues und Pull Requests.
 - Interne Inhalte dürfen nicht im statischen HTML- oder JavaScript-Bundle liegen.
 
-## 10. Veröffentlichung
+## 10. Veröffentlichung und fester Hauptlink
 
+- Einziger fester öffentlicher Hauptlink: `https://ys2mm422yb-max.github.io/DokoHilf/`.
+- Dieser Link wird nicht als „Testlink“ bezeichnet, sondern als fester öffentlicher Hauptlink beziehungsweise fester DokoHilf-Link.
+- Veröffentlichte Änderungen dürfen nur über diesen Link bereitgestellt und gegenüber Nutzern genannt werden.
+- Keine wechselnden Vorschau-, Versions-, Cache-, Branch- oder Ausweichlinks nennen.
+- Keine Queryparameter oder künstlichen Cache-Links als alternative öffentliche Adresse verwenden.
 - Öffentliche Prototypen enthalten ausschließlich Fantasiedaten und neutrale Abbildungen.
 - Eine öffentlich erreichbare Loginseite bedeutet nicht, dass interne Inhalte öffentlich sein dürfen.
 - Produktives Hosting und Login müssen vor Einsatz durch Arbeitgeber und IT freigegeben werden.
