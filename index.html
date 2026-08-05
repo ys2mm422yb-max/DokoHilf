@@ -1,1 +1,86 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate"><title>DokoHilf</title><meta http-equiv="refresh" content="0; url=app-v3.html?release=20260805-1530"><script>location.replace('app-v3.html?release=20260805-1530')</script></head><body><p><a href="app-v3.html?release=20260805-1530">DokoHilf öffnen</a></p></body></html>
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b6b52">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="DokoHilf">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>DokoHilf – Gesprächshilfe</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="assets/styles.css?v=20260805-3">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="DokoHilf Startseite">
+        <span class="brand-mark" aria-hidden="true">D</span>
+        <span><strong>DokoHilf</strong><small>Gesprächshilfe</small></span>
+      </a>
+      <div class="top-actions">
+        <button class="quiet-button" id="speechToggle" type="button" aria-pressed="false" title="Antworten automatisch vorlesen">
+          <span aria-hidden="true">🔈</span><span class="button-label">Vorlesen aus</span>
+        </button>
+        <button class="quiet-button" id="resetButton" type="button">
+          <span aria-hidden="true">↻</span><span class="button-label">Neu</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="welcome" id="welcomeBlock" aria-labelledby="welcomeTitle">
+        <p class="privacy-line">Kostenlose Gesprächshilfe · keine Eingaben werden übertragen</p>
+        <h1 id="welcomeTitle">Hallo! Was möchtest du machen?</h1>
+        <p>Schreib oder sag es einfach so, wie du es einem Kollegen erklären würdest.</p>
+
+        <button class="voice-start" id="voiceStart" type="button">
+          <span class="voice-symbol" aria-hidden="true">🎙</span>
+          <span><strong>Gespräch per Sprache starten</strong><small>Ich höre zu und lese die nächsten Schritte vor.</small></span>
+        </button>
+
+        <div class="quick-title">Häufig gebraucht</div>
+        <div class="quick-actions" id="quickActions" aria-label="Häufige Themen">
+          <button type="button" data-prompt="Ich möchte einen neuen Bericht schreiben">Neuer Bericht</button>
+          <button type="button" data-prompt="Ich habe mich in einem Bericht verschrieben">Bericht korrigieren</button>
+          <button type="button" data-prompt="Ich möchte einen Durchführungsnachweis bearbeiten">Durchführungsnachweis</button>
+          <button type="button" data-prompt="Wo finde ich die Vitalwerte?">Vitalwerte</button>
+          <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite</button>
+          <button type="button" data-prompt="Wo finde ich EasyPlan?">EasyPlan</button>
+        </div>
+      </section>
+
+      <section class="conversation" aria-label="Gespräch mit DokoHilf">
+        <div class="messages" id="messages" aria-live="polite" aria-relevant="additions"></div>
+      </section>
+
+      <footer class="legal-note">Diese Anwendung ist eine unabhängige interne Arbeitshilfe der Einrichtung. Sie wurde nicht vom Hersteller der eingesetzten Dokumentationssoftware entwickelt, betrieben oder geprüft.</footer>
+    </main>
+
+    <aside class="listening-bar" id="listeningBar" hidden aria-live="assertive">
+      <span class="listening-dot" aria-hidden="true"></span>
+      <strong>Ich höre zu …</strong>
+      <button type="button" id="stopListening">Abbrechen</button>
+    </aside>
+
+    <footer class="composer-wrap">
+      <form class="composer" id="chatForm">
+        <label class="sr-only" for="chatInput">Nachricht an DokoHilf</label>
+        <textarea id="chatInput" rows="1" placeholder="Zum Beispiel: Ich möchte einen Bericht schreiben" autocomplete="off"></textarea>
+        <button class="mic-button" id="micButton" type="button" aria-label="Spracheingabe starten" title="Spracheingabe">
+          <span aria-hidden="true">🎙</span>
+        </button>
+        <button class="send-button" type="submit" aria-label="Nachricht senden">Senden</button>
+      </form>
+      <p class="composer-help">Du kannst auch „weiter“, „zurück“, „nochmal“ oder „ich finde das nicht“ sagen.</p>
+    </footer>
+  </div>
+
+  <script src="assets/workflows.js?v=20260805-3" defer></script>
+  <script src="assets/app.js?v=20260805-3" defer></script>
+</body>
+</html>
