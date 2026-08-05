@@ -26,23 +26,30 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p _site/assets
-          cp index.html manifest.webmanifest icon.svg service-worker.js _site/
-          cp assets/styles.css assets/mobile-audio-fix.js assets/routing-fix.js assets/app.js _site/assets/
+          cp index.html manifest.webmanifest icon.svg service-worker.js version.json _site/
+          cp assets/styles.css assets/update-manager.js assets/mobile-audio-fix.js assets/routing-fix.js assets/app.js _site/assets/
           touch _site/.nojekyll
 
           test -s _site/index.html
+          test -s _site/version.json
           test -s _site/assets/styles.css
+          test -s _site/assets/update-manager.js
           test -s _site/assets/mobile-audio-fix.js
           test -s _site/assets/routing-fix.js
           test -s _site/assets/app.js
           test -s _site/service-worker.js
           test -s _site/icon.svg
+
           grep -q "Sprachgespräch" _site/index.html
           grep -q "data-select-mode=\"chat\"" _site/index.html
           grep -q "Hauptmenü" _site/index.html
-          grep -q "mobile-audio-fix.js?v=20260805-12" _site/index.html
-          grep -q "routing-fix.js?v=20260805-block1" _site/index.html
-          grep -q "app.js?v=20260805-12" _site/index.html
+          grep -q "dokohilf-build\" content=\"20260805-14" _site/index.html
+          grep -q "update-manager.js?v=20260805-14" _site/index.html
+          grep -q "mobile-audio-fix.js?v=20260805-14" _site/index.html
+          grep -q "routing-fix.js?v=20260805-14" _site/index.html
+          grep -q "app.js?v=20260805-14" _site/index.html
+          grep -q '"buildId": "20260805-14"' _site/version.json
+
           grep -q "serviceWorker.register" _site/assets/app.js
           grep -q "TTS_ENDPOINT" _site/assets/app.js
           grep -q "TTS_TIMEOUT_MS = 20000" _site/assets/mobile-audio-fix.js
@@ -53,10 +60,21 @@ jobs:
           grep -q "MutationObserver" _site/assets/mobile-audio-fix.js
           grep -q "notfallblattButton" _site/assets/mobile-audio-fix.js
           grep -q "Wie öffne ich das Notfallblatt" _site/assets/mobile-audio-fix.js
+
           grep -q "__DOKOHILF_GREETING_ROUTING_PATCH__" _site/assets/routing-fix.js
           grep -q "stripLeadingGreeting" _site/assets/routing-fix.js
-          grep -q "dokohilf-shell-v20260805-13" _site/service-worker.js
-          grep -q "routing-fix.js?v=20260805-block1" _site/service-worker.js
+
+          grep -q "BUILD_ID = '20260805-14'" _site/assets/update-manager.js
+          grep -q "version.json" _site/assets/update-manager.js
+          grep -q "Neue Version wird geladen" _site/assets/update-manager.js
+          grep -q "visibilitychange" _site/assets/update-manager.js
+          grep -q "pageshow" _site/assets/update-manager.js
+          grep -q "controllerchange" _site/assets/update-manager.js
+
+          grep -q "BUILD_ID = '20260805-14'" _site/service-worker.js
+          grep -q "DOKOHILF_UPDATED" _site/service-worker.js
+          grep -q "clients.claim" _site/service-worker.js
+          grep -q "version.json" _site/service-worker.js
           grep -q "SKIP_WAITING" _site/service-worker.js
           grep -q "Schutzfilter prüft jede Eingabe" _site/index.html
           grep -q "AI_ENDPOINT" _site/assets/app.js
@@ -71,11 +89,13 @@ jobs:
           # Keine dauerhafte Speicherung von Gesprächsverläufen.
           grep -q "sessionStorage\|localStorage\|indexedDB\|dokohilf-ai-history" _site/assets/app.js && exit 1 || true
           grep -q "PLACEHOLDER" _site/index.html && exit 1 || true
+
+          node --check _site/assets/update-manager.js
           node --check _site/assets/mobile-audio-fix.js
           node --check _site/assets/routing-fix.js
           node --check _site/assets/app.js
           node --check _site/service-worker.js
-          node --test tests/greeting-routing.test.mjs
+          node --test tests/greeting-routing.test.mjs tests/pwa-update.test.mjs
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
