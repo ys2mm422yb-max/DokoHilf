@@ -3,6 +3,7 @@ name: Deploy DokoHilf
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,30 +16,45 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build static site
+        run: |
+          set -euo pipefail
+          mkdir -p _site/assets
+          cp index.html manifest.webmanifest icon.svg _site/
+          cp assets/styles.css assets/app.js assets/workflows.js _site/assets/
+          touch _site/.nojekyll
+
+          test -s _site/index.html
+          test -s _site/assets/styles.css
+          test -s _site/assets/app.js
+          test -s _site/assets/workflows.js
+          grep -q "DokoHilf – Gesprächshilfe" _site/index.html
+          grep -q "PLACEHOLDER" _site/index.html && exit 1 || true
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
   deploy:
+    if: github.event_name != 'pull_request'
+    needs: validate
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Build static site
-        run: |
-          mkdir -p _site
-          curl --fail --silent --show-error --location --retry 5 \
-            https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf \
-            --output _site/index.html
-          touch _site/.nojekyll
-          test "$(head -c 15 _site/index.html)" = "<!doctype html>"
-
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
