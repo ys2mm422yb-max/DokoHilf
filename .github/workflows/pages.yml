@@ -42,10 +42,13 @@ jobs:
           grep -q "mobile-audio-fix.js" _site/index.html
           grep -q "serviceWorker.register" _site/assets/app.js
           grep -q "TTS_ENDPOINT" _site/assets/app.js
-          grep -q "instant_system_voice" _site/assets/mobile-audio-fix.js
+          grep -q "TTS_TIMEOUT_MS = 8500" _site/assets/mobile-audio-fix.js
+          grep -q "__DOKOHILF_NATURAL_VOICE__" _site/assets/mobile-audio-fix.js
+          grep -q "persistentVoiceControlStyles" _site/assets/mobile-audio-fix.js
+          grep -q "position:fixed" _site/assets/mobile-audio-fix.js
           grep -q "notfallblattButton" _site/assets/mobile-audio-fix.js
           grep -q "Wie öffne ich das Notfallblatt" _site/assets/mobile-audio-fix.js
-          grep -q "dokohilf-shell-v20260805-10" _site/service-worker.js
+          grep -q "dokohilf-shell-v20260805-11" _site/service-worker.js
           grep -q "SKIP_WAITING" _site/service-worker.js
           grep -q "Schutzfilter prüft jede Eingabe" _site/index.html
           grep -q "AI_ENDPOINT" _site/assets/app.js
