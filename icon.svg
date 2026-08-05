@@ -1,4 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DokoHilf">
-  <rect width="512" height="512" rx="118" fill="#0b6b52"/>
-  <path d="M155 122h92c92 0 145 49 145 134s-53 134-145 134h-92V122zm91 205c43 0 67-23 67-71s-24-71-67-71h-16v142h16z" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DokoHilf App-Icon">
+  <defs>
+    <linearGradient id="bg" x1="58" y1="32" x2="448" y2="476" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0a8f72"/>
+      <stop offset="0.52" stop-color="#0b6b52"/>
+      <stop offset="1" stop-color="#064637"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="112" y1="78" x2="396" y2="414" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5ee0c3" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#1d75d4" stop-opacity=".15"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#002d23" flood-opacity=".34"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <path d="M40 164C83 67 181 28 282 38c96 10 166 69 190 150-34-38-82-62-139-68-107-12-211 35-293 111Z" fill="url(#shine)"/>
+  <g filter="url(#shadow)">
+    <path d="M120 124h272c32 0 58 26 58 58v174c0 32-26 58-58 58H254l-74 62c-12 10-31 2-31-14v-48h-29c-32 0-58-26-58-58V182c0-32 26-58 58-58Z" fill="#fff"/>
+    <path d="M129 151h254c22 0 40 18 40 40v156c0 22-18 40-40 40H245l-69 57v-57h-47c-22 0-40-18-40-40V191c0-22 18-40 40-40Z" fill="#eaf8f4"/>
+    <rect x="213" y="190" width="86" height="126" rx="43" fill="#0b6b52"/>
+    <path d="M181 265v15c0 41 33 74 74 74s74-33 74-74v-15" fill="none" stroke="#0b6b52" stroke-width="24" stroke-linecap="round"/>
+    <path d="M255 354v38M216 392h78" fill="none" stroke="#0b6b52" stroke-width="24" stroke-linecap="round"/>
+    <path d="M147 247v48M177 229v84M335 229v84M365 247v48" fill="none" stroke="#1d75d4" stroke-width="14" stroke-linecap="round" opacity=".9"/>
+  </g>
+  <path d="m397 80 11 28 28 11-28 11-11 28-11-28-28-11 28-11 11-28Z" fill="#ffd65a"/>
+  <circle cx="90" cy="93" r="12" fill="#fff" opacity=".55"/>
 </svg>
