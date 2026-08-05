@@ -1,7 +1,7 @@
 {
-  "name": "DokoHilf – Gesprächshilfe",
+  "name": "DokoHilf – KI-Gesprächshilfe",
   "short_name": "DokoHilf",
-  "description": "Einfache, schrittweise Bedienungshilfe mit Spracheingabe und Vorlesen.",
+  "description": "Einfache KI-Gesprächshilfe mit Spracheingabe, Vorlesen und schrittweiser Bedienungsführung.",
   "lang": "de-DE",
   "start_url": "./",
   "scope": "./",
