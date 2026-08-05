@@ -39,16 +39,20 @@ jobs:
           grep -q "Sprachgespräch" _site/index.html
           grep -q "data-select-mode=\"chat\"" _site/index.html
           grep -q "Hauptmenü" _site/index.html
-          grep -q "mobile-audio-fix.js" _site/index.html
+          grep -q "mobile-audio-fix.js?v=20260805-12" _site/index.html
+          grep -q "app.js?v=20260805-12" _site/index.html
           grep -q "serviceWorker.register" _site/assets/app.js
           grep -q "TTS_ENDPOINT" _site/assets/app.js
-          grep -q "TTS_TIMEOUT_MS = 8500" _site/assets/mobile-audio-fix.js
+          grep -q "TTS_TIMEOUT_MS = 20000" _site/assets/mobile-audio-fix.js
           grep -q "__DOKOHILF_NATURAL_VOICE__" _site/assets/mobile-audio-fix.js
+          grep -q "__DOKOHILF_MOBILE_VOICE_V2__" _site/assets/mobile-audio-fix.js
           grep -q "persistentVoiceControlStyles" _site/assets/mobile-audio-fix.js
-          grep -q "position:fixed" _site/assets/mobile-audio-fix.js
+          grep -q "position:fixed!important" _site/assets/mobile-audio-fix.js
+          grep -q "MutationObserver" _site/assets/mobile-audio-fix.js
           grep -q "notfallblattButton" _site/assets/mobile-audio-fix.js
           grep -q "Wie öffne ich das Notfallblatt" _site/assets/mobile-audio-fix.js
-          grep -q "dokohilf-shell-v20260805-11" _site/service-worker.js
+          grep -q "dokohilf-shell-v20260805-12" _site/service-worker.js
+          grep -q "mobile-audio-fix.js?v=20260805-12" _site/service-worker.js
           grep -q "SKIP_WAITING" _site/service-worker.js
           grep -q "Schutzfilter prüft jede Eingabe" _site/index.html
           grep -q "AI_ENDPOINT" _site/assets/app.js
