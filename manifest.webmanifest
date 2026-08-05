@@ -1,12 +1,12 @@
 {
   "name": "DokoHilf – KI-Bedienungshilfe",
   "short_name": "DokoHilf",
-  "description": "Einfache schrittweise Bedienungshilfe mit KI und Sprachsteuerung.",
+  "description": "Sichere KI-Bedienungshilfe mit Sprachgespräch und Chatmodus.",
   "lang": "de-DE",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f3f7f5",
+  "background_color": "#f4f7f6",
   "theme_color": "#0b6b52",
   "icons": [
     {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
