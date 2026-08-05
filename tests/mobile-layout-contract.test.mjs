@@ -2,12 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [mobileAudio, voiceDiagnostics, clarification, progress, styles] = await Promise.all([
+const [mobileAudio, voiceDiagnostics, clarification, progress] = await Promise.all([
   readFile(new URL('../assets/mobile-audio-fix.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/voice-diagnostics.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/clarification-ui.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/guide-progress.js', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/styles.css', import.meta.url), 'utf8'),
 ]);
 
 test('Sprachleiste ist auf kleinen und großen Mobilansichten fest sichtbar', () => {
@@ -31,7 +30,7 @@ test('Touchflächen bleiben auf Mobilgeräten ausreichend groß', () => {
   assert.match(clarification, /min-height:56px/);
   assert.match(progress, /min-height:38px/);
   assert.match(mobileAudio, /min-height:42px/);
-  assert.match(styles, /touch-action/);
+  assert.match(mobileAudio, /width:56px!important/);
 });
 
 test('feste Sprachleiste überdeckt Nachrichten und Steuerungen nicht', () => {
