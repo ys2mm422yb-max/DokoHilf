@@ -22,6 +22,11 @@ test('Guide-Leiste besitzt alle erforderlichen Bedienaktionen', () => {
   assert.match(script, /commandRow/);
 });
 
+test('Ablauf-Neustart startet denselben Guide direkt und ohne Zwischenbegrüßung', () => {
+  assert.match(script, /api\.sendMessage\(currentGuide\.guideTitle \|\| currentGuide\.guideSlug\)/);
+  assert.doesNotMatch(script, /resetWithoutGreeting/);
+});
+
 test('Fortschritts-Endpunkt gibt nur Metadaten und keine Klickschritte zurück', () => {
   assert.match(edgeFunction, /guideStepCount/);
   assert.match(edgeFunction, /guideStep/);
