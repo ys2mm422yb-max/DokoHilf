@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const TTS_TIMEOUT_MS = 8500;
+  const TTS_TIMEOUT_MS = 20000;
   const nativeFetch = window.fetch.bind(window);
 
   function isTtsRequest(input) {
@@ -9,9 +9,8 @@
     return typeof url === 'string' && url.includes('/functions/v1/dokohilf-tts');
   }
 
-  // Die natürliche Gemini-Stimme bleibt der Standard. Nur wenn der Dienst
-  // wirklich zu lange braucht, darf die Haupt-App auf eine Gerätestimme
-  // zurückfallen. Abbrüche durch einen Moduswechsel bleiben echte Abbrüche.
+  // Die natürliche Cloud-Stimme bleibt der Standard. Erst nach einer echten,
+  // langen Zeitüberschreitung darf die Haupt-App auf eine Gerätestimme fallen.
   window.fetch = function patchedFetch(input, init = {}) {
     if (!isTtsRequest(input)) return nativeFetch(input, init);
 
@@ -46,37 +45,48 @@
 
     const style = document.createElement('style');
     style.id = 'persistentVoiceControlStyles';
+    style.dataset.version = '20260805-12';
     style.textContent = `
-      @media (max-width:640px){
+      html{scroll-padding-top:82px}
+      .message{scroll-margin-top:88px}
+      @media (max-width:900px){
         .app-shell[data-mode="voice"]{
-          padding-bottom:calc(116px + env(safe-area-inset-bottom));
+          padding-bottom:calc(126px + env(safe-area-inset-bottom));
+        }
+        .app-shell[data-mode="voice"] .main-content{
+          padding-bottom:calc(126px + env(safe-area-inset-bottom));
         }
         .app-shell[data-mode="voice"] .voice-console{
-          position:fixed;
-          left:max(8px,env(safe-area-inset-left));
-          right:max(8px,env(safe-area-inset-right));
-          bottom:calc(8px + env(safe-area-inset-bottom));
-          z-index:45;
+          position:fixed!important;
+          left:max(8px,env(safe-area-inset-left))!important;
+          right:max(8px,env(safe-area-inset-right))!important;
+          bottom:calc(8px + env(safe-area-inset-bottom))!important;
+          top:auto!important;
+          z-index:100!important;
           display:grid!important;
+          visibility:visible!important;
+          opacity:1!important;
           grid-template-columns:64px minmax(0,1fr) auto;
           align-items:center;
           gap:11px;
-          width:auto;
-          margin:0;
-          padding:10px 11px;
-          border:1px solid rgba(11,107,82,.16);
+          width:auto!important;
+          min-height:84px;
+          margin:0!important;
+          padding:10px 11px!important;
+          border:1px solid rgba(11,107,82,.18);
           border-radius:20px;
-          background:rgba(255,255,255,.96);
-          box-shadow:0 16px 42px rgba(8,67,50,.20);
+          background:rgba(255,255,255,.97);
+          box-shadow:0 16px 42px rgba(8,67,50,.24);
           backdrop-filter:blur(18px);
           -webkit-backdrop-filter:blur(18px);
+          transform:translateZ(0);
           text-align:left;
         }
         .app-shell[data-mode="voice"] .voice-orb{
-          width:64px;
-          height:64px;
+          width:64px!important;
+          height:64px!important;
           min-width:64px;
-          margin:0;
+          margin:0!important;
           box-shadow:0 10px 26px rgba(6,77,59,.24),inset 0 1px 0 rgba(255,255,255,.35);
         }
         .app-shell[data-mode="voice"] .orb-rings,
@@ -99,10 +109,11 @@
         }
         .app-shell[data-mode="voice"] .voice-copy{
           min-width:0;
-          margin:0;
+          margin:0!important;
           text-align:left;
         }
         .app-shell[data-mode="voice"] .voice-copy strong{
+          display:block;
           overflow:hidden;
           font-size:16px;
           line-height:1.2;
@@ -120,16 +131,54 @@
         }
         .app-shell[data-mode="voice"] .pause-button{
           min-height:42px;
-          max-width:88px;
-          margin:0;
+          max-width:92px;
+          margin:0!important;
           padding:0 9px;
           border-radius:12px;
           font-size:11px;
           line-height:1.15;
         }
       }
+      @media (max-width:380px){
+        .app-shell[data-mode="voice"] .voice-console{
+          grid-template-columns:56px minmax(0,1fr) 76px;
+          gap:8px;
+          min-height:76px;
+          padding:9px!important;
+        }
+        .app-shell[data-mode="voice"] .voice-orb{
+          width:56px!important;
+          height:56px!important;
+          min-width:56px;
+        }
+        .app-shell[data-mode="voice"] .mic-symbol svg{width:30px;height:30px}
+        .app-shell[data-mode="voice"] .voice-copy strong{font-size:15px}
+        .app-shell[data-mode="voice"] .voice-copy span{font-size:11px}
+      }
     `;
     document.head.append(style);
+  }
+
+  function syncVoiceControl() {
+    const shell = document.getElementById('appShell');
+    const voiceConsole = document.getElementById('voiceConsole');
+    if (!shell || !voiceConsole) return;
+
+    if (shell.dataset.mode === 'voice') {
+      voiceConsole.hidden = false;
+      voiceConsole.dataset.persistent = 'true';
+    } else {
+      delete voiceConsole.dataset.persistent;
+    }
+  }
+
+  function observeModeChanges() {
+    const shell = document.getElementById('appShell');
+    if (!shell || shell.dataset.voiceObserver === 'active') return;
+    shell.dataset.voiceObserver = 'active';
+    const observer = new MutationObserver(syncVoiceControl);
+    observer.observe(shell, { attributes: true, attributeFilter: ['data-mode'] });
+    syncVoiceControl();
   }
 
   function submitNotfallblattQuestion() {
@@ -183,6 +232,8 @@
   function initializeEnhancements() {
     installPersistentVoiceControl();
     addNotfallblattShortcut();
+    observeModeChanges();
+    syncVoiceControl();
   }
 
   if (document.readyState === 'loading') {
@@ -190,7 +241,9 @@
   } else {
     initializeEnhancements();
   }
+  window.addEventListener('pageshow', initializeEnhancements);
 
   window.__DOKOHILF_NATURAL_VOICE__ = true;
   window.__DOKOHILF_PERSISTENT_VOICE_CONTROL__ = true;
+  window.__DOKOHILF_MOBILE_VOICE_V2__ = true;
 })();
