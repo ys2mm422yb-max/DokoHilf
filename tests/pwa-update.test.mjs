@@ -12,11 +12,11 @@ const [versionRaw, indexHtml, updateManager, serviceWorker] = await Promise.all(
 const version = JSON.parse(versionRaw);
 const buildId = version.buildId;
 
-test('Build-ID ist in allen Update-Komponenten identisch', () => {
+test('Build-ID ist in allen Update-Komponenten konsistent', () => {
   assert.match(buildId, /^\d{8}-\d+$/);
   assert.match(indexHtml, new RegExp(`dokohilf-build" content="${buildId}`));
   assert.match(indexHtml, new RegExp(`update-manager\\.js\\?v=${buildId}`));
-  assert.match(updateManager, new RegExp(`BUILD_ID = '${buildId}'`));
+  assert.match(updateManager, /document\.querySelector\('meta\[name="dokohilf-build"\]'\)\?\.content/);
   assert.match(serviceWorker, new RegExp(`BUILD_ID = '${buildId}'`));
 });
 
