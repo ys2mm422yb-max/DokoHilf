@@ -31,7 +31,9 @@ jobs:
             assets/styles.css \
             assets/premium-ui-v25.css \
             assets/premium-ui-v26.css \
+            assets/dark-ui-v27.css \
             assets/experience-v26.js \
+            assets/experience-v27.js \
             assets/update-manager.js \
             assets/mobile-audio-fix.js \
             assets/voice-diagnostics.js \
@@ -47,10 +49,11 @@ jobs:
           touch _site/.nojekyll
 
           for file in \
-            README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md \
+            README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md ACTIVE_WORK.md \
             _site/index.html _site/editor.html _site/version.json _site/service-worker.js \
             _site/assets/styles.css _site/assets/premium-ui-v25.css _site/assets/premium-ui-v26.css \
-            _site/assets/experience-v26.js _site/assets/update-manager.js _site/assets/mobile-audio-fix.js \
+            _site/assets/dark-ui-v27.css _site/assets/experience-v26.js _site/assets/experience-v27.js \
+            _site/assets/update-manager.js _site/assets/mobile-audio-fix.js \
             _site/assets/voice-diagnostics.js _site/assets/routing-fix.js \
             _site/assets/conversation-intelligence.js _site/assets/clarification-ui.js \
             _site/assets/guide-progress.js _site/assets/voice-focus-mode.js _site/assets/app.js \
@@ -64,21 +67,25 @@ jobs:
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-routing-stable.mjs \
             scripts/live-tts-smoke.mjs scripts/live-screenshot-smoke.mjs \
             tests/vitalwerte-intent.test.mjs tests/live-build-recovery.test.mjs \
-            tests/confirmed-workflows.test.mjs tests/intelligent-router-v26.test.mjs tests/voice-layout-v26.test.mjs; do
+            tests/confirmed-workflows.test.mjs tests/intelligent-router-v26.test.mjs \
+            tests/voice-layout-v26.test.mjs tests/dark-ui-voice-v27.test.mjs; do
             test -s "$file"
           done
 
-          grep -q 'dokohilf-build" content="20260806-26' _site/index.html
-          grep -q 'premium-ui-v25.css?v=20260806-26' _site/index.html
-          grep -q 'premium-ui-v26.css?v=20260806-26' _site/index.html
-          grep -q 'experience-v26.js?v=20260806-26' _site/index.html
-          grep -q 'guide-progress.js?v=20260806-26' _site/index.html
-          grep -q 'voice-focus-mode.js?v=20260806-26' _site/index.html
-          grep -q 'app.js?v=20260806-26' _site/index.html
-          grep -q '"buildId": "20260806-26"' _site/version.json
-          grep -q "BUILD_ID = '20260806-26'" _site/service-worker.js
-          grep -q '__DOKOHILF_DIRECT_ROUTER_V26__' _site/index.html
-          grep -q 'KI · v26' _site/index.html
+          grep -q 'dokohilf-build" content="20260806-27' _site/index.html
+          grep -q 'premium-ui-v25.css?v=20260806-27' _site/index.html
+          grep -q 'premium-ui-v26.css?v=20260806-27' _site/index.html
+          grep -q 'dark-ui-v27.css?v=20260806-27' _site/index.html
+          grep -q 'experience-v26.js?v=20260806-27' _site/index.html
+          grep -q 'experience-v27.js?v=20260806-27' _site/index.html
+          grep -q 'guide-progress.js?v=20260806-27' _site/index.html
+          grep -q 'voice-focus-mode.js?v=20260806-27' _site/index.html
+          grep -q 'app.js?v=20260806-27' _site/index.html
+          grep -q '"buildId": "20260806-27"' _site/version.json
+          grep -q "BUILD_ID = '20260806-27'" _site/service-worker.js
+          grep -q '__DOKOHILF_DIRECT_ROUTER_V27__' _site/index.html
+          grep -q 'KI · v27' _site/index.html
+          grep -q 'theme-color" content="#020b13"' _site/index.html
           grep -q 'Wobei brauchst du Hilfe?' _site/index.html
           grep -q 'DokoHilfHardRefresh' _site/index.html
           grep -q 'CLEAR_DOKOHILF_CACHES' _site/service-worker.js
@@ -99,6 +106,14 @@ jobs:
           grep -q -- '--dh-deep' _site/assets/premium-ui-v25.css
           grep -q 'grid-template-rows:minmax(92px,auto)' _site/assets/premium-ui-v26.css
           grep -q 'voice-copy strong:after{content:none' _site/assets/premium-ui-v26.css
+
+          grep -q '__DOKOHILF_DARK_UI_V27__' _site/assets/experience-v27.js
+          grep -q '__DOKOHILF_VOICE_RECOVERY_V27__' _site/assets/experience-v27.js
+          grep -q 'TTS_VISIBLE_WAIT_MS = 2400' _site/assets/experience-v27.js
+          grep -q 'Gerätestimme wird verwendet' _site/assets/experience-v27.js
+          grep -q -- '--v27-bg:#020b13' _site/assets/dark-ui-v27.css
+          grep -q 'color-scheme:dark' _site/assets/dark-ui-v27.css
+          grep -q 'data-voice-state="fallback"' _site/assets/dark-ui-v27.css
 
           grep -q '__DOKOHILF_STRUCTURED_CLARIFICATION__' _site/assets/clarification-ui.js
           grep -q 'voiceFocusChoices' _site/assets/clarification-ui.js
@@ -128,6 +143,7 @@ jobs:
 
           grep -q 'Jeder neue Chat liest zuerst vollständig' PROJECT_HANDOFF.md
           grep -q 'CONFIRMED_WORKFLOWS.md' PROJECT_HANDOFF.md
+          grep -q 'tatsächlicher Live-Stand' ACTIVE_WORK.md
           grep -q 'Bilder bleiben ausschließlich im Chat' CONFIRMED_WORKFLOWS.md
           grep -q 'CONFIRMED_WORKFLOWS.md' README.md
 
@@ -141,6 +157,7 @@ jobs:
           grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' _site/assets/app.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/voice-focus-mode.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|caches.open' _site/assets/experience-v26.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB\|caches.open' _site/assets/experience-v27.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/conversation-intelligence.js && exit 1 || true
           grep -q '\.jpe\?g\|\.png\|IMG_' CONFIRMED_WORKFLOWS.md && exit 1 || true
 
@@ -153,6 +170,7 @@ jobs:
           node --check _site/assets/guide-progress.js
           node --check _site/assets/voice-focus-mode.js
           node --check _site/assets/experience-v26.js
+          node --check _site/assets/experience-v27.js
           node --check _site/assets/app.js
           node --check _site/assets/editor.js
           node --check _site/service-worker.js
@@ -182,7 +200,8 @@ jobs:
             tests/live-build-recovery.test.mjs \
             tests/confirmed-workflows.test.mjs \
             tests/intelligent-router-v26.test.mjs \
-            tests/voice-layout-v26.test.mjs
+            tests/voice-layout-v26.test.mjs \
+            tests/dark-ui-voice-v27.test.mjs
 
       - name: Check active DokoHilf router
         run: |
