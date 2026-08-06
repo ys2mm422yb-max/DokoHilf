@@ -3,6 +3,7 @@
 ## Finaler Stand
 
 - finaler Release-Branch: `release/build-27-final-validation`
+- finaler Release-PR: **#53**
 - vorheriger Release-PR: **#52**
 - Zielbranch: `main`
 - Ziel-Build: `20260806-27`
@@ -14,29 +15,39 @@
 - PR #49 wurde durch spätere Build-27-Arbeit ersetzt und geschlossen; Branch nicht gelöscht
 - PR #50 wurde durch PR #51 ersetzt und geschlossen; Branch nicht gelöscht
 - PR #51 wurde durch PR #52 ersetzt und geschlossen; Branch nicht gelöscht
-- PR #52 bleibt bis zum grünen Nachweis offen und wird anschließend durch den finalen Validierungs-PR ersetzt; Branch nicht löschen
+- PR #52 bleibt bis zum grünen Nachweis von PR #53 offen und wird anschließend als ersetzt geschlossen; Branch nicht löschen
 
-Der finale Validierungsbranch enthält den vollständigen Stand aus PR #52 einschließlich der korrigierten iPhone-Renderprüfung auf Commit `1cc9024db2f7d209dc42439563639d967a410160`.
+PR #53 enthält den vollständigen Stand aus PR #52 einschließlich der korrigierten iPhone-Renderprüfung und der auf den finalen Release-PR ausgerichteten Übergabedokumentation.
 
 ## Zusätzliche Bereinigung im Release-PR
 
-Nach Abtrennung des Release-Branches wurden drei veraltete Regressionen gefunden und auf den tatsächlichen Build-27-Vertrag migriert:
+Drei veraltete Regressionen wurden auf den tatsächlichen Build-27-Vertrag migriert:
 
 - `tests/voice-diagnostics.test.mjs`
 - `tests/live-build-recovery.test.mjs`
 - `tests/voice-layout-v26.test.mjs`
 
-Diese Änderungen entfernen ausschließlich harte Build-26-/TTS-v16-Erwartungen. Fachliche Router-, Sicherheits- und Klickwegprüfungen bleiben vollständig bestehen.
+Diese Änderungen entfernen ausschließlich harte Build-26- und TTS-v16-Erwartungen. Fachliche Router-, Sicherheits- und Klickwegprüfungen bleiben vollständig bestehen.
 
-Zusätzlich wurden für beide internen Audio-Tabellen explizite Deny-All-RLS-Policies für `anon` und `authenticated` ergänzt. Der Supabase-Sicherheitsberater meldet danach keine Lints.
+Für beide internen Audio-Tabellen wurden explizite Deny-All-RLS-Policies für `anon` und `authenticated` ergänzt. Der Supabase-Sicherheitsberater meldet keine Lints.
 
 ## Korrigierte iPhone-Renderprüfung
 
 Die Renderprüfung wartete nach dem Wechsel in den Sprachmodus noch auf den absichtlich ausgeblendeten alten `#workspace`. Der Test wartet nun auf die sichtbare Vollbild-Sprachansicht `.voice-focus-stage` und prüft gleichzeitig, dass `#workspace` im Sprachfokus verborgen bleibt. Die fachlichen und visuellen Anforderungen wurden nicht abgeschwächt.
 
+## Live-Audit
+
+- Supabase-Projekt aktiv und gesund
+- 23 freigegebene Guides mit 108 Schritten
+- Router v11, TTS v20, Guide-Audio v1 und Builder v2 aktiv
+- privater Audiobestand 1/93
+- stündlicher Builder-Cron aktiv
+- temporäre Diagnose-, Export-, Batch-, Store- und Snapshot-Endpunkte auf HTTP 410 neutralisiert
+- Supabase-Sicherheitsberater ohne Lints
+
 ## Merge-Grenze
 
-Der finale Validierungs-PR bleibt ungemergt, bis `Deploy DokoHilf` auf dem exakten Release-Head vollständig grün ist. Dieser eine Workflow enthält bereits:
+PR #53 bleibt ungemergt, bis `Deploy DokoHilf` auf dem exakten Release-Head vollständig grün ist. Dieser Workflow enthält:
 
 - Syntax- und Quellverträge
 - Fach- und Routingregressionen
@@ -47,6 +58,6 @@ Der finale Validierungs-PR bleibt ungemergt, bis `Deploy DokoHilf` auf dem exakt
 - privaten Guide-Audiobestand
 - exakten Pages-Build
 
-Der neue Pull Request wird bewusst als eigenständiger `opened`-Trigger angelegt, damit GitHub Actions den vollständigen exakten Head prüft.
+Durch die verbundene GitHub-App erzeugte Pushes und PR-Änderungen lösen keinen Workflow aus. Der Connector stellt keinen direkten Workflow-Dispatch bereit. Deshalb ist einmalig ein manueller Start über **Actions → Deploy DokoHilf → Run workflow** auf Branch `release/build-27-final-validation` erforderlich.
 
-Erst danach darf der exakte Head manuell gemergt und über den festen Hauptlink verifiziert werden.
+Erst nach vollständig grünem Lauf auf dem dann exakten Head darf manuell gemergt und über den festen Hauptlink veröffentlicht werden.
