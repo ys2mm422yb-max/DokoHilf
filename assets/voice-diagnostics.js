@@ -3,8 +3,14 @@
 
   const root = typeof window !== 'undefined' ? window : globalThis;
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
+  const LOCAL_MANIFEST_MARKER = '/assets/guide-audio-manifest.json';
+  const GUIDE_AUDIO_MARKER = '/functions/v1/dokohilf-guide-audio';
+  const GUIDE_AUDIO_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-guide-audio';
+  const GUIDE_AUDIO_MANIFEST = `${GUIDE_AUDIO_ENDPOINT}?manifest=1&build=20260806-27`;
+  const GUIDE_AUDIO_CACHE = 'dokohilf-approved-guide-audio-20260806-27';
   let lastNaturalResponse = null;
   let lastFallbackReason = '';
+  let lastManifestCount = 0;
 
   function fallbackReason(error) {
     const message = String(error?.message || error || '').toLowerCase();
@@ -26,9 +32,70 @@
   root.DokoHilfVoiceDiagnostics = { fallbackReason, calculateKeyboardOffset };
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
 
+  function requestUrl(input) {
+    return typeof input === 'string' ? input : input?.url || '';
+  }
+
   function isTtsRequest(input) {
-    const url = typeof input === 'string' ? input : input?.url;
-    return typeof url === 'string' && url.includes(TTS_MARKER);
+    return requestUrl(input).includes(TTS_MARKER);
+  }
+
+  function isLocalManifestRequest(input) {
+    return requestUrl(input).includes(LOCAL_MANIFEST_MARKER);
+  }
+
+  function isRemoteGuideAudioRequest(input) {
+    const url = requestUrl(input);
+    return url.includes(GUIDE_AUDIO_MARKER) && !url.includes('manifest=1');
+  }
+
+  async function openGuideAudioCache() {
+    if (!('caches' in window)) return null;
+    try { return await caches.open(GUIDE_AUDIO_CACHE); }
+    catch { return null; }
+  }
+
+  async function fetchGuideManifest(previousFetch, init = {}) {
+    const cache = await openGuideAudioCache();
+    const cacheKey = new Request(GUIDE_AUDIO_MANIFEST, { method: 'GET' });
+    try {
+      const response = await previousFetch(GUIDE_AUDIO_MANIFEST, {
+        ...init,
+        method: 'GET',
+        cache: 'no-store',
+      });
+      if (!response.ok) throw new Error(`guide_audio_manifest_${response.status}`);
+      const payload = await response.clone().json();
+      if (payload?.voice !== 'Gacrux' || !Array.isArray(payload?.entries)) {
+        throw new Error('guide_audio_manifest_invalid');
+      }
+      lastManifestCount = payload.entries.length;
+      await cache?.put(cacheKey, response.clone());
+      return response;
+    } catch (error) {
+      const cached = await cache?.match(cacheKey);
+      if (cached) {
+        cached.clone().json().then(payload => {
+          lastManifestCount = Array.isArray(payload?.entries) ? payload.entries.length : 0;
+        }).catch(() => {});
+        return cached;
+      }
+      throw error;
+    }
+  }
+
+  async function fetchCachedGuideAudio(previousFetch, input, init = {}) {
+    const url = requestUrl(input);
+    if (!url) return previousFetch(input, init);
+    const cache = await openGuideAudioCache();
+    const cached = await cache?.match(url);
+    if (cached) return cached;
+
+    const response = await previousFetch(input, { ...init, cache: 'force-cache' });
+    if (response.ok && /audio\/wav/i.test(response.headers.get('content-type') || '')) {
+      await cache?.put(url, response.clone());
+    }
+    return response;
   }
 
   function installStyles() {
@@ -135,11 +202,19 @@
     update();
   }
 
-  function installTtsObserver() {
+  function installFetchObserver() {
     if (window.__DOKOHILF_VOICE_DIAGNOSTICS_FETCH__) return;
     const previousFetch = window.fetch.bind(window);
     window.fetch = async (input, init = {}) => {
+      const method = String(init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
+      if (method === 'GET' && isLocalManifestRequest(input)) {
+        return fetchGuideManifest(previousFetch, init);
+      }
+      if (method === 'GET' && isRemoteGuideAudioRequest(input)) {
+        return fetchCachedGuideAudio(previousFetch, input, init);
+      }
       if (!isTtsRequest(input)) return previousFetch(input, init);
+
       lastNaturalResponse = null;
       lastFallbackReason = '';
       setEngine('loading', 'Natürliche Stimme wird vorbereitet');
@@ -154,6 +229,7 @@
           voice: response.headers.get('X-DokoHilf-Voice') || '',
           model: response.headers.get('X-DokoHilf-TTS-Model') || '',
           mode: response.headers.get('X-DokoHilf-Voice-Mode') || 'natural-cloud',
+          parser: response.headers.get('X-DokoHilf-TTS-Parser') || '',
         };
         return response;
       } catch (error) {
@@ -163,6 +239,7 @@
       }
     };
     window.__DOKOHILF_VOICE_DIAGNOSTICS_FETCH__ = true;
+    window.__DOKOHILF_REMOTE_GUIDE_AUDIO_V27__ = true;
   }
 
   function installLifecycleObservers() {
@@ -194,7 +271,7 @@
     syncVoiceConsole();
   }
 
-  installTtsObserver();
+  installFetchObserver();
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initialize, { once: true });
   } else {
@@ -209,6 +286,11 @@
     getState: () => ({
       naturalResponse: lastNaturalResponse ? { ...lastNaturalResponse } : null,
       fallbackReason: lastFallbackReason,
+      staticGuideAudio: {
+        endpoint: GUIDE_AUDIO_ENDPOINT,
+        manifestEntries: lastManifestCount,
+        cacheName: GUIDE_AUDIO_CACHE,
+      },
     }),
   };
 })();
