@@ -27,7 +27,7 @@ jobs:
           set -euo pipefail
           mkdir -p _site/assets artifacts
           cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _site/
-          cp assets/styles.css assets/update-manager.js assets/mobile-audio-fix.js assets/voice-diagnostics.js assets/routing-fix.js assets/clarification-ui.js assets/guide-progress.js assets/voice-focus-mode.js assets/app.js assets/editor.css assets/editor.js _site/assets/
+          cp assets/styles.css assets/update-manager.js assets/mobile-audio-fix.js assets/voice-diagnostics.js assets/routing-fix.js assets/conversation-intelligence.js assets/clarification-ui.js assets/guide-progress.js assets/voice-focus-mode.js assets/app.js assets/editor.css assets/editor.js _site/assets/
           touch _site/.nojekyll
 
           test -s _site/index.html
@@ -38,6 +38,7 @@ jobs:
           test -s _site/assets/mobile-audio-fix.js
           test -s _site/assets/voice-diagnostics.js
           test -s _site/assets/routing-fix.js
+          test -s _site/assets/conversation-intelligence.js
           test -s _site/assets/clarification-ui.js
           test -s _site/assets/guide-progress.js
           test -s _site/assets/voice-focus-mode.js
@@ -63,16 +64,17 @@ jobs:
           grep -q "Sprachgespräch" _site/index.html
           grep -q "data-select-mode=\"chat\"" _site/index.html
           grep -q "Hauptmenü" _site/index.html
-          grep -q "dokohilf-build\" content=\"20260806-21" _site/index.html
-          grep -q "update-manager.js?v=20260806-21" _site/index.html
-          grep -q "mobile-audio-fix.js?v=20260806-21" _site/index.html
-          grep -q "voice-diagnostics.js?v=20260806-21" _site/index.html
-          grep -q "routing-fix.js?v=20260806-21" _site/index.html
-          grep -q "clarification-ui.js?v=20260806-21" _site/index.html
-          grep -q "guide-progress.js?v=20260806-21" _site/index.html
-          grep -q "voice-focus-mode.js?v=20260806-21" _site/index.html
-          grep -q "app.js?v=20260806-21" _site/index.html
-          grep -q '"buildId": "20260806-21"' _site/version.json
+          grep -q "dokohilf-build\" content=\"20260806-22" _site/index.html
+          grep -q "update-manager.js?v=20260806-22" _site/index.html
+          grep -q "mobile-audio-fix.js?v=20260806-22" _site/index.html
+          grep -q "voice-diagnostics.js?v=20260806-22" _site/index.html
+          grep -q "routing-fix.js?v=20260806-22" _site/index.html
+          grep -q "conversation-intelligence.js?v=20260806-22" _site/index.html
+          grep -q "clarification-ui.js?v=20260806-22" _site/index.html
+          grep -q "guide-progress.js?v=20260806-22" _site/index.html
+          grep -q "voice-focus-mode.js?v=20260806-22" _site/index.html
+          grep -q "app.js?v=20260806-22" _site/index.html
+          grep -q '"buildId": "20260806-22"' _site/version.json
 
           grep -q "Redaktion anmelden" _site/editor.html
           grep -q "keine öffentliche Registrierung" _site/editor.html
@@ -107,26 +109,36 @@ jobs:
           grep -q "visualViewport" _site/assets/voice-diagnostics.js
           grep -q "orientationchange" _site/assets/voice-diagnostics.js
           grep -q "fallbackReason" _site/assets/voice-diagnostics.js
-          grep -q "VOICE_NAME = 'Sulafat'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "VOICE_STYLE = 'warm-conversational'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "X-DokoHilf-Voice-Style" supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_NAME = 'Achird'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_STYLE = 'friendly-casual-natural-v2'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "v1beta/interactions" supabase/functions/dokohilf-tts/index.ts
+          grep -q "X-DokoHilf-TTS-Latency" supabase/functions/dokohilf-tts/index.ts
 
           grep -q "__DOKOHILF_GREETING_ROUTING_PATCH__" _site/assets/routing-fix.js
           grep -q "stripLeadingGreeting" _site/assets/routing-fix.js
+
+          grep -q "__DOKOHILF_CONVERSATION_INTELLIGENCE__" _site/assets/conversation-intelligence.js
+          grep -q "maxAlternatives = 3" _site/assets/conversation-intelligence.js
+          grep -q "speechAlternatives" _site/assets/conversation-intelligence.js
+          grep -q "inputMode: 'voice'" _site/assets/conversation-intelligence.js
 
           grep -q "__DOKOHILF_STRUCTURED_CLARIFICATION__" _site/assets/clarification-ui.js
           grep -q "selectedGuideSlug" _site/assets/clarification-ui.js
           grep -q "dokohilf-ai-router" _site/assets/clarification-ui.js
           grep -q "slice(0, 3)" _site/assets/clarification-ui.js
-          grep -q "structured-clarification-v2" supabase/functions/dokohilf-ai-router/index.ts
-          grep -q "status=eq.approved" supabase/functions/dokohilf-ai-router/index.ts
-          grep -q "neutralizeInternalText" supabase/functions/dokohilf-ai-router/index.ts
+          grep -q "conversational-guide-router-v3" supabase/functions/dokohilf-ai-router/index.ts
+          grep -q "MODEL = 'gemini-3.6-flash'" supabase/functions/dokohilf-ai-router/index.ts
+          grep -q "interpretGuideReply" supabase/functions/dokohilf-ai-router/index.ts
+          grep -q "ai-dialogue-cancel" supabase/functions/dokohilf-ai-router/index.ts
+          grep -q "speech-recognition-clarification" supabase/functions/dokohilf-ai-router/index.ts
           grep -q "vitalwerte-erfassen-fortsetzen" supabase/functions/dokohilf-ai-router/index.ts
-          grep -q "context-required-clarification" supabase/functions/dokohilf-ai-router/index.ts
 
           grep -q "meta\[name=\"dokohilf-build\"\]" _site/assets/update-manager.js
           grep -q "version.json" _site/assets/update-manager.js
           grep -q "Neue Version wird geladen" _site/assets/update-manager.js
+          grep -q "RELOAD_GUARD_MS" _site/assets/update-manager.js
+          grep -q "WORKER_WAIT_MS" _site/assets/update-manager.js
+          grep -q "reason === 'startup'" _site/assets/update-manager.js
           grep -q "visibilitychange" _site/assets/update-manager.js
           grep -q "pageshow" _site/assets/update-manager.js
           grep -q "controllerchange" _site/assets/update-manager.js
@@ -155,11 +167,12 @@ jobs:
           grep -q "dokohilf_reject_public_signup" supabase/migrations/20260805224500_dokohilf_editor_rbac.sql
           grep -q "Before User Created" docs/EDITOR_ROLLOUT.md
 
-          grep -q "BUILD_ID = '20260806-21'" _site/service-worker.js
-          grep -q "voice-diagnostics.js?v=20260806-21" _site/service-worker.js
-          grep -q "clarification-ui.js?v=20260806-21" _site/service-worker.js
-          grep -q "guide-progress.js?v=20260806-21" _site/service-worker.js
-          grep -q "voice-focus-mode.js?v=20260806-21" _site/service-worker.js
+          grep -q "BUILD_ID = '20260806-22'" _site/service-worker.js
+          grep -q "voice-diagnostics.js?v=20260806-22" _site/service-worker.js
+          grep -q "conversation-intelligence.js?v=20260806-22" _site/service-worker.js
+          grep -q "clarification-ui.js?v=20260806-22" _site/service-worker.js
+          grep -q "guide-progress.js?v=20260806-22" _site/service-worker.js
+          grep -q "voice-focus-mode.js?v=20260806-22" _site/service-worker.js
           grep -q "DOKOHILF_UPDATED" _site/service-worker.js
           grep -q "clients.claim" _site/service-worker.js
           grep -q "version.json" _site/service-worker.js
@@ -177,12 +190,14 @@ jobs:
           # Keine dauerhafte Speicherung von Gesprächsverläufen.
           grep -q "localStorage\|indexedDB\|dokohilf-ai-history" _site/assets/app.js && exit 1 || true
           grep -q "localStorage\|indexedDB\|sessionStorage" _site/assets/voice-focus-mode.js && exit 1 || true
+          grep -q "localStorage\|indexedDB\|sessionStorage" _site/assets/conversation-intelligence.js && exit 1 || true
           grep -q "PLACEHOLDER" _site/index.html && exit 1 || true
 
           node --check _site/assets/update-manager.js
           node --check _site/assets/mobile-audio-fix.js
           node --check _site/assets/voice-diagnostics.js
           node --check _site/assets/routing-fix.js
+          node --check _site/assets/conversation-intelligence.js
           node --check _site/assets/clarification-ui.js
           node --check _site/assets/guide-progress.js
           node --check _site/assets/voice-focus-mode.js
