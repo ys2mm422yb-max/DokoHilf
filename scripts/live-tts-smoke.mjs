@@ -4,7 +4,9 @@ const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 const TEST_TEXT = 'Stimmt, dann war die Annahme falsch. Wir starten ganz vorne.';
 const EXPECTED_VOICE = 'Achird';
-const EXPECTED_STYLE = 'friendly-casual-natural-v2';
+const EXPECTED_STYLE = 'friendly-casual-natural-v3';
+const EXPECTED_MODEL = 'gemini-2.5-flash-preview-tts';
+const MAX_LATENCY_MS = 18_000;
 
 async function requestAudio() {
   let lastError;
@@ -14,7 +16,7 @@ async function requestAudio() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
         body: JSON.stringify({ text: TEST_TEXT }),
-        signal: AbortSignal.timeout(45_000),
+        signal: AbortSignal.timeout(25_000),
       });
       const bytes = new Uint8Array(await response.arrayBuffer());
       const header = new TextDecoder('ascii').decode(bytes.slice(0, 12));
@@ -36,7 +38,9 @@ async function requestAudio() {
       if (!header.startsWith('RIFF') || !header.includes('WAVE')) throw new Error(`Ungültiger WAV-Header: ${header}`);
       if (result.voice !== EXPECTED_VOICE) throw new Error(`Falsche Stimme: ${result.voice || 'leer'}`);
       if (result.style !== EXPECTED_STYLE) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
+      if (result.model !== EXPECTED_MODEL) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
       if (!result.mode.includes('natural-cloud')) throw new Error(`Falscher Sprachmodus: ${result.mode || 'leer'}`);
+      if (!result.latency || result.latency > MAX_LATENCY_MS) throw new Error(`Sprachausgabe zu langsam: ${result.latency || 0} ms`);
       return result;
     } catch (error) {
       lastError = error;
@@ -51,7 +55,7 @@ let report;
 try {
   const result = await requestAudio();
   report = { passed: true, ...result };
-  console.log(`DokoHilf Live-TTS: ${result.byteLength} Bytes, Stimme ${result.voice}, Modus ${result.mode}, ${result.latency} ms.`);
+  console.log(`DokoHilf Live-TTS: ${result.byteLength} Bytes, Stimme ${result.voice}, Modell ${result.model}, ${result.latency} ms.`);
 } catch (error) {
   report = { passed: false, endpoint: ENDPOINT, error: String(error?.message || error) };
   console.error(`DokoHilf Live-TTS fehlgeschlagen: ${report.error}`);
@@ -61,6 +65,6 @@ try {
 await writeFile('artifacts/dokohilf-live-tts.json', JSON.stringify(report, null, 2), 'utf8');
 await writeFile(
   'artifacts/dokohilf-live-tts.md',
-  `# DokoHilf Live-TTS\n\n- ${report.passed ? '✅' : '❌'} ${report.passed ? `${report.byteLength} Bytes · ${report.voice} · ${report.mode} · ${report.latency} ms` : report.error}\n`,
+  `# DokoHilf Live-TTS\n\n- ${report.passed ? '✅' : '❌'} ${report.passed ? `${report.byteLength} Bytes · ${report.voice} · ${report.model} · ${report.latency} ms` : report.error}\n`,
   'utf8',
 );
