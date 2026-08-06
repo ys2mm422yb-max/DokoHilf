@@ -2,7 +2,8 @@
 
 **Stand:** 6. August 2026  
 **Ziel-Build:** `20260806-27`  
-**Aktiver Release-PR:** `#52`
+**Aktiver Release-PR:** `#53`  
+**Aktiver Release-Branch:** `release/build-27-final-validation`
 
 ## Ziel
 
@@ -44,7 +45,9 @@ Damit ist die natürliche Live-Stimme technisch wieder funktionsfähig. Der verb
 - keine erneute Erzeugung fertiger Dateien
 - automatische Deaktivierung bei 93/93
 
-Zuletzt verifiziert war 1/93 vollständig gespeichert. Dieser Wert ist veränderlich und muss live geprüft werden.
+Live nachgeprüft sind aktuell 1/93 vollständig gespeichert, ein privates Storage-Objekt, ein aktiver stündlicher Cronjob und ein aktivierter Builder. Dieser Wert ist veränderlich und muss vor jeder Aussage live geprüft werden.
+
+Frühere temporäre Diagnose-, Export-, Batch-, Store- und Snapshot-Endpunkte wurden neutralisiert und antworten nur noch mit HTTP 410. Sie sind nicht Bestandteil des Build-27-Laufwegs.
 
 ## Veröffentlichungsfolge
 
@@ -55,7 +58,7 @@ Der Blocker hält nicht länger die sichtbare Dark-UI zurück:
 - nach rund 1,9 Sekunden greift die lokale Sofortstimme
 - die App bleibt vollständig bedienbar
 
-Build 27 darf nach vollständig grünen Fach-, Datenschutz-, TTS-, Build- und iPhone-Prüfungen veröffentlicht werden, auch wenn die private Bibliothek noch nicht 93/93 erreicht hat.
+Build 27 darf nach vollständig grünen Fach-, Datenschutz-, TTS-, Build- und iPhone-Prüfungen auf dem exakten PR-#53-Head veröffentlicht werden, auch wenn die private Bibliothek noch nicht 93/93 erreicht hat.
 
 Der vollständige Audioabschluss bleibt separat streng prüfbar:
 
