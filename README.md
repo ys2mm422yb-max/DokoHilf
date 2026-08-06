@@ -7,10 +7,13 @@ DokoHilf ist eine unabhängige interne Schritt-für-Schritt-Hilfe für Dokumenta
 Vor jeder Arbeit sind diese Dateien vollständig zu lesen:
 
 1. [`PROJECT_RULES.md`](./PROJECT_RULES.md) – verbindliche Sicherheits-, Datenschutz- und Projektregeln
-2. [`PROJECT_HANDOFF.md`](./PROJECT_HANDOFF.md) – aktueller Stand, Architektur, bestätigte Abläufe, Entscheidungen und offene Arbeiten
-3. anschließend tatsächlichen GitHub-, Actions-, Pages- und Supabase-Stand prüfen
+2. [`PROJECT_HANDOFF.md`](./PROJECT_HANDOFF.md) – aktueller Stand, Architektur, Entscheidungen und offene Arbeiten
+3. [`CONFIRMED_WORKFLOWS.md`](./CONFIRMED_WORKFLOWS.md) – alle vom Nutzer bestätigten, anonymisierten Klickwege und Sonderregeln
+4. anschließend tatsächlichen GitHub-, Actions-, Pages- und Supabase-Stand prüfen
 
-Die Übergabe ist dauerhaft im Repository zu pflegen, damit ein neuer Chat nicht wieder bei null beginnt.
+Die Übergabe und die bestätigten Arbeitsabläufe sind dauerhaft im Repository zu pflegen, damit ein neuer Chat nicht wieder bei null beginnt.
+
+Die zur Bestätigung verwendeten Bilder bleiben ausschließlich im jeweiligen Chat. Sie dürfen nicht in GitHub, Supabase, Issues, Pull Requests, Testartefakte oder die öffentliche App übernommen werden.
 
 ## Fester öffentlicher Hauptlink
 
