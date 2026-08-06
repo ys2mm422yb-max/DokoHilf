@@ -43,11 +43,17 @@ test('Router klärt unbestimmte Korrekturen und nutzt nur freigegebene Guides', 
   assert.match(router, /selectedGuideSlug/);
 });
 
-test('bestätigte freie Antworten bleiben im laufenden Guide und gehen weiter', () => {
+test('bestätigte freie Antworten bleiben im laufenden Guide und gehen exakt einen Schritt weiter', () => {
   assert.match(router, /isGuideProgressConfirmation/);
-  assert.match(router, /Ich habe Blutdruck ausgewählt/);
-  assert.match(router, /runGuideCommand\(origin, parsed, messages, activeGuide, 'weiter'\)/);
+  assert.match(router, /currentGuideStep/);
+  assert.match(router, /runGuideCommand\(origin, parsed, messages, guides, activeGuide, 'weiter'\)/);
   assert.match(router, /guide-context-clarification/);
+});
+
+test('Vitalwerte-Auswahl wird strukturiert in Einzel- und Sammelerfassung getrennt', () => {
+  assert.match(router, /vitalEntryOptions/);
+  assert.match(router, /vitalwerte-einzelwert-fortsetzen/);
+  assert.match(router, /vitalwerte-sammelerfassung-fortsetzen/);
 });
 
 test('interne Freigabeformulierungen werden nicht an Nutzer weitergereicht', () => {
