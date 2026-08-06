@@ -45,7 +45,7 @@ test('Diagnose speichert keine Gesprächsinhalte dauerhaft', () => {
 test('Cloud-TTS nutzt die freundliche schnelle Stimme und liefert Diagnose-Header', () => {
   assert.match(tts, /PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts'/);
   assert.match(tts, /VOICE_NAME = 'Achird'/);
-  assert.match(tts, /VOICE_STYLE = 'friendly-casual-natural-v3'/);
+  assert.match(tts, /VOICE_STYLE = 'friendly-casual-natural-v2'/);
   assert.match(tts, /REQUEST_TIMEOUT_MS = 16_000/);
   assert.match(tts, /X-DokoHilf-Voice-Style/);
   assert.match(tts, /Kein Ansage-, Navi- oder Roboterklang/);
