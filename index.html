@@ -3,24 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#063f35">
+  <meta name="theme-color" content="#020c12">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DokoHilf">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="dokohilf-build" content="20260806-26">
+  <meta name="dokohilf-build" content="20260806-27">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>DokoHilf – KI-Bedienungshilfe</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="assets/styles.css?v=20260806-26">
-  <link rel="stylesheet" href="assets/premium-ui-v25.css?v=20260806-26" data-dokohilf-premium-v25>
-  <link rel="stylesheet" href="assets/premium-ui-v26.css?v=20260806-26" data-dokohilf-premium-v26>
+  <link rel="stylesheet" href="assets/styles.css?v=20260806-27">
+  <link rel="stylesheet" href="assets/premium-ui-v25.css?v=20260806-27" data-dokohilf-premium-v25>
+  <link rel="stylesheet" href="assets/premium-ui-v26.css?v=20260806-27" data-dokohilf-premium-v26>
+  <link rel="stylesheet" href="assets/premium-ui-v27.css?v=20260806-27" data-dokohilf-premium-v27>
   <script>
     (() => {
       'use strict';
-      const BUILD_ID = '20260806-26';
+      const BUILD_ID = '20260806-27';
       const ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router';
       const CORE_ENDPOINT_MARKER = '/functions/v1/dokohilf-ai';
       const nativeFetch = window.fetch.bind(window);
@@ -33,7 +34,7 @@
       }
 
       window.fetch = (input, init) => nativeFetch(routedInput(input), init);
-      window.__DOKOHILF_DIRECT_ROUTER_V26__ = true;
+      window.__DOKOHILF_DIRECT_ROUTER_V27__ = true;
 
       if ('serviceWorker' in navigator) {
         const nativeRegister = navigator.serviceWorker.register.bind(navigator.serviceWorker);
@@ -87,14 +88,14 @@
   </script>
 </head>
 <body>
-  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260806-26">
+  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260806-27">
     <header class="topbar">
       <div class="brand" aria-label="DokoHilf">
         <img src="icon.svg" alt="" width="48" height="48">
-        <span><strong>DokoHilf</strong><small>KI-Bedienungshilfe</small></span>
+        <span><strong>DokoHilf</strong><small>Bedienhilfe</small></span>
       </div>
       <div class="top-actions">
-        <button class="build-pill" id="buildPill" type="button" aria-label="Version 20260806-26 und Updateprüfung">KI · v26</button>
+        <button class="build-pill" id="buildPill" type="button" aria-label="Version 20260806-27 und Updateprüfung">KI · v27</button>
         <button class="home-button" id="homeButton" type="button" hidden aria-label="Zum Hauptmenü">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></svg>
           <span>Hauptmenü</span>
@@ -106,8 +107,8 @@
     <main class="main-content">
       <section class="start-screen" id="startScreen" aria-labelledby="startTitle">
         <div class="start-copy">
-          <h1 id="startTitle">Wobei brauchst du Hilfe?</h1>
-          <p>Sprich mit DokoHilf oder nutze den übersichtlichen Chat.</p>
+          <h1 id="startTitle">Was möchtest du erledigen?</h1>
+          <p>Wähle einen Ablauf oder starte ein Sprachgespräch.</p>
         </div>
 
         <div class="mode-grid" aria-label="Bedienart auswählen">
@@ -115,7 +116,7 @@
             <span class="mode-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48"><rect x="17" y="7" width="14" height="23" rx="7"/><path d="M11 24v2c0 7 6 13 13 13s13-6 13-13v-2M24 39v5M17 44h14"/></svg>
             </span>
-            <span class="mode-text"><strong>Sprachgespräch</strong><small>DokoHilf antwortet mit natürlicher Stimme und zeigt nur die aktuelle Anweisung.</small></span>
+            <span class="mode-text"><strong>Sprechen</strong><small>DokoHilf hört zu und führt dich Schritt für Schritt.</small></span>
             <span class="mode-arrow" aria-hidden="true">›</span>
           </button>
 
@@ -123,21 +124,25 @@
             <span class="mode-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48"><path d="M9 10h30v23H22l-9 7v-7H9z"/><path d="M16 18h16M16 24h11"/></svg>
             </span>
-            <span class="mode-text"><strong>Chat</strong><small>Schreiben oder diktieren. Antworten bleiben klar und übersichtlich zum Nachlesen.</small></span>
+            <span class="mode-text"><strong>Schreiben</strong><small>Schreibe oder diktiere. Alles bleibt übersichtlich zum Nachlesen.</small></span>
             <span class="mode-arrow" aria-hidden="true">›</span>
           </button>
         </div>
 
         <div class="examples">
-          <span>Häufige Themen</span>
-          <button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe</button>
-          <button type="button" data-prompt="Ich möchte einen Bericht schreiben">Bericht</button>
-          <button type="button" data-prompt="Ich möchte Vitalwerte eingeben">Vitalwerte</button>
+          <span>Häufige Abläufe</span>
+          <button type="button" data-prompt="Ich möchte einen Bericht schreiben">Bericht anlegen</button>
+          <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite anlegen</button>
+          <button type="button" data-prompt="Ich möchte Vitalwerte eingeben">Vitalwerte erfassen</button>
+          <button type="button" data-prompt="Wie erfasse ich eine An- oder Abwesenheit?">An-/Abwesenheit</button>
+          <button type="button" data-prompt="Wie kann ich die Medikation ansehen?">Medikation ansehen</button>
+          <button type="button" data-prompt="Wie lege ich ein Formular an?">Formular anlegen</button>
+          <button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe anzeigen</button>
         </div>
 
         <div class="safety-note" role="note">
-          <strong>Keine Echtdaten.</strong>
-          <span>Niemals Namen, Berichte, Diagnosen, Medikamente, Vitalwerte oder andere persönliche Angaben eingeben.</span>
+          <strong>Keine persönlichen Daten eingeben.</strong>
+          <span>Nutze DokoHilf nur für allgemeine Bedienfragen.</span>
         </div>
       </section>
 
@@ -163,8 +168,8 @@
         </section>
 
         <section class="chat-head" id="chatHead" hidden>
-          <h1>Frag DokoHilf</h1>
-          <p>Schreib ganz normal. DokoHilf merkt sich dein Ziel und führt dich ausschließlich durch bestätigte Klickwege.</p>
+          <h1>Was möchtest du machen?</h1>
+          <p>Schreib einfach dein Ziel. DokoHilf führt dich nur durch bestätigte Abläufe.</p>
           <div class="quick-prompts">
             <button type="button" data-prompt="Wie komme ich zur Übergabe?">Zur Übergabe</button>
             <button type="button" data-prompt="Ich habe mich in einem Bericht verschrieben">Bericht korrigieren</button>
@@ -201,20 +206,21 @@
     <div class="update-toast" id="updateToast" hidden aria-live="polite">DokoHilf wurde automatisch aktualisiert.</div>
   </div>
 
-  <script src="assets/update-manager.js?v=20260806-26"></script>
-  <script src="assets/mobile-audio-fix.js?v=20260806-26"></script>
-  <script src="assets/voice-diagnostics.js?v=20260806-26"></script>
-  <script src="assets/routing-fix.js?v=20260806-26"></script>
-  <script src="assets/conversation-intelligence.js?v=20260806-26"></script>
-  <script src="assets/clarification-ui.js?v=20260806-26"></script>
-  <script src="assets/guide-progress.js?v=20260806-26"></script>
-  <script src="assets/voice-focus-mode.js?v=20260806-26"></script>
-  <script src="assets/experience-v26.js?v=20260806-26"></script>
-  <script src="assets/app.js?v=20260806-26" defer></script>
+  <script src="assets/update-manager.js?v=20260806-27"></script>
+  <script src="assets/mobile-audio-fix.js?v=20260806-27"></script>
+  <script src="assets/voice-diagnostics.js?v=20260806-27"></script>
+  <script src="assets/routing-fix.js?v=20260806-27"></script>
+  <script src="assets/conversation-intelligence.js?v=20260806-27"></script>
+  <script src="assets/clarification-ui.js?v=20260806-27"></script>
+  <script src="assets/guide-progress.js?v=20260806-27"></script>
+  <script src="assets/voice-focus-mode.js?v=20260806-27"></script>
+  <script src="assets/experience-v26.js?v=20260806-27"></script>
+  <script src="assets/experience-v27.js?v=20260806-27"></script>
+  <script src="assets/app.js?v=20260806-27" defer></script>
   <script>
     document.getElementById('buildPill')?.addEventListener('click', () => {
       if (window.DokoHilfUpdate?.checkForUpdate) window.DokoHilfUpdate.checkForUpdate('manual');
-      else window.DokoHilfHardRefresh?.('20260806-26');
+      else window.DokoHilfHardRefresh?.('20260806-27');
     });
   </script>
 </body>
