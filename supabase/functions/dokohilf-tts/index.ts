@@ -6,7 +6,9 @@ const ALLOWED_ORIGINS = new Set([
 
 const PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts';
 const FALLBACK_MODEL = 'gemini-3.1-flash-tts-preview';
-const VOICE_NAME = 'Achird';
+// Vorherige Stimme zur nachvollziehbaren Umstellung: VOICE_NAME = 'Achird'
+const PREVIOUS_VOICE_NAME = 'Achird';
+const VOICE_NAME = 'Callirrhoe';
 const VOICE_STYLE = 'friendly-casual-natural-v3';
 const REQUEST_TIMEOUT_MS = 16_000;
 const MAX_TEXT_CHARS = 900;
@@ -107,8 +109,9 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
 
 function voicePrompt(text: string): string {
   return [
-    'Sprich diesen deutschen Text locker und natürlich wie eine freundliche Kollegin.',
-    'Normales Alltagstempo, lebendige Satzmelodie, kurze Pausen. Kein Ansage-, Navi- oder Roboterklang.',
+    'Sprich diesen deutschen Text wie eine ruhige, natürliche Kollegin in einem direkten Gespräch.',
+    'Mittleres bis leicht zügiges Alltagstempo, unaufgeregte Satzmelodie und kurze natürliche Pausen.',
+    'Nicht werblich, nicht übertrieben freundlich und nicht belehrend. Kein Ansage-, Navi- oder Roboterklang.',
     'Lies exakt nur den Text:',
     text,
   ].join('\n');
