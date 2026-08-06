@@ -42,14 +42,16 @@ test('Diagnose speichert keine Gesprächsinhalte dauerhaft', () => {
   assert.doesNotMatch(diagnostics, /console\.(log|info|warn|error)/);
 });
 
-test('Cloud-TTS nutzt die neue Pro-Kolleginnenstimme und liefert Diagnose-Header', () => {
-  assert.match(tts, /PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts'/);
-  assert.match(tts, /FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts'/);
+test('Cloud-TTS nutzt Gacrux über den schnellen Flash-Pfad mit Pro-Fallback', () => {
+  assert.match(tts, /PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts'/);
+  assert.match(tts, /FALLBACK_MODEL = 'gemini-2.5-pro-preview-tts'/);
   assert.match(tts, /VOICE_NAME = 'Gacrux'/);
-  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v5'/);
-  assert.match(tts, /REQUEST_TIMEOUT_MS = 20_000/);
-  assert.match(tts, /X-DokoHilf-Voice-Style/);
+  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v6-fast'/);
+  assert.match(tts, /PRIMARY_TIMEOUT_MS = 8_000/);
+  assert.match(tts, /FALLBACK_TIMEOUT_MS = 14_000/);
+  assert.match(tts, /X-DokoHilf-TTS-Latency/);
+  assert.match(tts, /X-DokoHilf-TTS-Cache/);
+  assert.match(tts, /audioCache/);
   assert.match(tts, /erfahrene Kollegin/);
-  assert.match(tts, /Kein Ansagerhythmus/);
-  assert.match(tts, /keine überdeutliche Aussprache/);
+  assert.match(tts, /Kein(?:e)? Moderation/);
 });
