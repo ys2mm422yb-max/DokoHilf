@@ -12,7 +12,16 @@ test('client starts the immediate fallback instead of waiting indefinitely', () 
   assert.match(ux, /Promise\.race\(\[request, timeout\]\)/);
   assert.match(experience, /nextSpokenText/);
   assert.match(experience, /prefetch(?:Text)?/);
-  assert.doesNotMatch(ux, /localStorage|indexedDB|caches\.open/);
+  assert.doesNotMatch(experience, /localStorage|indexedDB|caches\.open/);
+  assert.doesNotMatch(ux, /indexedDB|caches\.open/);
+});
+
+test('persistent browser storage is limited to one privacy acknowledgement boolean', () => {
+  assert.match(ux, /PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1'/);
+  assert.match(ux, /localStorage\.getItem\(PRIVACY_ACK_KEY\)/);
+  assert.match(ux, /localStorage\.setItem\(PRIVACY_ACK_KEY, 'yes'\)/);
+  const directKeys = [...ux.matchAll(/localStorage\.(?:getItem|setItem)\(([^,)]+)/g)].map(match => match[1].trim());
+  assert.deepEqual([...new Set(directKeys)], ['PRIVACY_ACK_KEY']);
 });
 
 test('server uses the current low-latency TTS model and keeps Gacrux', () => {
