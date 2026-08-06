@@ -4,10 +4,11 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:3000',
 ]);
 
-const PRIMARY_MODEL = 'gemini-3.1-flash-tts-preview';
-const FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts';
+const PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts';
+const FALLBACK_MODEL = 'gemini-3.1-flash-tts-preview';
 const VOICE_NAME = 'Achird';
-const VOICE_STYLE = 'friendly-casual-natural-v2';
+const VOICE_STYLE = 'friendly-casual-natural-v3';
+const REQUEST_TIMEOUT_MS = 16_000;
 const MAX_TEXT_CHARS = 900;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 10;
@@ -87,7 +88,6 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
   const view = new DataView(buffer);
   const blockAlign = channels * bitsPerSample / 8;
   const byteRate = sampleRate * blockAlign;
-
   writeAscii(view, 0, 'RIFF');
   view.setUint32(4, 36 + pcm.byteLength, true);
   writeAscii(view, 8, 'WAVE');
@@ -107,13 +107,38 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
 
 function voicePrompt(text: string): string {
   return [
-    'Sprich auf Deutsch wie eine freundliche Kollegin direkt neben mir.',
-    'Locker, aufmerksam und natürlich; normale Umgangssprache, lebendige Satzmelodie und kurze echte Pausen.',
-    'Kein Ansage-, Werbe-, Navigations- oder Roboterklang. Nicht überdeutlich artikulieren.',
-    'Die letzte Rückfrage freundlich und interessiert sprechen, nicht wie eine Prüfung.',
-    'Lies exakt nur diesen Text, ohne etwas hinzuzufügen:',
+    'Sprich diesen deutschen Text locker und natürlich wie eine freundliche Kollegin.',
+    'Normales Alltagstempo, lebendige Satzmelodie, kurze Pausen. Kein Ansage-, Navi- oder Roboterklang.',
+    'Lies exakt nur den Text:',
     text,
   ].join('\n');
+}
+
+async function requestViaGenerateContent(apiKey: string, model: string, text: string): Promise<Uint8Array> {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
+    },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: voicePrompt(text) }] }],
+      generationConfig: {
+        responseModalities: ['AUDIO'],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName: VOICE_NAME },
+          },
+        },
+      },
+    }),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(`tts_generate_${response.status}`);
+  const base64 = payload?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+  if (typeof base64 !== 'string' || !base64) throw new Error('tts_generate_empty');
+  return base64ToBytes(base64);
 }
 
 async function requestViaInteractions(apiKey: string, model: string, text: string): Promise<Uint8Array> {
@@ -122,8 +147,8 @@ async function requestViaInteractions(apiKey: string, model: string, text: strin
     headers: {
       'Content-Type': 'application/json',
       'x-goog-api-key': apiKey,
-      'Api-Revision': '2026-05-20',
     },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     body: JSON.stringify({
       model,
       input: voicePrompt(text),
@@ -137,33 +162,6 @@ async function requestViaInteractions(apiKey: string, model: string, text: strin
   if (!response.ok) throw new Error(`tts_interactions_${response.status}`);
   const base64 = payload?.output_audio?.data;
   if (typeof base64 !== 'string' || !base64) throw new Error('tts_interactions_empty');
-  return base64ToBytes(base64);
-}
-
-async function requestViaGenerateContent(apiKey: string, model: string, text: string): Promise<Uint8Array> {
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': apiKey,
-    },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: voicePrompt(text) }] }],
-      generationConfig: {
-        responseModalities: ['AUDIO'],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: VOICE_NAME },
-          },
-        },
-      },
-    }),
-  });
-
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(`tts_generate_${response.status}`);
-  const base64 = payload?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  if (typeof base64 !== 'string' || !base64) throw new Error('tts_generate_empty');
   return base64ToBytes(base64);
 }
 
@@ -195,20 +193,19 @@ Deno.serve(async (req: Request) => {
   const startedAt = Date.now();
   let pcm: Uint8Array;
   let model = PRIMARY_MODEL;
-  let mode = 'interactions-natural-cloud';
+  let mode = 'generate-content-fast-natural-cloud';
   try {
-    pcm = await requestViaInteractions(apiKey, PRIMARY_MODEL, text);
-  } catch {
-    mode = 'generate-content-natural-cloud';
+    pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text);
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'TimeoutError') {
+      return jsonResponse(origin, 504, { error: 'Die natürliche Stimme hat zu lange gebraucht.' });
+    }
+    model = FALLBACK_MODEL;
+    mode = 'interactions-natural-cloud';
     try {
-      pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text);
+      pcm = await requestViaInteractions(apiKey, FALLBACK_MODEL, text);
     } catch {
-      model = FALLBACK_MODEL;
-      try {
-        pcm = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text);
-      } catch {
-        return jsonResponse(origin, 502, { error: 'Die natürliche Stimme ist gerade nicht verfügbar.' });
-      }
+      return jsonResponse(origin, 502, { error: 'Die natürliche Stimme ist gerade nicht verfügbar.' });
     }
   }
 
