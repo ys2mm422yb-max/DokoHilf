@@ -12,10 +12,25 @@
     return String(value || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
   }
 
+  function optimizeSpokenText(value) {
+    const text = cleanText(value);
+    if (!text || text === GREETING || text.length <= 150) return text;
+    const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map(part => part.trim()).filter(Boolean) || [text];
+    if (sentences.length > 1 && /\?$/.test(sentences.at(-1))) {
+      const instruction = sentences.slice(0, -1).join(' ').trim();
+      if (instruction) return `${instruction.slice(0, 260)} Sag kurz Bescheid, wenn du soweit bist.`;
+    }
+    if (text.length > 280) {
+      const short = sentences.filter(sentence => !/\?$/.test(sentence)).slice(0, 2).join(' ').trim();
+      if (short) return short.slice(0, 280);
+    }
+    return text;
+  }
+
   function extractText(init) {
     try {
       const parsed = JSON.parse(String(init?.body || '{}'));
-      return cleanText(parsed.text);
+      return optimizeSpokenText(parsed.text);
     } catch {
       return '';
     }
@@ -104,6 +119,7 @@
   window.DokoHilfExperience = {
     buildId: BUILD_ID,
     warmGreeting,
+    optimizeSpokenText,
     memoryEntries: () => memory.size,
   };
   window.__DOKOHILF_PREMIUM_EXPERIENCE_V25__ = true;
