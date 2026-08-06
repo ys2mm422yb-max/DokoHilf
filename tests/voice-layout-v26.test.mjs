@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const legacyCss = await readFile(new URL('../assets/premium-ui-v26.css', import.meta.url), 'utf8');
 const currentCss = await readFile(new URL('../assets/premium-ui-v27.css', import.meta.url), 'utf8');
+const currentUxCss = await readFile(new URL('../assets/ux-v27.css', import.meta.url), 'utf8');
 const experience = await readFile(new URL('../assets/experience-v27.js', import.meta.url), 'utf8');
 const worker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
@@ -27,8 +28,10 @@ test('kleine und niedrige iPhones behalten die verdichtete Darstellung', () => {
   assert.match(legacyCss, /@media\(max-height:760px\)/);
   assert.match(legacyCss, /@media\(max-height:650px\)/);
   assert.match(legacyCss, /width:104px/);
-  assert.match(currentCss, /data-voice-state="listening"/);
-  assert.match(currentCss, /width:96px/);
+  assert.match(currentCss, /voice-focus-stage/);
+  assert.match(currentUxCss, /data-voice-state="listening"/);
+  assert.match(currentUxCss, /width:96px/);
+  assert.match(currentUxCss, /@media\(max-height:720px\)/);
 });
 
 test('Ladehinweis bleibt ohne buggy animierte Punkte', () => {
@@ -40,8 +43,10 @@ test('Ladehinweis bleibt ohne buggy animierte Punkte', () => {
 test('Build 27 lädt die bewährte v26-Basisschicht und die neue v27-Erfahrung gemeinsam', () => {
   assert.match(html, /premium-ui-v26\.css\?v=20260806-27/);
   assert.match(html, /premium-ui-v27\.css\?v=20260806-27/);
+  assert.match(html, /ux-v27\.css\?v=20260806-27/);
   assert.match(html, /experience-v27\.js\?v=20260806-27/);
   assert.match(worker, /premium-ui-v26\.css\?v=20260806-27/);
   assert.match(worker, /premium-ui-v27\.css\?v=20260806-27/);
+  assert.match(worker, /ux-v27\.css\?v=20260806-27/);
   assert.match(worker, /experience-v27\.js\?v=20260806-27/);
 });
