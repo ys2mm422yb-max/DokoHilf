@@ -9,7 +9,6 @@ const cases = [
   { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Ich muss einen Bericht löschen', expectedGuide: 'bericht-durchstreichen' },
   { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Wo finde ich den Durchführungsnachweis?', expectedGuide: 'durchfuehrungsnachweis-oeffnen' },
   { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Ich möchte eine Durchführung stornieren', expectedGuide: 'durchfuehrung-storno' },
-  { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Ich möchte Blutdruck als Vitalwert eintragen', expectedGuide: 'vitalwerte-erfassen' },
   { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Ich möchte eine Visite anlegen', expectedGuide: 'visite-anlegen' },
   { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Wie komme ich zur Übergabe?', expectedGuide: 'uebergabeformular' },
   {
@@ -19,35 +18,131 @@ const cases = [
     expectedGuide: 'notfallblatt',
     expectedReplyIncludes: 'Bewohner',
   },
-  { endpoint: ROUTER_ENDPOINT, endpointName: 'App-Router', input: 'Ich habe falsch dokumentiert', expectedSource: 'structured-clarification', expectedOptions: 2 },
   {
     endpoint: ROUTER_ENDPOINT,
-    endpointName: 'App-Router Vitalwerte-Kontext',
-    guideSlug: 'vitalwerte',
+    endpointName: 'Vitalwerte-Ziel bleibt Erfassen',
+    input: 'Ich möchte die Vitalwerte eingeben',
+    expectedGuide: 'vitalwerte-erfassen',
+    expectedReplyIncludes: 'Doku',
+    replyMustNotInclude: 'erfassen oder',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Benannter Einzelwert startet Einzelerfassung',
+    input: 'Ich möchte Blutdruck eingeben',
+    expectedGuide: 'vitalwerte-einzelwert',
+    expectedReplyIncludes: 'Doku',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Mehrere Werte starten Sammelerfassung',
+    input: 'Ich möchte mehrere Vitalwerte gleichzeitig eingeben',
+    expectedGuide: 'vitalwerte-sammelerfassung',
+    expectedReplyIncludes: 'Doku',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Expliziter Schrittzustand: Vitalwerte öffnen',
+    guideSlug: 'vitalwerte-erfassen',
+    guideStep: 1,
     messages: [
-      { role: 'user', content: 'Wo finde ich die Vitalwerte?' },
-      { role: 'assistant', content: 'Entscheide, ob du einen neuen Vitalwert erfassen oder vorhandene Werte beziehungsweise den Verlauf ansehen möchtest.' },
-      { role: 'user', content: 'Erfassen' },
+      { role: 'user', content: 'Ich möchte die Vitalwerte eingeben' },
+      { role: 'assistant', content: 'Öffne beim gewünschten Bewohner entweder „Doku erweitert“ oder „Doku“.' },
+      { role: 'user', content: 'Ja' },
     ],
-    expectedGuide: 'vitalwerte-erfassen-fortsetzen',
+    expectedGuide: 'vitalwerte-erfassen',
+    expectedGuideStep: 2,
+    expectedReplyIncludes: 'Vitalwerte',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Expliziter Schrittzustand: Auswahl Einzel oder Sammel',
+    guideSlug: 'vitalwerte-erfassen',
+    guideStep: 2,
+    messages: [
+      { role: 'user', content: 'Ich möchte die Vitalwerte eingeben' },
+      { role: 'assistant', content: 'Wähle „Vitalwerte“.' },
+      { role: 'user', content: 'Ja' },
+    ],
+    expectedGuide: 'vitalwerte-erfassen',
+    expectedGuideStep: 3,
+    expectedReplyIncludes: 'Sammelerfassung',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Einzelwahl öffnet grünes Plus',
+    guideSlug: 'vitalwerte-erfassen',
+    guideStep: 3,
+    messages: [
+      { role: 'assistant', content: 'Für einen einzelnen Wert klickst du oben links auf das grüne Plus. Für mehrere Werte gleichzeitig wählst du „Sammelerfassung“.' },
+      { role: 'user', content: 'Ich möchte einen einzelnen Wert eingeben' },
+    ],
+    expectedGuide: 'vitalwerte-einzelwert-fortsetzen',
+    expectedGuideStep: 1,
     expectedReplyIncludes: 'grüne Plus',
   },
   {
     endpoint: ROUTER_ENDPOINT,
-    endpointName: 'App-Router falsche Voraussetzung korrigieren',
-    guideSlug: 'vitalwerte-erfassen-fortsetzen',
+    endpointName: 'Sammelwahl öffnet Sammelerfassung',
+    guideSlug: 'vitalwerte-erfassen',
+    guideStep: 3,
     messages: [
-      { role: 'assistant', content: 'Klicke jetzt im bereits geöffneten Bereich „Vitalwerte“ auf das grüne Plus beziehungsweise auf „Neu“.' },
-      { role: 'user', content: 'Welches bereits geöffnete Fenster? Ich habe noch nichts geöffnet.' },
+      { role: 'assistant', content: 'Für einen einzelnen Wert klickst du oben links auf das grüne Plus. Für mehrere Werte gleichzeitig wählst du „Sammelerfassung“.' },
+      { role: 'user', content: 'Mehrere gleichzeitig über Sammelerfassung' },
+    ],
+    expectedGuide: 'vitalwerte-sammelerfassung-fortsetzen',
+    expectedGuideStep: 1,
+    expectedReplyIncludes: 'Sammelerfassung',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Pop-up-Auswahl wird als erledigt verstanden',
+    guideSlug: 'vitalwerte-einzelwert-fortsetzen',
+    guideStep: 2,
+    messages: [
+      { role: 'assistant', content: 'Wähle im Pop-up den Vitalwert aus, den du erfassen möchtest.' },
+      { role: 'user', content: 'Ich habe Blutdruck ausgewählt' },
+    ],
+    expectedGuide: 'vitalwerte-einzelwert-fortsetzen',
+    expectedGuideStep: 3,
+    expectedReplyIncludes: 'Datum',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Viele alte Ja-Antworten überspringen keinen Schritt',
+    guideSlug: 'vitalwerte-erfassen',
+    guideStep: 2,
+    messages: [
+      { role: 'user', content: 'Ich möchte die Vitalwerte eingeben' },
+      { role: 'assistant', content: 'Öffne Doku.' },
+      { role: 'user', content: 'Ja' },
+      { role: 'assistant', content: 'Wähle Vitalwerte.' },
+      { role: 'user', content: 'Ja' },
+      { role: 'assistant', content: 'Nochmal: Wähle Vitalwerte.' },
+      { role: 'user', content: 'Ja' },
     ],
     expectedGuide: 'vitalwerte-erfassen',
+    expectedGuideStep: 3,
+    expectedReplyIncludes: 'grüne Plus',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Falsche Voraussetzung startet Einzelerfassung vorne',
+    guideSlug: 'vitalwerte-einzelwert-fortsetzen',
+    guideStep: 1,
+    messages: [
+      { role: 'assistant', content: 'Klicke oben links auf das grüne Plus.' },
+      { role: 'user', content: 'Welches Fenster? Ich habe noch nichts geöffnet.' },
+    ],
+    expectedGuide: 'vitalwerte-einzelwert',
+    expectedGuideStep: 1,
     expectedReplyIncludes: 'Stimmt',
   },
   {
     endpoint: ROUTER_ENDPOINT,
     endpointName: 'App-Router Spracherkennungs-Alternativen',
     input: 'Albert erfassen',
-    speechAlternatives: ['Albert erfassen', 'Vitalwert erfassen'],
+    speechAlternatives: ['Albert erfassen', 'Vitalwerte erfassen'],
     expectedGuide: 'vitalwerte-erfassen',
   },
   {
@@ -59,33 +154,16 @@ const cases = [
   },
   {
     endpoint: ROUTER_ENDPOINT,
-    endpointName: 'App-Router ohne Kontext',
-    input: 'Erfassen',
-    expectedSource: 'context-required-clarification',
-    expectedOptions: 0,
+    endpointName: 'Korrektur wird strukturiert geklärt',
+    input: 'Ich habe falsch dokumentiert',
+    expectedSource: 'structured-clarification',
+    expectedOptions: 2,
   },
   {
     endpoint: ROUTER_ENDPOINT,
-    endpointName: 'Exakter iPhone-Fall: freie Bestätigung im Vitalwerte-Guide',
-    guideSlug: 'vitalwerte-erfassen',
-    messages: [
-      { role: 'user', content: 'Ich möchte vital Wert anlegen' },
-      { role: 'assistant', content: 'Öffne den gewünschten Klienten und anschließend „Doku erweitert“ oder „Doku“. Hast du den richtigen Bereich geöffnet?' },
-      { role: 'user', content: 'Ja' },
-      { role: 'assistant', content: 'Wähle „Vitalwerte“. Ist der Bereich „Vitalwerte“ geöffnet?' },
-      { role: 'user', content: 'Weiter' },
-      { role: 'assistant', content: 'Klicke auf das grüne Plus beziehungsweise auf „Neu“. Ist die Eingabemaske für einen neuen Vitalwert geöffnet?' },
-      { role: 'user', content: 'Ja' },
-      { role: 'assistant', content: 'Wähle den Vitalwert oder ein vorhandenes Vitalwert-Set aus, zum Beispiel Blutdruck, Puls, Temperatur oder Gewicht. Ist der richtige Vitalwert ausgewählt?' },
-      { role: 'user', content: 'Ich habe Blutdruck ausgewählt' },
-    ],
-    expectedGuide: 'vitalwerte-erfassen',
-    expectedReplyIncludes: 'Datum',
-  },
-  {
-    endpoint: ROUTER_ENDPOINT,
-    endpointName: 'Gemini-Dialogmanager',
+    endpointName: 'Gemini-Dialogmanager kann abbrechen',
     guideSlug: 'bericht-neu',
+    guideStep: 1,
     messages: [
       { role: 'assistant', content: 'Öffne in der grauen Leiste den festen Reiter „Berichte“.' },
       { role: 'user', content: 'Stopp, ich möchte diesen Ablauf abbrechen.' },
@@ -106,6 +184,8 @@ async function requestWithRetry(testCase) {
         body: JSON.stringify({
           messages,
           guideSlug: testCase.guideSlug || null,
+          guideStep: testCase.guideStep || null,
+          guideStateVersion: testCase.guideStep ? 2 : null,
           inputMode: testCase.speechAlternatives ? 'voice' : 'chat',
           speechAlternatives: testCase.speechAlternatives || [],
         }),
@@ -131,17 +211,21 @@ for (const testCase of cases) {
     const routingPassed = testCase.expectedGuide
       ? payload.guideSlug === testCase.expectedGuide
       : payload.source === testCase.expectedSource && options.length === testCase.expectedOptions;
+    const stepPassed = !testCase.expectedGuideStep || Number(payload.guideStep) === testCase.expectedGuideStep;
     const replyPassed = !testCase.expectedReplyIncludes
       || reply.toLowerCase().includes(testCase.expectedReplyIncludes.toLowerCase());
-    const passed = routingPassed && replyPassed;
+    const forbiddenPassed = !testCase.replyMustNotInclude
+      || !reply.toLowerCase().includes(testCase.replyMustNotInclude.toLowerCase());
+    const passed = routingPassed && stepPassed && replyPassed && forbiddenPassed;
     results.push({
       endpointName: testCase.endpointName,
       input: testCase.input || testCase.messages?.at(-1)?.content || '',
       expectedGuide: testCase.expectedGuide || null,
       expectedSource: testCase.expectedSource || null,
-      expectedReplyIncludes: testCase.expectedReplyIncludes || null,
+      expectedGuideStep: testCase.expectedGuideStep || null,
       actualGuide: payload.guideSlug || null,
       actualSource: payload.source || null,
+      actualGuideStep: payload.guideStep || null,
       optionCount: options.length,
       reply: reply || null,
       passed,
@@ -162,7 +246,7 @@ await mkdir('artifacts', { recursive: true });
 const markdown = [
   '# DokoHilf Live-Routing-Smoke-Test',
   '',
-  ...results.map(result => `- ${result.passed ? '✅' : '❌'} ${result.endpointName}: „${result.input}“ → ${result.actualGuide || result.actualSource || result.error || 'keine Antwort'}`),
+  ...results.map(result => `- ${result.passed ? '✅' : '❌'} ${result.endpointName}: „${result.input}“ → ${result.actualGuide || result.actualSource || result.error || 'keine Antwort'}${result.actualGuideStep ? ` · Schritt ${result.actualGuideStep}` : ''}`),
   '',
 ].join('\n');
 await writeFile('artifacts/dokohilf-live-routing.md', markdown, 'utf8');
