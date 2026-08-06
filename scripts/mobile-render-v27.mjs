@@ -50,8 +50,8 @@ try {
 
   await page.reload({ waitUntil: 'networkidle' });
   await page.locator('#startTitle').waitFor({ state: 'visible' });
-  assert(await page.locator('#privacyAckV27').count() === 0, 'Datenschutzbestätigung erscheint nach Bestätigung erneut.');
-  assert(await page.evaluate(() => localStorage.getItem('dokohilf-privacy-ack-v1') === 'yes'), 'Datenschutzbestätigung wurde nicht als unpersönliches Ja/Nein gespeichert.');
+  assert(await page.locator('#privacyAckV27').count() === 0, 'Datenschutzbestätigung erscheint innerhalb derselben App-Sitzung erneut.');
+  assert(await page.evaluate(() => sessionStorage.getItem('dokohilf-privacy-ack-v1') === 'yes'), 'Datenschutzbestätigung wurde nicht sitzungsgebunden gespeichert.');
 
   const identity = await page.evaluate(() => ({
     title: document.title,
@@ -128,7 +128,7 @@ try {
     url: BASE_URL,
     viewport: { width: 393, height: 852, deviceScaleFactor: 2 },
     identity,
-    privacyAcknowledgementPersisted: true,
+    privacyAcknowledgementSessionOnly: true,
     visibleCommands,
     progressHeight: progressBox?.height,
     idleOrbWidth: idleBox?.width,
