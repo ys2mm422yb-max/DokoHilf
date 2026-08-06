@@ -3,6 +3,8 @@
 
   const DEFAULT_INSTRUCTION = 'Tippe auf das Mikrofon und sag mir, wobei du Hilfe brauchst.';
   const root = typeof window !== 'undefined' ? window : globalThis;
+  let observersInstalled = false;
+  let actionsInstalled = false;
 
   function cleanInstruction(value) {
     return String(value || '').replace(/\s+/g, ' ').trim();
@@ -151,8 +153,7 @@
     const actions = document.getElementById('voiceFocusActions');
     if (!text || !title || !step || !actions) return;
     const guide = currentGuide();
-    const nextText = latestAssistantInstruction() || DEFAULT_INSTRUCTION;
-    text.textContent = nextText;
+    text.textContent = latestAssistantInstruction() || DEFAULT_INSTRUCTION;
     title.textContent = guide?.guideTitle || 'DokoHilf';
     step.textContent = guide
       ? `Schritt ${guide.guideStep} von ${guide.guideStepCount}`
@@ -176,17 +177,17 @@
   }
 
   function installObservers() {
+    if (observersInstalled) return;
+    observersInstalled = true;
     const shell = document.getElementById('appShell');
     const messages = document.getElementById('messages');
-    if (shell && shell.dataset.voiceFocusObserver !== 'active') {
-      shell.dataset.voiceFocusObserver = 'active';
+    if (shell) {
       new MutationObserver(syncMode).observe(shell, {
         attributes: true,
         attributeFilter: ['data-mode', 'data-voice-state'],
       });
     }
-    if (messages && messages.dataset.voiceFocusObserver !== 'active') {
-      messages.dataset.voiceFocusObserver = 'active';
+    if (messages) {
       new MutationObserver(updateInstruction).observe(messages, { childList: true, subtree: true });
     }
     new MutationObserver(removeLegacyShortcuts).observe(document.body, { childList: true, subtree: true });
@@ -194,6 +195,8 @@
   }
 
   function installActions() {
+    if (actionsInstalled) return;
+    actionsInstalled = true;
     document.addEventListener('click', event => {
       const button = event.target.closest('[data-voice-command]');
       if (!button || !window.DokoHilf?.sendMessage) return;
