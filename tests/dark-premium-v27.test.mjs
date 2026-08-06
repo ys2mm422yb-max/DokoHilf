@@ -99,8 +99,11 @@ test('cloud voice uses raw Gemini Interactions REST audio, Gacrux and transient 
 });
 
 test('central privacy acknowledgement replaces repeated exercise notices without weakening filter', () => {
-  assert.match(migration, /remove repeated/i);
-  assert.match(migration, /guide\.steps::text ilike '%Fantasiedaten%'/);
+  assert.match(migration, /privacy remains enforced centrally/i);
+  assert.match(migration, /regexp_replace/);
+  assert.match(migration, /steps::text ~\*/);
+  assert.match(migration, /Fantasiedaten/);
+  assert.match(migration, /raise exception 'Approved guide steps still contain repeated Fantasiedaten notices\.'/);
   assert.match(index, /Datenschutz aktiv|Keine persönlichen Daten eingeben/);
   assert.match(ux, /Kurz zum Datenschutz/);
   assert.match(ux, /PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1'/);
