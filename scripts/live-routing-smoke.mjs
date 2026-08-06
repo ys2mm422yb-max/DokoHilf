@@ -66,9 +66,16 @@ const cases = [
   },
   {
     endpoint: ROUTER_ENDPOINT,
-    endpointName: 'Freie Bestätigung im laufenden Vitalwerte-Guide',
+    endpointName: 'Exakter iPhone-Fall: freie Bestätigung im Vitalwerte-Guide',
     guideSlug: 'vitalwerte-erfassen',
     messages: [
+      { role: 'user', content: 'Ich möchte vital Wert anlegen' },
+      { role: 'assistant', content: 'Öffne den gewünschten Klienten und anschließend „Doku erweitert“ oder „Doku“. Hast du den richtigen Bereich geöffnet?' },
+      { role: 'user', content: 'Ja' },
+      { role: 'assistant', content: 'Wähle „Vitalwerte“. Ist der Bereich „Vitalwerte“ geöffnet?' },
+      { role: 'user', content: 'Weiter' },
+      { role: 'assistant', content: 'Klicke auf das grüne Plus beziehungsweise auf „Neu“. Ist die Eingabemaske für einen neuen Vitalwert geöffnet?' },
+      { role: 'user', content: 'Ja' },
       { role: 'assistant', content: 'Wähle den Vitalwert oder ein vorhandenes Vitalwert-Set aus, zum Beispiel Blutdruck, Puls, Temperatur oder Gewicht. Ist der richtige Vitalwert ausgewählt?' },
       { role: 'user', content: 'Ich habe Blutdruck ausgewählt' },
     ],
