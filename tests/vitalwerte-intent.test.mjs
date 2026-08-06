@@ -2,10 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [router, migration, progress, voiceFocus] = await Promise.all([
+const [router, migration, progress, taskInterface, voiceFocus] = await Promise.all([
   readFile(new URL('../supabase/functions/dokohilf-ai-router/index.ts', import.meta.url), 'utf8'),
   readFile(new URL('../supabase/migrations/20260806112000_vitalwerte_intent_guides.sql', import.meta.url), 'utf8'),
   readFile(new URL('../assets/guide-progress.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/task-interface.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/voice-focus-mode.js', import.meta.url), 'utf8'),
 ]);
 
@@ -30,10 +31,13 @@ test('der Router fragt nur noch Einzelwert oder mehrere Werte', () => {
   assert.match(router, /vital-entry-choice/);
 });
 
-test('Schrittzustand wird nicht mehr aus allen früheren Ja-Antworten gezählt', () => {
+test('Schrittzustand wird explizit übertragen und nicht aus allen früheren Ja-Antworten gezählt', () => {
   assert.match(router, /parsed\.guideStep/);
   assert.match(router, /currentGuideStep/);
-  assert.match(progress, /guideStateVersion: 2/);
+  assert.match(progress, /payloadHasProgress/);
+  assert.match(progress, /renderGuide\(payload\)/);
+  assert.match(taskInterface, /augmentRequestBody/);
+  assert.match(taskInterface, /guideStep: Number\(guideStep\)/);
   assert.doesNotMatch(progress, /filter\(.*role.*user/);
 });
 
