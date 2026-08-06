@@ -109,7 +109,7 @@ jobs:
           grep -q "visualViewport" _site/assets/voice-diagnostics.js
           grep -q "orientationchange" _site/assets/voice-diagnostics.js
           grep -q "fallbackReason" _site/assets/voice-diagnostics.js
-          grep -q "VOICE_NAME = 'Achird'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_NAME = 'Callirrhoe'" supabase/functions/dokohilf-tts/index.ts
           grep -q "VOICE_STYLE = 'friendly-casual-natural-v3'" supabase/functions/dokohilf-tts/index.ts
           grep -q "v1beta/interactions" supabase/functions/dokohilf-tts/index.ts
           grep -q "X-DokoHilf-TTS-Latency" supabase/functions/dokohilf-tts/index.ts
@@ -126,9 +126,11 @@ jobs:
           grep -q "selectedGuideSlug" _site/assets/clarification-ui.js
           grep -q "dokohilf-ai-router" _site/assets/clarification-ui.js
           grep -q "slice(0, 3)" _site/assets/clarification-ui.js
-          grep -q "conversational-guide-router-v3" supabase/functions/dokohilf-ai-router/index.ts
+          grep -q "conversational-guide-router-v4" supabase/functions/dokohilf-ai-router/index.ts
           grep -q "MODEL = 'gemini-3.6-flash'" supabase/functions/dokohilf-ai-router/index.ts
           grep -q "interpretGuideReply" supabase/functions/dokohilf-ai-router/index.ts
+          grep -q "isGuideProgressConfirmation" supabase/functions/dokohilf-ai-router/index.ts
+          grep -q "guide-context-clarification" supabase/functions/dokohilf-ai-router/index.ts
           grep -q "ai-dialogue-cancel" supabase/functions/dokohilf-ai-router/index.ts
           grep -q "speech-recognition-clarification" supabase/functions/dokohilf-ai-router/index.ts
           grep -q "vitalwerte-erfassen-fortsetzen" supabase/functions/dokohilf-ai-router/index.ts
