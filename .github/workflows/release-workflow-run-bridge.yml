@@ -2,8 +2,8 @@ name: DokoHilf Release Validation Bridge
 
 on:
   workflow_run:
-    workflows: ["Deploy DokoHilf"]
-    types: [requested]
+    workflows: ["Cancel stale audio generator"]
+    types: [completed]
 
 permissions:
   actions: write
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   start-current-release-validation:
-    if: github.event.workflow_run.run_number == 227
+    if: github.event.workflow_run.run_number == 1
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -25,4 +25,4 @@ jobs:
               workflow_id: 'release-dispatcher.yml',
               ref: 'main',
             });
-            core.notice('Workflow run #227 was requested again; started current exact-head Build 27 validation.');
+            core.notice('Lightweight helper run completed; started current exact-head Build 27 validation.');
