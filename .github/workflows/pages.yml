@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -18,35 +18,20 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 60
     steps:
-      - name: Checkout repository
+      - name: Checkout exact repository head
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
 
-      - name: Generate missing approved Gacrux guide audio
+      - name: Require completed committed guide audio
         run: |
           set -euo pipefail
           mkdir -p artifacts
-          node scripts/generate-guide-audio.mjs
-
-      - name: Persist newly generated approved audio
-        if: github.event_name == 'pull_request'
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/guide-audio-manifest.json assets/audio/guides
-          if git diff --cached --quiet; then
-            echo "Approved guide audio is already committed."
-            exit 0
-          fi
-          git commit -m "Add prebuilt Gacrux audio for approved guides"
-          git pull --rebase origin "${GITHUB_HEAD_REF}"
-          git push origin "HEAD:${GITHUB_HEAD_REF}"
-          echo "Generated audio committed. A fresh exact-head validation will follow."
+          test -s assets/guide-audio-manifest.json
+          test -s assets/guide-audio-generation-status.json
+          test "$(node -e "const s=require('./assets/guide-audio-generation-status.json');process.stdout.write(String(s.complete))")" = "true"
+          test "$(find assets/audio/guides -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')" = "93"
+          grep -q '"entryCount": 93' assets/guide-audio-manifest.json
 
       - name: Build exact static site
         run: |
@@ -61,7 +46,7 @@ jobs:
           for file in \
             README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md \
             FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md \
-            assets/guide-audio-catalog.json assets/guide-audio-manifest.json \
+            assets/guide-audio-catalog.json assets/guide-audio-manifest.json assets/guide-audio-generation-status.json \
             scripts/generate-guide-audio.mjs scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh \
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
             scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-screenshot-smoke.mjs \
@@ -70,8 +55,6 @@ jobs:
             test -s "$file"
           done
 
-          test "$(find assets/audio/guides -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')" = "93"
-          grep -q '"entryCount": 93' assets/guide-audio-manifest.json
           grep -q '__DOKOHILF_DARK_PREMIUM_V27__' assets/experience-v27.js
           grep -q '__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__' assets/experience-v27.js
           grep -q 'loadPrebuiltVoice' assets/experience-v27.js
@@ -174,6 +157,7 @@ jobs:
             artifacts/
             assets/guide-audio-catalog.json
             assets/guide-audio-manifest.json
+            assets/guide-audio-generation-status.json
             assets/audio/guides/*.wav
           if-no-files-found: warn
           retention-days: 30
