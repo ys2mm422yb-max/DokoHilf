@@ -20,7 +20,7 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v4
 
-      - name: Require complete private Gacrux guide audio
+      - name: Validate available private Gacrux guide audio
         run: |
           set -euo pipefail
           node --check scripts/live-static-guide-audio-smoke.mjs
