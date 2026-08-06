@@ -9,13 +9,21 @@ const [router, migration, progress, voiceFocus] = await Promise.all([
   readFile(new URL('../assets/voice-focus-mode.js', import.meta.url), 'utf8'),
 ]);
 
-test('eindeutige Erfassungsabsicht startet direkt einen Erfassungsablauf', () => {
-  assert.match(router, /wantsVitalEntry/);
-  assert.match(router, /return startGuide\(origin, guides, 'vitalwerte-erfassen'\)/);
+test('eindeutige Erfassungsabsicht bleibt erhalten und fragt nur Einzel- oder Sammelerfassung', () => {
+  assert.match(router, /detectVitalMode/);
+  assert.match(router, /vitalChoiceResponse/);
+  assert.match(router, /vital-entry-mode-choice/);
+  assert.match(router, /Du möchtest Vitalwerte eingeben/);
   assert.doesNotMatch(router, /Möchtest du einen Vitalwert erfassen oder vorhandene Werte/);
 });
 
-test('Einzelwert und Sammelerfassung sind getrennte bestätigte Abläufe', () => {
+test('benannter Einzelwert und mehrere Werte starten direkt die passenden Abläufe', () => {
+  assert.match(router, /return startGuide\(origin, guides, 'vitalwerte-einzelwert'\)/);
+  assert.match(router, /return startGuide\(origin, guides, 'vitalwerte-sammelerfassung'\)/);
+  assert.match(router, /vitalTypes/);
+});
+
+test('Einzelwert und Sammelerfassung sind getrennte bestätigte Klickwege', () => {
   assert.match(migration, /vitalwerte-einzelwert/);
   assert.match(migration, /vitalwerte-sammelerfassung/);
   assert.match(migration, /Klicke oben links auf das grüne Plus/);
@@ -23,16 +31,16 @@ test('Einzelwert und Sammelerfassung sind getrennte bestätigte Abläufe', () =>
   assert.match(migration, /Wähle „Sammelerfassung“/);
 });
 
-test('der Router fragt nur noch Einzelwert oder mehrere Werte', () => {
-  assert.match(router, /vitalEntryOptions/);
+test('Auswahl nach geöffnetem Vitalwerte-Bereich nutzt Anschlussabläufe', () => {
   assert.match(router, /vitalwerte-einzelwert-fortsetzen/);
   assert.match(router, /vitalwerte-sammelerfassung-fortsetzen/);
-  assert.match(router, /vital-entry-choice/);
+  assert.match(router, /vitalAreaAlreadyOpen/);
+  assert.match(router, /Wie möchtest du die Vitalwerte erfassen/);
 });
 
 test('Schrittzustand wird nicht mehr aus allen früheren Ja-Antworten gezählt', () => {
   assert.match(router, /parsed\.guideStep/);
-  assert.match(router, /currentGuideStep/);
+  assert.match(router, /currentGuideIndex/);
   assert.match(progress, /guideStateVersion: 2/);
   assert.doesNotMatch(progress, /filter\(.*role.*user/);
 });
