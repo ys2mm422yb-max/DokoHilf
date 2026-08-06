@@ -60,6 +60,8 @@ Der Blocker hält nicht länger die sichtbare Dark-UI zurück:
 
 Build 27 darf nach vollständig grünen Fach-, Datenschutz-, TTS-, Build- und iPhone-Prüfungen auf dem exakten PR-#53-Head veröffentlicht werden, auch wenn die private Bibliothek noch nicht 93/93 erreicht hat.
 
+Der manuelle Lauf #229 scheiterte nicht am Providerbestand, sondern an drei inzwischen korrigierten statischen Vertragsabweichungen. Nach den Korrekturen ist ein neuer manueller Lauf auf dem aktuellen PR-#53-Head erforderlich.
+
 Der vollständige Audioabschluss bleibt separat streng prüfbar:
 
 ```bash
