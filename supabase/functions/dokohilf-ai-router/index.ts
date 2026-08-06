@@ -34,7 +34,7 @@ function jsonResponse(origin: string | null, status: number, body: unknown): Res
     headers: {
       ...corsHeaders(origin),
       'Content-Type': 'application/json; charset=utf-8',
-      'X-DokoHilf-Router': 'structured-clarification-v1',
+      'X-DokoHilf-Router': 'structured-clarification-v2',
     },
   });
 }
@@ -129,11 +129,25 @@ function isCorrectionAmbiguous(text: string): boolean {
 function inferSpokenSelection(messages: ChatMessage[]): string | null {
   const lastUser = [...messages].reverse().find(message => message.role === 'user')?.content || '';
   const previousAssistant = [...messages].reverse().find(message => message.role === 'assistant')?.content || '';
-  if (!/was mochtest du korrigieren/i.test(normalize(previousAssistant))) return null;
   const n = normalize(lastUser);
-  if (/\b(bericht|berichtseintrag|pflegebericht)\b/.test(n)) return 'bericht-durchstreichen';
-  if (/\b(durchfuhrung|durchfuhrungsnachweis|nachweis|massnahme)\b/.test(n)) return 'durchfuehrung-storno';
+  const assistant = normalize(previousAssistant);
+
+  const asksVitalChoice = /vitalwert/.test(assistant)
+    && /erfass/.test(assistant)
+    && /(ansehen|nachsehen|verlauf|vorhandene werte)/.test(assistant);
+  if (asksVitalChoice && /^(erfassen|neu erfassen|neuen wert erfassen)$/.test(n)) {
+    return 'vitalwerte-erfassen-fortsetzen';
+  }
+
+  if (/was mochtest du korrigieren/.test(assistant)) {
+    if (/\b(bericht|berichtseintrag|pflegebericht)\b/.test(n)) return 'bericht-durchstreichen';
+    if (/\b(durchfuhrung|durchfuhrungsnachweis|nachweis|massnahme)\b/.test(n)) return 'durchfuehrung-storno';
+  }
   return null;
+}
+
+function isBareVitalChoice(text: string): boolean {
+  return /^(erfassen|neu erfassen|nachsehen|ansehen|verlauf)$/.test(normalize(text));
 }
 
 function neutralizeInternalText(payload: Record<string, unknown>): Record<string, unknown> {
@@ -205,6 +219,14 @@ Deno.serve(async (req: Request) => {
   }
 
   const lastText = messages[messages.length - 1].content;
+  if (isBareVitalChoice(lastText)) {
+    return jsonResponse(origin, 200, {
+      reply: 'Möchtest du einen Vitalwert erfassen oder vorhandene Werte beziehungsweise den Verlauf ansehen?',
+      guideSlug: null,
+      source: 'context-required-clarification',
+    });
+  }
+
   if (isCorrectionAmbiguous(lastText)) {
     const options = correctionOptions(guides);
     return jsonResponse(origin, 200, {
