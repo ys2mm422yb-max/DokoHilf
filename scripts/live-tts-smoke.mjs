@@ -4,7 +4,10 @@ const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 const TEST_TEXT = 'Öffne Vitalwerte und klicke oben links auf das grüne Plus.';
 const EXPECTED_VOICE = 'Gacrux';
-const EXPECTED_STYLE = 'natural-spoken-german-colleague-v7-fast-start';
+const ALLOWED_STYLES = new Set([
+  'natural-spoken-german-colleague-v7-fast-start',
+  'natural-spoken-german-colleague-v8-hybrid-fast',
+]);
 const ALLOWED_MODELS = new Set([
   'gemini-2.5-flash-preview-tts',
   'gemini-2.5-pro-preview-tts',
@@ -61,7 +64,7 @@ async function requestAudio() {
   if (bytes.byteLength <= 44) throw new Error('Audiodatei ist leer.');
   if (!header.startsWith('RIFF') || !header.includes('WAVE')) throw new Error(`Ungültiger WAV-Header: ${header}`);
   if (result.voice !== EXPECTED_VOICE) throw new Error(`Falsche Stimme: ${result.voice || 'leer'}`);
-  if (result.style !== EXPECTED_STYLE) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
+  if (!ALLOWED_STYLES.has(result.style)) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
   if (!ALLOWED_MODELS.has(result.model)) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
   if (!['hit', 'miss'].includes(result.cache)) throw new Error(`Cache-Nachweis fehlt: ${result.cache || 'leer'}`);
   if (result.cache !== 'hit' && (!result.serverLatency || result.serverLatency > MAX_SERVER_LATENCY_MS)) {
@@ -96,7 +99,7 @@ try {
     cacheReuseObserved: second.result.cache === 'hit',
   };
   await writeFile('artifacts/dokohilf-live-tts.wav', first.bytes);
-  console.log(`DokoHilf Live-TTS: erster Abruf ${first.result.serverLatency} ms, zweiter Abruf ${second.result.serverLatency} ms, Cache ${second.result.cache}, Stimme ${first.result.voice}, Modell ${first.result.model}.`);
+  console.log(`DokoHilf Live-TTS: erster Abruf ${first.result.serverLatency} ms, zweiter Abruf ${second.result.serverLatency} ms, Cache ${second.result.cache}, Stimme ${first.result.voice}, Stil ${first.result.style}, Modell ${first.result.model}.`);
 } catch (error) {
   const providerUnavailable = error instanceof ProviderUnavailableError;
   report = {
@@ -119,7 +122,7 @@ await writeFile('artifacts/dokohilf-live-tts.json', JSON.stringify(report, null,
 await writeFile(
   'artifacts/dokohilf-live-tts.md',
   `# DokoHilf Live-TTS\n\n- ${report.passed
-    ? `✅ erster Abruf ${report.first.serverLatency} ms · zweiter Abruf ${report.second.serverLatency} ms · Cache ${report.second.cache} · ${report.first.voice} · ${report.first.model}`
+    ? `✅ erster Abruf ${report.first.serverLatency} ms · zweiter Abruf ${report.second.serverLatency} ms · Cache ${report.second.cache} · ${report.first.voice} · ${report.first.style} · ${report.first.model}`
     : report.nonBlockingExternalOutage
       ? `⚠️ externer Sprachdienst vorübergehend nicht erreichbar: ${report.error}. Kein gültiger WAV-Nachweis in diesem Lauf.`
       : `❌ ${report.error}`}\n`,
