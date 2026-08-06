@@ -41,6 +41,18 @@ try {
   await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30_000 });
   await page.locator('#startTitle').waitFor({ state: 'visible' });
 
+  const privacyDialog = page.locator('#privacyAckV27');
+  await privacyDialog.waitFor({ state: 'visible', timeout: 5_000 });
+  assert(await page.getByRole('button', { name: 'Verstanden' }).isVisible(), 'Erststart-Datenschutzbestätigung fehlt.');
+  await page.screenshot({ path: `${OUTPUT_DIR}/00-privacy-first-start.png`, fullPage: false });
+  await page.getByRole('button', { name: 'Verstanden' }).click();
+  await privacyDialog.waitFor({ state: 'detached' });
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('#startTitle').waitFor({ state: 'visible' });
+  assert(await page.locator('#privacyAckV27').count() === 0, 'Datenschutzbestätigung erscheint nach Bestätigung erneut.');
+  assert(await page.evaluate(() => localStorage.getItem('dokohilf-privacy-ack-v1') === 'yes'), 'Datenschutzbestätigung wurde nicht als unpersönliches Ja/Nein gespeichert.');
+
   const identity = await page.evaluate(() => ({
     title: document.title,
     build: document.querySelector('meta[name="dokohilf-build"]')?.content,
@@ -116,6 +128,7 @@ try {
     url: BASE_URL,
     viewport: { width: 393, height: 852, deviceScaleFactor: 2 },
     identity,
+    privacyAcknowledgementPersisted: true,
     visibleCommands,
     progressHeight: progressBox?.height,
     idleOrbWidth: idleBox?.width,
