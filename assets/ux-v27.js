@@ -5,13 +5,23 @@
   const PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1';
   const previousFetch = window.fetch.bind(window);
   const commands = new Set(['weiter', 'nochmal', 'zurück', 'zuruck', 'ich finde das nicht', 'ich brauche hilfe']);
+  let syncScheduled = false;
+  let observer = null;
 
   function clean(value) {
     return String(value || '').replace(/\s+/g, ' ').trim();
   }
+
   function normalize(value) {
     return clean(value).toLocaleLowerCase('de-DE').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss');
   }
+
+  function setTextIfChanged(node, value) {
+    if (!node || node.textContent === value) return false;
+    node.textContent = value;
+    return true;
+  }
+
   function stripReminder(value) {
     return String(value || '')
       .replace(/\s*(?:In Übungen|Bei Übungen)\s+(?:bitte\s+)?(?:ausschließlich|nur)\s+Fantasiedaten\s+verwenden\.?/gi, '')
@@ -74,7 +84,7 @@
   function compactGuideMenu() {
     const bar = document.getElementById('guideProgress');
     const actions = bar?.querySelector('.guide-progress-actions');
-    if (!bar || !actions || bar.querySelector('.guide-progress-menu')) return;
+    if (!bar || !actions || bar.querySelector('.guide-progress-menu')) return false;
     const details = document.createElement('details');
     details.className = 'guide-progress-menu';
     details.innerHTML = '<summary aria-label="Ablaufoptionen">•••</summary><div class="guide-progress-menu-panel"></div>';
@@ -82,23 +92,30 @@
     [...actions.querySelectorAll('button')].forEach(button => panel.append(button));
     actions.hidden = true;
     bar.append(details);
+    return true;
   }
 
   function cleanConversation() {
+    let changed = false;
     document.querySelectorAll('.message.assistant .bubble p,#voiceFocusText').forEach(node => {
-      const cleaned = stripReminder(node.textContent);
-      if (cleaned && cleaned !== node.textContent) node.textContent = cleaned;
+      const current = node.textContent || '';
+      const cleaned = stripReminder(current);
+      if (cleaned && cleaned !== current) changed = setTextIfChanged(node, cleaned) || changed;
     });
     document.querySelectorAll('.message.user').forEach(node => {
-      if (commands.has(normalize(node.textContent))) node.classList.add('command-message-hidden');
+      if (commands.has(normalize(node.textContent)) && !node.classList.contains('command-message-hidden')) {
+        node.classList.add('command-message-hidden');
+        changed = true;
+      }
     });
     const help = document.querySelector('[data-command="ich finde das nicht"]');
-    if (help) help.textContent = 'Ich brauche Hilfe';
+    changed = setTextIfChanged(help, 'Ich brauche Hilfe') || changed;
+    return changed;
   }
 
   function polishPrivacyCopy() {
     const note = document.querySelector('.composer-wrap > p');
-    if (note) note.textContent = 'Gespräch und persönliche Audioinhalte werden nicht gespeichert. Der Schutzfilter prüft jede Eingabe.';
+    return setTextIfChanged(note, 'Gespräch und persönliche Audioinhalte werden nicht gespeichert. Der Schutzfilter prüft jede Eingabe.');
   }
 
   function polishVoice() {
@@ -106,13 +123,17 @@
     const status = document.getElementById('voiceStatus');
     const hint = document.getElementById('voiceHint');
     const badge = document.querySelector('.voice-engine-badge');
-    if (!shell || !status || !hint) return;
+    if (!shell || !status || !hint) return false;
+    let changed = false;
     const current = normalize(status.textContent);
     if (shell.dataset.voiceState === 'thinking' || current.includes('stimme wird vorbereitet') || current.includes('stimme ladt')) {
-      status.textContent = 'Stimme startet …';
-      hint.textContent = 'Bekannte Schritte starten direkt. Freie Antworten wechseln nach kurzer Zeit zur Sofortstimme.';
+      changed = setTextIfChanged(status, 'Stimme startet …') || changed;
+      changed = setTextIfChanged(hint, 'Bekannte Schritte starten direkt. Freie Antworten wechseln nach kurzer Zeit zur Sofortstimme.') || changed;
     }
-    if (badge && /geratestimme|ersatz/.test(normalize(badge.textContent))) badge.textContent = 'Sofortstimme';
+    if (badge && /geratestimme|ersatz/.test(normalize(badge.textContent))) {
+      changed = setTextIfChanged(badge, 'Sofortstimme') || changed;
+    }
+    return changed;
   }
 
   function sync() {
@@ -122,10 +143,21 @@
     polishVoice();
   }
 
+  function scheduleSync() {
+    if (syncScheduled) return;
+    syncScheduled = true;
+    requestAnimationFrame(() => {
+      syncScheduled = false;
+      sync();
+    });
+  }
+
   function initialize() {
     showPrivacyAcknowledgement();
     sync();
-    new MutationObserver(sync).observe(document.body, {
+    if (observer) return;
+    observer = new MutationObserver(scheduleSync);
+    observer.observe(document.body, {
       childList: true,
       subtree: true,
       characterData: true,
@@ -142,7 +174,10 @@
     hasPrivacyAcknowledgement,
     showPrivacyAcknowledgement,
     stripReminder,
+    setTextIfChanged,
+    scheduleSync,
   };
   window.__DOKOHILF_UX_CLEANUP_V27__ = true;
   window.__DOKOHILF_PRIVACY_ACK_V27__ = true;
+  window.__DOKOHILF_IDEMPOTENT_SYNC_V27__ = true;
 })();
