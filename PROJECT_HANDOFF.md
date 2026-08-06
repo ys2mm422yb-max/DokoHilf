@@ -2,6 +2,7 @@
 
 **Status:** Verbindliche Arbeitsquelle  
 **Stand:** 6. August 2026  
+**Veröffentlichter Build:** `20260806-26`  
 **Aktueller Ziel-Build:** `20260806-27`
 
 > Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md` und diese Datei. Danach werden der tatsächliche GitHub-, GitHub-Actions-, GitHub-Pages- und Supabase-Stand geprüft. Veränderliche Zustände niemals nur aus dieser Übergabe übernehmen.
@@ -12,32 +13,28 @@
 - Einziges Supabase-Projekt: `efifbuqctylsujiauabg`
 - Fester öffentlicher Hauptlink: `https://ys2mm422yb-max.github.io/DokoHilf/`
 - Andere Repositories oder Projekte niemals öffnen, verändern oder verbinden.
-- Keine produktive Vivendi-Datenbank, API, nicht dokumentierte Schnittstelle oder Scraping-Verbindung.
-- Keine echten Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten in App, Tests, Dokumentation oder Logs.
-- Die zur Bestätigung verwendeten Bilder bleiben ausschließlich im jeweiligen Chat. Sie dürfen niemals in GitHub, Supabase, Issues, Pull Requests, Tests, Artefakte oder die öffentliche App übernommen werden.
-- In Repository und Supabase werden nur anonymisierte, selbst formulierte Klickwege und künstliche Testfälle gespeichert.
+- Keine produktive Vivendi-Verbindung, keine nicht dokumentierte Schnittstelle und kein Scraping.
+- Keine echten Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten.
+- Nutzerbilder und Screenshots bleiben ausschließlich im jeweiligen Chat und dürfen niemals in GitHub, Supabase, Tests, Artefakte oder App gelangen.
 
-## 2. Verbindlicher GitHub-Arbeitsablauf
+## 2. GitHub-Arbeitsablauf
 
-1. Vor jedem Eingriff echten Stand von `main`, offenen Pull Requests, Actions, `gh-pages` und Supabase prüfen.
+1. Vor jedem Eingriff `main`, offene Pull Requests, Actions, `gh-pages` und Supabase prüfen.
 2. Nie direkt auf `main` arbeiten.
-3. Eigener Branch pro Arbeitsblock.
-4. Änderungen, Tests und Nachweise im Repository speichern.
-5. Pull Request gegen `main` erstellen.
-6. Nur den exakten PR-Head mergen, wenn alle verpflichtenden Checks grün sind.
-7. Kein Auto-Merge aktivieren.
-8. Branches nicht automatisch löschen.
-9. Nach Merge `main`, `gh-pages`, aktive Edge Functions und festen Hauptlink kontrollieren.
-10. Niemals alternative Vorschau-, Cache-, Branch- oder Query-Links gegenüber dem Nutzer nennen.
+3. Eigener Branch und Pull Request pro Arbeitsblock.
+4. Änderungen, Entscheidungen, Tests, Fehler und Restarbeiten im Repository dokumentieren.
+5. Nur den vollständig grünen exakten PR-Head manuell mergen.
+6. Kein Auto-Merge und keine automatische Branch-Löschung.
+7. Nach Merge `main`, `gh-pages`, aktive Edge Functions und festen Hauptlink kontrollieren.
+8. Gegenüber dem Nutzer niemals alternative Preview-, Branch-, Cache- oder Query-Links nennen.
 
 ## 3. Verbindliche Fachquelle
 
-`CONFIRMED_WORKFLOWS.md` ist die fachliche Quelle für alle vom Nutzer bestätigten anonymisierten Klickwege. Supabase-Guides und Routerantworten müssen damit übereinstimmen. Nicht bestätigte Klickwege, Feldnamen oder fachliche Inhalte werden nicht erfunden.
+`CONFIRMED_WORKFLOWS.md` enthält alle bestätigten anonymisierten Klickwege. Supabase-Guides und Routerantworten müssen damit übereinstimmen. Nicht bestätigte Abläufe, Feldnamen oder fachliche Inhalte werden nicht erfunden.
 
-Bestätigt sind unter anderem:
+Bestätigt sind:
 
-- Bericht anlegen
-- automatisch verknüpfte Protokolle bei `Kontakt – alles außer Arzt` und `Sturzereignis`
+- Bericht anlegen einschließlich Kategorieauswahl und automatisch verknüpfter Protokolle
 - Bericht durchstreichen
 - Folgebericht erstellen
 - falsch abgezeichnete Durchführung stornieren
@@ -53,7 +50,7 @@ Bestätigt sind unter anderem:
 
 ### Frontend
 
-- Statische PWA auf GitHub Pages
+- statische PWA auf GitHub Pages
 - Einstieg: `index.html`
 - Kernlogik: `assets/app.js`
 - Gesprächszustand: `assets/guide-progress.js`
@@ -61,151 +58,134 @@ Bestätigt sind unter anderem:
 - Sprachfokus: `assets/voice-focus-mode.js`
 - Audio-Entsperrung: `assets/mobile-audio-fix.js`
 - Updateverwaltung: `assets/update-manager.js`
-- Premium-Grunddesign: `assets/premium-ui-v25.css`
-- Build-26-Sprachlayout: `assets/premium-ui-v26.css`
-- Build-27-Dark-Design: `assets/premium-ui-v27.css`
-- Build-27-Dialog- und Sprachvorbereitung: `assets/experience-v27.js`
-- Build-27-Kompaktsteuerung und Sofortfallback: `assets/ux-v27.css` und `assets/ux-v27.js`
+- Dark-Design: `assets/premium-ui-v27.css`
+- kompakte Bedienung und Erststart-Datenschutz: `assets/ux-v27.css` und `assets/ux-v27.js`
+- statische und dynamische Sprachausgabe: `assets/experience-v27.js`
+- statischer Audio-Katalog: `assets/guide-audio-catalog.json`
+- erzeugtes Audio-Manifest: `assets/guide-audio-manifest.json`
+- statische Audios: `assets/audio/guides/*.wav`
+- gemeinsame Pages-Erzeugung: `scripts/build-static-site-v27.sh`
 
-### Supabase Edge Functions
+### Supabase
 
-- `dokohilf-ai`: Kernrouting und Wissensantworten
-- `dokohilf-ai-router`: zustandsbasierter Gesprächsrouter
-- `dokohilf-tts`: natürliche Sprachausgabe
+- `dokohilf-ai-router`: aktive Version **11**, Marker `conversational-guide-router-v9`
+- `dokohilf-tts`: aktive Version **17**
 - `dokohilf-editor`: geschützter Redaktionsbereich
-
-### Wissensbasis
-
-- Freigegebene Guides liegen in `public.dokohilf_guides`.
-- Themenzuordnungen liegen in `public.dokohilf_topics`.
-- Freie Formulierungen werden auf freigegebene Ziele geroutet.
-- Innerhalb laufender Guides stammen ausgegebene Schritte ausschließlich aus freigegebenen Guides.
+- freigegebene Guides: `public.dokohilf_guides`
+- Themenzuordnungen: `public.dokohilf_topics`
 
 ## 5. Gesprächslogik
 
-Aktive Routerfunktion: `dokohilf-ai-router`, Version **11**, Header `conversational-guide-router-v9`.
-
-Verbindliches Verhalten:
-
 - Eine klar genannte Absicht bleibt erhalten.
-- `Ich möchte Vitalwerte eingeben` bedeutet bereits Erfassen, nicht Nachsehen.
-- Bei Vitalwerten wird nur noch zwischen Einzelwert und Sammelerfassung unterschieden.
-- Bestätigungen führen genau einen Schritt weiter.
+- `Ich möchte Vitalwerte eingeben` bedeutet bereits Erfassen.
+- Bei Vitalwerten wird nur zwischen Einzelwert und Sammelerfassung unterschieden.
+- Bestätigungen führen exakt einen Schritt weiter.
 - Verneinungen und Probleme gelten nicht als erledigt.
 - Ein klar genanntes neues Ziel ersetzt den alten Ablauf sauber.
-- Mehrdeutige Korrekturen werden strukturiert geklärt.
-- Medikationsänderungen werden nicht angeleitet; angeboten wird ausschließlich der bestätigte Leseweg.
-- Routerantworten enthalten `spokenText` und `nextSpokenText` zum Vorladen der nächsten Sprachausgabe.
+- Medikationsänderungen werden blockiert; angeboten wird ausschließlich der bestätigte Leseweg.
+- Ausgegebene Klickschritte stammen nur aus freigegebenen Guides.
+- Routerantworten enthalten `spokenText` und `nextSpokenText`.
 
-## 6. Build 27 – dunkles Design und vereinfachte Bedienung
-
-Ziel: Hauptmenü, Chat und Sprachmodus wirken wie ein zusammenhängendes hochwertiges Produkt.
-
-Verbindlich ab Build 27:
+## 6. Build 27 – verbindliches Oberflächenziel
 
 - dunkle Grundfläche in Petrol/Schwarz mit grünen und blauen Akzenten
-- kompakte Kopfzeile
-- Hauptmenü mit zwei klaren Wegen: **Sprechen** und **Schreiben**
-- sechs häufige Abläufe direkt im Hauptmenü
-- nur ein kompakter Datenschutz-Hinweis im Hauptmenü
-- keine wiederholten Fantasiedaten-Sätze in normalen Guide-Schritten
-- Ablaufkarte im Chat als schmale Fortschrittszeile
-- `Zurück`, `Neu starten` und `Anderer Ablauf` liegen im Drei-Punkte-Menü
-- pro Schritt nur zwei sichtbare Hauptaktionen: **Weiter** und **Ich brauche Hilfe**
-- Bedienkommandos wie `weiter` werden nicht als normale Chatnachricht dargestellt
-- lange Sprachhinweise dürfen Mikrofonanimation und Bedienelemente nicht überdecken
-- auf kleinen beziehungsweise niedrigen iPhones wird die Sprachansicht automatisch verdichtet
+- flache kompakte Kopfzeile
+- Hauptmenü mit **Sprechen** und **Schreiben**
+- häufige bestätigte Abläufe direkt im Hauptmenü
+- einmalige Datenschutzbestätigung beim ersten Start; gespeichert wird nur `dokohilf-privacy-ack-v1=yes`
+- keine wiederholten Fantasiedaten-Hinweise in normalen Guide-Schritten
+- technischer Datenschutzfilter bleibt vollständig aktiv
+- Ablaufsteuerung als schmale Fortschrittszeile
+- `Zurück`, `Neu starten` und `Anderer Ablauf` im Drei-Punkte-Menü
+- pro Schritt nur **Weiter** und **Ich brauche Hilfe** sichtbar
+- Bedienkommandos erscheinen nicht als normale Chatnachrichten
+- Mikrofon bleibt im Leerlauf kompakt und wird erst beim Zuhören oder Sprechen groß
+- kleine und niedrige iPhones erhalten eine verdichtete Sprachansicht
 
-Der Datenschutzfilter bleibt vollständig aktiv. Entfernt wird nur die störende Wiederholung desselben Übungshinweises in nahezu jedem Schritt.
-
-## 7. Build 27 – Sprache
+## 7. Build 27 – statische und dynamische Stimme
 
 Natürliche Stimme: **Gacrux**.
 
-Aktive Supabase-Funktion: `dokohilf-tts`, Version **17**.
+### Statische bekannte Anweisungen
 
-Technik:
+- Datenbasis: 23 freigegebene Guides, 108 Schritte, 92 eindeutige Schritttexte plus Begrüßung
+- Ziel: exakt 93 vorproduzierte Gacrux-WAV-Dateien
+- Quelle ausschließlich allgemeines `step.text` freigegebener Guides
+- Nutzerantworten, Checks, Diktate, Namen, Fall- oder Gesundheitsdaten sind ausgeschlossen
+- `assets/experience-v27.js` sucht zuerst eine statische freigegebene Datei
+- Service Worker cached die statischen Dateien für schnelle und Offline-Wiedergabe
+- Manifest enthält Textschlüssel, Pfad, Größe, SHA-256, Stimme, Modell und Stil
+- Details und enge Datenschutz-Ausnahme: `PREBUILT_AUDIO.md` und `PROJECT_RULES.md`
+
+### Freie Antworten
 
 - Primärmodell: `gemini-3.1-flash-tts-preview`
-- kompatibler Rückfallweg: `gemini-2.5-flash-preview-tts`
+- Fallbackmodell: `gemini-2.5-flash-preview-tts`
 - Stil: `natural-spoken-german-colleague-v8-low-latency`
-- identische gleichzeitige Anfragen werden serverseitig zusammengeführt
-- flüchtiger Servercache: höchstens 96 Einträge, zwei Stunden Lebensdauer
-- flüchtiger Clientcache und Vorladen des nächsten bekannten Guide-Schritts
-- Begrüßung und häufige erste Schritte werden im Hintergrund vorbereitet
-- der aktuelle Sprachversuch wartet im Browser höchstens 1,9 Sekunden
-- ist Gacrux bis dahin nicht bereit, startet sofort die Gerätestimme; die natürliche Anfrage darf im Hintergrund den flüchtigen Cache füllen
-- keine dauerhafte Speicherung von Audio oder Gesprächsinhalten
-- keine Behauptung, eine Stimme persönlich angehört zu haben, wenn nur WAV, Header, Modell und Laufzeit technisch geprüft wurden
+- Live-TTS wird nur für nicht katalogisierte freie Antworten verwendet
+- Browser wartet höchstens rund 1,9 Sekunden; danach startet die lokale Sofortstimme
+- dynamische Audios und Gesprächsinhalte bleiben flüchtig
 
-## 8. Datenschutz und Sicherheit
-
-- Keine echten Namen, Berichte, Diagnosen, Medikamente, Messwerte oder personenbezogenen Inhalte verwenden.
-- Keine persistente Gesprächshistorie im Browser.
-- Keine persistente Audiospeicherung im Browser oder in Supabase.
-- Medikation ist in DokoHilf ein reiner Leseweg.
-- Nicht bestätigte Formularfelder werden nicht erfunden.
-- Der sichtbare Hauptmenü-Hinweis ersetzt nicht den technischen Schutzfilter.
-
-## 9. Veröffentlichung und Updateverhalten
+## 8. Veröffentlichung
 
 - `main` ist Integrationsbranch.
 - `gh-pages` ist der tatsächlich ausgelieferte Branch.
-- `.github/workflows/pages.yml` validiert Build, Router, TTS, Datenschutz, Dialoge und Layout.
-- `.github/workflows/publish-gh-pages.yml` synchronisiert die vollständige statische App aus `main` nach `gh-pages`.
-- `version.json`, `index.html`, `service-worker.js`, Asset-Queryparameter und Workflows müssen dieselbe Build-ID verwenden.
-- Browser und installierte PWA müssen nach Veröffentlichung denselben Build anzeigen.
+- `scripts/build-static-site-v27.sh` muss für beide Veröffentlichungswege denselben vollständigen Build erzeugen.
+- `version.json`, `index.html`, `service-worker.js`, Asset-Queryparameter und Workflows müssen dieselbe Build-ID enthalten.
+- Build 27 darf nur veröffentlicht werden, wenn Manifest und exakt 93 WAV-Dateien im erzeugten Pages-Build liegen.
 
-## 10. Pflichtprüfungen vor Merge
+## 9. Pflichtprüfungen vor Merge
 
 - Syntaxprüfung aller geänderten JavaScript-Dateien
-- statische Build- und Dateiprüfungen
-- Datenschutz- und Sicherheitsverträge
+- statische Build- und Datenschutzverträge
 - 165 Routingregressionen und Gesprächssequenzen
-- Tests aller bestätigten Arbeitsabläufe
-- Vitalwerte-, Zielwechsel- und Medikationssicherheitstests
-- Dark-UI- und Kompaktsteuerungstests
-- mobile Sprachlayouttests
-- Live-Routing-Test gegen die aktive Edge Function
-- Live-TTS-Test mit gültigem WAV-Header, Gacrux, Modell-, Stil-, Cache- und Laufzeitnachweis
-- dokumentierte externe HTTP-429/502/503/504- oder Timeout-Ausfälle dürfen nur nach unveränderten Wiederholungen als Fremddienst-Ausfall behandelt werden
+- alle bestätigten Fachabläufe
+- Vitalwerte-, Zielwechsel- und Medikationssicherheit
+- Dark-UI, kompakte Guide-Steuerung und Erststart-Datenschutz
+- gültiger RIFF-/WAVE-Header, Dateigröße und SHA-256 für alle 93 statischen Audios
+- mobiler Playwright-Render auf 393 × 852 mit künstlicher Oberfläche
+- kein horizontaler Überlauf
+- kompakte Leerlauf- und größere aktive Mikrofonansicht
+- Live-Router und zeitlich begrenzter Live-TTS-Fallback
 - sichtbarer Build-Marker im Pages-Artefakt
-- exakter PR-Head grün
+- vollständig grüner exakter PR-Head
 
-## 11. Arbeitsstände
+## 10. Abgeschlossene Stände
 
-### Blöcke 1–4: bestätigte Fachabläufe
+### Fachabläufe
 
-- PR `#45`, gemergt
-- Merge-Commit `e5446014a6e4e6941101d4d1746a02e49d951729`
+- PR #45 gemergt
 - `CONFIRMED_WORKFLOWS.md` erstellt
 - Migration `20260806153000_confirmed_workflows_blocks_1_4.sql` angewandt
 
-### Blöcke 5–9: intelligente Dialoge und Build 26
+### Build 26
 
-- PR `#46`, gemergt
-- Merge-Commit `374969932028a7f47aea0bbcc4b7f31d23bae441`
-- Build `20260806-26` veröffentlicht
+- PR #46 gemergt
+- veröffentlichter Build `20260806-26`
 - Router v9 und TTS v16 aktiviert
 
-### Build 27: Dark-UI, Sofortstimme und reduzierte Hinweise
+## 11. Aktiver Arbeitsstand Build 27
 
-- Branch: `feat/dark-premium-fast-voice-v27`
+- finaler Branch: `feat/dark-premium-static-guide-audio-v27`
+- finaler Draft-PR: **#50**
+- PR #49 wurde als vollständig ersetzt geschlossen; sein Branch wurde nicht gelöscht
 - Ziel-Build: `20260806-27`
-- TTS v17 ist aktiv.
-- Migration `remove_repeated_exercise_notices_v2` wurde im freigegebenen Supabase-Projekt erfolgreich angewandt.
-- Vor Merge muss der exakte PR-Head vollständig grün sein.
-- Nach Merge sind `main`, `gh-pages`, aktiver TTS-Stand und fester Hauptlink zu kontrollieren.
+- TTS v17 ist aktiv
+- Migration zur Entfernung wiederholter Übungshinweise wurde angewandt
+- Dark-UI, kompakte Steuerung, Erststart-Datenschutz, statische Audioarchitektur, Generator, Manifesttests, gemeinsamer Build und mobile Renderprüfung sind im Branch angelegt
+- **Offener harter Merge-Blocker:** `assets/guide-audio-manifest.json` und alle 93 WAV-Dateien müssen tatsächlich erzeugt, im Branch gespeichert und vollständig grün geprüft sein
+- bis dahin bleibt PR #50 als Draft offen und wird nicht gemergt
 
 ## 12. Pflege dieser Datei
 
 Nach jedem größeren Arbeitsblock sind mindestens zu aktualisieren:
 
-- aktueller veröffentlichter Build
-- wichtige Architekturänderungen
-- neu bestätigte Klickwege
-- offene Probleme
-- neue harte Regeln und Nutzerentscheidungen
-- relevante Pull Requests, Funktionsversionen und Migrationsstände
+- veröffentlichter und Ziel-Build
+- Architekturänderungen
+- bestätigte Klickwege
+- offene Probleme und harte Blocker
+- neue Regeln und Nutzerentscheidungen
+- Pull Requests, Funktionsversionen und Migrationen
+- tatsächliche Test- und Veröffentlichungsnachweise
 
-Diese Datei ersetzt niemals die Prüfung des echten Live-Stands. Sie verhindert, dass ein neuer Chat fachliche Entscheidungen, bestätigte Abläufe und Arbeitsregeln erneut beim Nutzer erfragen muss.
+Diese Datei ersetzt niemals die Prüfung des echten Live-Stands. Sie verhindert, dass ein neuer Chat Entscheidungen und bestätigte Abläufe erneut beim Nutzer erfragen muss.
