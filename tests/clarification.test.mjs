@@ -28,10 +28,12 @@ test('angeklickte Auswahl wird exakt an den Router übergeben', () => {
   assert.equal(rewritten.selectedGuideSlug, 'bericht-durchstreichen');
 });
 
-test('Frontend bietet höchstens drei touchfreundliche Auswahlbuttons', () => {
+test('Frontend bietet höchstens drei große touchfreundliche Auswahlkarten', () => {
   assert.match(frontend, /slice\(0, 3\)/);
   assert.match(frontend, /clarification-option/);
-  assert.match(frontend, /min-height:56px/);
+  assert.match(frontend, /min-height:76px/);
+  assert.match(frontend, /clarification-option-description/);
+  assert.match(frontend, /choiceTitle/);
   assert.match(frontend, /dokohilf-ai-router/);
 });
 
