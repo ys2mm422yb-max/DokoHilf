@@ -73,13 +73,14 @@ Der öffentliche Pages-Build enthält **keine WAV-Binärdateien** und kein lokal
 - `dokohilf-ai-router`: aktive Version **11**, Marker `conversational-guide-router-v9`
 - `dokohilf-tts`: aktive Version **20**
 - `dokohilf-guide-audio`: aktive Version **1**, öffentlicher Leseendpunkt für Manifest und freigegebene WAVs
-- `dokohilf-guide-audio-build`: aktive Version **2**, temporärer und intern token-geschützter Builder
+- `dokohilf-guide-audio-build`: aktive Version **2**, intern token-geschützter Builder
 - `dokohilf-editor`: geschützter Redaktionsbereich
 - freigegebene Guides: `public.dokohilf_guides`
 - Themenzuordnungen: `public.dokohilf_topics`
 - Audio-Registry: `public.dokohilf_static_guide_audio`
 - interner Builderzustand: `public.dokohilf_internal_build_control`
 - privater Storage-Bucket: `dokohilf-guide-audio`
+- temporärer Quell-Snapshot-Endpunkt `dokohilf-source-snapshot` ist als Version 2 deaktiviert und antwortet nur noch HTTP 410
 
 ## 5. Gesprächslogik
 
@@ -162,6 +163,15 @@ Live-Nachweis vom 6. August 2026:
 - bei 93/93 deaktiviert sich der Builder und entfernt den Cronjob selbst
 - wegen Google HTTP 429 kann der Bestand zeitweise nicht wachsen
 
+Live-Nachweis des privaten Audiowegs:
+
+- Manifest Schema 2
+- Build `20260806-27`
+- Stimme Gacrux
+- Eintrag 0: 301484 Bytes
+- SHA-256 `007bc2cd09297f0d45150bb79cd82ed5c7e85ca83263b7023f11732bfd4bac82`
+- WAV-Abruf HTTP 200 mit demselben Hash im Response-Header
+
 ## 8. Veröffentlichungsentscheidung
 
 Das sichtbare Dark-UI-Update wird nicht länger durch Googles kostenlose 93er-TTS-Quota blockiert.
@@ -224,22 +234,40 @@ Der vollständige 93/93-Bestand ist kein Merge-Blocker mehr für die sichtbare B
 
 ## 12. Aktiver Arbeitsstand Build 27
 
-- finaler isolierter Branch: `feat/dark-premium-v27-final`
-- finaler Draft-PR: **#51**
+- **einziger finaler Release-Branch:** `feat/dark-premium-v27-release`
+- **einziger finaler Draft-PR:** **#52**
 - PR #49 und PR #50 wurden als ersetzt geschlossen; ihre Branches wurden nicht gelöscht
+- PR #51 ist durch PR #52 ersetzt und wird geschlossen; sein Branch wird nicht gelöscht
 - Ziel-Build: `20260806-27`
 - TTS v20 ist aktiv und live als gültiges Gacrux-WAV nachgewiesen
 - `dokohilf-guide-audio` v1 und geschützter Builder v2 sind aktiv
 - Migration zur Entfernung wiederholter Übungshinweise wurde angewandt
 - Audio-Registry und interner Builderzustand wurden angelegt
 - Builder ohne Token wurde mit HTTP 403 geprüft; interner Aufruf erreicht den Builder
-- Dark-UI, kompakte Steuerung, Erststart-Datenschutz, privater Audioendpunkt, gemeinsamer Build und mobile Renderprüfung liegen im finalen Branch
+- Dark-UI, kompakte Steuerung, Erststart-Datenschutz, privater Audioendpunkt, gemeinsamer Build und mobile Renderprüfung liegen im Release-Branch
 - alte selbstverändernde Audio-Workflows wurden entfernt
-- der Cronjob wurde wegen wiederholtem HTTP 429 von minütlich auf stündlich reduziert
+- der Cronjob wurde wegen wiederholtem HTTP 429 auf stündlich reduziert
 - veröffentlichter Hauptlink zeigt weiterhin Build 26
-- ältere Actions-Läufe wurden durch nachfolgende Branchänderungen abgebrochen und sind kein Nachweis für den aktuellen Head
-- vor Merge muss auf dem letzten exakten Head ein neuer vollständiger Actions-Lauf ausgelöst und grün abgeschlossen werden
-- kein Merge, kein Auto-Merge und keine Branch-Löschung vor diesem Nachweis
+
+### Bereinigte veraltete Regressionen
+
+Folgende Tests enthielten noch harte Build-26-/TTS-v16-Annahmen und wurden auf den tatsächlichen Build-27-Vertrag migriert:
+
+- `tests/voice-diagnostics.test.mjs`
+- `tests/live-build-recovery.test.mjs`
+- `tests/voice-layout-v26.test.mjs`
+
+Die fachlichen Router- und Klickwegregressionen wurden nicht abgeschwächt.
+
+### Offener technischer CI-Punkt
+
+- GitHub unterdrückt Workflowereignisse, die durch die verbundene GitHub-App selbst erzeugt werden.
+- Das wurde mit Push, PR-Neuanlage, Schließen/Wiederöffnen und `ready_for_review` geprüft.
+- Ein direkter Workflow-Dispatch ist im verbundenen GitHub-Connector nicht verfügbar.
+- Ältere Actions-Läufe gehören zu früheren Heads und sind kein Nachweis für den aktuellen Release-Head.
+- Vor Merge muss deshalb der Workflow **einmal über die GitHub-Oberfläche manuell auf dem Release-Branch gestartet** werden.
+- Erst nach vollständig grünem exakten Head darf manuell gemergt werden.
+- Kein Merge, kein Auto-Merge und keine Branch-Löschung vorher.
 
 ## 13. Neue Repositoryquellen
 
