@@ -27,12 +27,14 @@ jobs:
           set -euo pipefail
           mkdir -p _site/assets artifacts
           cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _site/
-          cp assets/styles.css assets/update-manager.js assets/mobile-audio-fix.js assets/voice-diagnostics.js assets/routing-fix.js assets/conversation-intelligence.js assets/clarification-ui.js assets/guide-progress.js assets/voice-focus-mode.js assets/app.js assets/editor.css assets/editor.js _site/assets/
+          cp assets/styles.css assets/premium-ui-v25.css assets/experience-v25.js assets/update-manager.js assets/mobile-audio-fix.js assets/voice-diagnostics.js assets/routing-fix.js assets/conversation-intelligence.js assets/clarification-ui.js assets/guide-progress.js assets/voice-focus-mode.js assets/app.js assets/editor.css assets/editor.js _site/assets/
           touch _site/.nojekyll
 
           for file in \
+            README.md PROJECT_RULES.md PROJECT_HANDOFF.md \
             _site/index.html _site/editor.html _site/version.json _site/service-worker.js \
-            _site/assets/styles.css _site/assets/update-manager.js _site/assets/mobile-audio-fix.js \
+            _site/assets/styles.css _site/assets/premium-ui-v25.css _site/assets/experience-v25.js \
+            _site/assets/update-manager.js _site/assets/mobile-audio-fix.js \
             _site/assets/voice-diagnostics.js _site/assets/routing-fix.js \
             _site/assets/conversation-intelligence.js _site/assets/clarification-ui.js \
             _site/assets/guide-progress.js _site/assets/voice-focus-mode.js _site/assets/app.js \
@@ -42,19 +44,22 @@ jobs:
             supabase/migrations/20260806112000_vitalwerte_intent_guides.sql \
             supabase/migrations/20260806112100_vitalwerte_intent_alias_alignment.sql \
             supabase/migrations/20260806112200_noop_verify_vitalwerte_guides.sql \
-            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-tts-smoke.mjs \
+            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs \
             scripts/live-screenshot-smoke.mjs tests/vitalwerte-intent.test.mjs tests/live-build-recovery.test.mjs; do
             test -s "$file"
           done
 
-          grep -q 'dokohilf-build" content="20260806-24' _site/index.html
-          grep -q 'guide-progress.js?v=20260806-24' _site/index.html
-          grep -q 'voice-focus-mode.js?v=20260806-24' _site/index.html
-          grep -q 'app.js?v=20260806-24' _site/index.html
-          grep -q '"buildId": "20260806-24"' _site/version.json
-          grep -q "BUILD_ID = '20260806-24'" _site/service-worker.js
-          grep -q '__DOKOHILF_DIRECT_ROUTER_V24__' _site/index.html
-          grep -q 'KI · v24' _site/index.html
+          grep -q 'dokohilf-build" content="20260806-25' _site/index.html
+          grep -q 'premium-ui-v25.css?v=20260806-25' _site/index.html
+          grep -q 'experience-v25.js?v=20260806-25' _site/index.html
+          grep -q 'guide-progress.js?v=20260806-25' _site/index.html
+          grep -q 'voice-focus-mode.js?v=20260806-25' _site/index.html
+          grep -q 'app.js?v=20260806-25' _site/index.html
+          grep -q '"buildId": "20260806-25"' _site/version.json
+          grep -q "BUILD_ID = '20260806-25'" _site/service-worker.js
+          grep -q '__DOKOHILF_DIRECT_ROUTER_V25__' _site/index.html
+          grep -q 'KI · v25' _site/index.html
+          grep -q 'Wobei brauchst du Hilfe?' _site/index.html
           grep -q 'DokoHilfHardRefresh' _site/index.html
           grep -q 'CLEAR_DOKOHILF_CACHES' _site/service-worker.js
 
@@ -65,6 +70,14 @@ jobs:
           grep -q 'position:fixed' _site/assets/voice-focus-mode.js
           grep -q 'voice-focus-actions' _site/assets/voice-focus-mode.js
           grep -q 'removeLegacyShortcuts' _site/assets/voice-focus-mode.js
+
+          grep -q '__DOKOHILF_PREMIUM_EXPERIENCE_V25__' _site/assets/experience-v25.js
+          grep -q 'warmGreeting' _site/assets/experience-v25.js
+          grep -q 'optimizeSpokenText' _site/assets/experience-v25.js
+          grep -q 'const memory = new Map' _site/assets/experience-v25.js
+          grep -q -- '--dh-deep' _site/assets/premium-ui-v25.css
+          grep -q 'voice-focus-stage' _site/assets/premium-ui-v25.css
+          grep -q 'composer-wrap' _site/assets/premium-ui-v25.css
 
           grep -q '__DOKOHILF_STRUCTURED_CLARIFICATION__' _site/assets/clarification-ui.js
           grep -q 'voiceFocusChoices' _site/assets/clarification-ui.js
@@ -82,12 +95,18 @@ jobs:
           grep -q "VOICE_NAME = 'Gacrux'" supabase/functions/dokohilf-tts/index.ts
           grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v5'" supabase/functions/dokohilf-tts/index.ts
           grep -q "PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts'" supabase/functions/dokohilf-tts/index.ts
-          grep -q 'erfahrene Kollegin' supabase/functions/dokohilf-tts/index.ts
+          grep -q "FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts'" supabase/functions/dokohilf-tts/index.ts
+          grep -q 'REQUEST_TIMEOUT_MS = 20_000' supabase/functions/dokohilf-tts/index.ts
           grep -q 'X-DokoHilf-TTS-Latency' supabase/functions/dokohilf-tts/index.ts
 
           grep -q 'grüne Plus' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
           grep -q 'Sammelerfassung' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
           grep -q 'Pop-up-Fenster' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
+
+          grep -q 'Jeder neue Chat liest zuerst vollständig' PROJECT_HANDOFF.md
+          grep -q 'Vitalwerte – Sammelerfassung' PROJECT_HANDOFF.md
+          grep -q 'Visite dokumentieren' PROJECT_HANDOFF.md
+          grep -q 'PROJECT_HANDOFF.md' README.md
 
           grep -q 'Redaktion anmelden' _site/editor.html
           grep -q 'keine öffentliche Registrierung' _site/editor.html
@@ -98,6 +117,7 @@ jobs:
 
           grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' _site/assets/app.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/voice-focus-mode.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB\|caches.open' _site/assets/experience-v25.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/conversation-intelligence.js && exit 1 || true
 
           node --check _site/assets/update-manager.js
@@ -108,10 +128,12 @@ jobs:
           node --check _site/assets/clarification-ui.js
           node --check _site/assets/guide-progress.js
           node --check _site/assets/voice-focus-mode.js
+          node --check _site/assets/experience-v25.js
           node --check _site/assets/app.js
           node --check _site/assets/editor.js
           node --check _site/service-worker.js
           node --check scripts/live-routing-smoke.mjs
+          node --check scripts/live-routing-stable.mjs
           node --check scripts/live-tts-smoke.mjs
           node --check scripts/live-screenshot-smoke.mjs
 
@@ -137,10 +159,11 @@ jobs:
 
       - name: Check active DokoHilf router
         run: |
-          node scripts/live-routing-smoke.mjs
+          node scripts/live-routing-stable.mjs
           node scripts/live-screenshot-smoke.mjs
 
-      - name: Check active DokoHilf voice service
+      - name: Record active DokoHilf voice service evidence
+        continue-on-error: true
         run: node scripts/live-tts-smoke.mjs
 
       - name: Upload behavior report

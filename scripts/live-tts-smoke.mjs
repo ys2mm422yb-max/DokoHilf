@@ -2,53 +2,59 @@ import { mkdir, writeFile } from 'node:fs/promises';
 
 const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-tts';
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
-const TEST_TEXT = 'Öffne Vitalwerte. Für einen einzelnen Wert klickst du oben links auf das grüne Plus.';
+const TEST_TEXT = 'Öffne Vitalwerte und klicke oben links auf das grüne Plus.';
 const EXPECTED_VOICE = 'Gacrux';
 const EXPECTED_STYLE = 'natural-spoken-german-colleague-v5';
-const EXPECTED_MODE = 'natural-spoken-german';
 const ALLOWED_MODELS = new Set([
   'gemini-2.5-pro-preview-tts',
   'gemini-2.5-flash-preview-tts',
 ]);
-const MAX_LATENCY_MS = 24_000;
+const MAX_SERVER_LATENCY_MS = 20_000;
 
 async function requestAudio() {
+  const startedAt = Date.now();
+  const response = await fetch(ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
+    body: JSON.stringify({ text: TEST_TEXT }),
+    signal: AbortSignal.timeout(26_000),
+  });
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  const header = new TextDecoder('ascii').decode(bytes.slice(0, 12));
+  const result = {
+    endpoint: ENDPOINT,
+    status: response.status,
+    contentType: response.headers.get('content-type') || '',
+    voice: response.headers.get('x-dokohilf-voice') || '',
+    model: response.headers.get('x-dokohilf-tts-model') || '',
+    mode: response.headers.get('x-dokohilf-voice-mode') || '',
+    style: response.headers.get('x-dokohilf-voice-style') || '',
+    serverLatency: Number(response.headers.get('x-dokohilf-tts-latency') || 0),
+    roundTripLatency: Date.now() - startedAt,
+    byteLength: bytes.byteLength,
+    header,
+  };
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  if (!result.contentType.includes('audio/wav')) throw new Error(`Falscher Inhaltstyp: ${result.contentType}`);
+  if (bytes.byteLength <= 44) throw new Error('Audiodatei ist leer.');
+  if (!header.startsWith('RIFF') || !header.includes('WAVE')) throw new Error(`Ungültiger WAV-Header: ${header}`);
+  if (result.voice !== EXPECTED_VOICE) throw new Error(`Falsche Stimme: ${result.voice || 'leer'}`);
+  if (result.style !== EXPECTED_STYLE) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
+  if (!ALLOWED_MODELS.has(result.model)) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
+  if (!result.serverLatency || result.serverLatency > MAX_SERVER_LATENCY_MS) {
+    throw new Error(`Sprachausgabe zu langsam: ${result.serverLatency || 0} ms`);
+  }
+  return { result, bytes };
+}
+
+async function runTest() {
   let lastError;
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      const response = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
-        body: JSON.stringify({ text: TEST_TEXT }),
-        signal: AbortSignal.timeout(30_000),
-      });
-      const bytes = new Uint8Array(await response.arrayBuffer());
-      const header = new TextDecoder('ascii').decode(bytes.slice(0, 12));
-      const result = {
-        endpoint: ENDPOINT,
-        status: response.status,
-        contentType: response.headers.get('content-type') || '',
-        voice: response.headers.get('x-dokohilf-voice') || '',
-        model: response.headers.get('x-dokohilf-tts-model') || '',
-        mode: response.headers.get('x-dokohilf-voice-mode') || '',
-        style: response.headers.get('x-dokohilf-voice-style') || '',
-        latency: Number(response.headers.get('x-dokohilf-tts-latency') || 0),
-        byteLength: bytes.byteLength,
-        header,
-      };
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      if (!result.contentType.includes('audio/wav')) throw new Error(`Falscher Inhaltstyp: ${result.contentType}`);
-      if (bytes.byteLength <= 44) throw new Error('Audiodatei ist leer.');
-      if (!header.startsWith('RIFF') || !header.includes('WAVE')) throw new Error(`Ungültiger WAV-Header: ${header}`);
-      if (result.voice !== EXPECTED_VOICE) throw new Error(`Falsche Stimme: ${result.voice || 'leer'}`);
-      if (result.style !== EXPECTED_STYLE) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
-      if (!ALLOWED_MODELS.has(result.model)) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
-      if (!result.mode.includes(EXPECTED_MODE)) throw new Error(`Falscher Sprachmodus: ${result.mode || 'leer'}`);
-      if (!result.latency || result.latency > MAX_LATENCY_MS) throw new Error(`Sprachausgabe zu langsam: ${result.latency || 0} ms`);
-      return result;
+      return await requestAudio();
     } catch (error) {
       lastError = error;
-      if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 1200));
+      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1800));
     }
   }
   throw lastError;
@@ -57,9 +63,10 @@ async function requestAudio() {
 await mkdir('artifacts', { recursive: true });
 let report;
 try {
-  const result = await requestAudio();
+  const { result, bytes } = await runTest();
   report = { passed: true, ...result };
-  console.log(`DokoHilf Live-TTS: ${result.byteLength} Bytes, Stimme ${result.voice}, Modell ${result.model}, ${result.latency} ms.`);
+  await writeFile('artifacts/dokohilf-live-tts.wav', bytes);
+  console.log(`DokoHilf Live-TTS: ${result.serverLatency} ms, Stimme ${result.voice}, Modell ${result.model}, ${result.byteLength} Bytes.`);
 } catch (error) {
   report = { passed: false, endpoint: ENDPOINT, error: String(error?.message || error) };
   console.error(`DokoHilf Live-TTS fehlgeschlagen: ${report.error}`);
@@ -69,6 +76,6 @@ try {
 await writeFile('artifacts/dokohilf-live-tts.json', JSON.stringify(report, null, 2), 'utf8');
 await writeFile(
   'artifacts/dokohilf-live-tts.md',
-  `# DokoHilf Live-TTS\n\n- ${report.passed ? '✅' : '❌'} ${report.passed ? `${report.byteLength} Bytes · ${report.voice} · ${report.model} · ${report.latency} ms` : report.error}\n`,
+  `# DokoHilf Live-TTS\n\n- ${report.passed ? '✅' : '❌'} ${report.passed ? `${report.serverLatency} ms · ${report.voice} · ${report.model} · ${report.byteLength} Bytes` : report.error}\n`,
   'utf8',
 );

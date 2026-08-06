@@ -8,32 +8,18 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="DokoHilf">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="dokohilf-build" content="20260806-24">
+  <meta name="dokohilf-build" content="20260806-25">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>DokoHilf – KI-Bedienungshilfe</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="assets/styles.css?v=20260806-24">
-  <style id="dokohilfVisualRefreshV24">
-    :root{--v24-deep:#063f35;--v24-green:#08765e;--v24-mint:#dff5ee;--v24-ink:#10231e;--v24-card:#fff}
-    body{background:radial-gradient(circle at 20% -10%,#d9f4eb 0,transparent 34%),linear-gradient(180deg,#f6fbf9 0,#eef7f3 100%)!important;color:var(--v24-ink)!important}
-    .topbar{margin:10px 10px 0!important;padding:10px 12px!important;border:0!important;border-radius:22px!important;background:linear-gradient(135deg,#063f35 0%,#08765e 100%)!important;box-shadow:0 14px 34px rgba(5,70,57,.24)!important;color:#fff!important}
-    .brand{min-width:0!important}.brand img{border-radius:14px!important;box-shadow:0 6px 18px rgba(0,0,0,.2)!important}.brand strong,.brand small{color:#fff!important}.brand small{display:block!important;opacity:.78!important;font-size:11px!important;letter-spacing:.01em!important}
-    .top-actions{gap:7px!important}.home-button,.new-button{border:1px solid rgba(255,255,255,.26)!important;background:rgba(255,255,255,.12)!important;color:#fff!important;box-shadow:none!important}.home-button svg{stroke:#fff!important}.new-button{min-width:58px!important}
-    .build-pill{min-height:38px;padding:0 11px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:#fff;color:#075744;font:inherit;font-size:12px;font-weight:850;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.12)}
-    .main-content{padding-top:18px!important}.workspace,.start-screen{max-width:850px!important;margin-inline:auto!important}
-    .message .bubble{border:1px solid rgba(5,84,67,.13)!important;border-radius:22px!important;box-shadow:0 9px 24px rgba(20,66,55,.08)!important;background:rgba(255,255,255,.96)!important}
-    .message.assistant .bubble{border-left:5px solid #15a77f!important}.message.user .bubble{background:linear-gradient(135deg,#08765e,#075b49)!important;color:#fff!important;border:0!important;box-shadow:0 10px 25px rgba(5,101,80,.23)!important}
-    .command-row{gap:10px!important}.command-row button{border-radius:18px!important;border:1px solid rgba(5,91,72,.16)!important;background:#fff!important;box-shadow:0 6px 18px rgba(22,70,59,.08)!important}.command-row button[data-command="ich finde das nicht"]{background:#fff7dc!important;border-color:#e3c15e!important}
-    .composer-wrap{background:rgba(246,251,249,.9)!important;backdrop-filter:blur(16px)!important}.composer{border:1px solid rgba(5,91,72,.17)!important;border-radius:20px!important;box-shadow:0 10px 30px rgba(14,77,62,.12)!important}
-    #notfallblattButton,[data-legacy-shortcut],.legacy-voice-shortcut,.persistent-voice-control{display:none!important}
-    @media(max-width:620px){.topbar{margin:7px 7px 0!important;border-radius:18px!important}.brand small{display:none!important}.build-pill{padding:0 9px;font-size:11px}.home-button span{display:none!important}.home-button{width:44px!important;padding:0!important}.message .bubble{border-radius:19px!important}.main-content{padding-inline:12px!important}}
-  </style>
+  <link rel="stylesheet" href="assets/styles.css?v=20260806-25">
+  <link rel="stylesheet" href="assets/premium-ui-v25.css?v=20260806-25" data-dokohilf-premium-v25>
   <script>
     (() => {
       'use strict';
-      const BUILD_ID = '20260806-24';
+      const BUILD_ID = '20260806-25';
       const ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router';
       const CORE_ENDPOINT_MARKER = '/functions/v1/dokohilf-ai';
       const nativeFetch = window.fetch.bind(window);
@@ -46,7 +32,7 @@
       }
 
       window.fetch = (input, init) => nativeFetch(routedInput(input), init);
-      window.__DOKOHILF_DIRECT_ROUTER_V24__ = true;
+      window.__DOKOHILF_DIRECT_ROUTER_V25__ = true;
 
       if ('serviceWorker' in navigator) {
         const nativeRegister = navigator.serviceWorker.register.bind(navigator.serviceWorker);
@@ -100,14 +86,14 @@
   </script>
 </head>
 <body>
-  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260806-24">
+  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260806-25">
     <header class="topbar">
       <div class="brand" aria-label="DokoHilf">
-        <img src="icon.svg" alt="" width="44" height="44">
+        <img src="icon.svg" alt="" width="48" height="48">
         <span><strong>DokoHilf</strong><small>KI-Bedienungshilfe</small></span>
       </div>
       <div class="top-actions">
-        <button class="build-pill" id="buildPill" type="button" aria-label="Version 20260806-24 und Updateprüfung">KI · v24</button>
+        <button class="build-pill" id="buildPill" type="button" aria-label="Version 20260806-25 und Updateprüfung">KI · v25</button>
         <button class="home-button" id="homeButton" type="button" hidden aria-label="Zum Hauptmenü">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></svg>
           <span>Hauptmenü</span>
@@ -119,8 +105,8 @@
     <main class="main-content">
       <section class="start-screen" id="startScreen" aria-labelledby="startTitle">
         <div class="start-copy">
-          <h1 id="startTitle">Wie möchtest du DokoHilf nutzen?</h1>
-          <p>Wähle ein flüssiges Sprachgespräch oder einen klassischen Chat.</p>
+          <h1 id="startTitle">Wobei brauchst du Hilfe?</h1>
+          <p>Sprich mit DokoHilf oder nutze den übersichtlichen Chat.</p>
         </div>
 
         <div class="mode-grid" aria-label="Bedienart auswählen">
@@ -128,7 +114,7 @@
             <span class="mode-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48"><rect x="17" y="7" width="14" height="23" rx="7"/><path d="M11 24v2c0 7 6 13 13 13s13-6 13-13v-2M24 39v5M17 44h14"/></svg>
             </span>
-            <span class="mode-text"><strong>Sprachgespräch</strong><small>Du sprichst. DokoHilf zeigt nur die aktuelle Anweisung, antwortet laut und hört danach weiter zu.</small></span>
+            <span class="mode-text"><strong>Sprachgespräch</strong><small>DokoHilf antwortet mit natürlicher Stimme und zeigt nur die aktuelle Anweisung.</small></span>
             <span class="mode-arrow" aria-hidden="true">›</span>
           </button>
 
@@ -136,13 +122,13 @@
             <span class="mode-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48"><path d="M9 10h30v23H22l-9 7v-7H9z"/><path d="M16 18h16M16 24h11"/></svg>
             </span>
-            <span class="mode-text"><strong>Chat</strong><small>Schreiben oder diktieren. Antworten bleiben übersichtlich zum Nachlesen.</small></span>
+            <span class="mode-text"><strong>Chat</strong><small>Schreiben oder diktieren. Antworten bleiben klar und übersichtlich zum Nachlesen.</small></span>
             <span class="mode-arrow" aria-hidden="true">›</span>
           </button>
         </div>
 
         <div class="examples">
-          <span>Zum Beispiel:</span>
+          <span>Häufige Themen</span>
           <button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe</button>
           <button type="button" data-prompt="Ich möchte einen Bericht schreiben">Bericht</button>
           <button type="button" data-prompt="Ich möchte Vitalwerte eingeben">Vitalwerte</button>
@@ -156,7 +142,7 @@
 
       <section class="workspace" id="workspace" hidden>
         <nav class="mode-switch" aria-label="Bedienart wechseln">
-          <button type="button" data-switch-mode="voice"><span aria-hidden="true">●</span> Sprechen</button>
+          <button type="button" data-switch-mode="voice"><span aria-hidden="true">●</span> Sprachmodus</button>
           <button type="button" data-switch-mode="chat"><span aria-hidden="true">▰</span> Chat</button>
         </nav>
 
@@ -177,7 +163,7 @@
 
         <section class="chat-head" id="chatHead" hidden>
           <h1>Frag DokoHilf</h1>
-          <p>Schreib ganz normal. DokoHilf merkt sich dein Ziel und führt dich nur durch bestätigte Klickwege.</p>
+          <p>Schreib ganz normal. DokoHilf merkt sich dein Ziel und führt dich ausschließlich durch bestätigte Klickwege.</p>
           <div class="quick-prompts">
             <button type="button" data-prompt="Wie komme ich zur Übergabe?">Zur Übergabe</button>
             <button type="button" data-prompt="Ich habe mich in einem Bericht verschrieben">Bericht korrigieren</button>
@@ -214,19 +200,20 @@
     <div class="update-toast" id="updateToast" hidden aria-live="polite">DokoHilf wurde automatisch aktualisiert.</div>
   </div>
 
-  <script src="assets/update-manager.js?v=20260806-24"></script>
-  <script src="assets/mobile-audio-fix.js?v=20260806-24"></script>
-  <script src="assets/voice-diagnostics.js?v=20260806-24"></script>
-  <script src="assets/routing-fix.js?v=20260806-24"></script>
-  <script src="assets/conversation-intelligence.js?v=20260806-24"></script>
-  <script src="assets/clarification-ui.js?v=20260806-24"></script>
-  <script src="assets/guide-progress.js?v=20260806-24"></script>
-  <script src="assets/voice-focus-mode.js?v=20260806-24"></script>
-  <script src="assets/app.js?v=20260806-24" defer></script>
+  <script src="assets/update-manager.js?v=20260806-25"></script>
+  <script src="assets/mobile-audio-fix.js?v=20260806-25"></script>
+  <script src="assets/voice-diagnostics.js?v=20260806-25"></script>
+  <script src="assets/routing-fix.js?v=20260806-25"></script>
+  <script src="assets/conversation-intelligence.js?v=20260806-25"></script>
+  <script src="assets/clarification-ui.js?v=20260806-25"></script>
+  <script src="assets/guide-progress.js?v=20260806-25"></script>
+  <script src="assets/voice-focus-mode.js?v=20260806-25"></script>
+  <script src="assets/experience-v25.js?v=20260806-25"></script>
+  <script src="assets/app.js?v=20260806-25" defer></script>
   <script>
     document.getElementById('buildPill')?.addEventListener('click', () => {
       if (window.DokoHilfUpdate?.checkForUpdate) window.DokoHilfUpdate.checkForUpdate('manual');
-      else window.DokoHilfHardRefresh?.('20260806-24');
+      else window.DokoHilfHardRefresh?.('20260806-25');
     });
   </script>
 </body>

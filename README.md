@@ -1,6 +1,16 @@
 # DokoHilf
 
-DokoHilf ist ein sicherer Prototyp für interne Schritt-für-Schritt-Anleitungen zu Dokumentationsabläufen.
+DokoHilf ist eine unabhängige interne Schritt-für-Schritt-Hilfe für Dokumentationsabläufe.
+
+## Start für jeden neuen Chat
+
+Vor jeder Arbeit sind diese Dateien vollständig zu lesen:
+
+1. [`PROJECT_RULES.md`](./PROJECT_RULES.md) – verbindliche Sicherheits-, Datenschutz- und Projektregeln
+2. [`PROJECT_HANDOFF.md`](./PROJECT_HANDOFF.md) – aktueller Stand, Architektur, bestätigte Abläufe, Entscheidungen und offene Arbeiten
+3. anschließend tatsächlichen GitHub-, Actions-, Pages- und Supabase-Stand prüfen
+
+Die Übergabe ist dauerhaft im Repository zu pflegen, damit ein neuer Chat nicht wieder bei null beginnt.
 
 ## Fester öffentlicher Hauptlink
 
@@ -10,15 +20,13 @@ Das ist der einzige feste öffentliche Link von DokoHilf. Er wird nicht als „T
 
 ## Aktueller Stand
 
-- privates, eigenständiges GitHub-Repository
+- eigenständiges GitHub-Repository
 - getrenntes Supabase-Projekt in Frankfurt
 - ausschließlich Fantasie- und Platzhalterdaten
 - keine Bewohner-, Gesundheits- oder Mitarbeiterdaten
 - keine Logos, kopierten Handbücher oder geschützten Schulungsunterlagen
-
-## Verbindliche Regeln
-
-Vor jeder Änderung muss [`PROJECT_RULES.md`](./PROJECT_RULES.md) vollständig gelesen und eingehalten werden.
+- zustandsbasierte, redaktionell freigegebene Schritt-für-Schritt-Anleitungen
+- PWA-Veröffentlichung über `main` und den tatsächlich ausgelieferten Branch `gh-pages`
 
 ## Projektgrenzen
 
