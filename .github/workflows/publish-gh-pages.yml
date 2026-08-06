@@ -26,6 +26,8 @@ jobs:
           cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _site/
           cp \
             assets/styles.css \
+            assets/premium-ui-v25.css \
+            assets/experience-v25.js \
             assets/update-manager.js \
             assets/mobile-audio-fix.js \
             assets/voice-diagnostics.js \
@@ -42,9 +44,13 @@ jobs:
 
           test -s _site/index.html
           test -s _site/version.json
-          grep -q 'dokohilf-build" content="20260806-24' _site/index.html
-          grep -q 'KI · v24' _site/index.html
-          grep -q '"buildId": "20260806-24"' _site/version.json
+          test -s _site/assets/premium-ui-v25.css
+          test -s _site/assets/experience-v25.js
+          grep -q 'dokohilf-build" content="20260806-25' _site/index.html
+          grep -q 'KI · v25' _site/index.html
+          grep -q 'premium-ui-v25.css?v=20260806-25' _site/index.html
+          grep -q 'experience-v25.js?v=20260806-25' _site/index.html
+          grep -q '"buildId": "20260806-25"' _site/version.json
 
       - name: Publish exact site to gh-pages
         env:
