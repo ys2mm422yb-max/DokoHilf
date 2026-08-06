@@ -4,9 +4,8 @@ import { readFile } from 'node:fs/promises';
 
 await import('../assets/guide-progress.js');
 
-const { formatProgress } = globalThis.DokoHilfGuideProgress;
+const { formatProgress, addGuideStateToBody } = globalThis.DokoHilfGuideProgress;
 const script = await readFile(new URL('../assets/guide-progress.js', import.meta.url), 'utf8');
-const edgeFunction = await readFile(new URL('../supabase/functions/dokohilf-guide-state/index.ts', import.meta.url), 'utf8');
 
 test('Schrittanzeige wird verständlich formatiert', () => {
   assert.equal(formatProgress(1, 6), 'Schritt 1 von 6');
@@ -14,22 +13,34 @@ test('Schrittanzeige wird verständlich formatiert', () => {
   assert.equal(formatProgress(0, 0), 'Schritt 1 von 1');
 });
 
+test('aktueller Guide-Schritt wird jeder KI-Anfrage explizit mitgegeben', () => {
+  const body = addGuideStateToBody(
+    JSON.stringify({ messages: [{ role: 'user', content: 'Ja' }], guideSlug: 'vitalwerte-erfassen' }),
+    { guideSlug: 'vitalwerte-erfassen', guideStep: 2, guideStepCount: 3 },
+  );
+  const parsed = JSON.parse(body);
+  assert.equal(parsed.guideStep, 2);
+  assert.equal(parsed.guideStepCount, 3);
+  assert.equal(parsed.guideStateVersion, 2);
+});
+
 test('Guide-Leiste besitzt alle erforderlichen Bedienaktionen', () => {
-  assert.match(script, /Schritt zurück/);
-  assert.match(script, /Ablauf neu starten/);
-  assert.match(script, /Anderen Ablauf wählen/);
+  assert.match(script, /data-guide-action="back"/);
+  assert.match(script, /data-guide-action="restart"/);
+  assert.match(script, /data-guide-action="change"/);
   assert.match(script, /currentGuide/);
   assert.match(script, /commandRow/);
 });
 
-test('Ablauf-Neustart startet denselben Guide direkt und ohne Zwischenbegrüßung', () => {
-  assert.match(script, /api\.sendMessage\(currentGuide\.guideTitle \|\| currentGuide\.guideSlug\)/);
-  assert.doesNotMatch(script, /resetWithoutGreeting/);
+test('Antwortmetadaten steuern den sichtbaren Schritt direkt', () => {
+  assert.match(script, /payload\.guideStep/);
+  assert.match(script, /payload\.guideStepCount/);
+  assert.match(script, /guideStateVersion/);
+  assert.match(script, /dokohilf:guide-state/);
+  assert.doesNotMatch(script, /dokohilf-guide-state/);
 });
 
-test('Fortschritts-Endpunkt gibt nur Metadaten und keine Klickschritte zurück', () => {
-  assert.match(edgeFunction, /guideStepCount/);
-  assert.match(edgeFunction, /guideStep/);
-  assert.match(edgeFunction, /guideTitle/);
-  assert.doesNotMatch(edgeFunction, /steps:\s*guide\.steps/);
+test('Ablauf-Neustart setzt den Schrittzustand auf eins', () => {
+  assert.match(script, /guideStep: 1/);
+  assert.match(script, /api\.sendMessage\(currentGuide\.guideTitle \|\| currentGuide\.guideSlug\)/);
 });
