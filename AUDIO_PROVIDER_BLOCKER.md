@@ -1,43 +1,68 @@
-# Externer Blocker der statischen Guide-Audioerzeugung
+# Externer Blocker der vollständigen Guide-Audiobibliothek
 
 **Stand:** 6. August 2026  
-**Betroffener Ziel-Build:** `20260806-27`  
-**Betroffener PR:** `#50`
+**Ziel-Build:** `20260806-27`  
+**Aktiver PR:** `#51`
 
 ## Ziel
 
-Für 92 eindeutige freigegebene Guide-Schritte und die allgemeine Begrüßung sollen insgesamt 93 statische WAV-Dateien mit der Stimme Gacrux erzeugt werden. Nutzer-, Bewohner- und Gesprächsdaten sind davon vollständig ausgeschlossen.
+Für 92 eindeutige freigegebene Guide-Schritte und die allgemeine Begrüßung sollen insgesamt 93 statische WAV-Dateien mit der Stimme Gacrux erzeugt werden. Nutzer-, Bewohner- und Gesprächsdaten sind vollständig ausgeschlossen.
 
-## Technischer Stand
+## TTS-Fehler behoben
 
-- TTS-Funktion `dokohilf-tts` ist in Supabase als Version 19 aktiv.
-- Primärweg: Gemini Interactions API mit `gemini-3.1-flash-tts-preview`.
-- Fallback: Gemini 2.5 Flash TTS und danach der bisherige Generate-Content-Weg.
-- Live-Antworten weisen Stimme, Modell, API-Weg, Stil, Cache und Laufzeit in Response-Headern aus.
-- Die App fällt bei freien Antworten nach rund 1,9 Sekunden auf die lokale Sofortstimme zurück.
+Der vorherige Echtzeitfehler war nicht ausschließlich ein Providerproblem. TTS v19 suchte beim rohen Gemini-Interactions-REST-Response primär im SDK-Komfortfeld `output_audio`. Das echte REST-Audio liegt in `steps[].content[]`.
 
-## Nachgewiesene Providerprobleme
+TTS v20 ist aktiv und:
 
-1. Einzelne Echtzeit-TTS-Anfragen schwankten zwischen HTTP 200, 429, 502 und 504.
-2. Mehrere parallele oder wiederholte Erzeugungsversuche führten zu HTTP 429. Bereits erfolgreiche Teildateien werden im aktuellen Generator deshalb dauerhaft checkpoint-basiert gesichert.
-3. Fünf offizielle Gemini-Batchversuche für die Bereiche 0–19, 20–39, 40–59, 60–79 und 80–92 wurden mit `FAILED_PRECONDITION` abgewiesen.
-4. Die aktuelle offizielle Gemini-Preisdokumentation weist die Batch API ausschließlich für die kostenpflichtige Stufe aus; in der kostenlosen Stufe ist sie nicht verfügbar.
-5. Sowohl `gemini-3.1-flash-tts-preview` als auch `gemini-2.5-flash-preview-tts` unterstützen grundsätzlich die Batch API. Das aktuelle Google-Projekt erfüllt jedoch die Abrechnungs-/Freischaltungsvoraussetzung nicht.
+- liest das rohe Audio mit Parser `raw-steps-content-v1`
+- erzeugt gültige RIFF/WAVE-Dateien
+- gibt echte Providerstatus weiter
+- verwendet Gacrux und primär `gemini-3.1-flash-tts-preview`
 
-## Konsequenz
+Live nachgewiesen wurden HTTP 200, `audio/wav`, 101804 Bytes, Gacrux, Gemini 3.1, Interactions API und ein gültiger RIFF/WAVE-Anfang.
 
-- Die 93 statischen Audiodateien sind noch nicht vollständig erzeugt.
-- PR #50 bleibt Draft und darf nicht gemergt oder veröffentlicht werden.
-- Die Oberfläche, Dialoglogik und mobile Darstellung werden unabhängig davon vollständig geprüft.
-- Ein finaler Audioerzeugungslauf ist erst sinnvoll, wenn entweder die kostenpflichtige Gemini-Stufe für den verwendeten API-Schlüssel aktiviert wurde oder die Echtzeit-Quota nachweislich genügend Kapazität für eine langsam checkpoint-basierte Erzeugung bietet.
-- Es werden keine stummen Platzhalter, falschen Stimmen oder ungeprüften Audiodateien veröffentlicht.
+Damit ist die natürliche Live-Stimme technisch wieder funktionsfähig. Der verbleibende Blocker betrifft ausschließlich die schnelle vollständige Massenerzeugung von 93 unterschiedlichen Dateien.
 
-## Aufgeräumte temporäre Infrastruktur
+## Nachgewiesene Providergrenze
 
-- Die temporären Supabase-Hilfstabellen und das interne Export-Schema wurden wieder gelöscht.
-- Die temporären Audio-Export-, Batch-, Store- und Batch-Submit-Edge-Functions antworten nur noch mit HTTP 410 und führen keine Erzeugung mehr aus.
-- Die produktive Routerfunktion und `dokohilf-tts` Version 19 bleiben aktiv.
+1. Einzelne TTS-Anfragen können erfolgreich mit HTTP 200 antworten.
+2. Weitere unterschiedliche Erzeugungen werden aktuell häufig mit HTTP 429 begrenzt.
+3. Mehrere parallele oder schnelle Wiederholungen sind deshalb ungeeignet.
+4. Offizielle Gemini-Batchversuche wurden mit `FAILED_PRECONDITION` abgewiesen.
+5. Die aktuelle Batchnutzung steht mit dem verwendeten kostenlosen Google-Projekt nicht zur Verfügung.
 
-## Harte Abschlussbedingung
+## Sichere Teilrollout-Lösung
 
-Vor einem Merge müssen exakt 93 gültige Gacrux-WAV-Dateien einschließlich vollständigem Manifest, Dateigröße, SHA-256 und RIFF-/WAVE-Prüfung im Branch liegen. Danach muss der exakte PR-Head alle Fach-, Datenschutz-, Audio-, Build- und iPhone-Renderprüfungen bestehen.
+- private Speicherung im Supabase-Bucket `dokohilf-guide-audio`
+- Registry `public.dokohilf_static_guide_audio`
+- kontrollierter Leseendpunkt `dokohilf-guide-audio`
+- token-geschützter Builder `dokohilf-guide-audio-build` v2
+- zufälliges Token ausschließlich in `public.dokohilf_internal_build_control`
+- externer Aufruf ohne Token liefert HTTP 403
+- höchstens ein Versuch pro Stunde
+- ausschließlich nächster fehlender Index
+- keine erneute Erzeugung fertiger Dateien
+- automatische Deaktivierung bei 93/93
+
+Zuletzt verifiziert war 1/93 vollständig gespeichert. Dieser Wert ist veränderlich und muss live geprüft werden.
+
+## Veröffentlichungsfolge
+
+Der Blocker hält nicht länger die sichtbare Dark-UI zurück:
+
+- vorhandene statische Dateien werden bevorzugt
+- fehlende Dateien nutzen TTS v20
+- nach rund 1,9 Sekunden greift die lokale Sofortstimme
+- die App bleibt vollständig bedienbar
+
+Build 27 darf nach vollständig grünen Fach-, Datenschutz-, TTS-, Build- und iPhone-Prüfungen veröffentlicht werden, auch wenn die private Bibliothek noch nicht 93/93 erreicht hat.
+
+Der vollständige Audioabschluss bleibt separat streng prüfbar:
+
+```bash
+DOKOHILF_REQUIRE_COMPLETE_AUDIO=1 node scripts/live-static-guide-audio-smoke.mjs
+```
+
+## Unveränderte Qualitätsgrenze
+
+Es werden niemals stumme Platzhalter, falsche Stimmen, ungeprüfte WAV-Dateien oder personenbezogene Audios veröffentlicht. Jeder vorhandene statische Eintrag benötigt gültigen RIFF/WAVE-Inhalt, Dateigröße, SHA-256, Gacrux, Modell-, API-, Parser- und Stilnachweis.
