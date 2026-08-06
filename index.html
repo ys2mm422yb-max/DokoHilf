@@ -8,16 +8,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="DokoHilf">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="dokohilf-build" content="20260806-19">
+  <meta name="dokohilf-build" content="20260806-20">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>DokoHilf – KI-Bedienungshilfe</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="assets/styles.css?v=20260806-19">
+  <link rel="stylesheet" href="assets/styles.css?v=20260806-20">
 </head>
 <body>
-  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260806-19">
+  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260806-20">
     <header class="topbar">
       <div class="brand" aria-label="DokoHilf">
         <img src="icon.svg" alt="" width="44" height="44">
@@ -44,7 +44,7 @@
             <span class="mode-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48"><rect x="17" y="7" width="14" height="23" rx="7"/><path d="M11 24v2c0 7 6 13 13 13s13-6 13-13v-2M24 39v5M17 44h14"/></svg>
             </span>
-            <span class="mode-text"><strong>Sprachgespräch</strong><small>Du sprichst. DokoHilf antwortet mit einer natürlichen Stimme und hört danach weiter zu.</small></span>
+            <span class="mode-text"><strong>Sprachgespräch</strong><small>Du sprichst. DokoHilf zeigt nur die aktuelle Anweisung, antwortet laut und hört danach weiter zu.</small></span>
             <span class="mode-arrow" aria-hidden="true">›</span>
           </button>
 
@@ -61,7 +61,7 @@
           <span>Zum Beispiel:</span>
           <button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe</button>
           <button type="button" data-prompt="Ich möchte einen Bericht schreiben">Bericht</button>
-          <button type="button" data-prompt="Wo finde ich die Vitalwerte?">Vitalwerte</button>
+          <button type="button" data-prompt="Ich möchte einen Vitalwert erfassen">Vitalwerte</button>
         </div>
 
         <div class="safety-note" role="note">
@@ -130,12 +130,13 @@
     <div class="update-toast" id="updateToast" hidden aria-live="polite">DokoHilf wurde automatisch aktualisiert.</div>
   </div>
 
-  <script src="assets/update-manager.js?v=20260806-19"></script>
-  <script src="assets/mobile-audio-fix.js?v=20260806-19"></script>
-  <script src="assets/voice-diagnostics.js?v=20260806-19"></script>
-  <script src="assets/routing-fix.js?v=20260806-19"></script>
-  <script src="assets/clarification-ui.js?v=20260806-19"></script>
-  <script src="assets/guide-progress.js?v=20260806-19"></script>
-  <script src="assets/app.js?v=20260806-19" defer></script>
+  <script src="assets/update-manager.js?v=20260806-20"></script>
+  <script src="assets/mobile-audio-fix.js?v=20260806-20"></script>
+  <script src="assets/voice-diagnostics.js?v=20260806-20"></script>
+  <script src="assets/routing-fix.js?v=20260806-20"></script>
+  <script src="assets/clarification-ui.js?v=20260806-20"></script>
+  <script src="assets/guide-progress.js?v=20260806-20"></script>
+  <script src="assets/voice-focus-mode.js?v=20260806-20"></script>
+  <script src="assets/app.js?v=20260806-20" defer></script>
 </body>
 </html>
