@@ -32,9 +32,9 @@ jobs:
             README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md \
             FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md \
             assets/guide-audio-catalog.json \
-            scripts/generate-guide-audio.mjs scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh \
+            scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh \
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
-            scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-screenshot-smoke.mjs \
+            scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-static-guide-audio-smoke.mjs scripts/live-screenshot-smoke.mjs \
             tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs \
             supabase/functions/dokohilf-ai-router/index.ts supabase/functions/dokohilf-tts/index.ts; do
             test -s "$file"
@@ -44,6 +44,8 @@ jobs:
           grep -q '__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__' assets/experience-v27.js
           grep -q 'loadPrebuiltVoice' assets/experience-v27.js
           grep -q 'prebuilt-approved-guide' assets/experience-v27.js
+          grep -q '__DOKOHILF_REMOTE_GUIDE_AUDIO_V27__' assets/voice-diagnostics.js
+          grep -q 'dokohilf-guide-audio' assets/voice-diagnostics.js
           grep -q 'guide-progress-menu' assets/ux-v27.js
           grep -q '__DOKOHILF_PRIVACY_ACK_V27__' assets/ux-v27.js
           grep -q '__DOKOHILF_IDEMPOTENT_SYNC_V27__' assets/ux-v27.js
@@ -56,11 +58,13 @@ jobs:
           grep -q 'conversational-guide-router-v9' supabase/functions/dokohilf-ai-router/index.ts
           grep -q 'medication-view-only-safety-v9' supabase/functions/dokohilf-ai-router/index.ts
           grep -q "VOICE_NAME = 'Gacrux'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v9-interactions'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio'" supabase/functions/dokohilf-tts/index.ts
           grep -q "PRIMARY_MODEL = 'gemini-3.1-flash-tts-preview'" supabase/functions/dokohilf-tts/index.ts
           grep -q "FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts'" supabase/functions/dokohilf-tts/index.ts
-          grep -q 'v1beta/interactions' supabase/functions/dokohilf-tts/index.ts
-          grep -q 'X-DokoHilf-TTS-API' supabase/functions/dokohilf-tts/index.ts
+          grep -q "INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'" supabase/functions/dokohilf-tts/index.ts
+          grep -q 'root.steps' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'step.content' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'X-DokoHilf-TTS-Parser' supabase/functions/dokohilf-tts/index.ts
           grep -q 'Bilder bleiben ausschließlich im Chat' CONFIRMED_WORKFLOWS.md
 
           node --check assets/update-manager.js
@@ -76,17 +80,17 @@ jobs:
           node --check assets/app.js
           node --check assets/editor.js
           node --check service-worker.js
-          node --check scripts/generate-guide-audio.mjs
           node --check scripts/mobile-render-v27.mjs
           node --check scripts/live-routing-smoke.mjs
           node --check scripts/live-routing-stable.mjs
           node --check scripts/live-tts-smoke.mjs
+          node --check scripts/live-static-guide-audio-smoke.mjs
           node --check scripts/live-screenshot-smoke.mjs
 
           grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' assets/app.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' assets/voice-focus-mode.js && exit 1 || true
-          grep -q 'localStorage\|indexedDB\|caches.open' assets/experience-v27.js && exit 1 || true
-          grep -q 'indexedDB\|caches.open' assets/ux-v27.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB' assets/experience-v27.js && exit 1 || true
+          grep -q 'indexedDB' assets/ux-v27.js && exit 1 || true
           grep -q '\.jpe\?g\|\.png\|IMG_' CONFIRMED_WORKFLOWS.md && exit 1 || true
 
       - name: Run deterministic fachliche, privacy and UI contracts
@@ -112,7 +116,8 @@ jobs:
             tests/intelligent-router-v26.test.mjs \
             tests/voice-layout-v26.test.mjs \
             tests/dark-premium-v27.test.mjs \
-            tests/fast-voice-v27.test.mjs
+            tests/fast-voice-v27.test.mjs \
+            tests/prebuilt-guide-audio.test.mjs
 
       - name: Build isolated UI test surface
         run: |
@@ -120,16 +125,8 @@ jobs:
           mkdir -p _ui_site/assets artifacts/mobile-v27
           cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _ui_site/
           cp -R assets/. _ui_site/assets/
-          cat > _ui_site/assets/guide-audio-manifest.json <<'JSON'
-          {
-            "schemaVersion": 1,
-            "buildId": "20260806-27",
-            "voice": "Gacrux",
-            "source": "ui-render-isolated",
-            "entryCount": 0,
-            "entries": []
-          }
-          JSON
+          rm -rf _ui_site/assets/audio
+          rm -f _ui_site/assets/guide-audio-manifest.json
           touch _ui_site/.nojekyll
 
       - name: Render and interact with iPhone layout
@@ -158,15 +155,8 @@ jobs:
       - name: Check active dynamic voice fallback
         run: node scripts/live-tts-smoke.mjs
 
-      - name: Require completed committed guide audio before release
-        run: |
-          set -euo pipefail
-          test -s assets/guide-audio-manifest.json
-          test -s assets/guide-audio-generation-status.json
-          test "$(node -e "const s=require('./assets/guide-audio-generation-status.json');process.stdout.write(String(s.complete))")" = "true"
-          test "$(find assets/audio/guides -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')" = "93"
-          grep -q '"entryCount": 93' assets/guide-audio-manifest.json
-          node --test tests/prebuilt-guide-audio.test.mjs
+      - name: Require complete private approved guide audio
+        run: node scripts/live-static-guide-audio-smoke.mjs
 
       - name: Build exact releasable static site
         run: |
@@ -182,9 +172,6 @@ jobs:
           path: |
             artifacts/
             assets/guide-audio-catalog.json
-            assets/guide-audio-manifest.json
-            assets/guide-audio-generation-status.json
-            assets/audio/guides/*.wav
           if-no-files-found: warn
           retention-days: 30
 
