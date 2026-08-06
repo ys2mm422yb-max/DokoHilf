@@ -1,0 +1,100 @@
+/* DokoHilf build 26: non-overlapping voice layout and calmer loading state. */
+:root{--dh-v26-instruction-max:210px}
+
+.voice-focus-inner{
+  min-height:0!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  overflow:hidden!important;
+}
+.voice-focus-main{
+  width:100%!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-rows:minmax(92px,auto) minmax(0,1fr)!important;
+  align-items:center!important;
+  justify-items:center!important;
+  align-content:stretch!important;
+  gap:12px!important;
+  overflow:hidden!important;
+}
+.voice-focus-instruction{
+  position:relative!important;
+  z-index:4!important;
+  box-sizing:border-box!important;
+  width:min(720px,100%)!important;
+  max-height:min(var(--dh-v26-instruction-max),29dvh)!important;
+  overflow:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  scrollbar-width:thin!important;
+}
+.voice-focus-instruction p{
+  overflow-wrap:anywhere!important;
+  hyphens:auto!important;
+  text-wrap:pretty!important;
+}
+#voiceFocusConsoleSlot{
+  position:relative!important;
+  z-index:2!important;
+  display:grid!important;
+  place-items:center!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  overflow:visible!important;
+}
+.voice-focus-stage .voice-console{
+  position:relative!important;
+  z-index:2!important;
+  max-height:100%!important;
+  justify-content:center!important;
+}
+.voice-focus-stage .voice-orb{
+  flex:0 0 auto!important;
+  width:clamp(158px,24dvh,218px)!important;
+  height:clamp(158px,24dvh,218px)!important;
+}
+.voice-focus-stage .voice-copy{
+  position:relative!important;
+  z-index:3!important;
+  margin-top:12px!important;
+}
+.voice-focus-stage .voice-copy strong:after{content:none!important;display:none!important;animation:none!important}
+.app-shell[data-voice-state="thinking"] .voice-focus-stage .voice-copy strong:after{content:none!important;display:none!important}
+.voice-focus-stage .voice-engine-badge{white-space:normal!important;text-align:center!important}
+
+@media(max-width:680px){
+  :root{--dh-v26-instruction-max:176px}
+  .voice-focus-inner{padding-top:10px!important;gap:9px!important}
+  .voice-focus-main{grid-template-rows:minmax(82px,auto) minmax(0,1fr)!important;gap:9px!important}
+  .voice-focus-instruction{padding:14px 16px!important;border-radius:20px!important}
+  .voice-focus-instruction p{font-size:clamp(17px,4.75vw,22px)!important;line-height:1.27!important}
+  .voice-focus-stage .voice-orb{width:clamp(142px,21dvh,186px)!important;height:clamp(142px,21dvh,186px)!important}
+  .voice-focus-stage .mic-symbol svg{width:62px!important;height:62px!important}
+  .voice-focus-stage .voice-copy{margin-top:9px!important}
+  .voice-focus-stage .voice-copy strong{font-size:18px!important}
+  .voice-focus-stage .voice-copy>span:not(.voice-engine-badge){font-size:12px!important}
+  .voice-focus-stage .pause-button{min-height:42px!important;margin-top:8px!important}
+}
+
+@media(max-height:760px){
+  :root{--dh-v26-instruction-max:144px}
+  .voice-focus-inner{padding-top:7px!important;padding-bottom:calc(12px + env(safe-area-inset-bottom))!important;gap:7px!important}
+  .voice-focus-main{grid-template-rows:minmax(68px,auto) minmax(0,1fr)!important;gap:6px!important}
+  .voice-focus-instruction{padding:11px 14px!important}
+  .voice-focus-instruction p{font-size:17px!important;line-height:1.23!important}
+  .voice-focus-stage .voice-orb{width:126px!important;height:126px!important}
+  .voice-focus-stage .mic-symbol svg{width:52px!important;height:52px!important}
+  .voice-focus-stage .voice-copy{margin-top:6px!important}
+  .voice-focus-stage .voice-copy strong{font-size:17px!important}
+  .voice-focus-stage .voice-engine-badge{margin-top:5px!important}
+  .voice-focus-stage .pause-button{min-height:38px!important;margin-top:5px!important}
+  .voice-focus-actions button{min-height:40px!important}
+}
+
+@media(max-height:650px){
+  :root{--dh-v26-instruction-max:112px}
+  .voice-focus-stage .voice-orb{width:104px!important;height:104px!important}
+  .voice-focus-stage .voice-copy>span:not(.voice-engine-badge){display:none!important}
+  .voice-engine-badge{display:none!important}
+}
