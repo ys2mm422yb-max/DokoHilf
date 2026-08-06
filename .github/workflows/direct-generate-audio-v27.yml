@@ -11,6 +11,9 @@ on:
       - assets/guide-audio-manifest.json
       - assets/audio/guides/**
       - scripts/generate-guide-audio.mjs
+      - scripts/live-tts-smoke.mjs
+      - supabase/functions/dokohilf-tts/index.ts
+      - tests/fast-voice-v27.test.mjs
       - tests/prebuilt-guide-audio.test.mjs
   workflow_dispatch:
 
@@ -40,8 +43,6 @@ jobs:
 
       - name: Generate the next approved Gacrux audio batch
         id: generate
-        env:
-          DOKOHILF_TTS_API: interactions-v1beta
         run: |
           set +e
           node scripts/generate-guide-audio.mjs
