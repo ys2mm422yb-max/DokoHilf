@@ -37,7 +37,8 @@ test('Antwortmetadaten steuern den sichtbaren Schritt direkt', () => {
   assert.match(script, /payload\.guideStepCount/);
   assert.match(script, /guideStateVersion/);
   assert.match(script, /dokohilf:guide-state/);
-  assert.doesNotMatch(script, /dokohilf-guide-state/);
+  assert.doesNotMatch(script, /const STATE_ENDPOINT/);
+  assert.doesNotMatch(script, /loadGuideState/);
 });
 
 test('Ablauf-Neustart setzt den Schrittzustand auf eins', () => {
