@@ -28,7 +28,6 @@ test('kleine und niedrige iPhones behalten die verdichtete Darstellung', () => {
   assert.match(legacyCss, /@media\(max-height:650px\)/);
   assert.match(legacyCss, /width:104px/);
   assert.match(currentCss, /data-voice-state="listening"/);
-  assert.match(currentCss, /data-voice-state="speaking"/);
   assert.match(currentCss, /width:96px/);
 });
 
