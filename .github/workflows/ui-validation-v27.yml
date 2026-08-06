@@ -2,7 +2,7 @@ name: Validate dark iPhone UI v27
 
 on:
   push:
-    branches: [feat/dark-premium-static-guide-audio-v27]
+    branches: [feat/dark-premium-v27-final]
     paths:
       - index.html
       - service-worker.js
