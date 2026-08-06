@@ -27,8 +27,9 @@ test('kleine und niedrige iPhones behalten die verdichtete Darstellung', () => {
   assert.match(legacyCss, /@media\(max-height:760px\)/);
   assert.match(legacyCss, /@media\(max-height:650px\)/);
   assert.match(legacyCss, /width:104px/);
-  assert.match(currentCss, /@media\(max-width:680px\)/);
-  assert.match(currentCss, /@media\(max-height:760px\)/);
+  assert.match(currentCss, /data-voice-state="listening"/);
+  assert.match(currentCss, /data-voice-state="speaking"/);
+  assert.match(currentCss, /width:96px/);
 });
 
 test('Ladehinweis bleibt ohne buggy animierte Punkte', () => {
