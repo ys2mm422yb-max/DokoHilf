@@ -1,6 +1,8 @@
 const BUILD_ID = '20260806-27';
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}`;
-const AUDIO_MANIFEST = './assets/guide-audio-manifest.json?v=20260806-27';
+const AUDIO_CACHE_NAME = `dokohilf-approved-guide-audio-${BUILD_ID}`;
+const AUDIO_MANIFEST = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-guide-audio?manifest=1&build=20260806-27';
+const GUIDE_AUDIO_MARKER = '/functions/v1/dokohilf-guide-audio';
 const CORE_FILES = [
   './',
   './index.html',
@@ -11,7 +13,6 @@ const CORE_FILES = [
   './assets/premium-ui-v27.css?v=20260806-27',
   './assets/ux-v27.css?v=20260806-27',
   './assets/guide-audio-catalog.json?v=20260806-27',
-  AUDIO_MANIFEST,
   './assets/update-manager.js?v=20260806-27',
   './assets/mobile-audio-fix.js?v=20260806-27',
   './assets/voice-diagnostics.js?v=20260806-27',
@@ -28,29 +29,32 @@ const CORE_FILES = [
 ];
 
 async function cacheApprovedGuideAudio() {
-  const cache = await caches.open(CACHE_NAME);
-  const response = await fetch(AUDIO_MANIFEST, { cache: 'reload' });
-  if (!response.ok) return { cached: 0, total: 0 };
+  const cache = await caches.open(AUDIO_CACHE_NAME);
+  const response = await fetch(AUDIO_MANIFEST, { cache: 'no-store', mode: 'cors' });
+  if (!response.ok) return { cached: 0, total: 0, complete: false };
+  const manifest = await response.clone().json();
+  if (manifest?.voice !== 'Gacrux' || !Array.isArray(manifest?.entries)) {
+    return { cached: 0, total: 0, complete: false };
+  }
   await cache.put(AUDIO_MANIFEST, response.clone());
-  const manifest = await response.json();
-  const files = Array.isArray(manifest?.entries)
-    ? [...new Set(manifest.entries.map(entry => entry?.file).filter(file => typeof file === 'string'))]
-    : [];
+  const files = [...new Set(manifest.entries
+    .map(entry => entry?.file)
+    .filter(file => typeof file === 'string' && file.includes(GUIDE_AUDIO_MARKER)))];
 
   let cached = 0;
-  for (let index = 0; index < files.length; index += 8) {
-    const batch = files.slice(index, index + 8);
+  for (let index = 0; index < files.length; index += 4) {
+    const batch = files.slice(index, index + 4);
     const results = await Promise.allSettled(batch.map(async file => {
-      const existing = await cache.match(file, { ignoreSearch: true });
+      const existing = await cache.match(file);
       if (existing) return true;
-      const audio = await fetch(file, { cache: 'reload' });
+      const audio = await fetch(file, { cache: 'force-cache', mode: 'cors' });
       if (!audio.ok || !/audio\/wav/i.test(audio.headers.get('content-type') || '')) return false;
       await cache.put(file, audio.clone());
       return true;
     }));
     cached += results.filter(result => result.status === 'fulfilled' && result.value === true).length;
   }
-  return { cached, total: files.length };
+  return { cached, total: files.length, complete: manifest.complete === true && files.length === 93 };
 }
 
 self.addEventListener('install', event => {
@@ -64,9 +68,11 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(key => key.startsWith('dokohilf-') && key !== CACHE_NAME).map(key => caches.delete(key)));
+    await Promise.all(keys
+      .filter(key => key.startsWith('dokohilf-') && key !== CACHE_NAME && key !== AUDIO_CACHE_NAME)
+      .map(key => caches.delete(key)));
     if (self.registration.navigationPreload) await self.registration.navigationPreload.enable().catch(() => {});
-    await cacheApprovedGuideAudio().catch(() => ({ cached: 0, total: 0 }));
+    await cacheApprovedGuideAudio().catch(() => ({ cached: 0, total: 0, complete: false }));
     await self.clients.claim();
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const client of clients) client.postMessage({ type: 'DOKOHILF_UPDATED', buildId: BUILD_ID, hardRefresh: true });
@@ -101,13 +107,15 @@ async function networkFirst(request) {
   }
 }
 
-async function cacheFirstAudio(request) {
-  const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(request, { ignoreSearch: true });
+async function cacheFirstApprovedAudio(request) {
+  const cache = await caches.open(AUDIO_CACHE_NAME);
+  const cached = await cache.match(request);
   if (cached) return cached;
   try {
-    const response = await fetch(request, { cache: 'reload' });
-    if (response.ok) await cache.put(request, response.clone());
+    const response = await fetch(request, { cache: 'force-cache', mode: 'cors' });
+    if (response.ok && /audio\/wav/i.test(response.headers.get('content-type') || '')) {
+      await cache.put(request, response.clone());
+    }
     return response;
   } catch {
     return Response.error();
@@ -118,15 +126,34 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
+
+  if (url.href === AUDIO_MANIFEST) {
+    event.respondWith((async () => {
+      try {
+        const response = await fetch(request, { cache: 'no-store', mode: 'cors' });
+        if (response.ok) {
+          const cache = await caches.open(AUDIO_CACHE_NAME);
+          await cache.put(request, response.clone());
+        }
+        return response;
+      } catch {
+        return (await caches.match(request)) || Response.error();
+      }
+    })());
+    return;
+  }
+
+  if (url.pathname.includes(GUIDE_AUDIO_MARKER) && url.searchParams.has('index')) {
+    event.respondWith(cacheFirstApprovedAudio(request));
+    return;
+  }
+
   if (url.origin !== self.location.origin) return;
   if (url.pathname.endsWith('/version.json') || url.pathname.endsWith('/service-worker.js')) {
     event.respondWith(fetch(request, { cache: 'no-store' }));
     return;
   }
-  if (url.pathname.includes('/assets/audio/guides/') && url.pathname.endsWith('.wav')) {
-    event.respondWith(cacheFirstAudio(request));
-    return;
-  }
+
   event.respondWith((async () => {
     if (request.mode === 'navigate') {
       try {
