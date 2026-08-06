@@ -43,6 +43,13 @@ test('Router klärt unbestimmte Korrekturen und nutzt nur freigegebene Guides', 
   assert.match(router, /selectedGuideSlug/);
 });
 
+test('bestätigte freie Antworten bleiben im laufenden Guide und gehen weiter', () => {
+  assert.match(router, /isGuideProgressConfirmation/);
+  assert.match(router, /Ich habe Blutdruck ausgewählt/);
+  assert.match(router, /runGuideCommand\(origin, parsed, messages, activeGuide, 'weiter'\)/);
+  assert.match(router, /guide-context-clarification/);
+});
+
 test('interne Freigabeformulierungen werden nicht an Nutzer weitergereicht', () => {
   assert.match(router, /neutralizeInternalText/);
   assert.match(router, /Dafür ist aktuell noch keine bestätigte Schritt-für-Schritt-Anleitung hinterlegt/);
