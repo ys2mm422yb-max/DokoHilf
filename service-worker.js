@@ -8,6 +8,7 @@ const CORE_FILES = [
   './assets/premium-ui-v25.css?v=20260806-27',
   './assets/premium-ui-v26.css?v=20260806-27',
   './assets/premium-ui-v27.css?v=20260806-27',
+  './assets/ux-v27.css?v=20260806-27',
   './assets/update-manager.js?v=20260806-27',
   './assets/mobile-audio-fix.js?v=20260806-27',
   './assets/voice-diagnostics.js?v=20260806-27',
@@ -16,8 +17,8 @@ const CORE_FILES = [
   './assets/clarification-ui.js?v=20260806-27',
   './assets/guide-progress.js?v=20260806-27',
   './assets/voice-focus-mode.js?v=20260806-27',
-  './assets/experience-v26.js?v=20260806-27',
   './assets/experience-v27.js?v=20260806-27',
+  './assets/ux-v27.js?v=20260806-27',
   './assets/app.js?v=20260806-27',
   './manifest.webmanifest',
   './icon.svg',
@@ -34,30 +35,17 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys
-      .filter(key => key.startsWith('dokohilf-') && key !== CACHE_NAME)
-      .map(key => caches.delete(key)));
-
-    if (self.registration.navigationPreload) {
-      await self.registration.navigationPreload.enable().catch(() => {});
-    }
-
+    await Promise.all(keys.filter(key => key.startsWith('dokohilf-') && key !== CACHE_NAME).map(key => caches.delete(key)));
+    if (self.registration.navigationPreload) await self.registration.navigationPreload.enable().catch(() => {});
     await self.clients.claim();
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    for (const client of clients) {
-      client.postMessage({ type: 'DOKOHILF_UPDATED', buildId: BUILD_ID, hardRefresh: true });
-    }
+    for (const client of clients) client.postMessage({ type: 'DOKOHILF_UPDATED', buildId: BUILD_ID, hardRefresh: true });
   })());
 });
 
 self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-    return;
-  }
-  if (event.data?.type === 'GET_BUILD_ID') {
-    event.ports?.[0]?.postMessage({ buildId: BUILD_ID });
-  }
+  if (event.data?.type === 'SKIP_WAITING') return void self.skipWaiting();
+  if (event.data?.type === 'GET_BUILD_ID') event.ports?.[0]?.postMessage({ buildId: BUILD_ID });
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
     event.waitUntil((async () => {
       const keys = await caches.keys();
@@ -83,15 +71,12 @@ async function networkFirst(request) {
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
-
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
-
   if (url.pathname.endsWith('/version.json') || url.pathname.endsWith('/service-worker.js')) {
     event.respondWith(fetch(request, { cache: 'no-store' }));
     return;
   }
-
   event.respondWith((async () => {
     if (request.mode === 'navigate') {
       try {
@@ -106,8 +91,6 @@ self.addEventListener('fetch', event => {
         return (await caches.match('./index.html')) || (await caches.match('./')) || Response.error();
       }
     }
-
-    const response = await networkFirst(request);
-    return response || Response.error();
+    return (await networkFirst(request)) || Response.error();
   })());
 });
