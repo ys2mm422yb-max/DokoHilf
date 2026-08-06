@@ -45,7 +45,7 @@ Die drei Ursachen wurden auf dem Release-Branch behoben:
 2. Der Datenschutzvertrag erwartete eine veraltete SQL-Schreibweise. Er prüft nun die tatsächlich angewandte Migration mit `regexp_replace`, Regex-Nachkontrolle und Exception-Grenze, ohne den Datenschutz abzuschwächen.
 3. Die statische Audio-Dokumentation enthielt die ausgeschlossenen Nutzerinhalte nur als Liste. Ein zusätzlicher eindeutiger Satz dokumentiert jetzt ausdrücklich, dass Nutzerstimmen, Diktate, freie Antworten und Gesprächsverläufe nicht dauerhaft gespeichert werden.
 
-Aktueller exakter Head nach diesen Korrekturen: `e73ec9d7ce0ffa693c9ad9f3be946b6cc334c826`.
+Der aktuelle exakte Head wird immer direkt in PR #53 geprüft. Diese Datei enthält bewusst keinen selbstreferenziellen aktuellen Head, weil jede Dokumentationskorrektur selbst einen neuen Commit erzeugt.
 
 ## Live-Audit
 
