@@ -62,14 +62,16 @@ Bestätigt sind:
 - kompakte Bedienung und Erststart-Datenschutz: `assets/ux-v27.css` und `assets/ux-v27.js`
 - statische und dynamische Sprachausgabe: `assets/experience-v27.js`
 - statischer Audio-Katalog: `assets/guide-audio-catalog.json`
-- erzeugtes Audio-Manifest: `assets/guide-audio-manifest.json`
+- vollständiges Audio-Manifest: `assets/guide-audio-manifest.json`
+- Teilfortschritt während der Erzeugung: `assets/guide-audio-manifest.partial.json` und `assets/guide-audio-generation-status.json`
 - statische Audios: `assets/audio/guides/*.wav`
+- resumierbarer Generator: `scripts/generate-guide-audio.mjs`
 - gemeinsame Pages-Erzeugung: `scripts/build-static-site-v27.sh`
 
 ### Supabase
 
 - `dokohilf-ai-router`: aktive Version **11**, Marker `conversational-guide-router-v9`
-- `dokohilf-tts`: aktive Version **17**
+- `dokohilf-tts`: aktive Version **18**
 - `dokohilf-editor`: geschützter Redaktionsbereich
 - freigegebene Guides: `public.dokohilf_guides`
 - Themenzuordnungen: `public.dokohilf_topics`
@@ -115,13 +117,19 @@ Natürliche Stimme: **Gacrux**.
 - `assets/experience-v27.js` sucht zuerst eine statische freigegebene Datei
 - Service Worker cached die statischen Dateien für schnelle und Offline-Wiedergabe
 - Manifest enthält Textschlüssel, Pfad, Größe, SHA-256, Stimme, Modell und Stil
+- der Generator verarbeitet höchstens zwölf fehlende Texte je Runde, speichert jede erfolgreiche WAV-Datei und schreibt einen Teilfortschritt
+- HTTP 429/502/503/504 oder Timeouts verwerfen keine zuvor erfolgreichen Dateien mehr
+- ein Fortschrittscommit startet automatisch die nächste Runde; nach höchstens 24 automatischen Runden bleibt ein ehrlicher harter Blocker bestehen
 - Details und enge Datenschutz-Ausnahme: `PREBUILT_AUDIO.md` und `PROJECT_RULES.md`
 
-### Freie Antworten
+### Freie Antworten und Erzeugungsdienst
 
 - Primärmodell: `gemini-3.1-flash-tts-preview`
 - Fallbackmodell: `gemini-2.5-flash-preview-tts`
-- Stil: `natural-spoken-german-colleague-v8-low-latency`
+- Stil: `natural-spoken-german-colleague-v9-interactions`
+- TTS v18 verwendet primär die aktuelle Gemini-Interactions-API `/v1beta/interactions` mit `response_format: audio`
+- technischer Rückfallweg: Gemini 2.5 über Interactions, danach der bisherige Generate-Content-Endpunkt
+- erfolgreiche Antworten weisen Modell, API-Weg, Stimme, Stil, Cache und Laufzeit in den Response-Headern nach
 - Live-TTS wird nur für nicht katalogisierte freie Antworten verwendet
 - Browser wartet höchstens rund 1,9 Sekunden; danach startet die lokale Sofortstimme
 - dynamische Audios und Gesprächsinhalte bleiben flüchtig
@@ -133,6 +141,7 @@ Natürliche Stimme: **Gacrux**.
 - `scripts/build-static-site-v27.sh` muss für beide Veröffentlichungswege denselben vollständigen Build erzeugen.
 - `version.json`, `index.html`, `service-worker.js`, Asset-Queryparameter und Workflows müssen dieselbe Build-ID enthalten.
 - Build 27 darf nur veröffentlicht werden, wenn Manifest und exakt 93 WAV-Dateien im erzeugten Pages-Build liegen.
+- der normale PR-Prüflauf erzeugt keine Audios mehr parallel, sondern prüft ausschließlich den vollständig committed Audio-Stand.
 
 ## 9. Pflichtprüfungen vor Merge
 
@@ -147,6 +156,7 @@ Natürliche Stimme: **Gacrux**.
 - kein horizontaler Überlauf
 - kompakte Leerlauf- und größere aktive Mikrofonansicht
 - Live-Router und zeitlich begrenzter Live-TTS-Fallback
+- Live-TTS-Nachweis mit Gacrux, Modell, Interactions-/Fallback-API, Stil, Cache und WAV-Header
 - sichtbarer Build-Marker im Pages-Artefakt
 - vollständig grüner exakter PR-Head
 
@@ -170,10 +180,11 @@ Natürliche Stimme: **Gacrux**.
 - finaler Draft-PR: **#50**
 - PR #49 wurde als vollständig ersetzt geschlossen; sein Branch wurde nicht gelöscht
 - Ziel-Build: `20260806-27`
-- TTS v17 ist aktiv
+- TTS v18 mit Gemini Interactions ist aktiv
 - Migration zur Entfernung wiederholter Übungshinweise wurde angewandt
-- Dark-UI, kompakte Steuerung, Erststart-Datenschutz, statische Audioarchitektur, Generator, Manifesttests, gemeinsamer Build und mobile Renderprüfung sind im Branch angelegt
-- **Offener harter Merge-Blocker:** `assets/guide-audio-manifest.json` und alle 93 WAV-Dateien müssen tatsächlich erzeugt, im Branch gespeichert und vollständig grün geprüft sein
+- Dark-UI, kompakte Steuerung, Erststart-Datenschutz, statische Audioarchitektur, resumierbarer Generator, Manifesttests, gemeinsamer Build und mobile Renderprüfung sind im Branch angelegt
+- konkurrierende All-or-nothing-Audio-Workflows wurden entfernt; einziger Generator ist `.github/workflows/direct-generate-audio-v27.yml`
+- **Offener harter Merge-Blocker:** `assets/guide-audio-manifest.json` und alle 93 WAV-Dateien müssen tatsächlich vollständig im Branch liegen und anschließend im exakten PR-Head grün geprüft sein
 - bis dahin bleibt PR #50 als Draft offen und wird nicht gemergt
 
 ## 12. Pflege dieser Datei
