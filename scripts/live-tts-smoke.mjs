@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-tts';
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 const TEST_TEXT = 'Stimmt, dann war die Annahme falsch. Wir starten ganz vorne.';
-const EXPECTED_VOICE = 'Achird';
+const EXPECTED_VOICE = 'Callirrhoe';
 const EXPECTED_STYLE = 'friendly-casual-natural-v3';
 const EXPECTED_MODEL = 'gemini-2.5-flash-preview-tts';
 const MAX_LATENCY_MS = 18_000;
