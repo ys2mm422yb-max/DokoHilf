@@ -1,0 +1,53 @@
+name: Direct final guide audio v27
+
+on:
+  push:
+    branches: [feat/dark-premium-static-guide-audio-v27]
+    paths:
+      - .github/workflows/direct-generate-audio-v27.yml
+      - assets/guide-audio-catalog.json
+      - scripts/generate-guide-audio.mjs
+      - tests/prebuilt-guide-audio.test.mjs
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dokohilf-direct-final-audio-v27
+  cancel-in-progress: false
+
+jobs:
+  generate-and-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout branch without marketplace actions
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git init .
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${REPO_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --depth=1 origin feat/dark-premium-static-guide-audio-v27
+          git checkout -B feat/dark-premium-static-guide-audio-v27 FETCH_HEAD
+
+      - name: Generate all approved Gacrux WAV files
+        run: node scripts/generate-guide-audio.mjs
+
+      - name: Verify manifest, hashes and WAV headers
+        run: node --test tests/prebuilt-guide-audio.test.mjs
+
+      - name: Commit generated files to the feature branch
+        run: |
+          set -euo pipefail
+          git add assets/guide-audio-manifest.json assets/audio/guides
+          if git diff --cached --quiet; then
+            echo "All approved guide audio is already committed."
+            exit 0
+          fi
+          git commit -m "Add prebuilt Gacrux audio for approved guides"
+          git pull --rebase origin feat/dark-premium-static-guide-audio-v27
+          git push origin HEAD:feat/dark-premium-static-guide-audio-v27
