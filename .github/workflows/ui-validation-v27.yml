@@ -11,6 +11,7 @@ on:
       - .github/workflows/ui-validation-v27.yml
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - index.html
       - service-worker.js
