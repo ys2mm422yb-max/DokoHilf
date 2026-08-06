@@ -51,15 +51,18 @@ test('chat controls are compact and command bubbles stay hidden', () => {
   assert.match(ux, /Ich brauche Hilfe/);
 });
 
-test('voice starts quickly and keeps natural audio warm in memory', () => {
+test('voice starts quickly, uses static audio first and keeps idle microphone compact', () => {
   assert.match(experience, /FAST_FALLBACK_MS = 2400/);
+  assert.match(experience, /loadPrebuiltVoice/);
   assert.match(experience, /fastRace\(loadNaturalVoice/);
-  assert.match(experience, /cloudPromise\.catch/);
   assert.match(experience, /payload\.nextSpokenText/);
   assert.match(experience, /memory = new Map/);
   assert.match(experience, /__DOKOHILF_DARK_PREMIUM_V27__/);
+  assert.match(experience, /__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__/);
   assert.match(ux, /HARD_FALLBACK_MS = 1900/);
   assert.match(ux, /dokohilf_immediate_voice_fallback/);
+  assert.match(uxCss, /data-voice-state="listening"/);
+  assert.match(uxCss, /width:96px/);
 });
 
 test('cloud voice uses Gemini 3.1, Gacrux and transient shared memory', () => {
@@ -72,11 +75,13 @@ test('cloud voice uses Gemini 3.1, Gacrux and transient shared memory', () => {
   assert.match(tts, /TRANSKRIPT:/);
 });
 
-test('repeated exercise notices disappear without weakening privacy', () => {
+test('central privacy acknowledgement replaces repeated exercise notices without weakening filter', () => {
   assert.match(migration, /remove repeated/i);
   assert.match(migration, /guide\.steps::text ilike '%Fantasiedaten%'/);
   assert.match(index, /Datenschutz aktiv|Keine persönlichen Daten eingeben/);
-  assert.match(index, /Gespräch und Audio werden nicht dauerhaft gespeichert/);
+  assert.match(ux, /Kurz zum Datenschutz/);
+  assert.match(ux, /PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1'/);
+  assert.match(ux, /Gespräch und persönliche Audioinhalte werden nicht gespeichert/);
   assert.match(app, /function clientPrivacyGuard/);
   assert.match(app, /BLOCK_MESSAGE/);
 });
