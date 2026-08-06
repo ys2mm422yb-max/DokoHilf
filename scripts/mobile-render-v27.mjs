@@ -3,6 +3,27 @@ import { chromium } from 'playwright';
 
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || 'artifacts/mobile-v27';
+const USE_MOCK_SERVICES = process.env.DOKOHILF_UI_MOCK === '1';
+
+function silentWav() {
+  const samples = 2400;
+  const dataSize = samples * 2;
+  const buffer = Buffer.alloc(44 + dataSize);
+  buffer.write('RIFF', 0, 'ascii');
+  buffer.writeUInt32LE(36 + dataSize, 4);
+  buffer.write('WAVE', 8, 'ascii');
+  buffer.write('fmt ', 12, 'ascii');
+  buffer.writeUInt32LE(16, 16);
+  buffer.writeUInt16LE(1, 20);
+  buffer.writeUInt16LE(1, 22);
+  buffer.writeUInt32LE(24000, 24);
+  buffer.writeUInt32LE(48000, 28);
+  buffer.writeUInt16LE(2, 32);
+  buffer.writeUInt16LE(16, 34);
+  buffer.write('data', 36, 'ascii');
+  buffer.writeUInt32LE(dataSize, 40);
+  return buffer;
+}
 
 await mkdir(OUTPUT_DIR, { recursive: true });
 const browser = await chromium.launch({ headless: true });
@@ -22,6 +43,45 @@ page.on('console', message => {
   if (message.type() === 'error') consoleErrors.push(message.text());
 });
 page.on('pageerror', error => pageErrors.push(error.message));
+
+if (USE_MOCK_SERVICES) {
+  const reply = 'Öffne beim gewünschten Bewohner den Bereich „Berichte“.';
+  await page.route(/\/functions\/v1\/dokohilf-ai(?:-router)?(?:\?.*)?$/, async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json; charset=utf-8',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({
+        reply,
+        spokenText: reply,
+        nextSpokenText: 'Klicke oben links auf das grüne Plus für einen neuen Berichtseintrag.',
+        guideSlug: 'bericht-anlegen',
+        guideTitle: 'Bericht anlegen',
+        guideStep: 1,
+        guideStepCount: 7,
+        source: 'ui-render-mock',
+      }),
+    });
+  });
+  await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => {
+    const wav = silentWav();
+    await route.fulfill({
+      status: 200,
+      contentType: 'audio/wav',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'X-DokoHilf-Voice': 'Gacrux',
+        'X-DokoHilf-TTS-Model': 'ui-render-mock',
+        'X-DokoHilf-TTS-API': 'ui-render-mock',
+        'X-DokoHilf-Voice-Mode': 'ui-render-mock',
+        'X-DokoHilf-Voice-Style': 'ui-render-mock',
+        'X-DokoHilf-TTS-Latency': '0',
+        'X-DokoHilf-TTS-Cache': 'hit',
+      },
+      body: wav,
+    });
+  });
+}
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -58,12 +118,14 @@ try {
     build: document.querySelector('meta[name="dokohilf-build"]')?.content,
     version: document.getElementById('buildPill')?.textContent?.trim(),
     htmlBackground: getComputedStyle(document.documentElement).backgroundColor,
+    bodyBackground: getComputedStyle(document.body).backgroundImage,
     bodyColor: getComputedStyle(document.body).color,
   }));
   assert(identity.title.includes('DokoHilf'), 'Falsche Seitenidentität.');
   assert(identity.build === '20260806-27', `Falscher Build: ${identity.build}`);
   assert(identity.version === 'KI · v27', `Falscher sichtbarer Marker: ${identity.version}`);
   assert(/rgb\((?:0|1|2|3|4|5|6|7|8|9|1\d|2\d),\s*(?:0|1|2|3|4|5|6|7|8|9|1\d|2\d),\s*(?:0|1|2|3|4|5|6|7|8|9|1\d|2\d)\)/.test(identity.htmlBackground), `Grundfläche ist nicht dunkel: ${identity.htmlBackground}`);
+  assert(identity.bodyBackground !== 'none', 'Dunkle Hintergrundgestaltung fehlt.');
 
   const startLayout = await layoutState();
   assert(startLayout.documentWidth <= startLayout.viewportWidth + 1, 'Startseite hat horizontalen Überlauf.');
@@ -127,6 +189,7 @@ try {
     passed: true,
     url: BASE_URL,
     viewport: { width: 393, height: 852, deviceScaleFactor: 2 },
+    mockServices: USE_MOCK_SERVICES,
     identity,
     privacyAcknowledgementStored: true,
     visibleCommands,
