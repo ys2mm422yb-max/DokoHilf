@@ -7,10 +7,11 @@ const ALLOWED_ORIGINS = new Set([
 const PRIMARY_MODEL = 'gemini-3.1-flash-tts-preview';
 const FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts';
 const VOICE_NAME = 'Gacrux';
-const VOICE_STYLE = 'natural-spoken-german-colleague-v8-low-latency';
-const PRIMARY_TIMEOUT_MS = 4_500;
-const PRIMARY_RETRY_TIMEOUT_MS = 3_000;
-const FALLBACK_TIMEOUT_MS = 4_000;
+const VOICE_STYLE = 'natural-spoken-german-colleague-v9-interactions';
+const INTERACTIONS_API_REVISION = '2026-05-20';
+const PRIMARY_INTERACTIONS_TIMEOUT_MS = 8_000;
+const FALLBACK_INTERACTIONS_TIMEOUT_MS = 6_000;
+const LEGACY_FALLBACK_TIMEOUT_MS = 5_000;
 const MAX_TEXT_CHARS = 520;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 36;
@@ -18,7 +19,7 @@ const CACHE_TTL_MS = 2 * 60 * 60_000;
 const CACHE_LIMIT = 96;
 
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
-const audioCache = new Map<string, { wav: Uint8Array; model: string; createdAt: number }>();
+const audioCache = new Map<string, { wav: Uint8Array; model: string; mode: string; createdAt: number }>();
 const pendingAudio = new Map<string, Promise<{ wav: Uint8Array; model: string; mode: string; latency: number }>>();
 
 function corsHeaders(origin: string | null): Record<string, string> {
@@ -27,7 +28,7 @@ function corsHeaders(origin: string | null): Record<string, string> {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'content-type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style, X-DokoHilf-TTS-Latency, X-DokoHilf-TTS-Cache',
+    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-TTS-API, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style, X-DokoHilf-TTS-Latency, X-DokoHilf-TTS-Cache',
     'Vary': 'Origin',
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
@@ -82,6 +83,12 @@ function base64ToBytes(value: string): Uint8Array {
   return bytes;
 }
 
+function isWave(bytes: Uint8Array): boolean {
+  return bytes.byteLength > 44
+    && bytes[0] === 82 && bytes[1] === 73 && bytes[2] === 70 && bytes[3] === 70
+    && bytes[8] === 87 && bytes[9] === 65 && bytes[10] === 86 && bytes[11] === 69;
+}
+
 function writeAscii(view: DataView, offset: number, value: string): void {
   for (let index = 0; index < value.length; index += 1) view.setUint8(offset + index, value.charCodeAt(index));
 }
@@ -109,6 +116,10 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
   return new Uint8Array(buffer);
 }
 
+function ensureWav(audio: Uint8Array): Uint8Array {
+  return isWave(audio) ? audio : pcmToWav(audio);
+}
+
 function voicePrompt(text: string): string {
   return [
     'Erzeuge ausschließlich eine deutsche Sprachausgabe.',
@@ -118,6 +129,33 @@ function voicePrompt(text: string): string {
     'TRANSKRIPT:',
     text,
   ].join('\n');
+}
+
+async function requestViaInteractions(apiKey: string, model: string, text: string, timeoutMs: number): Promise<Uint8Array> {
+  const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
+      'Api-Revision': INTERACTIONS_API_REVISION,
+    },
+    signal: AbortSignal.timeout(timeoutMs),
+    body: JSON.stringify({
+      model,
+      input: voicePrompt(text),
+      response_format: { type: 'audio' },
+      generation_config: {
+        speech_config: [{ voice: VOICE_NAME }],
+      },
+    }),
+  });
+  const payload = await response.json().catch(() => ({})) as {
+    output_audio?: { data?: unknown };
+  };
+  if (!response.ok) throw new Error(`tts_interactions_${response.status}`);
+  const base64 = payload?.output_audio?.data;
+  if (typeof base64 !== 'string' || !base64) throw new Error('tts_interactions_empty');
+  return base64ToBytes(base64);
 }
 
 async function requestViaGenerateContent(apiKey: string, model: string, text: string, timeoutMs: number): Promise<Uint8Array> {
@@ -151,7 +189,7 @@ function cacheKey(text: string): string {
   return text.toLocaleLowerCase('de-DE').replace(/\s+/g, ' ').trim();
 }
 
-function getCached(text: string): { wav: Uint8Array; model: string } | null {
+function getCached(text: string): { wav: Uint8Array; model: string; mode: string } | null {
   const key = cacheKey(text);
   const entry = audioCache.get(key);
   if (!entry) return null;
@@ -161,17 +199,23 @@ function getCached(text: string): { wav: Uint8Array; model: string } | null {
   }
   audioCache.delete(key);
   audioCache.set(key, entry);
-  return { wav: entry.wav, model: entry.model };
+  return { wav: entry.wav, model: entry.model, mode: entry.mode };
 }
 
-function putCached(text: string, wav: Uint8Array, model: string): void {
+function putCached(text: string, wav: Uint8Array, model: string, mode: string): void {
   const key = cacheKey(text);
-  audioCache.set(key, { wav, model, createdAt: Date.now() });
+  audioCache.set(key, { wav, model, mode, createdAt: Date.now() });
   while (audioCache.size > CACHE_LIMIT) {
     const oldest = audioCache.keys().next().value;
     if (typeof oldest !== 'string') break;
     audioCache.delete(oldest);
   }
+}
+
+function apiName(mode: string): string {
+  if (mode.includes('interactions')) return 'interactions-v1beta';
+  if (mode.includes('generate-content')) return 'generate-content-v1beta';
+  return 'server-memory-cache';
 }
 
 function audioResponse(origin: string | null, wav: Uint8Array, model: string, mode: string, latency: number, cache: 'hit' | 'miss' | 'shared'): Response {
@@ -183,6 +227,7 @@ function audioResponse(origin: string | null, wav: Uint8Array, model: string, mo
       'Content-Length': String(wav.byteLength),
       'X-DokoHilf-Voice': VOICE_NAME,
       'X-DokoHilf-TTS-Model': model,
+      'X-DokoHilf-TTS-API': apiName(mode),
       'X-DokoHilf-Voice-Mode': mode,
       'X-DokoHilf-Voice-Style': VOICE_STYLE,
       'X-DokoHilf-TTS-Latency': String(latency),
@@ -193,23 +238,23 @@ function audioResponse(origin: string | null, wav: Uint8Array, model: string, mo
 
 async function generateAudio(apiKey: string, text: string): Promise<{ wav: Uint8Array; model: string; mode: string; latency: number }> {
   const startedAt = Date.now();
-  let pcm: Uint8Array;
+  let audio: Uint8Array;
   let model = PRIMARY_MODEL;
-  let mode = 'gemini-3.1-fast-natural';
+  let mode = 'gemini-3.1-interactions-primary';
   try {
-    pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text, PRIMARY_TIMEOUT_MS);
+    audio = await requestViaInteractions(apiKey, PRIMARY_MODEL, text, PRIMARY_INTERACTIONS_TIMEOUT_MS);
   } catch {
+    model = FALLBACK_MODEL;
+    mode = 'gemini-2.5-interactions-fallback';
     try {
-      pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text, PRIMARY_RETRY_TIMEOUT_MS);
-      mode = 'gemini-3.1-fast-retry';
+      audio = await requestViaInteractions(apiKey, FALLBACK_MODEL, text, FALLBACK_INTERACTIONS_TIMEOUT_MS);
     } catch {
-      model = FALLBACK_MODEL;
-      mode = 'gemini-2.5-compatible-fallback';
-      pcm = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text, FALLBACK_TIMEOUT_MS);
+      mode = 'gemini-2.5-generate-content-fallback';
+      audio = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text, LEGACY_FALLBACK_TIMEOUT_MS);
     }
   }
-  const wav = pcmToWav(pcm);
-  putCached(text, wav, model);
+  const wav = ensureWav(audio);
+  putCached(text, wav, model, mode);
   return { wav, model, mode, latency: Date.now() - startedAt };
 }
 
@@ -234,7 +279,7 @@ Deno.serve(async (req: Request) => {
   if (containsDirectPersonalData(text)) return jsonResponse(origin, 422, { blocked: true, error: 'Mögliche Echtdaten erkannt. Keine Sprachausgabe erstellt.' });
 
   const cached = getCached(text);
-  if (cached) return audioResponse(origin, cached.wav, cached.model, 'server-memory-cache', 0, 'hit');
+  if (cached) return audioResponse(origin, cached.wav, cached.model, cached.mode, 0, 'hit');
 
   const apiKey = Deno.env.get('GEMINI_API_KEY');
   if (!apiKey) return jsonResponse(origin, 503, { error: 'Die Sprach-KI ist noch nicht eingerichtet.' });
