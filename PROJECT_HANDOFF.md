@@ -11,9 +11,10 @@
 
 - Einziges Repository: `ys2mm422yb-max/DokoHilf`
 - Einziges Supabase-Projekt: `efifbuqctylsujiauabg`
+- Region: Frankfurt, `eu-central-1`
 - Fester öffentlicher Hauptlink: `https://ys2mm422yb-max.github.io/DokoHilf/`
 - Andere Repositories und Supabase-Projekte niemals öffnen, verändern oder verbinden.
-- Keine produktive Vivendi-Verbindung, keine nicht dokumentierten Schnittstellen und kein Scraping.
+- Keine produktive Verbindung zur Dokumentationssoftware, keine nicht dokumentierten Schnittstellen und kein Scraping.
 - Keine echten Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten.
 - Nutzerbilder und Screenshots bleiben ausschließlich im jeweiligen Chat. Sie dürfen niemals in GitHub, Supabase, Tests, Artefakte oder die App gelangen.
 
@@ -25,7 +26,7 @@
 4. Änderungen, Entscheidungen, Tests, Fehler und Restarbeiten dauerhaft im Repository dokumentieren.
 5. Nur den vollständig grünen exakten PR-Head manuell mergen.
 6. Kein Auto-Merge und keine automatische Branch-Löschung.
-7. Nach Merge `main`, `gh-pages`, aktive Edge Functions und festen Hauptlink kontrollieren.
+7. Nach Merge `main`, `gh-pages`, aktive Edge Functions und den festen Hauptlink kontrollieren.
 8. Gegenüber dem Nutzer niemals alternative Preview-, Branch-, Cache- oder Query-Links nennen.
 
 ## 3. Verbindliche Fachquelle
@@ -61,26 +62,28 @@ Bestätigt sind:
 - Dark-Design: `assets/premium-ui-v27.css`
 - kompakte Bedienung und Erststart-Datenschutz: `assets/ux-v27.css` und `assets/ux-v27.js`
 - statische und dynamische Sprachausgabe: `assets/experience-v27.js`
-- Weiterleitung und iPhone-Cache des privaten Audiokatalogs: `assets/voice-diagnostics.js`
-- statischer Audio-Katalog: `assets/guide-audio-catalog.json`
+- Weiterleitung und Gerätecache des privaten Audiokatalogs: `assets/voice-diagnostics.js`
+- statischer Audio-Textkatalog: `assets/guide-audio-catalog.json`
 - gemeinsamer Pages-Build: `scripts/build-static-site-v27.sh`
-- echte mobile Renderprüfung: `scripts/mobile-render-v27.mjs`
+- mobile Renderprüfung: `scripts/mobile-render-v27.mjs`
 
-Der öffentliche Pages-Build enthält **keine WAV-Binärdateien** und kein lokales Audio-Manifest. Freigegebene Guide-Audios werden aus einem privaten Supabase-Bucket über einen kontrollierten Leseendpunkt ausgeliefert und auf dem Gerät gecacht.
+Der öffentliche Pages-Build enthält keine WAV-Binärdateien und kein lokales Audio-Manifest. Freigegebene Guide-Audios werden aus einem privaten Supabase-Bucket über einen kontrollierten Leseendpunkt ausgeliefert und auf dem Gerät gecacht.
 
 ### Supabase
 
-- `dokohilf-ai-router`: aktive Version **11**, Marker `conversational-guide-router-v9`
-- `dokohilf-tts`: aktive Version **20**
-- `dokohilf-guide-audio`: aktive Version **1**, öffentlicher Leseendpunkt für Manifest und freigegebene WAVs
-- `dokohilf-guide-audio-build`: aktive Version **2**, intern token-geschützter Builder
-- `dokohilf-editor`: geschützter Redaktionsbereich
+Aktiv und live nachgeprüft:
+
+- `dokohilf-ai-router`: Version **11**, Marker `conversational-guide-router-v9`
+- `dokohilf-tts`: Version **20**
+- `dokohilf-guide-audio`: Version **1**, kontrollierter Manifest- und WAV-Leseendpunkt
+- `dokohilf-guide-audio-build`: Version **2**, intern token-geschützter Builder
+- `dokohilf-editor`: Version **1**, JWT-geschützter Redaktionsbereich
 - freigegebene Guides: `public.dokohilf_guides`
 - Themenzuordnungen: `public.dokohilf_topics`
 - Audio-Registry: `public.dokohilf_static_guide_audio`
 - interner Builderzustand: `public.dokohilf_internal_build_control`
 - privater Storage-Bucket: `dokohilf-guide-audio`
-- temporärer Quell-Snapshot-Endpunkt `dokohilf-source-snapshot` ist als Version 2 deaktiviert und antwortet nur noch HTTP 410
+- temporäre Diagnose-, Export-, Batch-, Store- und Snapshot-Endpunkte sind neutralisiert und antworten nur noch HTTP 410
 
 ## 5. Gesprächslogik
 
@@ -109,6 +112,7 @@ Der öffentliche Pages-Build enthält **keine WAV-Binärdateien** und kein lokal
 - Bedienkommandos erscheinen nicht als normale Chatnachrichten
 - Mikrofon bleibt im Leerlauf kompakt und wird erst beim Zuhören oder Sprechen groß
 - kleine und niedrige iPhones erhalten eine verdichtete Sprachansicht
+- Sprachfokus zeigt `.voice-focus-stage`; der alte `#workspace` bleibt darin verborgen
 
 ## 7. Sprache
 
@@ -116,20 +120,20 @@ Natürliche Stimme: **Gacrux**.
 
 ### TTS v20
 
-Der eigentliche Fehler von TTS v19 wurde gefunden: Das SDK-Komfortfeld `output_audio` ist beim rohen Gemini-Interactions-REST-Response nicht zuverlässig vorhanden. Das Audio liegt in `steps[].content[]`.
+Der Fehler von TTS v19 wurde behoben: Das rohe Gemini-Interactions-REST-Audio liegt zuverlässig in `steps[].content[]`, nicht zwingend im SDK-Komfortfeld `output_audio`.
 
 TTS v20:
 
 - liest das rohe REST-Audio über Parser `raw-steps-content-v1`
-- akzeptiert zusätzlich kompatible `inlineData`-/`inline_data`-Strukturen
+- akzeptiert kompatible `inlineData`- und `inline_data`-Strukturen
 - wandelt PCM in gültige RIFF/WAVE-Dateien um
-- gibt echte Providerstatus 429/502/503/504 weiter, statt alles als 502 zu verschleiern
+- gibt echte Providerstatus 429/502/503/504 weiter
 - weist Stimme, Modell, API-Weg, Parser, Stil, Cache und Laufzeit in Response-Headern nach
 - verwendet primär `gemini-3.1-flash-tts-preview`
 - verwendet als Fallback `gemini-2.5-flash-preview-tts`
 - Stil: `natural-spoken-german-colleague-v10-rest-audio`
 
-Live-Nachweis vom 6. August 2026:
+Bereits nachgewiesener gültiger Live-Abruf:
 
 - HTTP 200
 - `Content-Type: audio/wav`
@@ -140,54 +144,39 @@ Live-Nachweis vom 6. August 2026:
 - Parser `raw-steps-content-v1`
 - gültiger RIFF/WAVE-Anfang
 
-### Bekannte freigegebene Anweisungen
+### Statische freigegebene Anweisungen
 
 - Datenbasis: 23 freigegebene Guides, 108 Schritte, 92 eindeutige Schritttexte plus Begrüßung
 - Zielbestand: exakt 93 geprüfte Gacrux-WAV-Dateien
 - Quelle ausschließlich allgemeines `step.text` freigegebener Guides
 - Nutzerantworten, Checks, Diktate, Namen, Fall- und Gesundheitsdaten sind ausgeschlossen
-- `assets/experience-v27.js` sucht zuerst eine statische freigegebene Datei
-- der Manifestendpunkt liefert Schema 2 mit Textschlüssel, Pfad, Größe, SHA-256, Stimme, Modell, API-Weg, Parser und Stil
-- Service Worker und Browser-Cache verwenden verfügbare Dateien schnell und offline wieder
+- vorhandene statische Dateien werden vor Live-TTS verwendet
 - fehlende statische Einträge fallen auf TTS v20 zurück
 - nach rund 1,9 Sekunden startet die lokale Sofortstimme
 - keine stummen Platzhalter, falschen Stimmen oder ungeprüften Dateien veröffentlichen
 
-### Kontrollierter Teilrollout
+## 8. Live-Audit vom 6. August 2026
 
-- zuletzt verifizierter Bestand: **1/93**; vor jeder Aussage live neu prüfen
-- Builderaufrufe ohne internes Token liefern HTTP 403
-- das zufällige Buildertoken liegt ausschließlich in `public.dokohilf_internal_build_control` und niemals im Repository oder Browser
-- der Cronjob `dokohilf-static-guide-audio-v27` versucht stündlich ausschließlich den nächsten fehlenden Index
-- fertige Einträge werden nicht erneut erzeugt
-- bei 93/93 deaktiviert sich der Builder und entfernt den Cronjob selbst
-- wegen Google HTTP 429 kann der Bestand zeitweise nicht wachsen
+Supabase-Projekt `efifbuqctylsujiauabg` ist `ACTIVE_HEALTHY`.
 
-Live-Nachweis des privaten Audiowegs:
+Nachgeprüft:
 
-- Manifest Schema 2
-- Build `20260806-27`
-- Stimme Gacrux
-- Eintrag 0: 301484 Bytes
-- SHA-256 `007bc2cd09297f0d45150bb79cd82ed5c7e85ca83263b7023f11732bfd4bac82`
-- WAV-Abruf HTTP 200 mit demselben Hash im Response-Header
+- 23 freigegebene Guides
+- 108 freigegebene Schritte
+- Audio-Registry: 1/93
+- privater Bucket: ein Audioobjekt, `public=false`
+- Datei 000: `20260806-27/000.wav`, 301484 Bytes
+- SHA-256: `007bc2cd09297f0d45150bb79cd82ed5c7e85ca83263b7023f11732bfd4bac82`
+- Gacrux, Gemini 3.1 Flash TTS, Interactions API, Parser `raw-steps-content-v1`
+- Builder aktiviert
+- Cronjob `dokohilf-static-guide-audio-v27`: aktiv, `0 * * * *`
+- Builderfunktion nur für `service_role` ausführbar; `anon` und `authenticated` haben kein Execute-Recht
+- Audio- und Buildertabellen mit RLS
+- Supabase-Sicherheitsberater: keine Lints
+- Performance-Berater meldet nur informative, bisher unbenutzte Indizes neuer Redaktionsbereiche
+- weitere neue Audioerzeugungen werden derzeit häufig durch Provider-HTTP-429 begrenzt
 
-## 8. Veröffentlichungsentscheidung
-
-Das sichtbare Dark-UI-Update wird nicht länger durch Googles kostenlose 93er-TTS-Quota blockiert.
-
-Für Build 27 gilt:
-
-- mindestens ein vollständig geprüftes statisches Gacrux-Audio muss über den privaten Endpunkt verfügbar sein
-- vorhandene statische Dateien werden bevorzugt
-- fehlende Dateien nutzen TTS v20 und anschließend die Sofortstimme
-- die App bleibt dadurch vollständig bedienbar
-- der strenge 93/93-Test bleibt mit `DOKOHILF_REQUIRE_COMPLETE_AUDIO=1` erhalten und ist Pflicht für den späteren Abschluss des vollständigen Audiopakets
-
-Damit sind zwei Ziele getrennt:
-
-1. **Build 27:** dunkle Oberfläche, kompakte Bedienung, TTS-v20-Fehlerbehebung und sicherer Audio-Teilrollout
-2. **Audioabschluss:** vollständige 93/93-Gacrux-Bibliothek nach verfügbarer Providerquota
+Der vollständige 93/93-Bestand ist kein Merge-Blocker für die sichtbare Build-27-Oberfläche. Er bleibt ein separater strenger Abschluss.
 
 ## 9. Veröffentlichung
 
@@ -216,8 +205,6 @@ Damit sind zwei Ziele getrennt:
 - sichtbarer Build-Marker im Pages-Artefakt
 - vollständig grüner exakter PR-Head
 
-Der vollständige 93/93-Bestand ist kein Merge-Blocker mehr für die sichtbare Build-27-Oberfläche, bleibt aber Pflicht für den separaten Audioabschluss.
-
 ## 11. Abgeschlossene Stände
 
 ### Fachabläufe
@@ -229,55 +216,57 @@ Der vollständige 93/93-Bestand ist kein Merge-Blocker mehr für die sichtbare B
 ### Build 26
 
 - PR #46 gemergt
-- veröffentlichter Build `20260806-26`
+- Build `20260806-26` auf `main` und `gh-pages` veröffentlicht
 - Router v9 und TTS v16 aktiviert
+- PR #47 mit finaler Build-26-Übergabe gemergt
+
+### Build-27-Vorarbeit
+
+- PR #49, #50 und #51 als ersetzt geschlossen; Branches nicht gelöscht
+- PR #52 enthält den vollständigen Build-27-Produktstand und bleibt bis zur erfolgreichen Prüfung von PR #53 offen
+- TTS v20, privater Guide-Audio-Endpunkt, Builder, Registry, privater Bucket und stündlicher Cronjob sind aktiv
+- veraltete Build-26- und TTS-v16-Testannahmen wurden auf Build 27 migriert
+- iPhone-Renderprüfung wurde auf die tatsächlich sichtbare Vollbild-Sprachansicht korrigiert
 
 ## 12. Aktiver Arbeitsstand Build 27
 
-- **einziger finaler Release-Branch:** `feat/dark-premium-v27-release`
-- **einziger finaler Draft-PR:** **#52**
-- PR #49 und PR #50 wurden als ersetzt geschlossen; ihre Branches wurden nicht gelöscht
-- PR #51 ist durch PR #52 ersetzt und wird geschlossen; sein Branch wird nicht gelöscht
+- **einziger finaler Release-Branch:** `release/build-27-final-validation`
+- **einziger finaler Release-PR:** **#53**
+- Zielbranch: `main`
 - Ziel-Build: `20260806-27`
-- TTS v20 ist aktiv und live als gültiges Gacrux-WAV nachgewiesen
-- `dokohilf-guide-audio` v1 und geschützter Builder v2 sind aktiv
-- Migration zur Entfernung wiederholter Übungshinweise wurde angewandt
-- Audio-Registry und interner Builderzustand wurden angelegt
-- Builder ohne Token wurde mit HTTP 403 geprüft; interner Aufruf erreicht den Builder
-- Dark-UI, kompakte Steuerung, Erststart-Datenschutz, privater Audioendpunkt, gemeinsamer Build und mobile Renderprüfung liegen im Release-Branch
-- alte selbstverändernde Audio-Workflows wurden entfernt
-- der Cronjob wurde wegen wiederholtem HTTP 429 auf stündlich reduziert
+- PR #53 ist offen und mergebar
+- PR #52 bleibt bis zum grünen Nachweis von PR #53 offen und wird danach als ersetzt geschlossen; sein Branch bleibt bestehen
 - veröffentlichter Hauptlink zeigt weiterhin Build 26
+- kein Merge und keine Veröffentlichung von Build 27 vor vollständig grünem exakten PR-#53-Head
 
-### Bereinigte veraltete Regressionen
-
-Folgende Tests enthielten noch harte Build-26-/TTS-v16-Annahmen und wurden auf den tatsächlichen Build-27-Vertrag migriert:
-
-- `tests/voice-diagnostics.test.mjs`
-- `tests/live-build-recovery.test.mjs`
-- `tests/voice-layout-v26.test.mjs`
-
-Die fachlichen Router- und Klickwegregressionen wurden nicht abgeschwächt.
-
-### Offener technischer CI-Punkt
+## 13. Offener technischer CI-Punkt
 
 - GitHub unterdrückt Workflowereignisse, die durch die verbundene GitHub-App selbst erzeugt werden.
 - Das wurde mit Push, PR-Neuanlage, Schließen/Wiederöffnen und `ready_for_review` geprüft.
 - Ein direkter Workflow-Dispatch ist im verbundenen GitHub-Connector nicht verfügbar.
+- Auf dem aktuellen PR-#53-Head existiert deshalb noch kein Actions-Lauf und kein Statuscheck.
 - Ältere Actions-Läufe gehören zu früheren Heads und sind kein Nachweis für den aktuellen Release-Head.
-- Vor Merge muss deshalb der Workflow **einmal über die GitHub-Oberfläche manuell auf dem Release-Branch gestartet** werden.
-- Erst nach vollständig grünem exakten Head darf manuell gemergt werden.
-- Kein Merge, kein Auto-Merge und keine Branch-Löschung vorher.
+- Vor Merge muss der Workflow **Deploy DokoHilf** einmal über die GitHub-Oberfläche manuell auf dem Branch `release/build-27-final-validation` gestartet werden.
+- Erst nach vollständig grünem Lauf auf dem dann exakten Head darf manuell gemergt werden.
+- Kein Auto-Merge und keine Branch-Löschung vorher.
 
-## 13. Neue Repositoryquellen
+## 14. Neue Repositoryquellen Build 27
 
+- `assets/premium-ui-v27.css`
+- `assets/ux-v27.css`
+- `assets/ux-v27.js`
+- `assets/experience-v27.js`
+- `assets/guide-audio-catalog.json`
 - `supabase/functions/dokohilf-guide-audio/index.ts`
 - `supabase/functions/dokohilf-guide-audio-build/index.ts`
 - `supabase/migrations/20260806194500_create_static_guide_audio_registry.sql`
 - `supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql`
+- `supabase/migrations/20260806204000_deny_public_audio_table_access.sql`
 - `scripts/live-static-guide-audio-smoke.mjs`
+- `scripts/mobile-render-v27.mjs`
+- `scripts/build-static-site-v27.sh`
 
-## 14. Pflege dieser Datei
+## 15. Pflege dieser Datei
 
 Nach jedem größeren Arbeitsblock sind mindestens zu aktualisieren:
 
