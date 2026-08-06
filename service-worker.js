@@ -1,17 +1,17 @@
-const BUILD_ID = '20260805-18';
+const BUILD_ID = '20260806-19';
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}`;
 const CORE_FILES = [
   './',
   './index.html',
   './version.json',
-  './assets/styles.css?v=20260805-18',
-  './assets/update-manager.js?v=20260805-18',
-  './assets/mobile-audio-fix.js?v=20260805-18',
-  './assets/voice-diagnostics.js?v=20260805-18',
-  './assets/routing-fix.js?v=20260805-18',
-  './assets/clarification-ui.js?v=20260805-18',
-  './assets/guide-progress.js?v=20260805-18',
-  './assets/app.js?v=20260805-18',
+  './assets/styles.css?v=20260806-19',
+  './assets/update-manager.js?v=20260806-19',
+  './assets/mobile-audio-fix.js?v=20260806-19',
+  './assets/voice-diagnostics.js?v=20260806-19',
+  './assets/routing-fix.js?v=20260806-19',
+  './assets/clarification-ui.js?v=20260806-19',
+  './assets/guide-progress.js?v=20260806-19',
+  './assets/app.js?v=20260806-19',
   './manifest.webmanifest',
   './icon.svg',
 ];

@@ -53,21 +53,23 @@ jobs:
           test -s docs/EDITOR_ROLLOUT.md
           test -s tests/fixtures/routing-fixtures.mjs
           test -s tests/helpers/routing-contract.mjs
+          test -s tests/audio-playback-unlock.test.mjs
           test -s scripts/run-behavior-regressions.mjs
           test -s scripts/live-routing-smoke.mjs
+          test -s scripts/live-tts-smoke.mjs
 
           grep -q "Sprachgespräch" _site/index.html
           grep -q "data-select-mode=\"chat\"" _site/index.html
           grep -q "Hauptmenü" _site/index.html
-          grep -q "dokohilf-build\" content=\"20260805-18" _site/index.html
-          grep -q "update-manager.js?v=20260805-18" _site/index.html
-          grep -q "mobile-audio-fix.js?v=20260805-18" _site/index.html
-          grep -q "voice-diagnostics.js?v=20260805-18" _site/index.html
-          grep -q "routing-fix.js?v=20260805-18" _site/index.html
-          grep -q "clarification-ui.js?v=20260805-18" _site/index.html
-          grep -q "guide-progress.js?v=20260805-18" _site/index.html
-          grep -q "app.js?v=20260805-18" _site/index.html
-          grep -q '"buildId": "20260805-18"' _site/version.json
+          grep -q "dokohilf-build\" content=\"20260806-19" _site/index.html
+          grep -q "update-manager.js?v=20260806-19" _site/index.html
+          grep -q "mobile-audio-fix.js?v=20260806-19" _site/index.html
+          grep -q "voice-diagnostics.js?v=20260806-19" _site/index.html
+          grep -q "routing-fix.js?v=20260806-19" _site/index.html
+          grep -q "clarification-ui.js?v=20260806-19" _site/index.html
+          grep -q "guide-progress.js?v=20260806-19" _site/index.html
+          grep -q "app.js?v=20260806-19" _site/index.html
+          grep -q '"buildId": "20260806-19"' _site/version.json
 
           grep -q "Redaktion anmelden" _site/editor.html
           grep -q "keine öffentliche Registrierung" _site/editor.html
@@ -85,6 +87,11 @@ jobs:
           grep -q "TTS_TIMEOUT_MS = 20000" _site/assets/mobile-audio-fix.js
           grep -q "__DOKOHILF_NATURAL_VOICE__" _site/assets/mobile-audio-fix.js
           grep -q "__DOKOHILF_MOBILE_VOICE_V2__" _site/assets/mobile-audio-fix.js
+          grep -q "__DOKOHILF_AUDIO_UNLOCK_V3__" _site/assets/mobile-audio-fix.js
+          grep -q "installSharedAudioContext" _site/assets/mobile-audio-fix.js
+          grep -q "unlockAudioPlayback" _site/assets/mobile-audio-fix.js
+          grep -q "pointerdown" _site/assets/mobile-audio-fix.js
+          grep -q "touchend" _site/assets/mobile-audio-fix.js
           grep -q "persistentVoiceControlStyles" _site/assets/mobile-audio-fix.js
           grep -q "position:fixed!important" _site/assets/mobile-audio-fix.js
           grep -q "MutationObserver" _site/assets/mobile-audio-fix.js
@@ -135,10 +142,10 @@ jobs:
           grep -q "dokohilf_reject_public_signup" supabase/migrations/20260805224500_dokohilf_editor_rbac.sql
           grep -q "Before User Created" docs/EDITOR_ROLLOUT.md
 
-          grep -q "BUILD_ID = '20260805-18'" _site/service-worker.js
-          grep -q "voice-diagnostics.js?v=20260805-18" _site/service-worker.js
-          grep -q "clarification-ui.js?v=20260805-18" _site/service-worker.js
-          grep -q "guide-progress.js?v=20260805-18" _site/service-worker.js
+          grep -q "BUILD_ID = '20260806-19'" _site/service-worker.js
+          grep -q "voice-diagnostics.js?v=20260806-19" _site/service-worker.js
+          grep -q "clarification-ui.js?v=20260806-19" _site/service-worker.js
+          grep -q "guide-progress.js?v=20260806-19" _site/service-worker.js
           grep -q "DOKOHILF_UPDATED" _site/service-worker.js
           grep -q "clients.claim" _site/service-worker.js
           grep -q "version.json" _site/service-worker.js
@@ -166,6 +173,7 @@ jobs:
           node --check _site/assets/app.js
           node --check _site/assets/editor.js
           node --check _site/service-worker.js
+          node --check scripts/live-tts-smoke.mjs
 
       - name: Run deterministic behavior regressions
         run: |
@@ -178,6 +186,7 @@ jobs:
             tests/guide-progress.test.mjs \
             tests/clarification.test.mjs \
             tests/voice-diagnostics.test.mjs \
+            tests/audio-playback-unlock.test.mjs \
             tests/behavior-regression.test.mjs \
             tests/mobile-layout-contract.test.mjs \
             tests/privacy-contract.test.mjs \
@@ -185,6 +194,9 @@ jobs:
 
       - name: Check active DokoHilf router
         run: node scripts/live-routing-smoke.mjs
+
+      - name: Check active DokoHilf voice service
+        run: node scripts/live-tts-smoke.mjs
 
       - name: Upload behavior report
         if: always()
