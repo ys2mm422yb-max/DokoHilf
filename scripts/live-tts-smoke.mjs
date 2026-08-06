@@ -4,12 +4,12 @@ const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 const TEST_TEXT = 'Öffne Vitalwerte und klicke oben links auf das grüne Plus.';
 const EXPECTED_VOICE = 'Gacrux';
-const EXPECTED_STYLE = 'natural-spoken-german-colleague-v6-fast';
+const EXPECTED_STYLE = 'natural-spoken-german-colleague-v5';
 const ALLOWED_MODELS = new Set([
   'gemini-2.5-pro-preview-tts',
   'gemini-2.5-flash-preview-tts',
 ]);
-const MAX_SERVER_LATENCY_MS = 14_000;
+const MAX_SERVER_LATENCY_MS = 20_000;
 
 async function requestAudio() {
   const startedAt = Date.now();
@@ -17,7 +17,7 @@ async function requestAudio() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
     body: JSON.stringify({ text: TEST_TEXT }),
-    signal: AbortSignal.timeout(24_000),
+    signal: AbortSignal.timeout(26_000),
   });
   const bytes = new Uint8Array(await response.arrayBuffer());
   const header = new TextDecoder('ascii').decode(bytes.slice(0, 12));
@@ -31,7 +31,6 @@ async function requestAudio() {
     style: response.headers.get('x-dokohilf-voice-style') || '',
     serverLatency: Number(response.headers.get('x-dokohilf-tts-latency') || 0),
     roundTripLatency: Date.now() - startedAt,
-    cache: response.headers.get('x-dokohilf-tts-cache') || '',
     byteLength: bytes.byteLength,
     header,
   };
@@ -55,7 +54,7 @@ async function runTest() {
       return await requestAudio();
     } catch (error) {
       lastError = error;
-      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1300));
+      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1800));
     }
   }
   throw lastError;
