@@ -10,9 +10,9 @@ const VOICE_NAME = 'Gacrux';
 const VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio';
 const INTERACTIONS_API_REVISION = '2026-05-20';
 const INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1';
-const PRIMARY_INTERACTIONS_TIMEOUT_MS = 8_000;
-const FALLBACK_INTERACTIONS_TIMEOUT_MS = 6_000;
-const LEGACY_FALLBACK_TIMEOUT_MS = 5_000;
+const PRIMARY_TIMEOUT_MS = 8_000;
+const FALLBACK_TIMEOUT_MS = 6_000;
+const LEGACY_TIMEOUT_MS = 5_000;
 const MAX_TEXT_CHARS = 520;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 36;
@@ -26,31 +26,47 @@ type AudioPayload = {
   sampleRate: number;
   channels: number;
 };
+type GeneratedAudio = {
+  wav: Uint8Array;
+  model: string;
+  mode: string;
+  latency: number;
+};
 
 class TtsProviderError extends Error {
-  status: number;
-  source: string;
-
-  constructor(source: string, status: number, message: string) {
+  constructor(
+    readonly source: string,
+    readonly status: number,
+    message: string,
+  ) {
     super(message);
     this.name = 'TtsProviderError';
-    this.source = source;
-    this.status = status;
   }
 }
 
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
 const audioCache = new Map<string, { wav: Uint8Array; model: string; mode: string; createdAt: number }>();
-const pendingAudio = new Map<string, Promise<{ wav: Uint8Array; model: string; mode: string; latency: number }>>();
+const pendingAudio = new Map<string, Promise<GeneratedAudio>>();
 
 function corsHeaders(origin: string | null): Record<string, string> {
-  const allowedOrigin = origin && ALLOWED_ORIGINS.has(origin) ? origin : 'https://ys2mm422yb-max.github.io';
+  const allowedOrigin = origin && ALLOWED_ORIGINS.has(origin)
+    ? origin
+    : 'https://ys2mm422yb-max.github.io';
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'content-type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-TTS-API, X-DokoHilf-TTS-Parser, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style, X-DokoHilf-TTS-Latency, X-DokoHilf-TTS-Cache',
-    'Vary': 'Origin',
+    'Access-Control-Expose-Headers': [
+      'X-DokoHilf-Voice',
+      'X-DokoHilf-TTS-Model',
+      'X-DokoHilf-TTS-API',
+      'X-DokoHilf-TTS-Parser',
+      'X-DokoHilf-Voice-Mode',
+      'X-DokoHilf-Voice-Style',
+      'X-DokoHilf-TTS-Latency',
+      'X-DokoHilf-TTS-Cache',
+    ].join(', '),
+    Vary: 'Origin',
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
   };
@@ -103,7 +119,7 @@ function asRecord(value: unknown): UnknownRecord | null {
     : null;
 }
 
-function stringValue(value: unknown): string {
+function asString(value: unknown): string {
   return typeof value === 'string' ? value : '';
 }
 
@@ -116,68 +132,20 @@ function base64ToBytes(value: string): Uint8Array {
   const normalized = value.includes(',') ? value.slice(value.indexOf(',') + 1) : value;
   const binary = atob(normalized);
   const bytes = new Uint8Array(binary.length);
-  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
   return bytes;
-}
-
-function isWave(bytes: Uint8Array): boolean {
-  return bytes.byteLength > 44
-    && bytes[0] === 82 && bytes[1] === 73 && bytes[2] === 70 && bytes[3] === 70
-    && bytes[8] === 87 && bytes[9] === 65 && bytes[10] === 86 && bytes[11] === 69;
-}
-
-function writeAscii(view: DataView, offset: number, value: string): void {
-  for (let index = 0; index < value.length; index += 1) view.setUint8(offset + index, value.charCodeAt(index));
-}
-
-function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSample = 16): Uint8Array {
-  const headerSize = 44;
-  const buffer = new ArrayBuffer(headerSize + pcm.byteLength);
-  const view = new DataView(buffer);
-  const blockAlign = channels * bitsPerSample / 8;
-  const byteRate = sampleRate * blockAlign;
-  writeAscii(view, 0, 'RIFF');
-  view.setUint32(4, 36 + pcm.byteLength, true);
-  writeAscii(view, 8, 'WAVE');
-  writeAscii(view, 12, 'fmt ');
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, channels, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, byteRate, true);
-  view.setUint16(32, blockAlign, true);
-  view.setUint16(34, bitsPerSample, true);
-  writeAscii(view, 36, 'data');
-  view.setUint32(40, pcm.byteLength, true);
-  new Uint8Array(buffer, headerSize).set(pcm);
-  return new Uint8Array(buffer);
-}
-
-function ensureWav(audio: AudioPayload): Uint8Array {
-  return isWave(audio.bytes)
-    ? audio.bytes
-    : pcmToWav(audio.bytes, audio.sampleRate, audio.channels);
-}
-
-function voicePrompt(text: string): string {
-  return [
-    'Erzeuge ausschließlich eine deutsche Sprachausgabe.',
-    'Stimme: erfahrene Kollegin, natürlich, ruhig, klar und zügig.',
-    'Normale Satzmelodie, kurze Pausen, kein Ansagerhythmus.',
-    'Lies nur den Text nach der Markierung TRANSKRIPT vor.',
-    'TRANSKRIPT:',
-    text,
-  ].join('\n');
 }
 
 function audioFromRecord(value: unknown): AudioPayload | null {
   const record = asRecord(value);
   if (!record) return null;
 
-  const inlineData = asRecord(record.inlineData) || asRecord(record.inline_data);
-  if (inlineData) {
-    const data = stringValue(inlineData.data);
-    const mimeType = stringValue(inlineData.mimeType || inlineData.mime_type).toLowerCase();
+  const inline = asRecord(record.inlineData) || asRecord(record.inline_data);
+  if (inline) {
+    const data = asString(inline.data);
+    const mimeType = asString(inline.mimeType || inline.mime_type).toLowerCase();
     if (data && mimeType.startsWith('audio/')) {
       return {
         bytes: base64ToBytes(data),
@@ -188,9 +156,9 @@ function audioFromRecord(value: unknown): AudioPayload | null {
     }
   }
 
-  const data = stringValue(record.data);
-  const type = stringValue(record.type).toLowerCase();
-  const mimeType = stringValue(record.mimeType || record.mime_type).toLowerCase();
+  const data = asString(record.data);
+  const type = asString(record.type).toLowerCase();
+  const mimeType = asString(record.mimeType || record.mime_type).toLowerCase();
   if (data && (type === 'audio' || mimeType.startsWith('audio/'))) {
     return {
       bytes: base64ToBytes(data),
@@ -240,7 +208,69 @@ function extractInteractionAudio(payload: unknown): AudioPayload | null {
   return null;
 }
 
-async function requestViaInteractions(apiKey: string, model: string, text: string, timeoutMs: number): Promise<AudioPayload> {
+function isWave(bytes: Uint8Array): boolean {
+  return bytes.byteLength > 44
+    && bytes[0] === 82 && bytes[1] === 73 && bytes[2] === 70 && bytes[3] === 70
+    && bytes[8] === 87 && bytes[9] === 65 && bytes[10] === 86 && bytes[11] === 69;
+}
+
+function writeAscii(view: DataView, offset: number, value: string): void {
+  for (let index = 0; index < value.length; index += 1) {
+    view.setUint8(offset + index, value.charCodeAt(index));
+  }
+}
+
+function pcmToWav(
+  pcm: Uint8Array,
+  sampleRate = 24000,
+  channels = 1,
+  bitsPerSample = 16,
+): Uint8Array {
+  const headerSize = 44;
+  const buffer = new ArrayBuffer(headerSize + pcm.byteLength);
+  const view = new DataView(buffer);
+  const blockAlign = channels * bitsPerSample / 8;
+  const byteRate = sampleRate * blockAlign;
+  writeAscii(view, 0, 'RIFF');
+  view.setUint32(4, 36 + pcm.byteLength, true);
+  writeAscii(view, 8, 'WAVE');
+  writeAscii(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, channels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, byteRate, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitsPerSample, true);
+  writeAscii(view, 36, 'data');
+  view.setUint32(40, pcm.byteLength, true);
+  new Uint8Array(buffer, headerSize).set(pcm);
+  return new Uint8Array(buffer);
+}
+
+function ensureWav(audio: AudioPayload): Uint8Array {
+  return isWave(audio.bytes)
+    ? audio.bytes
+    : pcmToWav(audio.bytes, audio.sampleRate, audio.channels);
+}
+
+function voicePrompt(text: string): string {
+  return [
+    'Erzeuge ausschließlich eine deutsche Sprachausgabe.',
+    'Stimme: erfahrene Kollegin, natürlich, ruhig, klar und zügig.',
+    'Normale Satzmelodie, kurze Pausen, kein Ansagerhythmus.',
+    'Lies nur den Text nach der Markierung TRANSKRIPT vor.',
+    'TRANSKRIPT:',
+    text,
+  ].join('\n');
+}
+
+async function requestViaInteractions(
+  apiKey: string,
+  model: string,
+  text: string,
+  timeoutMs: number,
+): Promise<AudioPayload> {
   const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
     method: 'POST',
     headers: {
@@ -253,16 +283,18 @@ async function requestViaInteractions(apiKey: string, model: string, text: strin
       model,
       input: voicePrompt(text),
       response_format: { type: 'audio' },
-      generation_config: {
-        speech_config: [{ voice: VOICE_NAME }],
-      },
+      generation_config: { speech_config: [{ voice: VOICE_NAME }] },
     }),
   });
-  const payload = await response.json().catch(() => ({}));
+  const payload: unknown = await response.json().catch(() => ({}));
   if (!response.ok) {
     const errorRecord = asRecord(asRecord(payload)?.error);
-    const providerMessage = stringValue(errorRecord?.status) || `HTTP ${response.status}`;
-    throw new TtsProviderError('interactions', response.status, `tts_interactions_${response.status}_${providerMessage}`);
+    const providerStatus = asString(errorRecord?.status) || `HTTP_${response.status}`;
+    throw new TtsProviderError(
+      'interactions',
+      response.status,
+      `tts_interactions_${response.status}_${providerStatus}`,
+    );
   }
   const audio = extractInteractionAudio(payload);
   if (!audio || audio.bytes.byteLength === 0) {
@@ -271,29 +303,42 @@ async function requestViaInteractions(apiKey: string, model: string, text: strin
   return audio;
 }
 
-async function requestViaGenerateContent(apiKey: string, model: string, text: string, timeoutMs: number): Promise<AudioPayload> {
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-    signal: AbortSignal.timeout(timeoutMs),
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: voicePrompt(text) }] }],
-      generationConfig: {
-        responseModalities: ['AUDIO'],
-        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE_NAME } } },
-      },
-    }),
-  });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new TtsProviderError('generate-content', response.status, `tts_generate_${response.status}`);
-  const parts = asRecord(asRecord(Array.isArray(asRecord(payload)?.candidates) ? asRecord(payload)?.candidates?.[0] : null)?.content)?.parts;
-  const audioPart = Array.isArray(parts)
-    ? parts.map(audioFromRecord).find(Boolean) as AudioPayload | undefined
-    : undefined;
-  if (!audioPart || audioPart.bytes.byteLength === 0) {
-    throw new TtsProviderError('generate-content', 502, 'tts_generate_missing_audio');
+async function requestViaGenerateContent(
+  apiKey: string,
+  model: string,
+  text: string,
+  timeoutMs: number,
+): Promise<AudioPayload> {
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+      signal: AbortSignal.timeout(timeoutMs),
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: voicePrompt(text) }] }],
+        generationConfig: {
+          responseModalities: ['AUDIO'],
+          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE_NAME } } },
+        },
+      }),
+    },
+  );
+  const payload: unknown = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new TtsProviderError('generate-content', response.status, `tts_generate_${response.status}`);
   }
-  return audioPart;
+
+  const root = asRecord(payload);
+  const candidates = Array.isArray(root?.candidates) ? root.candidates : [];
+  const firstCandidate = asRecord(candidates[0]);
+  const content = asRecord(firstCandidate?.content);
+  const parts = Array.isArray(content?.parts) ? content.parts : [];
+  for (const part of parts) {
+    const audio = audioFromRecord(part);
+    if (audio) return audio;
+  }
+  throw new TtsProviderError('generate-content', 502, 'tts_generate_missing_audio');
 }
 
 function cacheKey(text: string): string {
@@ -329,7 +374,14 @@ function apiName(mode: string): string {
   return 'server-memory-cache';
 }
 
-function audioResponse(origin: string | null, wav: Uint8Array, model: string, mode: string, latency: number, cache: 'hit' | 'miss' | 'shared'): Response {
+function audioResponse(
+  origin: string | null,
+  wav: Uint8Array,
+  model: string,
+  mode: string,
+  latency: number,
+  cache: 'hit' | 'miss' | 'shared',
+): Response {
   return new Response(wav, {
     status: 200,
     headers: {
@@ -348,21 +400,21 @@ function audioResponse(origin: string | null, wav: Uint8Array, model: string, mo
   });
 }
 
-async function generateAudio(apiKey: string, text: string): Promise<{ wav: Uint8Array; model: string; mode: string; latency: number }> {
+async function generateAudio(apiKey: string, text: string): Promise<GeneratedAudio> {
   const startedAt = Date.now();
   let audio: AudioPayload;
   let model = PRIMARY_MODEL;
   let mode = 'gemini-3.1-interactions-primary';
   try {
-    audio = await requestViaInteractions(apiKey, PRIMARY_MODEL, text, PRIMARY_INTERACTIONS_TIMEOUT_MS);
+    audio = await requestViaInteractions(apiKey, PRIMARY_MODEL, text, PRIMARY_TIMEOUT_MS);
   } catch {
     model = FALLBACK_MODEL;
     mode = 'gemini-2.5-interactions-fallback';
     try {
-      audio = await requestViaInteractions(apiKey, FALLBACK_MODEL, text, FALLBACK_INTERACTIONS_TIMEOUT_MS);
+      audio = await requestViaInteractions(apiKey, FALLBACK_MODEL, text, FALLBACK_TIMEOUT_MS);
     } catch {
       mode = 'gemini-2.5-generate-content-fallback';
-      audio = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text, LEGACY_FALLBACK_TIMEOUT_MS);
+      audio = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text, LEGACY_TIMEOUT_MS);
     }
   }
   const wav = ensureWav(audio);
@@ -371,46 +423,78 @@ async function generateAudio(apiKey: string, text: string): Promise<{ wav: Uint8
 }
 
 function responseStatusForError(error: unknown): number {
-  if (error instanceof TtsProviderError && [429, 502, 503, 504].includes(error.status)) return error.status;
+  if (error instanceof TtsProviderError && [429, 502, 503, 504].includes(error.status)) {
+    return error.status;
+  }
   if (error instanceof DOMException && error.name === 'TimeoutError') return 504;
   return 502;
 }
 
+function publicError(status: number): string {
+  if (status === 429) return 'Die Sprach-KI hat ihr aktuelles Kontingent erreicht.';
+  if (status === 504) return 'Die natürliche Stimme hat zu lange gebraucht.';
+  return 'Die natürliche Stimme ist gerade nicht verfügbar.';
+}
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
-  if (req.method !== 'POST') return jsonResponse(origin, 405, { error: 'Nur POST ist erlaubt.' });
-  if (origin && !ALLOWED_ORIGINS.has(origin)) return jsonResponse(origin, 403, { error: 'Diese Herkunft ist nicht freigegeben.' });
-  if (isRateLimited(req)) return jsonResponse(origin, 429, { error: 'Zu viele Sprachanfragen. Bitte kurz warten.' });
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders(origin) });
+  }
+  if (req.method !== 'POST') {
+    return jsonResponse(origin, 405, { error: 'Nur POST ist erlaubt.' });
+  }
+  if (origin && !ALLOWED_ORIGINS.has(origin)) {
+    return jsonResponse(origin, 403, { error: 'Diese Herkunft ist nicht freigegeben.' });
+  }
+  if (isRateLimited(req)) {
+    return jsonResponse(origin, 429, { error: 'Zu viele Sprachanfragen. Bitte kurz warten.' });
+  }
 
-  let parsed: Record<string, unknown>;
+  let parsed: UnknownRecord;
   try {
     const raw = await req.text();
-    if (!raw || raw.length > 5000) return jsonResponse(origin, 400, { error: 'Die Anfrage ist leer oder zu groß.' });
-    parsed = JSON.parse(raw);
+    if (!raw || raw.length > 5000) {
+      return jsonResponse(origin, 400, { error: 'Die Anfrage ist leer oder zu groß.' });
+    }
+    parsed = JSON.parse(raw) as UnknownRecord;
   } catch {
     return jsonResponse(origin, 400, { error: 'Ungültige Anfrage.' });
   }
 
   const text = sanitizeText(parsed.text);
   if (!text) return jsonResponse(origin, 400, { error: 'Es fehlt ein Text.' });
-  if (containsDirectPersonalData(text)) return jsonResponse(origin, 422, { blocked: true, error: 'Mögliche Echtdaten erkannt. Keine Sprachausgabe erstellt.' });
+  if (containsDirectPersonalData(text)) {
+    return jsonResponse(origin, 422, {
+      blocked: true,
+      error: 'Mögliche Echtdaten erkannt. Keine Sprachausgabe erstellt.',
+    });
+  }
 
   const cached = getCached(text);
   if (cached) return audioResponse(origin, cached.wav, cached.model, cached.mode, 0, 'hit');
 
   const apiKey = Deno.env.get('GEMINI_API_KEY');
-  if (!apiKey) return jsonResponse(origin, 503, { error: 'Die Sprach-KI ist noch nicht eingerichtet.' });
+  if (!apiKey) {
+    return jsonResponse(origin, 503, { error: 'Die Sprach-KI ist noch nicht eingerichtet.' });
+  }
 
   const key = cacheKey(text);
   const existing = pendingAudio.get(key);
   if (existing) {
     try {
       const result = await existing;
-      return audioResponse(origin, result.wav, result.model, `${result.mode}-shared`, result.latency, 'shared');
+      return audioResponse(
+        origin,
+        result.wav,
+        result.model,
+        `${result.mode}-shared`,
+        result.latency,
+        'shared',
+      );
     } catch (error) {
       const status = responseStatusForError(error);
-      return jsonResponse(origin, status, { error: status === 429 ? 'Die Sprach-KI hat ihr aktuelles Kontingent erreicht.' : 'Die natürliche Stimme ist gerade nicht verfügbar.' });
+      return jsonResponse(origin, status, { error: publicError(status) });
     }
   }
 
@@ -421,12 +505,6 @@ Deno.serve(async (req: Request) => {
     return audioResponse(origin, result.wav, result.model, result.mode, result.latency, 'miss');
   } catch (error) {
     const status = responseStatusForError(error);
-    return jsonResponse(origin, status, {
-      error: status === 429
-        ? 'Die Sprach-KI hat ihr aktuelles Kontingent erreicht.'
-        : status === 504
-          ? 'Die natürliche Stimme hat zu lange gebraucht.'
-          : 'Die natürliche Stimme ist gerade nicht verfügbar.',
-    });
+    return jsonResponse(origin, status, { error: publicError(status) });
   }
 });
