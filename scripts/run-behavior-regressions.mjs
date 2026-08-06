@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { approvedGuides, expectedCaseCount, routingCases } from '../tests/fixtures/routing-fixtures.mjs';
 import { evaluateCases, routeContract } from '../tests/helpers/routing-contract.mjs';
 
@@ -11,6 +11,26 @@ const REQUIRED_GUIDES = [
   'vitalwerte',
   'uebergabeformular',
   'notfallblatt',
+];
+
+const CONFIRMED_WORKFLOW_MIGRATION = await readFile(
+  new URL('../supabase/migrations/20260806153000_confirmed_workflows_blocks_1_4.sql', import.meta.url),
+  'utf8',
+);
+
+const REQUIRED_WORKFLOW_MARKERS = [
+  'bericht-folgebericht',
+  'Kontakt – alles außer Arzt',
+  'Sturzereignis',
+  'Bemerkung zur Bearbeitung',
+  'Klienten auswählen',
+  'niemals den Status „abgeschlossen“',
+  'Vitalwerte Sammelerf.',
+  'lasse „Bis“ leer und schätze niemals',
+  'Medikation ausschließlich ansehen',
+  'formulare-anlegen',
+  'Notfallblatt aufrufen',
+  'Alles ausklappen',
 ];
 
 const REAL_DATA_PATTERNS = [
@@ -48,7 +68,7 @@ function sequenceResults() {
   });
 }
 
-function buildMarkdown(caseResults, sequences, guideFailures, dataFailures) {
+function buildMarkdown(caseResults, sequences, guideFailures, dataFailures, workflowFailures) {
   const failedCases = caseResults.filter(result => !result.passed);
   const tagCounts = new Map();
   for (const result of caseResults) {
@@ -64,6 +84,7 @@ function buildMarkdown(caseResults, sequences, guideFailures, dataFailures) {
     `- Freigegebene Guides im Vertrag: **${approvedGuides.length}**`,
     `- Gesprächssequenzen: **${sequences.length}**`,
     `- Echtdaten in Testfällen erkannt: **${dataFailures.length}**`,
+    `- Fehlende bestätigte Workflow-Marker: **${workflowFailures.length}**`,
     '',
     '## Abgedeckte Varianten',
     '',
@@ -78,6 +99,12 @@ function buildMarkdown(caseResults, sequences, guideFailures, dataFailures) {
     ...(guideFailures.length
       ? guideFailures.map(slug => `- ❌ fehlt: ${slug}`)
       : REQUIRED_GUIDES.map(slug => `- ✅ ${slug}`)),
+    '',
+    '## Neu bestätigte Arbeitsabläufe',
+    '',
+    ...(workflowFailures.length
+      ? workflowFailures.map(marker => `- ❌ fehlt: ${marker}`)
+      : REQUIRED_WORKFLOW_MARKERS.map(marker => `- ✅ ${marker}`)),
     '',
   ];
 
@@ -98,13 +125,18 @@ const caseResults = evaluateCases(routingCases, approvedGuides);
 const sequences = sequenceResults();
 const guideSlugs = new Set(approvedGuides.map(guide => guide.slug));
 const guideFailures = REQUIRED_GUIDES.filter(slug => !guideSlugs.has(slug));
+const workflowFailures = REQUIRED_WORKFLOW_MARKERS.filter(marker => !CONFIRMED_WORKFLOW_MIGRATION.includes(marker));
 const dataFailures = routingCases.filter(testCase => REAL_DATA_PATTERNS.some(pattern => pattern.test(testCase.input)));
 const countFailure = routingCases.length !== expectedCaseCount || routingCases.length < 100;
 const failedCases = caseResults.filter(result => !result.passed);
 const failedSequences = sequences.filter(sequence => !sequence.passed);
 
 await mkdir('artifacts', { recursive: true });
-await writeFile('artifacts/dokohilf-behavior-report.md', buildMarkdown(caseResults, sequences, guideFailures, dataFailures), 'utf8');
+await writeFile(
+  'artifacts/dokohilf-behavior-report.md',
+  buildMarkdown(caseResults, sequences, guideFailures, dataFailures, workflowFailures),
+  'utf8',
+);
 await writeFile('artifacts/dokohilf-behavior-report.json', JSON.stringify({
   generatedAt: new Date().toISOString(),
   caseCount: routingCases.length,
@@ -114,13 +146,15 @@ await writeFile('artifacts/dokohilf-behavior-report.json', JSON.stringify({
   failedCases,
   sequences,
   missingRequiredGuides: guideFailures,
+  missingConfirmedWorkflowMarkers: workflowFailures,
   realDataFindings: dataFailures,
 }, null, 2), 'utf8');
 
 console.log(`DokoHilf: ${caseResults.length - failedCases.length}/${caseResults.length} Routingfälle bestanden.`);
 console.log(`DokoHilf: ${sequences.length - failedSequences.length}/${sequences.length} Gesprächssequenzen bestanden.`);
+console.log(`DokoHilf: ${REQUIRED_WORKFLOW_MARKERS.length - workflowFailures.length}/${REQUIRED_WORKFLOW_MARKERS.length} bestätigte Workflow-Marker vorhanden.`);
 
-if (countFailure || failedCases.length || failedSequences.length || guideFailures.length || dataFailures.length) {
+if (countFailure || failedCases.length || failedSequences.length || guideFailures.length || workflowFailures.length || dataFailures.length) {
   console.error('DokoHilf-Verhaltensprüfung fehlgeschlagen. Bericht siehe artifacts/.');
   process.exitCode = 1;
 }
