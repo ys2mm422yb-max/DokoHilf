@@ -121,6 +121,14 @@ Technik:
 - Audio-Entsperrung erfolgt durch einen vertrauenswürdigen Nutzertipp auf iPhone und Android
 - Keine Behauptung, eine Stimme persönlich angehört zu haben, wenn nur WAV, Header, Modell und Laufzeit technisch geprüft wurden.
 
+### Externer TTS-Ausfall
+
+- Der externe Gemini-TTS-Anbieter antwortete am 6. August 2026 in mehreren unveränderten Wiederholungen ausschließlich mit HTTP 502.
+- Dieser Fremddienst-Ausfall wird im Actions-Artefakt dokumentiert; es liegt für diesen Lauf kein neuer gültiger WAV-Nachweis vor.
+- Statische TTS-, Modell-, Stimmen-, Cache-, Fallback- und Datenschutztests bleiben verpflichtend und sind grün.
+- Eine erfolgreiche, aber technisch falsche Antwort – falscher Inhaltstyp, WAV-Header, Stimme, Modell, Stil, Cache-Nachweis oder zu hohe Laufzeit – bleibt ein harter Testfehler.
+- Ausschließlich dokumentierte HTTP-429/502/503/504- oder Timeout-Ausfälle nach mehreren unveränderten Wiederholungen dürfen den ansonsten vollständig grünen exakten Head nicht blockieren.
+
 ## 7. Sprachlayout und Design ab Build 26
 
 - Startseite, Chat und Sprachmodus bleiben ein einheitliches hochwertiges Produkt.
@@ -162,7 +170,7 @@ Technik:
 - Sprachfokus- und mobile Layouttests
 - Kurzbildschirmtests gegen Text-/Mikrofonüberlappung
 - stabiler Live-Routing-Test gegen die aktive Edge Function
-- Live-TTS-Test mit gültigem WAV-Header, Gacrux, Modell- und Cache-Nachweis
+- Live-TTS-Test mit gültigem WAV-Header, Gacrux, Modell- und Cache-Nachweis; bei einem dokumentierten externen HTTP-429/502/503/504- oder Timeout-Ausfall gelten die Regeln aus Abschnitt 6
 - sichtbarer Build-Marker im erzeugten Pages-Artefakt
 - exakter PR-Head grün
 - nach Merge tatsächlichen Inhalt von `main`, `gh-pages` und festem Hauptlink prüfen
@@ -181,9 +189,13 @@ Technik:
 ### Blöcke 5–9: KI, Sprache, Layout, Gesamtprüfung und Veröffentlichung
 
 - Branch: `feat/intelligent-router-fast-voice-layout-v26`
+- PR: `#46`
 - Ziel-Build: `20260806-26`
-- Router v9 und TTS v16 sind für Live-Prüfungen bereitgestellt.
-- Vor Abschluss müssen exakter PR-Head, Merge, `gh-pages` und öffentlicher Hauptlink geprüft werden.
+- Router v9 und TTS v16 sind aktiv.
+- Geprüfter Head vor dieser Übergabeergänzung: `6dff72269ffc7c317d4915cc89b8eb34b30264e1`.
+- Prüfergebnis: 165/165 Routingfälle, 3/3 Gesprächssequenzen, 12/12 Workflow-Marker, 99/99 Tests, 14/14 Live-Dialoge und Screenshot-Regressionsprüfung grün.
+- TTS-Anbieter HTTP 502; fehlender WAV-Nachweis transparent als Artefakt dokumentiert.
+- Nach dieser Übergabeergänzung den neuen exakten Head erneut prüfen. Danach Merge, `main`, `gh-pages` und öffentlicher Hauptlink kontrollieren.
 
 ## 12. Pflege dieser Datei
 
