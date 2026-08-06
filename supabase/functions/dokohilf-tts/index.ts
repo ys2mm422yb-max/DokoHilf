@@ -7,8 +7,9 @@ const ALLOWED_ORIGINS = new Set([
 const PRIMARY_MODEL = 'gemini-3.1-flash-tts-preview';
 const FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts';
 const VOICE_NAME = 'Gacrux';
-const VOICE_STYLE = 'natural-spoken-german-colleague-v9-interactions';
+const VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio';
 const INTERACTIONS_API_REVISION = '2026-05-20';
+const INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1';
 const PRIMARY_INTERACTIONS_TIMEOUT_MS = 8_000;
 const FALLBACK_INTERACTIONS_TIMEOUT_MS = 6_000;
 const LEGACY_FALLBACK_TIMEOUT_MS = 5_000;
@@ -17,6 +18,26 @@ const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 36;
 const CACHE_TTL_MS = 2 * 60 * 60_000;
 const CACHE_LIMIT = 96;
+
+type UnknownRecord = Record<string, unknown>;
+type AudioPayload = {
+  bytes: Uint8Array;
+  mimeType: string;
+  sampleRate: number;
+  channels: number;
+};
+
+class TtsProviderError extends Error {
+  status: number;
+  source: string;
+
+  constructor(source: string, status: number, message: string) {
+    super(message);
+    this.name = 'TtsProviderError';
+    this.source = source;
+    this.status = status;
+  }
+}
 
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
 const audioCache = new Map<string, { wav: Uint8Array; model: string; mode: string; createdAt: number }>();
@@ -28,7 +49,7 @@ function corsHeaders(origin: string | null): Record<string, string> {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'content-type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-TTS-API, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style, X-DokoHilf-TTS-Latency, X-DokoHilf-TTS-Cache',
+    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-TTS-API, X-DokoHilf-TTS-Parser, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style, X-DokoHilf-TTS-Latency, X-DokoHilf-TTS-Cache',
     'Vary': 'Origin',
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
@@ -76,8 +97,24 @@ function containsDirectPersonalData(text: string): boolean {
   ].some(pattern => pattern.test(text));
 }
 
+function asRecord(value: unknown): UnknownRecord | null {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? value as UnknownRecord
+    : null;
+}
+
+function stringValue(value: unknown): string {
+  return typeof value === 'string' ? value : '';
+}
+
+function positiveInteger(value: unknown, fallback: number): number {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 function base64ToBytes(value: string): Uint8Array {
-  const binary = atob(value);
+  const normalized = value.includes(',') ? value.slice(value.indexOf(',') + 1) : value;
+  const binary = atob(normalized);
   const bytes = new Uint8Array(binary.length);
   for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
   return bytes;
@@ -116,8 +153,10 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
   return new Uint8Array(buffer);
 }
 
-function ensureWav(audio: Uint8Array): Uint8Array {
-  return isWave(audio) ? audio : pcmToWav(audio);
+function ensureWav(audio: AudioPayload): Uint8Array {
+  return isWave(audio.bytes)
+    ? audio.bytes
+    : pcmToWav(audio.bytes, audio.sampleRate, audio.channels);
 }
 
 function voicePrompt(text: string): string {
@@ -131,7 +170,77 @@ function voicePrompt(text: string): string {
   ].join('\n');
 }
 
-async function requestViaInteractions(apiKey: string, model: string, text: string, timeoutMs: number): Promise<Uint8Array> {
+function audioFromRecord(value: unknown): AudioPayload | null {
+  const record = asRecord(value);
+  if (!record) return null;
+
+  const inlineData = asRecord(record.inlineData) || asRecord(record.inline_data);
+  if (inlineData) {
+    const data = stringValue(inlineData.data);
+    const mimeType = stringValue(inlineData.mimeType || inlineData.mime_type).toLowerCase();
+    if (data && mimeType.startsWith('audio/')) {
+      return {
+        bytes: base64ToBytes(data),
+        mimeType,
+        sampleRate: positiveInteger(record.sampleRate || record.sample_rate, 24000),
+        channels: positiveInteger(record.channels, 1),
+      };
+    }
+  }
+
+  const data = stringValue(record.data);
+  const type = stringValue(record.type).toLowerCase();
+  const mimeType = stringValue(record.mimeType || record.mime_type).toLowerCase();
+  if (data && (type === 'audio' || mimeType.startsWith('audio/'))) {
+    return {
+      bytes: base64ToBytes(data),
+      mimeType: mimeType || 'audio/l16',
+      sampleRate: positiveInteger(record.sampleRate || record.sample_rate, 24000),
+      channels: positiveInteger(record.channels, 1),
+    };
+  }
+  return null;
+}
+
+function extractInteractionAudio(payload: unknown): AudioPayload | null {
+  const root = asRecord(payload);
+  if (!root) return null;
+
+  const convenience = audioFromRecord(root.output_audio) || audioFromRecord(root.outputAudio);
+  if (convenience) return convenience;
+
+  const steps = Array.isArray(root.steps) ? [...root.steps].reverse() : [];
+  for (const stepValue of steps) {
+    const step = asRecord(stepValue);
+    if (!step) continue;
+    const content = Array.isArray(step.content) ? [...step.content].reverse() : [];
+    for (const block of content) {
+      const audio = audioFromRecord(block);
+      if (audio) return audio;
+    }
+  }
+
+  const queue: unknown[] = [root];
+  const visited = new Set<object>();
+  let inspected = 0;
+  while (queue.length && inspected < 400) {
+    const current = queue.shift();
+    inspected += 1;
+    const direct = audioFromRecord(current);
+    if (direct) return direct;
+    if (Array.isArray(current)) {
+      queue.push(...current.slice(0, 50));
+      continue;
+    }
+    const record = asRecord(current);
+    if (!record || visited.has(record)) continue;
+    visited.add(record);
+    queue.push(...Object.values(record).slice(0, 50));
+  }
+  return null;
+}
+
+async function requestViaInteractions(apiKey: string, model: string, text: string, timeoutMs: number): Promise<AudioPayload> {
   const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
     method: 'POST',
     headers: {
@@ -149,16 +258,20 @@ async function requestViaInteractions(apiKey: string, model: string, text: strin
       },
     }),
   });
-  const payload = await response.json().catch(() => ({})) as {
-    output_audio?: { data?: unknown };
-  };
-  if (!response.ok) throw new Error(`tts_interactions_${response.status}`);
-  const base64 = payload?.output_audio?.data;
-  if (typeof base64 !== 'string' || !base64) throw new Error('tts_interactions_empty');
-  return base64ToBytes(base64);
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const errorRecord = asRecord(asRecord(payload)?.error);
+    const providerMessage = stringValue(errorRecord?.status) || `HTTP ${response.status}`;
+    throw new TtsProviderError('interactions', response.status, `tts_interactions_${response.status}_${providerMessage}`);
+  }
+  const audio = extractInteractionAudio(payload);
+  if (!audio || audio.bytes.byteLength === 0) {
+    throw new TtsProviderError('interactions', 502, 'tts_interactions_missing_raw_audio');
+  }
+  return audio;
 }
 
-async function requestViaGenerateContent(apiKey: string, model: string, text: string, timeoutMs: number): Promise<Uint8Array> {
+async function requestViaGenerateContent(apiKey: string, model: string, text: string, timeoutMs: number): Promise<AudioPayload> {
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
@@ -172,17 +285,15 @@ async function requestViaGenerateContent(apiKey: string, model: string, text: st
     }),
   });
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(`tts_generate_${response.status}`);
-  const parts = payload?.candidates?.[0]?.content?.parts;
+  if (!response.ok) throw new TtsProviderError('generate-content', response.status, `tts_generate_${response.status}`);
+  const parts = asRecord(asRecord(Array.isArray(asRecord(payload)?.candidates) ? asRecord(payload)?.candidates?.[0] : null)?.content)?.parts;
   const audioPart = Array.isArray(parts)
-    ? parts.find((part: Record<string, unknown>) => {
-      const inlineData = part?.inlineData as Record<string, unknown> | undefined;
-      return typeof inlineData?.data === 'string';
-    })
-    : null;
-  const base64 = audioPart?.inlineData?.data;
-  if (typeof base64 !== 'string' || !base64) throw new Error('tts_generate_empty');
-  return base64ToBytes(base64);
+    ? parts.map(audioFromRecord).find(Boolean) as AudioPayload | undefined
+    : undefined;
+  if (!audioPart || audioPart.bytes.byteLength === 0) {
+    throw new TtsProviderError('generate-content', 502, 'tts_generate_missing_audio');
+  }
+  return audioPart;
 }
 
 function cacheKey(text: string): string {
@@ -228,6 +339,7 @@ function audioResponse(origin: string | null, wav: Uint8Array, model: string, mo
       'X-DokoHilf-Voice': VOICE_NAME,
       'X-DokoHilf-TTS-Model': model,
       'X-DokoHilf-TTS-API': apiName(mode),
+      'X-DokoHilf-TTS-Parser': INTERACTIONS_AUDIO_PARSER,
       'X-DokoHilf-Voice-Mode': mode,
       'X-DokoHilf-Voice-Style': VOICE_STYLE,
       'X-DokoHilf-TTS-Latency': String(latency),
@@ -238,7 +350,7 @@ function audioResponse(origin: string | null, wav: Uint8Array, model: string, mo
 
 async function generateAudio(apiKey: string, text: string): Promise<{ wav: Uint8Array; model: string; mode: string; latency: number }> {
   const startedAt = Date.now();
-  let audio: Uint8Array;
+  let audio: AudioPayload;
   let model = PRIMARY_MODEL;
   let mode = 'gemini-3.1-interactions-primary';
   try {
@@ -256,6 +368,12 @@ async function generateAudio(apiKey: string, text: string): Promise<{ wav: Uint8
   const wav = ensureWav(audio);
   putCached(text, wav, model, mode);
   return { wav, model, mode, latency: Date.now() - startedAt };
+}
+
+function responseStatusForError(error: unknown): number {
+  if (error instanceof TtsProviderError && [429, 502, 503, 504].includes(error.status)) return error.status;
+  if (error instanceof DOMException && error.name === 'TimeoutError') return 504;
+  return 502;
 }
 
 Deno.serve(async (req: Request) => {
@@ -290,8 +408,9 @@ Deno.serve(async (req: Request) => {
     try {
       const result = await existing;
       return audioResponse(origin, result.wav, result.model, `${result.mode}-shared`, result.latency, 'shared');
-    } catch {
-      return jsonResponse(origin, 502, { error: 'Die natürliche Stimme ist gerade nicht verfügbar.' });
+    } catch (error) {
+      const status = responseStatusForError(error);
+      return jsonResponse(origin, status, { error: status === 429 ? 'Die Sprach-KI hat ihr aktuelles Kontingent erreicht.' : 'Die natürliche Stimme ist gerade nicht verfügbar.' });
     }
   }
 
@@ -301,9 +420,13 @@ Deno.serve(async (req: Request) => {
     const result = await generation;
     return audioResponse(origin, result.wav, result.model, result.mode, result.latency, 'miss');
   } catch (error) {
-    const timeout = error instanceof DOMException && error.name === 'TimeoutError';
-    return jsonResponse(origin, timeout ? 504 : 502, {
-      error: timeout ? 'Die natürliche Stimme hat zu lange gebraucht.' : 'Die natürliche Stimme ist gerade nicht verfügbar.',
+    const status = responseStatusForError(error);
+    return jsonResponse(origin, status, {
+      error: status === 429
+        ? 'Die Sprach-KI hat ihr aktuelles Kontingent erreicht.'
+        : status === 504
+          ? 'Die natürliche Stimme hat zu lange gebraucht.'
+          : 'Die natürliche Stimme ist gerade nicht verfügbar.',
     });
   }
 });
