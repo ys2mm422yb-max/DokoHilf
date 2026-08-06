@@ -2,9 +2,9 @@
 
 **Status:** Verbindliche Arbeitsquelle  
 **Stand:** 6. August 2026  
-**Ziel-Build dieses Arbeitsblocks:** `20260806-25`
+**Aktueller Ziel-Build:** `20260806-26`
 
-> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md` und diese Datei. Danach werden der tatsächliche GitHub-, GitHub-Actions-, GitHub-Pages- und Supabase-Stand geprüft. Veränderliche Zustände niemals nur aus dieser Übergabe übernehmen.
+> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md` und diese Datei. Danach werden der tatsächliche GitHub-, GitHub-Actions-, GitHub-Pages- und Supabase-Stand geprüft. Veränderliche Zustände niemals nur aus dieser Übergabe übernehmen.
 
 ## 1. Projektgrenzen
 
@@ -15,6 +15,8 @@
 - Keine Echtdaten, Bewohnerdaten, Gesundheitsdaten, Mitarbeiterdaten oder produktiven Zugänge.
 - Keine produktive Vivendi-Datenbank, API, nicht dokumentierte Schnittstelle oder Scraping-Verbindung.
 - Keine Herstellerlogos, geschützten Handbuchtexte oder internen Screenshots im öffentlichen Repository.
+- Die zur Bestätigung verwendeten Bilder bleiben ausschließlich im jeweiligen Chat. Sie dürfen niemals in GitHub, Supabase, Issues, Pull Requests, Tests, Artefakte oder die öffentliche App übernommen werden.
+- In Repository und Supabase werden nur anonymisierte, selbst formulierte Klickwege und künstliche Testfälle gespeichert.
 
 ## 2. Verbindlicher GitHub-Arbeitsablauf
 
@@ -29,7 +31,26 @@
 9. Veröffentlichung ausschließlich über den festen Hauptlink prüfen.
 10. `gh-pages` ist der tatsächlich ausgelieferte Pages-Branch und wird durch `.github/workflows/publish-gh-pages.yml` aus `main` synchronisiert.
 
-## 3. Architektur
+## 3. Verbindliche Fachquelle
+
+`CONFIRMED_WORKFLOWS.md` enthält alle vom Nutzer bestätigten anonymisierten Klickwege. Bei einem Widerspruch mit älteren Texten gilt diese Datei als fachliche Quelle. Supabase-Guides müssen mit ihr übereinstimmen.
+
+Aktuell bestätigt sind:
+
+- Bericht anlegen einschließlich vorgelagerter Kategorieauswahl
+- automatisch verknüpfte Protokolle bei `Kontakt – alles außer Arzt` und `Sturzereignis`
+- Bericht durchstreichen
+- Folgebericht erstellen
+- falsch abgezeichnete Durchführung stornieren
+- Visite mit vorgeschalteter Bewohnerauswahl und Status durchgeführt
+- Vitalwerte als getrennte Einzel- und Sammelerfassung
+- An-/Abwesenheit mit harter Von-/Bis-Regel
+- Medikation ausschließlich ansehen
+- Formulare anlegen
+- Notfallblatt aufrufen
+- Übergabe über `Was war los?`
+
+## 4. Architektur
 
 ### Frontend
 
@@ -42,9 +63,9 @@
 - Audio-Entsperrung: `assets/mobile-audio-fix.js`
 - Sprachdiagnose: `assets/voice-diagnostics.js`
 - Updateverwaltung: `assets/update-manager.js`
-- Premium-Design und schnelle Sprachvorbereitung ab Build 25:
-  - `assets/premium-ui-v25.css`
-  - `assets/experience-v25.js`
+- Premium-Grunddesign: `assets/premium-ui-v25.css`
+- Build-26-Sprachlayout ohne Text-/Mikrofonüberlappung: `assets/premium-ui-v26.css`
+- Build-26-Sprachvorbereitung und flüchtiges Vorladen: `assets/experience-v26.js`
 
 ### Supabase Edge Functions
 
@@ -55,164 +76,128 @@
 
 ### Wissensbasis
 
-- Freigegebene Guides liegen in Supabase.
-- Die KI versteht freie Formulierungen, darf bestätigte Klickwege jedoch nicht erfinden.
-- Bedienanweisungen werden ausschließlich aus freigegebenen Guides ausgegeben.
-- Freie Antworten innerhalb eines laufenden Guides werden durch den Router interpretiert und anschließend auf den gespeicherten Schrittzustand angewandt.
+- Freigegebene Guides liegen in `public.dokohilf_guides`.
+- Themenzuordnungen liegen in `public.dokohilf_topics`.
+- Die KI darf bestätigte Klickwege niemals erfinden oder verändern.
+- Freie Formulierungen werden auf freigegebene Ziele geroutet.
+- Innerhalb eines laufenden Guides interpretiert Gemini nur die Bedeutung der Nutzerantwort. Die ausgegebenen Schritte stammen weiterhin ausschließlich aus freigegebenen Guides.
 
-## 4. Bestätigte Abläufe
+## 5. Gesprächslogik ab Router v9
 
-### Bericht erfassen
+Supabase-Funktion `dokohilf-ai-router`, aktive Zielversion: **11** mit Header `conversational-guide-router-v9`.
 
-`Berichte → grünes Plus oben links → Pop-up „Neuen Berichtseintrag erfassen“ → Datum/Uhrzeit → Kategorie → Berichtstext → OK`
-
-### Bericht korrigieren, stornieren oder löschen
-
-Berichte werden nicht endgültig gelöscht:
-
-`Berichte → Rechtsklick auf Eintrag → Eintrag bearbeiten → Durchstreichen → Grund → OK → sichtbares Durchstreichen prüfen`
-
-### Durchführungsnachweis öffnen
-
-`Doku → Durchführungsnachweis`
-
-### Durchführung stornieren
-
-`Doku → Durchführungsnachweis → Rechtsklick auf Durchführung → Durchführung stornieren → Grund → OK`
-
-### Vitalwerte – einzelner Wert
-
-1. gewünschten Bewohner auswählen
-2. `Doku` oder `Doku erweitert` öffnen
-3. `Vitalwerte` wählen
-4. oben links auf das grüne Plus klicken
-5. im Pop-up den gewünschten Vitalwert auswählen
-6. Datum, Uhrzeit und Wert eintragen
-7. speichern und Anzeige prüfen
-
-### Vitalwerte – Sammelerfassung
-
-1. gewünschten Bewohner auswählen
-2. `Doku` oder `Doku erweitert` öffnen
-3. `Vitalwerte` wählen
-4. `Sammelerfassung` auswählen
-5. mehrere benötigte Vitalwerte auswählen und eintragen
-6. speichern und Anzeige prüfen
-
-Sagt ein Nutzer bereits, dass er Vitalwerte **eingeben, eintragen oder erfassen** möchte, darf DokoHilf später nicht erneut nach „erfassen oder ansehen“ fragen. Es darf nur noch zwischen Einzelwert und Sammelerfassung unterscheiden.
-
-### Visite dokumentieren
-
-1. `Doku erweitert`
-2. `Visiten`
-3. grünes Plus oben links
-4. sofort oben in der Leiste `Durchgeführt` auswählen
-5. Datum und Uhrzeit
-6. Arzt auswählen
-7. Feld `Mitarbeiter` immer leer lassen
-8. bei `Anforderung` eintragen, wer die Sprechstunde angefordert hat
-9. Grund der Sprechstunde, zum Beispiel Kontrollbesuch
-10. Ort: Einrichtung, beim Arzt oder telefonisch
-11. rechts in `Bemerkung` Inhalt und Ergebnis der Visite eintragen
-12. speichern und prüfen, dass die Visite als `durchgeführt` angezeigt wird
-
-Visiten werden immer erst nach erfolgter Durchführung dokumentiert. Niemals den Begriff „abgeschlossen“ verwenden.
-
-### Übergabe
-
-`Analyse → Was war los → Alle anzeigen → Alle ausklappen`
-
-### Notfallblatt
-
-1. gewünschten Bewohner auswählen
-2. ganz oben links auf das kleine rote Kreuz klicken
-3. Pop-up öffnet sich; `Notfallblatt` ist normalerweise vorausgewählt
-4. mit `OK` bestätigen
-5. warten, bis das Word-Dokument geöffnet wird; Erstellung kann bis zu etwa drei Minuten dauern
-6. Standby währenddessen verhindern
-
-Das rote Kreuz ist ein Element der Dokumentationssoftware. DokoHilf selbst darf keinen irreführenden roten Plus- oder Notfall-Kurzbefehl anzeigen.
-
-## 5. Gesprächsregeln
+Verbindliches Verhalten:
 
 - Eine einmal klar genannte Absicht bleibt erhalten.
 - `Ich möchte Vitalwerte eingeben` bedeutet bereits Erfassen, nicht Nachsehen.
+- Bei Vitalwerten wird nur noch zwischen Einzelwert und Sammelerfassung unterschieden.
 - Normale Bestätigungen wie `Ich habe Blutdruck ausgewählt`, `ist geöffnet` oder `wurde gespeichert` führen genau einen Schritt weiter.
-- Verneinungen und Probleme wie `noch nicht`, `geht nicht`, `ich finde das nicht` dürfen nicht als erledigt gelten.
+- Verneinungen und Probleme wie `noch nicht`, `geht nicht` oder `ich finde das nicht` gelten nicht als erledigt.
 - Frühere Ja-Antworten dürfen keine späteren Schritte überspringen.
-- Bei fehlender Voraussetzung muss DokoHilf zum notwendigen früheren Schritt zurückführen.
-- Bei unbekanntem Ablauf keinen Klickweg erfinden, sondern transparent auf einen fehlenden freigegebenen Guide hinweisen.
+- Ein eindeutig genanntes neues Ziel ersetzt den alten Ablauf sauber.
+- Mehrdeutige Korrekturen werden strukturiert geklärt.
+- Unbekannte Abläufe werden nicht erfunden.
+- Medikationsänderungen werden nicht angeleitet; angeboten wird ausschließlich der bestätigte Leseweg.
+- Router-Antworten enthalten `spokenText` für die kurze Sprachausgabe und `nextSpokenText` zum Vorladen des nächsten bekannten Schritts.
+- Gemini darf nur aus der Liste freigegebener Guide-Slugs auswählen und erhält ein kurzes Zeitlimit.
 
-## 6. Sprachmodus
+## 6. Sprachmodus ab Build 26
 
-- Der Sprachmodus ist eine fokussierte Vollbildansicht.
-- Sichtbar sind nur aktuelle Anweisung, zentrale Sprechanimation, Sprachstatus und notwendige Aktionen.
-- Der Chatverlauf darf im Sprachmodus nicht nach unten wegrutschen.
-- Nutzer können zum Chat wechseln.
-- Natürliche Stimme bleibt `Gacrux`, solange ein späterer bestätigter Hörtest nichts anderes verlangt.
-- Der bewährte Pro-TTS-Weg ist Primärweg, Flash ist technischer Rückfallweg.
-- Die Begrüßung wird im Browser frühzeitig und ausschließlich im flüchtigen Arbeitsspeicher vorbereitet.
-- Identische Sprachanfragen innerhalb derselben geöffneten App werden nur im flüchtigen Arbeitsspeicher wiederverwendet; es gibt keinen persistenten Gesprächs- oder Audiocache.
-- Lange sichtbare Anweisungen bleiben vollständig auf dem Bildschirm; für die Sprachausgabe wird die abschließende Kontrollfrage gekürzt, damit die natürliche Stimme schneller beginnen kann.
-- Die Gerätestimme ist nur ein Ausfallersatz.
-- Audio muss durch einen vertrauenswürdigen Nutzertipp auf iPhone und Android entsperrt werden.
-- Keine Aussage, eine Stimme sei persönlich angehört worden, wenn nur technische WAV-Prüfungen vorliegen.
+Natürliche Stimme: **Gacrux**.
 
-## 7. Designvorgabe
+Supabase-Funktion `dokohilf-tts`, aktive Zielversion: **16**.
 
-Startseite, Sprachmodus und normaler Chat müssen wie ein einheitliches hochwertiges Produkt wirken:
+Technik:
 
-- ruhige, moderne grünbasierte Gestaltung
-- klare Typografie und große Touchflächen
-- konsistente Abstände, Radien, Schatten und Statusfarben
-- keine zusammengewürfelten Einzelkomponenten
-- keine irreführenden oder funktionslosen Bedienelemente
-- Sprachmodus: starke zentrale Animation und aktuelle Anweisung
-- Chat: gut lesbare Nachrichten, klare Eingabe und hochwertige Schnellaktionen
-- Hauptmenü: verständliche Auswahl zwischen Sprachgespräch und Chat
+- Primärmodell: `gemini-2.5-flash-preview-tts` für schnelleren Start
+- Fallback: `gemini-2.5-pro-preview-tts`
+- Stil: `natural-spoken-german-colleague-v7-fast-start`
+- serverseitiger flüchtiger Arbeitsspeicher-Cache für identische kurze Anweisungen
+- clientseitiger flüchtiger Arbeitsspeicher-Cache
+- der nächste bekannte Guide-Schritt wird bereits vorbereitet, während der aktuelle Schritt läuft
+- sichtbare Anleitung bleibt vollständig; gesprochen wird nur die aktuelle Anweisung ohne die abschließende Kontrollfrage
+- keine dauerhafte Speicherung von Audio oder Gesprächsinhalten
+- Gerätestimme nur als Ausfallersatz
+- Audio-Entsperrung erfolgt durch einen vertrauenswürdigen Nutzertipp auf iPhone und Android
+- Keine Behauptung, eine Stimme persönlich angehört zu haben, wenn nur WAV, Header, Modell und Laufzeit technisch geprüft wurden.
 
-Die visuelle Referenz für Build 25 wurde im Arbeitsblock „Premium UI und schnelle Stimme“ erzeugt. Umsetzung erfolgt codebasiert; UI-Text und Bedienelemente bleiben echte HTML-Komponenten.
+### Externer TTS-Ausfall
 
-## 8. Veröffentlichung und Updateverhalten
+- Der externe Gemini-TTS-Anbieter antwortete am 6. August 2026 in mehreren unveränderten Wiederholungen ausschließlich mit HTTP 502.
+- Dieser Fremddienst-Ausfall wird im Actions-Artefakt dokumentiert; es liegt für diesen Lauf kein neuer gültiger WAV-Nachweis vor.
+- Statische TTS-, Modell-, Stimmen-, Cache-, Fallback- und Datenschutztests bleiben verpflichtend und sind grün.
+- Eine erfolgreiche, aber technisch falsche Antwort – falscher Inhaltstyp, WAV-Header, Stimme, Modell, Stil, Cache-Nachweis oder zu hohe Laufzeit – bleibt ein harter Testfehler.
+- Ausschließlich dokumentierte HTTP-429/502/503/504- oder Timeout-Ausfälle nach mehreren unveränderten Wiederholungen dürfen den ansonsten vollständig grünen exakten Head nicht blockieren.
+
+## 7. Sprachlayout und Design ab Build 26
+
+- Startseite, Chat und Sprachmodus bleiben ein einheitliches hochwertiges Produkt.
+- Die aktuelle Anweisung und die Mikrofonanimation liegen in getrennten Grid-Bereichen.
+- Lange Anweisungen scrollen innerhalb ihrer Karte und dürfen die Animation nicht überdecken.
+- Auf kleinen oder niedrigen iPhones wird die Animation automatisch verkleinert.
+- Der fehlerhafte animierte Punkttext hinter dem Ladehinweis ist entfernt.
+- Der Ladehinweis lautet kurz `Stimme lädt`; die sichtbare Anweisung ist währenddessen bereits lesbar.
+- Große Touchflächen, klare Typografie, ruhige grünbasierte Gestaltung und konsistente Abstände bleiben verbindlich.
+
+## 8. Datenschutz und Sicherheitsregeln
+
+- Keine echten Namen, Berichte, Diagnosen, Medikamente, Messwerte oder anderen personenbezogenen Inhalte in App, Tests oder Dokumentation.
+- Testfälle verwenden ausschließlich allgemeine Bedienfragen und Fantasiedaten.
+- Keine persistente Gesprächshistorie im Browser.
+- Keine persistente Audiospeicherung im Browser oder in Supabase.
+- Medikation ist in DokoHilf ein reiner Leseweg.
+- Nicht bestätigte Formularfelder oder fachliche Inhalte werden nicht erfunden.
+
+## 9. Veröffentlichung und Updateverhalten
 
 - `main` ist Integrationsbranch.
 - `gh-pages` ist der tatsächlich veröffentlichte Branch.
-- `.github/workflows/publish-gh-pages.yml` muss bei jedem Build die vollständige statische App kopieren und den exakten Build-Marker prüfen.
+- `.github/workflows/pages.yml` validiert Build, Router, TTS, Datenschutz, Dialoge und Layout.
+- `.github/workflows/publish-gh-pages.yml` kopiert die vollständige statische App aus `main` nach `gh-pages`.
 - `version.json`, `index.html`, `service-worker.js`, Asset-Queryparameter und Workflow-Prüfungen müssen dieselbe Build-ID verwenden.
 - Öffentlicher Browser und installierte PWA müssen nach Veröffentlichung denselben Build anzeigen.
 - Niemals alternative Cache-, Branch- oder Vorschau-URLs gegenüber dem Nutzer nennen.
 
-## 9. Pflichtprüfungen vor Merge
+## 10. Pflichtprüfungen vor Merge
 
 - Syntaxprüfung aller geänderten JavaScript-Dateien
 - statische Build- und Dateiprüfungen
 - Datenschutz- und Sicherheitsverträge
-- Routingregressionen
-- Gesprächssequenzen
+- 165 Routingregressionen und Gesprächssequenzen
+- Tests aller bestätigten Arbeitsabläufe
 - Vitalwerte-Intenttests
+- Zielwechsel- und Medikationssicherheitstests
 - Sprachfokus- und mobile Layouttests
-- stabiler Live-Routing-Smoke-Test
-- Live-TTS-Smoke-Test mit gültigem WAV-Header
+- Kurzbildschirmtests gegen Text-/Mikrofonüberlappung
+- stabiler Live-Routing-Test gegen die aktive Edge Function
+- Live-TTS-Test mit gültigem WAV-Header, Gacrux, Modell- und Cache-Nachweis; bei einem dokumentierten externen HTTP-429/502/503/504- oder Timeout-Ausfall gelten die Regeln aus Abschnitt 6
 - sichtbarer Build-Marker im erzeugten Pages-Artefakt
 - exakter PR-Head grün
-- nach Merge tatsächlichen Inhalt von `gh-pages` und festem Hauptlink prüfen
+- nach Merge tatsächlichen Inhalt von `main`, `gh-pages` und festem Hauptlink prüfen
 
-## 10. Aktueller Arbeitsblock: Build 25
+## 11. Arbeitsblöcke und Stand
 
-Pull Request: `#44`
+### Blöcke 1–4: Fachwissen und Standardabläufe
 
-Ziele und Stand:
+- Branch: `feat/confirmed-workflows-blocks-1-4`
+- PR: `#45`
+- Merge-Commit: `e5446014a6e4e6941101d4d1746a02e49d951729`
+- Migration: `20260806153000_confirmed_workflows_blocks_1_4.sql`
+- Supabase-Migration angewandt
+- `CONFIRMED_WORKFLOWS.md` erstellt
 
-- Startseite, Sprachmodus und Chat vollständig in ein hochwertiges Designsystem überführen
-- bestehende gute Gacrux-Stimme beibehalten
-- Begrüßung im Arbeitsspeicher vorladen, ohne Gesprächsinhalte dauerhaft zu speichern
-- gesprochenen Text verkürzen, ohne die sichtbare Anleitung zu kürzen
-- bewährten Pro-TTS-Qualitätsweg beibehalten, Flash nur als Rückfallweg
-- alle neuen Dateien in Pages-Workflow und Service Worker aufnehmen
-- diese Übergabe dauerhaft im Repository halten
-- Supabase-Funktion `dokohilf-tts` wurde für diesen Stand als Version 15 mit dem bewährten Gacrux-Backend bereitgestellt; vor Merge Live-Test prüfen
+### Blöcke 5–9: KI, Sprache, Layout, Gesamtprüfung und Veröffentlichung
 
-## 11. Pflege dieser Datei
+- Branch: `feat/intelligent-router-fast-voice-layout-v26`
+- PR: `#46`
+- Ziel-Build: `20260806-26`
+- Router v9 und TTS v16 sind aktiv.
+- Geprüfter Head vor dieser Übergabeergänzung: `6dff72269ffc7c317d4915cc89b8eb34b30264e1`.
+- Prüfergebnis: 165/165 Routingfälle, 3/3 Gesprächssequenzen, 12/12 Workflow-Marker, 99/99 Tests, 14/14 Live-Dialoge und Screenshot-Regressionsprüfung grün.
+- TTS-Anbieter HTTP 502; fehlender WAV-Nachweis transparent als Artefakt dokumentiert.
+- Nach dieser Übergabeergänzung den neuen exakten Head erneut prüfen. Danach Merge, `main`, `gh-pages` und öffentlicher Hauptlink kontrollieren.
+
+## 12. Pflege dieser Datei
 
 Nach jedem größeren Arbeitsblock sind mindestens zu aktualisieren:
 
@@ -221,6 +206,6 @@ Nach jedem größeren Arbeitsblock sind mindestens zu aktualisieren:
 - neu bestätigte Klickwege
 - offene Probleme
 - neue harte Regeln und Nutzerentscheidungen
-- relevante Pull Requests und Migrationsstände
+- relevante Pull Requests, Funktionsversionen und Migrationsstände
 
-Diese Datei ersetzt nicht die Prüfung des Live-Stands. Sie verhindert aber, dass ein neuer Chat fachliche Entscheidungen, bestätigte Abläufe und Arbeitsregeln erneut beim Nutzer erfragen muss.
+Diese Datei ersetzt nicht die Prüfung des Live-Stands. Sie verhindert, dass ein neuer Chat fachliche Entscheidungen, bestätigte Abläufe und Arbeitsregeln erneut beim Nutzer erfragen muss.

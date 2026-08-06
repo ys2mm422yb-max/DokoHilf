@@ -3,11 +3,14 @@ import { mkdir, writeFile } from 'node:fs/promises';
 const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router';
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 
+const choiceSource = payload => String(payload.source || '').startsWith('vital-entry-mode-choice');
+const clarificationSource = payload => String(payload.source || '').startsWith('structured-clarification');
+
 const cases = [
   {
     name: 'Vitalwerte-Erfassungsziel bleibt erhalten',
     body: { messages: [{ role: 'user', content: 'Ich möchte Vitalwerte eingeben' }] },
-    validate: payload => payload.source === 'vital-entry-mode-choice' && Array.isArray(payload.options) && payload.options.length === 2,
+    validate: payload => choiceSource(payload) && Array.isArray(payload.options) && payload.options.length === 2,
   },
   {
     name: 'Einzelwert startet richtigen Guide',
@@ -55,12 +58,62 @@ const cases = [
       speechAlternatives: ['Albert erfassen', 'Vitalwerte erfassen'],
       messages: [{ role: 'user', content: 'Albert erfassen' }],
     },
-    validate: payload => payload.source === 'vital-entry-mode-choice' && Array.isArray(payload.options) && payload.options.length === 2,
+    validate: payload => choiceSource(payload) && Array.isArray(payload.options) && payload.options.length === 2,
   },
   {
     name: 'Mehrdeutige Korrektur wird strukturiert geklärt',
     body: { messages: [{ role: 'user', content: 'Ich habe falsch dokumentiert' }] },
-    validate: payload => payload.source === 'structured-clarification' && Array.isArray(payload.options) && payload.options.length === 2,
+    validate: payload => clarificationSource(payload) && Array.isArray(payload.options) && payload.options.length === 2,
+  },
+  {
+    name: 'Folgebericht wird direkt erkannt',
+    body: { messages: [{ role: 'user', content: 'Ich möchte einen Folgebericht erstellen' }] },
+    validate: payload => payload.guideSlug === 'bericht-folgebericht' && Number(payload.guideStep) === 1,
+  },
+  {
+    name: 'Visite beginnt mit Visitenbereich und enthält Bewohnerauswahl als nächsten Schritt',
+    body: { messages: [{ role: 'user', content: 'Ich möchte eine Visite dokumentieren' }] },
+    validate: payload => payload.guideSlug === 'visite-anlegen'
+      && Number(payload.guideStep) === 1
+      && typeof payload.nextSpokenText === 'string'
+      && /grüne Plus|Neu/i.test(payload.nextSpokenText),
+  },
+  {
+    name: 'An- und Abwesenheit wird direkt erkannt',
+    body: { messages: [{ role: 'user', content: 'Ich möchte eine Abwesenheit eintragen' }] },
+    validate: payload => payload.guideSlug === 'anwesenheit' && Number(payload.guideStep) === 1,
+  },
+  {
+    name: 'Formular anlegen wird direkt erkannt',
+    body: { messages: [{ role: 'user', content: 'Ich möchte ein Sturzprotokoll anlegen' }] },
+    validate: payload => payload.guideSlug === 'formulare-anlegen' && Number(payload.guideStep) === 1,
+  },
+  {
+    name: 'Medikationsänderung wird nicht angeleitet',
+    body: { messages: [{ role: 'user', content: 'Wie kann ich die Medikation absetzen?' }] },
+    validate: payload => payload.source === 'medication-view-only-safety-v9'
+      && payload.guideSlug == null
+      && /ausschließlich zum Ansehen/i.test(payload.reply || ''),
+  },
+  {
+    name: 'Klar genanntes neues Ziel ersetzt laufenden Guide',
+    body: {
+      guideSlug: 'visite-anlegen',
+      guideStep: 2,
+      guideStateVersion: 2,
+      messages: [
+        { role: 'assistant', content: 'Klicke oben links auf das grüne Plus beziehungsweise Neu.' },
+        { role: 'user', content: 'Ich möchte stattdessen einen Bericht durchstreichen' },
+      ],
+    },
+    validate: payload => payload.guideSlug === 'bericht-durchstreichen'
+      && Number(payload.guideStep) === 1
+      && /wechsle/i.test(payload.reply || ''),
+  },
+  {
+    name: 'Notfallblatt wird direkt erkannt',
+    body: { messages: [{ role: 'user', content: 'Wie rufe ich das Notfallblatt auf?' }] },
+    validate: payload => payload.guideSlug === 'notfallblatt' && Number(payload.guideStep) === 1,
   },
 ];
 

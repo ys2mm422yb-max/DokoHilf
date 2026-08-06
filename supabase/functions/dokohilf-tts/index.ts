@@ -4,17 +4,20 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:3000',
 ]);
 
-const PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts';
-const FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts';
-const PREVIOUS_VOICE_NAME = 'Vindemiatrix';
+const PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts';
+const FALLBACK_MODEL = 'gemini-2.5-pro-preview-tts';
 const VOICE_NAME = 'Gacrux';
-const VOICE_STYLE = 'natural-spoken-german-colleague-v5';
-const REQUEST_TIMEOUT_MS = 20_000;
-const MAX_TEXT_CHARS = 900;
+const VOICE_STYLE = 'natural-spoken-german-colleague-v7-fast-start';
+const PRIMARY_TIMEOUT_MS = 7_500;
+const FALLBACK_TIMEOUT_MS = 6_000;
+const MAX_TEXT_CHARS = 520;
 const WINDOW_MS = 60_000;
-const MAX_REQUESTS_PER_WINDOW = 10;
+const MAX_REQUESTS_PER_WINDOW = 28;
+const CACHE_TTL_MS = 15 * 60_000;
+const CACHE_LIMIT = 32;
 
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
+const audioCache = new Map<string, { wav: Uint8Array; model: string; createdAt: number }>();
 
 function corsHeaders(origin: string | null): Record<string, string> {
   const allowedOrigin = origin && ALLOWED_ORIGINS.has(origin)
@@ -24,7 +27,7 @@ function corsHeaders(origin: string | null): Record<string, string> {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'content-type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style, X-DokoHilf-TTS-Latency',
+    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style, X-DokoHilf-TTS-Latency, X-DokoHilf-TTS-Cache',
     'Vary': 'Origin',
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
@@ -69,18 +72,18 @@ function containsDirectPersonalData(text: string): boolean {
     /\b\d{1,2}\.\d{1,2}\.\d{2,4}\b/,
     /\b(?:herr|frau|bewohner(?:in)?|klient(?:in)?|patient(?:in)?)\s+[a-zäöüß-]{2,}/i,
     /\b\d{6,}\b/,
-  ].some((pattern) => pattern.test(text));
+  ].some(pattern => pattern.test(text));
 }
 
 function base64ToBytes(value: string): Uint8Array {
   const binary = atob(value);
   const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
   return bytes;
 }
 
 function writeAscii(view: DataView, offset: number, value: string): void {
-  for (let i = 0; i < value.length; i += 1) view.setUint8(offset + i, value.charCodeAt(i));
+  for (let index = 0; index < value.length; index += 1) view.setUint8(offset + index, value.charCodeAt(index));
 }
 
 function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSample = 16): Uint8Array {
@@ -108,22 +111,27 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
 
 function voicePrompt(text: string): string {
   return [
-    'Sprich den folgenden deutschen Satz so, wie eine erfahrene Kollegin ihn direkt nebenbei sagen würde.',
-    'Nicht vorlesen und nicht moderieren. Kein Ansagerhythmus, keine künstliche Freundlichkeit, keine überdeutliche Aussprache.',
-    'Nutze natürliche Satzmelodie, kleine unregelmäßige Sprechpausen und ein normales zügiges Alltagstempo.',
-    'Klickbegriffe nur leicht betonen. Am Satzende nicht hochgehen. Lies ausschließlich den folgenden Text:',
+    'Sprich ausschließlich den folgenden deutschen Text.',
+    'Klinge wie eine erfahrene Kollegin direkt neben der Person: natürlich, ruhig, klar und zügig.',
+    'Keine Moderation, kein Ansagerhythmus, keine künstliche Freundlichkeit und keine überdeutliche Aussprache.',
+    'Nutze normale Satzmelodie und kurze natürliche Pausen. Klickbegriffe leicht betonen.',
     text,
   ].join('\n');
 }
 
-async function requestViaGenerateContent(apiKey: string, model: string, text: string): Promise<Uint8Array> {
+async function requestViaGenerateContent(
+  apiKey: string,
+  model: string,
+  text: string,
+  timeoutMs: number,
+): Promise<Uint8Array> {
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-goog-api-key': apiKey,
     },
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeoutMs),
     body: JSON.stringify({
       contents: [{ parts: [{ text: voicePrompt(text) }] }],
       generationConfig: {
@@ -141,6 +149,57 @@ async function requestViaGenerateContent(apiKey: string, model: string, text: st
   const base64 = payload?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
   if (typeof base64 !== 'string' || !base64) throw new Error('tts_generate_empty');
   return base64ToBytes(base64);
+}
+
+function cacheKey(text: string): string {
+  return text.toLocaleLowerCase('de-DE').replace(/\s+/g, ' ').trim();
+}
+
+function getCached(text: string): { wav: Uint8Array; model: string } | null {
+  const key = cacheKey(text);
+  const entry = audioCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.createdAt > CACHE_TTL_MS) {
+    audioCache.delete(key);
+    return null;
+  }
+  audioCache.delete(key);
+  audioCache.set(key, entry);
+  return { wav: entry.wav, model: entry.model };
+}
+
+function putCached(text: string, wav: Uint8Array, model: string): void {
+  const key = cacheKey(text);
+  audioCache.set(key, { wav, model, createdAt: Date.now() });
+  while (audioCache.size > CACHE_LIMIT) {
+    const oldest = audioCache.keys().next().value;
+    if (typeof oldest !== 'string') break;
+    audioCache.delete(oldest);
+  }
+}
+
+function audioResponse(
+  origin: string | null,
+  wav: Uint8Array,
+  model: string,
+  mode: string,
+  latency: number,
+  cache: 'hit' | 'miss',
+): Response {
+  return new Response(wav, {
+    status: 200,
+    headers: {
+      ...corsHeaders(origin),
+      'Content-Type': 'audio/wav',
+      'Content-Length': String(wav.byteLength),
+      'X-DokoHilf-Voice': VOICE_NAME,
+      'X-DokoHilf-TTS-Model': model,
+      'X-DokoHilf-Voice-Mode': mode,
+      'X-DokoHilf-Voice-Style': VOICE_STYLE,
+      'X-DokoHilf-TTS-Latency': String(latency),
+      'X-DokoHilf-TTS-Cache': cache,
+    },
+  });
 }
 
 Deno.serve(async (req: Request) => {
@@ -165,40 +224,34 @@ Deno.serve(async (req: Request) => {
     return jsonResponse(origin, 422, { blocked: true, error: 'Mögliche Echtdaten erkannt. Keine Sprachausgabe erstellt.' });
   }
 
+  const cached = getCached(text);
+  if (cached) return audioResponse(origin, cached.wav, cached.model, 'server-memory-cache', 0, 'hit');
+
   const apiKey = Deno.env.get('GEMINI_API_KEY');
   if (!apiKey) return jsonResponse(origin, 503, { error: 'Die Sprach-KI ist noch nicht eingerichtet.' });
 
   const startedAt = Date.now();
   let pcm: Uint8Array;
   let model = PRIMARY_MODEL;
-  let mode = 'pro-natural-spoken-german';
+  let mode = 'flash-fast-natural-german';
   try {
-    pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text);
+    pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text, PRIMARY_TIMEOUT_MS);
   } catch (primaryError) {
     model = FALLBACK_MODEL;
-    mode = 'flash-natural-spoken-german-fallback';
+    mode = 'pro-quality-fallback';
     try {
-      pcm = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text);
+      pcm = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text, FALLBACK_TIMEOUT_MS);
     } catch {
-      if (primaryError instanceof DOMException && primaryError.name === 'TimeoutError') {
-        return jsonResponse(origin, 504, { error: 'Die natürliche Stimme hat zu lange gebraucht.' });
-      }
-      return jsonResponse(origin, 502, { error: 'Die natürliche Stimme ist gerade nicht verfügbar.' });
+      const timeout = primaryError instanceof DOMException && primaryError.name === 'TimeoutError';
+      return jsonResponse(origin, timeout ? 504 : 502, {
+        error: timeout
+          ? 'Die natürliche Stimme hat zu lange gebraucht.'
+          : 'Die natürliche Stimme ist gerade nicht verfügbar.',
+      });
     }
   }
 
   const wav = pcmToWav(pcm);
-  return new Response(wav, {
-    status: 200,
-    headers: {
-      ...corsHeaders(origin),
-      'Content-Type': 'audio/wav',
-      'Content-Length': String(wav.byteLength),
-      'X-DokoHilf-Voice': VOICE_NAME,
-      'X-DokoHilf-TTS-Model': model,
-      'X-DokoHilf-Voice-Mode': mode,
-      'X-DokoHilf-Voice-Style': VOICE_STYLE,
-      'X-DokoHilf-TTS-Latency': String(Date.now() - startedAt),
-    },
-  });
+  putCached(text, wav, model);
+  return audioResponse(origin, wav, model, mode, Date.now() - startedAt, 'miss');
 });

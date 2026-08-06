@@ -27,7 +27,8 @@ jobs:
           cp \
             assets/styles.css \
             assets/premium-ui-v25.css \
-            assets/experience-v25.js \
+            assets/premium-ui-v26.css \
+            assets/experience-v26.js \
             assets/update-manager.js \
             assets/mobile-audio-fix.js \
             assets/voice-diagnostics.js \
@@ -45,12 +46,14 @@ jobs:
           test -s _site/index.html
           test -s _site/version.json
           test -s _site/assets/premium-ui-v25.css
-          test -s _site/assets/experience-v25.js
-          grep -q 'dokohilf-build" content="20260806-25' _site/index.html
-          grep -q 'KI · v25' _site/index.html
-          grep -q 'premium-ui-v25.css?v=20260806-25' _site/index.html
-          grep -q 'experience-v25.js?v=20260806-25' _site/index.html
-          grep -q '"buildId": "20260806-25"' _site/version.json
+          test -s _site/assets/premium-ui-v26.css
+          test -s _site/assets/experience-v26.js
+          grep -q 'dokohilf-build" content="20260806-26' _site/index.html
+          grep -q 'KI · v26' _site/index.html
+          grep -q 'premium-ui-v26.css?v=20260806-26' _site/index.html
+          grep -q 'experience-v26.js?v=20260806-26' _site/index.html
+          grep -q '"buildId": "20260806-26"' _site/version.json
+          grep -q "BUILD_ID = '20260806-26'" _site/service-worker.js
 
       - name: Publish exact site to gh-pages
         env:
