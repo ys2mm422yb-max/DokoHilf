@@ -27,13 +27,21 @@ Nach Abtrennung des Release-Branches wurden drei veraltete Regressionen gefunden
 
 Diese Änderungen entfernen ausschließlich harte Build-26-/TTS-v16-Erwartungen. Fachliche Router-, Sicherheits- und Klickwegprüfungen bleiben vollständig bestehen.
 
+Zusätzlich wurden für beide internen Audio-Tabellen explizite Deny-All-RLS-Policies für `anon` und `authenticated` ergänzt. Der Supabase-Sicherheitsberater meldet danach keine Lints.
+
 ## Merge-Grenze
 
-PR #52 bleibt Draft, bis die beiden Workflows auf dem exakten Release-Head grün sind:
+PR #52 bleibt Draft, bis `Deploy DokoHilf` auf dem exakten Release-Head vollständig grün ist. Dieser eine Workflow enthält bereits:
 
-1. `Deploy DokoHilf`
-2. `Validate dark iPhone UI v27`
+- Syntax- und Quellverträge
+- Fach- und Routingregressionen
+- Datenschutz- und Sicherheitsprüfungen
+- Playwright-iPhone-Render auf 393 × 852
+- Live-Router
+- Live-TTS v20
+- privaten Guide-Audiobestand
+- exakten Pages-Build
 
-Die verbundene GitHub-App kann diese Workflows nicht selbst auslösen und der Connector stellt keinen Workflow-Dispatch bereit. Deshalb ist einmalig ein manueller Start in der GitHub-Oberfläche auf Branch `feat/dark-premium-v27-release` erforderlich.
+Die verbundene GitHub-App kann den Workflow nicht selbst auslösen und der Connector stellt keinen Workflow-Dispatch bereit. Deshalb ist einmalig ein manueller Start in der GitHub-Oberfläche auf Branch `feat/dark-premium-v27-release` erforderlich.
 
 Erst danach darf der exakte Head manuell gemergt und über den festen Hauptlink verifiziert werden.
