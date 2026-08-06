@@ -2,6 +2,10 @@
 
 Dieser Release-Branch enthält den zusammengeführten Zielumfang für DokoHilf Build `20260806-27`.
 
+**Finaler Branch:** `release/build-27-final-validation`  
+**Finaler Pull Request:** `#53`  
+**Ersetzter Release-PR:** `#52`
+
 ## Oberfläche
 
 - vollständiges dunkles Premium-Design für Hauptmenü, Chat und Sprachmodus
@@ -13,6 +17,7 @@ Dieser Release-Branch enthält den zusammengeführten Zielumfang für DokoHilf B
 - technische Bedienkommandos erscheinen nicht als normale Chatnachrichten
 - große Mikrofonfläche nur in aktivem Sprachzustand
 - verdichtete Darstellung auf kleinen und niedrigen iPhones
+- korrigierte Playwright-Prüfung der sichtbaren Vollbild-Sprachansicht auf 393 × 852
 
 ## Datenschutz
 
@@ -41,9 +46,12 @@ Dieser Release-Branch enthält den zusammengeführten Zielumfang für DokoHilf B
 - echter mobiler Rendernachweis auf 393 × 852
 - Live-Router und Live-TTS-v20-Nachweis
 - identischer Pages- und `gh-pages`-Build
-- exakter grüner PR-#52-Head
+- vollständig grüner exakter PR-#53-Head
 - manueller Merge ohne Auto-Merge und ohne Branch-Löschung
+- PR #52 anschließend als ersetzt schließen, ohne seinen Branch zu löschen
 - Prüfung von `main`, `gh-pages`, Supabase und festem Hauptlink nach Veröffentlichung
+
+Der erforderliche Workflow `Deploy DokoHilf` muss einmal manuell über die GitHub-Oberfläche auf `release/build-27-final-validation` gestartet werden. Durch die verbundene GitHub-App ausgelöste Änderungen erzeugen keinen Actions-Lauf, und der Connector stellt keinen Workflow-Dispatch bereit. Ohne vollständig grünen exakten Head darf nicht gemergt werden.
 
 ## Separater Audioabschluss
 
