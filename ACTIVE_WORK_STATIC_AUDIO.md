@@ -31,6 +31,7 @@
 - Datei 000: HTTP 200, `audio/wav`, 301484 Bytes, passender SHA-256-Header
 - weitere unterschiedliche TTS-Erzeugungen aktuell durch Google HTTP 429 begrenzt
 - temporärer Quell-Snapshot-Endpunkt wieder deaktiviert: HTTP 410
+- Supabase-Sicherheitsberater nach expliziten Deny-All-RLS-Policies: keine Lints
 
 ## Release-Trennung
 
@@ -53,15 +54,9 @@ Die fachlichen Router- und Klickwegregressionen wurden nicht abgeschwächt.
 ## Noch vor Merge von Build 27 erforderlich
 
 - in GitHub **Actions → Deploy DokoHilf → Run workflow** den Branch `feat/dark-premium-v27-release` einmal manuell starten
-- zusätzlich **Actions → Validate dark iPhone UI v27 → Run workflow** auf demselben Branch starten
+- dieser eine Workflow enthält bereits Syntax-, Fach-, Datenschutz-, Sicherheits-, Live-Router-, Live-TTS-, privaten Audio-, Pages-Build- und vollständigen Playwright-iPhone-Test auf 393 × 852
 - Grund: GitHub unterdrückt Workflowereignisse, die durch die verbundene GitHub-App selbst erzeugt werden; der Connector bietet keinen direkten Dispatch
-- alle deterministischen Fach-, Datenschutz- und Sicherheitsverträge grün
-- iPhone-Renderprüfung auf 393 × 852 grün
-- Live-Router grün
-- Live-TTS v20 grün oder dokumentierter zulässiger externer Ausfall
-- verfügbarer privater Audiobestand grün geprüft
-- Pages-Build grün
-- erst danach manueller Merge des exakten PR-#52-Heads
+- erst nach vollständig grünem Lauf darf der exakte PR-#52-Head manuell gemergt werden
 - kein Auto-Merge und keine Branch-Löschung
 - nach Merge `main`, `gh-pages`, Supabase und festen Hauptlink prüfen
 
