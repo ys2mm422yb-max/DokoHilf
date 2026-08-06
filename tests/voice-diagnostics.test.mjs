@@ -43,18 +43,15 @@ test('Diagnose speichert keine Gesprächsinhalte dauerhaft', () => {
   assert.doesNotMatch(diagnostics, /console\.(log|info|warn|error)/);
 });
 
-test('Cloud-TTS behält Gacrux über den stabilen Pro-Pfad mit Flash-Fallback', () => {
+test('Cloud-TTS behält Gacrux über den bewährten Pro-Pfad mit Flash-Fallback', () => {
   assert.match(tts, /PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts'/);
   assert.match(tts, /FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts'/);
   assert.match(tts, /VOICE_NAME = 'Gacrux'/);
-  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v6-fast'/);
-  assert.match(tts, /PRIMARY_TIMEOUT_MS = 12_000/);
-  assert.match(tts, /FALLBACK_TIMEOUT_MS = 8_000/);
+  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v5'/);
+  assert.match(tts, /REQUEST_TIMEOUT_MS = 20_000/);
   assert.match(tts, /X-DokoHilf-TTS-Latency/);
-  assert.match(tts, /X-DokoHilf-TTS-Cache/);
-  assert.match(tts, /audioCache/);
   assert.match(tts, /erfahrene Kollegin/);
-  assert.match(tts, /Kein(?:e)? Moderation/);
+  assert.match(tts, /Nicht vorlesen und nicht moderieren/);
 });
 
 test('Client bereitet die Begrüßung vor und kürzt nur den gesprochenen Prüfteil', () => {
