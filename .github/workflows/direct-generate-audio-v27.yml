@@ -6,6 +6,10 @@ on:
     paths:
       - .github/workflows/direct-generate-audio-v27.yml
       - assets/guide-audio-catalog.json
+      - assets/guide-audio-generation-status.json
+      - assets/guide-audio-manifest.partial.json
+      - assets/guide-audio-manifest.json
+      - assets/audio/guides/**
       - scripts/generate-guide-audio.mjs
       - tests/prebuilt-guide-audio.test.mjs
   workflow_dispatch:
@@ -15,14 +19,14 @@ permissions:
 
 concurrency:
   group: dokohilf-direct-final-audio-v27
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   generate-and-commit:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 45
     steps:
-      - name: Checkout branch without marketplace actions
+      - name: Checkout latest branch without marketplace actions
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -34,20 +38,44 @@ jobs:
           git fetch --depth=1 origin feat/dark-premium-static-guide-audio-v27
           git checkout -B feat/dark-premium-static-guide-audio-v27 FETCH_HEAD
 
-      - name: Generate all approved Gacrux WAV files
-        run: node scripts/generate-guide-audio.mjs
+      - name: Generate the next approved Gacrux audio batch
+        id: generate
+        run: |
+          set +e
+          node scripts/generate-guide-audio.mjs
+          generation_status=$?
+          set -e
+          echo "status=${generation_status}" >> "$GITHUB_OUTPUT"
+          echo "Generator exit status: ${generation_status}"
 
-      - name: Verify manifest, hashes and WAV headers
-        run: node --test tests/prebuilt-guide-audio.test.mjs
-
-      - name: Commit generated files to the feature branch
+      - name: Persist every successful audio and checkpoint
         run: |
           set -euo pipefail
-          git add assets/guide-audio-manifest.json assets/audio/guides
+          git add -A \
+            assets/audio/guides \
+            assets/guide-audio-generation-status.json \
+            assets/guide-audio-manifest.partial.json \
+            assets/guide-audio-manifest.json
           if git diff --cached --quiet; then
-            echo "All approved guide audio is already committed."
+            echo "No new guide audio progress in this round."
             exit 0
           fi
-          git commit -m "Add prebuilt Gacrux audio for approved guides"
+          completed="$(node -e "const s=require('./assets/guide-audio-generation-status.json');process.stdout.write(String(s.completed))")"
+          total="$(node -e "const s=require('./assets/guide-audio-generation-status.json');process.stdout.write(String(s.total))")"
+          git commit -m "Checkpoint prebuilt Gacrux audio ${completed} of ${total}"
           git pull --rebase origin feat/dark-premium-static-guide-audio-v27
           git push origin HEAD:feat/dark-premium-static-guide-audio-v27
+
+      - name: Verify complete manifest, hashes and WAV headers
+        if: steps.generate.outputs.status == '0'
+        run: node --test tests/prebuilt-guide-audio.test.mjs
+
+      - name: Keep incomplete generation visibly blocked
+        if: steps.generate.outputs.status != '0'
+        run: |
+          status='${{ steps.generate.outputs.status }}'
+          if [ -s assets/guide-audio-generation-status.json ]; then
+            cat assets/guide-audio-generation-status.json
+          fi
+          echo "Static guide audio remains incomplete; the checkpoint commit triggers the next resumable round."
+          exit "${status}"
