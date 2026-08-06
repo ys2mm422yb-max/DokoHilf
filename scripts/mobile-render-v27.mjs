@@ -165,7 +165,8 @@ try {
   });
   await page.locator('#startScreen').waitFor({ state: 'visible' });
   await page.getByRole('button', { name: /Sprechen/i }).first().click();
-  await page.locator('#workspace').waitFor({ state: 'visible' });
+  await page.locator('.voice-focus-stage').waitFor({ state: 'visible', timeout: 15_000 });
+  assert(await page.locator('#workspace').isHidden(), 'Der alte Arbeitsbereich bleibt im Vollbild-Sprachmodus sichtbar.');
   await page.waitForTimeout(200);
 
   const shell = page.locator('#appShell');
