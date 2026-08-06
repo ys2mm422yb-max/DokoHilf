@@ -5,18 +5,25 @@
   const TTS_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-tts';
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
   const AI_MARKER = '/functions/v1/dokohilf-ai';
+  const AUDIO_MANIFEST_URL = './assets/guide-audio-manifest.json?v=20260806-27';
   const FAST_FALLBACK_MS = 2400;
-  const MEMORY_LIMIT = 18;
+  const MANIFEST_TIMEOUT_MS = 1200;
+  const MEMORY_LIMIT = 24;
   const GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
   const previousFetch = window.fetch.bind(window);
   const memory = new Map();
   const inflight = new Map();
+  const prebuiltByKey = new Map();
+  let manifestPromise = null;
   let statusObserver = null;
   let messageObserver = null;
 
   const exercisePhrases = [
     /\s*In Übungen ausschließlich Fantasiedaten verwenden\.?/gi,
     /\s*In Übungen nur Fantasiedaten verwenden\.?/gi,
+    /\s*In Übungen nur Fantasiewerte verwenden\.?/gi,
+    /\s*Im öffentlichen Test ausschließlich Fantasiedaten verwenden\.?/gi,
+    /\s*Im öffentlichen Test nur vollständig erfundene Personen verwenden\.?/gi,
     /\s*Verwende in Übungen ausschließlich Fantasiedaten\.?/gi,
     /\s*Verwende dabei nur Fantasiedaten\.?/gi,
     /\s*In Übungen ausschließlich mit Fantasiedaten arbeiten\.?/gi,
@@ -47,6 +54,18 @@
     return clipped ? `${clipped}.` : short.slice(0, 215);
   }
 
+  function normalizeAudioKey(value) {
+    return String(value || '')
+      .toLocaleLowerCase('de-DE')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ß/g, 'ss')
+      .replace(/[„“”"']/g, '')
+      .replace(/[^a-z0-9äöü\s./-]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   function extractText(init) {
     try {
       const payload = JSON.parse(String(init?.body || '{}'));
@@ -58,6 +77,69 @@
 
   function responseFrom(entry) {
     return new Response(entry.bytes.slice(0), { status: 200, headers: entry.headers });
+  }
+
+  function remember(text, bytes, headers) {
+    const entry = { bytes, headers, createdAt: Date.now() };
+    memory.delete(text);
+    memory.set(text, entry);
+    while (memory.size > MEMORY_LIMIT) memory.delete(memory.keys().next().value);
+    return entry;
+  }
+
+  function fetchJsonWithTimeout(url, timeoutMs) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    return previousFetch(url, { cache: 'force-cache', signal: controller.signal })
+      .finally(() => clearTimeout(timer));
+  }
+
+  function loadPrebuiltManifest() {
+    if (prebuiltByKey.size) return Promise.resolve(prebuiltByKey);
+    if (manifestPromise) return manifestPromise;
+
+    manifestPromise = fetchJsonWithTimeout(AUDIO_MANIFEST_URL, MANIFEST_TIMEOUT_MS)
+      .then(async response => {
+        if (!response.ok) throw new Error(`guide_audio_manifest_${response.status}`);
+        const manifest = await response.json();
+        if (manifest?.voice !== 'Gacrux' || !Array.isArray(manifest?.entries)) {
+          throw new Error('invalid_guide_audio_manifest');
+        }
+        for (const entry of manifest.entries) {
+          if (!entry || typeof entry.key !== 'string' || typeof entry.file !== 'string') continue;
+          prebuiltByKey.set(entry.key, entry);
+        }
+        return prebuiltByKey;
+      })
+      .catch(() => {
+        manifestPromise = null;
+        return prebuiltByKey;
+      });
+
+    return manifestPromise;
+  }
+
+  async function loadPrebuiltVoice(text) {
+    const optimized = optimizeSpokenText(text);
+    if (!optimized) return null;
+    if (memory.has(optimized)) return responseFrom(memory.get(optimized));
+
+    const manifest = await loadPrebuiltManifest();
+    const entry = manifest.get(normalizeAudioKey(optimized));
+    if (!entry) return null;
+
+    const response = await previousFetch(entry.file, { cache: 'force-cache' });
+    if (!response.ok) throw new Error(`prebuilt_audio_${response.status}`);
+    const bytes = await response.arrayBuffer();
+    const headers = new Headers(response.headers);
+    headers.set('Content-Type', 'audio/wav');
+    headers.set('X-DokoHilf-Voice', 'Gacrux');
+    headers.set('X-DokoHilf-TTS-Model', 'prebuilt-approved-guide');
+    headers.set('X-DokoHilf-Voice-Mode', 'static-approved-guide');
+    headers.set('X-DokoHilf-Voice-Style', 'approved-guide-static-v1');
+    headers.set('X-DokoHilf-TTS-Cache', 'static-file');
+    headers.set('X-DokoHilf-Client-Cache', 'prebuilt-v27');
+    return responseFrom(remember(optimized, bytes, headers));
   }
 
   async function loadNaturalVoice(text, init = {}) {
@@ -76,11 +158,7 @@
         const bytes = await response.arrayBuffer();
         const headers = new Headers(response.headers);
         headers.set('X-DokoHilf-Client-Cache', 'memory-v27');
-        const entry = { bytes, headers, createdAt: Date.now() };
-        memory.delete(optimized);
-        memory.set(optimized, entry);
-        while (memory.size > MEMORY_LIMIT) memory.delete(memory.keys().next().value);
-        return entry;
+        return remember(optimized, bytes, headers);
       }).finally(() => inflight.delete(optimized));
       inflight.set(optimized, request);
     }
@@ -88,10 +166,20 @@
     return responseFrom(await inflight.get(optimized));
   }
 
+  async function loadPreferredVoice(text, init = {}) {
+    try {
+      const prebuilt = await loadPrebuiltVoice(text);
+      if (prebuilt) return prebuilt;
+    } catch {
+      // Eine beschädigte oder vorübergehend nicht erreichbare statische Datei blockiert die Live-Stimme nicht.
+    }
+    return loadNaturalVoice(text, init);
+  }
+
   function prefetchText(value) {
     const text = optimizeSpokenText(value);
     if (!text || memory.has(text) || inflight.has(text)) return Promise.resolve(false);
-    return loadNaturalVoice(text).then(() => true).catch(() => false);
+    return loadPreferredVoice(text).then(() => true).catch(() => false);
   }
 
   function fastRace(cloudPromise) {
@@ -119,6 +207,13 @@
       const text = extractText(init);
       if (!text) return previousFetch(input, init);
       if (memory.has(text)) return responseFrom(memory.get(text));
+
+      try {
+        const prebuilt = await loadPrebuiltVoice(text);
+        if (prebuilt) return prebuilt;
+      } catch {
+        // Fällt eine statische Datei aus, greift direkt der begrenzte Live-TTS-Weg.
+      }
       return fastRace(loadNaturalVoice(text, init));
     }
 
@@ -188,9 +283,9 @@
 
     if (normalized.includes('natürliche stimme wird vorbereitet') || normalized.includes('stimme lädt')) {
       status.textContent = 'Stimme startet';
-      hint.textContent = 'Nach kurzer Zeit startet automatisch die schnelle Gerätestimme.';
+      hint.textContent = 'Bekannte Schritte starten direkt. Freie Antworten wechseln nach kurzer Zeit zur Sofortstimme.';
     }
-    if (badge && /gerätestimme als ersatz/i.test(badge.textContent || '')) badge.textContent = 'Schnellmodus';
+    if (badge && /gerätestimme als ersatz/i.test(badge.textContent || '')) badge.textContent = 'Sofortstimme';
   }
 
   function prefetchForPrompt(button) {
@@ -200,7 +295,7 @@
       ['bericht', 'Öffne beim gewünschten Bewohner den Bereich „Berichte“.'],
       ['visite', 'Öffne „Doku-Erweitert“ und wähle „Visiten“.'],
       ['vital', 'Wähle zuerst den gewünschten Bewohner aus.'],
-      ['übergabe', 'Öffne „Analyse“ und wähle „Was war los?“.'],
+      ['übergabe', 'Öffne oben den Reiter „Analyse“.'],
       ['medikation', 'Wähle zuerst den gewünschten Bewohner aus.'],
       ['formular', 'Wähle zuerst den gewünschten Bewohner aus.'],
       ['abwesenheit', 'Wähle zuerst den gewünschten Bewohner aus.'],
@@ -223,7 +318,7 @@
   }
 
   function warmGreeting() {
-    prefetchText(GREETING);
+    return prefetchText(GREETING);
   }
 
   function initialize() {
@@ -231,6 +326,7 @@
     installObservers();
     polishVoiceStatus();
     cleanAssistantMessages();
+    loadPrebuiltManifest().then(() => warmGreeting()).catch(() => {});
 
     const voiceCard = document.querySelector('[data-select-mode="voice"]');
     voiceCard?.addEventListener('pointerdown', warmGreeting, { passive: true });
@@ -255,8 +351,11 @@
     warmGreeting,
     optimizeSpokenText,
     removeRepeatedExerciseNotice,
+    normalizeAudioKey,
+    prebuiltEntries: () => prebuiltByKey.size,
     memoryEntries: () => memory.size,
     inflightEntries: () => inflight.size,
   };
   window.__DOKOHILF_DARK_PREMIUM_V27__ = true;
+  window.__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__ = true;
 })();
