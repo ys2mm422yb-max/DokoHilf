@@ -4,10 +4,11 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:3000',
 ]);
 
-const PRIMARY_MODEL = 'gemini-3.1-flash-tts-preview';
-const FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts';
-const VOICE_NAME = 'Sulafat';
-const VOICE_STYLE = 'warm-conversational';
+const PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts';
+const FALLBACK_MODEL = 'gemini-3.1-flash-tts-preview';
+const VOICE_NAME = 'Achird';
+const VOICE_STYLE = 'friendly-casual-natural-v3';
+const REQUEST_TIMEOUT_MS = 16_000;
 const MAX_TEXT_CHARS = 900;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 10;
@@ -22,7 +23,7 @@ function corsHeaders(origin: string | null): Record<string, string> {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'content-type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style',
+    'Access-Control-Expose-Headers': 'X-DokoHilf-Voice, X-DokoHilf-TTS-Model, X-DokoHilf-Voice-Mode, X-DokoHilf-Voice-Style, X-DokoHilf-TTS-Latency',
     'Vary': 'Origin',
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
@@ -87,7 +88,6 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
   const view = new DataView(buffer);
   const blockAlign = channels * bitsPerSample / 8;
   const byteRate = sampleRate * blockAlign;
-
   writeAscii(view, 0, 'RIFF');
   view.setUint32(4, 36 + pcm.byteLength, true);
   writeAscii(view, 8, 'WAVE');
@@ -105,24 +105,25 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
   return new Uint8Array(buffer);
 }
 
-async function requestAudio(apiKey: string, model: string, text: string): Promise<Uint8Array> {
-  const prompt = [
-    'Sprich den folgenden deutschen Text wie eine hilfsbereite Kollegin in einem ruhigen direkten Gespräch.',
-    'Klinge warm, gelassen und menschlich. Vermeide Ansagerstimme, Werbeton, überdeutliche Silben und gleichförmige Roboter-Melodie.',
-    'Nutze natürliches Alltagstempo. Setze kurze Pausen an Satzzeichen und betone nur die Wörter, die für den nächsten Bedienungsschritt wichtig sind.',
-    'Kurze Rückfragen am Ende sollen freundlich und nicht prüfend klingen.',
-    'Füge keine Wörter, Erklärungen oder Begrüßungen hinzu. Lies ausschließlich das TRANSKRIPT vor.',
-    `TRANSKRIPT: ${text}`,
+function voicePrompt(text: string): string {
+  return [
+    'Sprich diesen deutschen Text locker und natürlich wie eine freundliche Kollegin.',
+    'Normales Alltagstempo, lebendige Satzmelodie, kurze Pausen. Kein Ansage-, Navi- oder Roboterklang.',
+    'Lies exakt nur den Text:',
+    text,
   ].join('\n');
+}
 
+async function requestViaGenerateContent(apiKey: string, model: string, text: string): Promise<Uint8Array> {
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-goog-api-key': apiKey,
     },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
+      contents: [{ parts: [{ text: voicePrompt(text) }] }],
       generationConfig: {
         responseModalities: ['AUDIO'],
         speechConfig: {
@@ -133,11 +134,34 @@ async function requestAudio(apiKey: string, model: string, text: string): Promis
       },
     }),
   });
-
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(`tts_${response.status}`);
+  if (!response.ok) throw new Error(`tts_generate_${response.status}`);
   const base64 = payload?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  if (typeof base64 !== 'string' || !base64) throw new Error('tts_empty');
+  if (typeof base64 !== 'string' || !base64) throw new Error('tts_generate_empty');
+  return base64ToBytes(base64);
+}
+
+async function requestViaInteractions(apiKey: string, model: string, text: string): Promise<Uint8Array> {
+  const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
+    },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    body: JSON.stringify({
+      model,
+      input: voicePrompt(text),
+      response_format: { type: 'audio' },
+      generation_config: {
+        speech_config: [{ voice: VOICE_NAME }],
+      },
+    }),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(`tts_interactions_${response.status}`);
+  const base64 = payload?.output_audio?.data;
+  if (typeof base64 !== 'string' || !base64) throw new Error('tts_interactions_empty');
   return base64ToBytes(base64);
 }
 
@@ -166,14 +190,20 @@ Deno.serve(async (req: Request) => {
   const apiKey = Deno.env.get('GEMINI_API_KEY');
   if (!apiKey) return jsonResponse(origin, 503, { error: 'Die Sprach-KI ist noch nicht eingerichtet.' });
 
+  const startedAt = Date.now();
   let pcm: Uint8Array;
   let model = PRIMARY_MODEL;
+  let mode = 'generate-content-fast-natural-cloud';
   try {
-    pcm = await requestAudio(apiKey, PRIMARY_MODEL, text);
-  } catch {
+    pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text);
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'TimeoutError') {
+      return jsonResponse(origin, 504, { error: 'Die natürliche Stimme hat zu lange gebraucht.' });
+    }
     model = FALLBACK_MODEL;
+    mode = 'interactions-natural-cloud';
     try {
-      pcm = await requestAudio(apiKey, FALLBACK_MODEL, text);
+      pcm = await requestViaInteractions(apiKey, FALLBACK_MODEL, text);
     } catch {
       return jsonResponse(origin, 502, { error: 'Die natürliche Stimme ist gerade nicht verfügbar.' });
     }
@@ -188,8 +218,9 @@ Deno.serve(async (req: Request) => {
       'Content-Length': String(wav.byteLength),
       'X-DokoHilf-Voice': VOICE_NAME,
       'X-DokoHilf-TTS-Model': model,
-      'X-DokoHilf-Voice-Mode': 'natural-cloud',
+      'X-DokoHilf-Voice-Mode': mode,
       'X-DokoHilf-Voice-Style': VOICE_STYLE,
+      'X-DokoHilf-TTS-Latency': String(Date.now() - startedAt),
     },
   });
 });

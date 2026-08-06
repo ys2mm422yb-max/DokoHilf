@@ -34,9 +34,45 @@ const cases = [
   },
   {
     endpoint: ROUTER_ENDPOINT,
+    endpointName: 'App-Router falsche Voraussetzung korrigieren',
+    guideSlug: 'vitalwerte-erfassen-fortsetzen',
+    messages: [
+      { role: 'assistant', content: 'Klicke jetzt im bereits geöffneten Bereich „Vitalwerte“ auf das grüne Plus beziehungsweise auf „Neu“.' },
+      { role: 'user', content: 'Welches bereits geöffnete Fenster? Ich habe noch nichts geöffnet.' },
+    ],
+    expectedGuide: 'vitalwerte-erfassen',
+    expectedReplyIncludes: 'Stimmt',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'App-Router Spracherkennungs-Alternativen',
+    input: 'Albert erfassen',
+    speechAlternatives: ['Albert erfassen', 'Vitalwert erfassen'],
+    expectedGuide: 'vitalwerte-erfassen',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'App-Router Sprachfehler klären',
+    input: 'Albert erfassen',
+    expectedSource: 'speech-recognition-clarification',
+    expectedOptions: 1,
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
     endpointName: 'App-Router ohne Kontext',
     input: 'Erfassen',
     expectedSource: 'context-required-clarification',
+    expectedOptions: 0,
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Gemini-Dialogmanager',
+    guideSlug: 'bericht-neu',
+    messages: [
+      { role: 'assistant', content: 'Öffne in der grauen Leiste den festen Reiter „Berichte“.' },
+      { role: 'user', content: 'Stopp, ich möchte diesen Ablauf abbrechen.' },
+    ],
+    expectedSource: 'ai-dialogue-cancel',
     expectedOptions: 0,
   },
 ];
@@ -49,8 +85,13 @@ async function requestWithRetry(testCase) {
       const response = await fetch(testCase.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
-        body: JSON.stringify({ messages, guideSlug: testCase.guideSlug || null }),
-        signal: AbortSignal.timeout(15_000),
+        body: JSON.stringify({
+          messages,
+          guideSlug: testCase.guideSlug || null,
+          inputMode: testCase.speechAlternatives ? 'voice' : 'chat',
+          speechAlternatives: testCase.speechAlternatives || [],
+        }),
+        signal: AbortSignal.timeout(20_000),
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(`HTTP ${response.status}: ${payload.error || 'unbekannt'}`);

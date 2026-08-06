@@ -42,9 +42,11 @@ test('Diagnose speichert keine Gesprächsinhalte dauerhaft', () => {
   assert.doesNotMatch(diagnostics, /console\.(log|info|warn|error)/);
 });
 
-test('Cloud-TTS nutzt die warme Stimme und liefert Diagnose-Header', () => {
-  assert.match(tts, /VOICE_NAME = 'Sulafat'/);
-  assert.match(tts, /VOICE_STYLE = 'warm-conversational'/);
+test('Cloud-TTS nutzt die freundliche schnelle Stimme und liefert Diagnose-Header', () => {
+  assert.match(tts, /PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts'/);
+  assert.match(tts, /VOICE_NAME = 'Achird'/);
+  assert.match(tts, /VOICE_STYLE = 'friendly-casual-natural-v3'/);
+  assert.match(tts, /REQUEST_TIMEOUT_MS = 16_000/);
   assert.match(tts, /X-DokoHilf-Voice-Style/);
-  assert.match(tts, /gleichförmige Roboter-Melodie/);
+  assert.match(tts, /Kein Ansage-, Navi- oder Roboterklang/);
 });
