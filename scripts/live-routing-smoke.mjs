@@ -20,17 +20,19 @@ const cases = [
   },
   {
     endpoint: ROUTER_ENDPOINT,
-    endpointName: 'Vitalwerte-Ziel bleibt Erfassen',
+    endpointName: 'Vitalwerte-Ziel bleibt Erfassen und fragt nur die Erfassungsart',
     input: 'Ich möchte die Vitalwerte eingeben',
-    expectedGuide: 'vitalwerte-erfassen',
-    expectedReplyIncludes: 'Doku',
-    replyMustNotInclude: 'erfassen oder',
+    expectedSource: 'vital-entry-mode-choice',
+    expectedOptions: 2,
+    expectedReplyIncludes: 'einzelnen',
+    replyMustNotInclude: 'erfassen oder ansehen',
   },
   {
     endpoint: ROUTER_ENDPOINT,
     endpointName: 'Benannter Einzelwert startet Einzelerfassung',
     input: 'Ich möchte Blutdruck eingeben',
     expectedGuide: 'vitalwerte-einzelwert',
+    expectedGuideStep: 1,
     expectedReplyIncludes: 'Doku',
   },
   {
@@ -38,6 +40,7 @@ const cases = [
     endpointName: 'Mehrere Werte starten Sammelerfassung',
     input: 'Ich möchte mehrere Vitalwerte gleichzeitig eingeben',
     expectedGuide: 'vitalwerte-sammelerfassung',
+    expectedGuideStep: 1,
     expectedReplyIncludes: 'Doku',
   },
   {
@@ -140,10 +143,12 @@ const cases = [
   },
   {
     endpoint: ROUTER_ENDPOINT,
-    endpointName: 'App-Router Spracherkennungs-Alternativen',
+    endpointName: 'Spracherkennungs-Alternative erhält Erfassungsziel',
     input: 'Albert erfassen',
     speechAlternatives: ['Albert erfassen', 'Vitalwerte erfassen'],
-    expectedGuide: 'vitalwerte-erfassen',
+    expectedSource: 'vital-entry-mode-choice',
+    expectedOptions: 2,
+    expectedReplyIncludes: 'einzelnen',
   },
   {
     endpoint: ROUTER_ENDPOINT,
