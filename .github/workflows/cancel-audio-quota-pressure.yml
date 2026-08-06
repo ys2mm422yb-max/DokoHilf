@@ -1,0 +1,20 @@
+name: Stop audio quota pressure
+
+on:
+  push:
+    branches: [feat/dark-premium-static-guide-audio-v27]
+    paths:
+      - .github/workflows/cancel-audio-quota-pressure.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dokohilf-direct-final-audio-v27
+  cancel-in-progress: true
+
+jobs:
+  stop-old-generator:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Concurrent guide audio generation stopped after provider HTTP 429."
