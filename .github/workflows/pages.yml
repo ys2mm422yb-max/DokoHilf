@@ -93,13 +93,11 @@ jobs:
           grep -q 'Die einmal genannte Absicht bleibt bestehen' supabase/functions/dokohilf-ai-router/index.ts
 
           grep -q "VOICE_NAME = 'Gacrux'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v6-fast'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v5'" supabase/functions/dokohilf-tts/index.ts
           grep -q "PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts'" supabase/functions/dokohilf-tts/index.ts
           grep -q "FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts'" supabase/functions/dokohilf-tts/index.ts
-          grep -q 'PRIMARY_TIMEOUT_MS = 12_000' supabase/functions/dokohilf-tts/index.ts
-          grep -q 'FALLBACK_TIMEOUT_MS = 8_000' supabase/functions/dokohilf-tts/index.ts
-          grep -q 'X-DokoHilf-TTS-Cache' supabase/functions/dokohilf-tts/index.ts
-          grep -q 'audioCache' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'REQUEST_TIMEOUT_MS = 20_000' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'X-DokoHilf-TTS-Latency' supabase/functions/dokohilf-tts/index.ts
 
           grep -q 'grüne Plus' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
           grep -q 'Sammelerfassung' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
