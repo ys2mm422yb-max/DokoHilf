@@ -10,10 +10,11 @@ const [mobileAudio, voiceDiagnostics, voiceFocus, clarification, progress] = awa
   readFile(new URL('../assets/guide-progress.js', import.meta.url), 'utf8'),
 ]);
 
-test('Sprachmodus nutzt die zentrale Fokusansicht statt der alten festen Sprachleiste', () => {
+test('Sprachmodus nutzt die feste Fokusansicht statt der alten Sprachleiste', () => {
   assert.match(voiceFocus, /voice-focus-stage/);
   assert.match(voiceFocus, /voice-focus-instruction/);
-  assert.match(voiceFocus, /height:calc\(100dvh - 64px\)/);
+  assert.match(voiceFocus, /position:fixed/);
+  assert.match(voiceFocus, /inset:64px 0 0/);
   assert.doesNotMatch(mobileAudio, /position:fixed!important/);
   assert.doesNotMatch(mobileAudio, /installPersistentVoiceControl/);
 });
@@ -22,6 +23,7 @@ test('Alte Sprachleisten- und Notfall-Kurzbefehle werden ausdrücklich entfernt'
   assert.match(mobileAudio, /removeLegacyVoiceUi/);
   assert.match(mobileAudio, /persistentVoiceControlStyles/);
   assert.match(mobileAudio, /notfallblattButton/);
+  assert.match(voiceFocus, /removeLegacyShortcuts/);
   assert.doesNotMatch(mobileAudio, /addNotfallblattShortcut/);
 });
 
@@ -36,15 +38,15 @@ test('iOS- und Android-Safe-Area sowie Bildschirmtastatur werden berücksichtigt
 
 test('Touchflächen bleiben auf Mobilgeräten ausreichend groß', () => {
   assert.match(clarification, /min-height:56px/);
-  assert.match(progress, /min-height:38px/);
-  assert.match(voiceFocus, /min-height:44px!important/);
+  assert.match(progress, /min-height:40px/);
+  assert.match(voiceFocus, /min-height:46px/);
   assert.match(voiceFocus, /width:clamp\(168px/);
 });
 
 test('Aktuelle Anweisung und Ablaufsteuerung bleiben im Sprachmodus sichtbar', () => {
   assert.match(voiceFocus, /latestAssistantInstruction/);
-  assert.match(voiceFocus, /currentProgressLabel/);
-  assert.match(voiceFocus, /\.command-row\{position:fixed/);
+  assert.match(voiceFocus, /DokoHilfGuideProgress/);
+  assert.match(voiceFocus, /voice-focus-actions/);
   assert.match(voiceFocus, /data-switch-mode="chat"/);
   assert.match(voiceDiagnostics, /pageshow/);
 });
