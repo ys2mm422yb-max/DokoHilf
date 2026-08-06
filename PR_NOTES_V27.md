@@ -2,8 +2,8 @@
 
 ## Finaler Stand
 
-- finaler Release-Branch: `feat/dark-premium-v27-release`
-- finaler Draft-PR: **#52**
+- finaler Release-Branch: `release/build-27-final-validation`
+- vorheriger Release-PR: **#52**
 - Zielbranch: `main`
 - Ziel-Build: `20260806-27`
 - kein Auto-Merge
@@ -14,8 +14,9 @@
 - PR #49 wurde durch spätere Build-27-Arbeit ersetzt und geschlossen; Branch nicht gelöscht
 - PR #50 wurde durch PR #51 ersetzt und geschlossen; Branch nicht gelöscht
 - PR #51 wurde durch PR #52 ersetzt und geschlossen; Branch nicht gelöscht
+- PR #52 bleibt bis zum grünen Nachweis offen und wird anschließend durch den finalen Validierungs-PR ersetzt; Branch nicht löschen
 
-PR #52 enthält den vollständigen Dark-UI-, Datenschutz-, TTS-v20-, privaten Guide-Audio-, Sicherheits-, Build- und Dokumentationsstand.
+Der finale Validierungsbranch enthält den vollständigen Stand aus PR #52 einschließlich der korrigierten iPhone-Renderprüfung auf Commit `1cc9024db2f7d209dc42439563639d967a410160`.
 
 ## Zusätzliche Bereinigung im Release-PR
 
@@ -29,9 +30,13 @@ Diese Änderungen entfernen ausschließlich harte Build-26-/TTS-v16-Erwartungen.
 
 Zusätzlich wurden für beide internen Audio-Tabellen explizite Deny-All-RLS-Policies für `anon` und `authenticated` ergänzt. Der Supabase-Sicherheitsberater meldet danach keine Lints.
 
+## Korrigierte iPhone-Renderprüfung
+
+Die Renderprüfung wartete nach dem Wechsel in den Sprachmodus noch auf den absichtlich ausgeblendeten alten `#workspace`. Der Test wartet nun auf die sichtbare Vollbild-Sprachansicht `.voice-focus-stage` und prüft gleichzeitig, dass `#workspace` im Sprachfokus verborgen bleibt. Die fachlichen und visuellen Anforderungen wurden nicht abgeschwächt.
+
 ## Merge-Grenze
 
-PR #52 bleibt Draft, bis `Deploy DokoHilf` auf dem exakten Release-Head vollständig grün ist. Dieser eine Workflow enthält bereits:
+Der finale Validierungs-PR bleibt ungemergt, bis `Deploy DokoHilf` auf dem exakten Release-Head vollständig grün ist. Dieser eine Workflow enthält bereits:
 
 - Syntax- und Quellverträge
 - Fach- und Routingregressionen
@@ -42,6 +47,6 @@ PR #52 bleibt Draft, bis `Deploy DokoHilf` auf dem exakten Release-Head vollstä
 - privaten Guide-Audiobestand
 - exakten Pages-Build
 
-Die verbundene GitHub-App kann den Workflow nicht selbst auslösen und der Connector stellt keinen Workflow-Dispatch bereit. Deshalb ist einmalig ein manueller Start in der GitHub-Oberfläche auf Branch `feat/dark-premium-v27-release` erforderlich.
+Der neue Pull Request wird bewusst als eigenständiger `opened`-Trigger angelegt, damit GitHub Actions den vollständigen exakten Head prüft.
 
 Erst danach darf der exakte Head manuell gemergt und über den festen Hauptlink verifiziert werden.
