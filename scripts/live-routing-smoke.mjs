@@ -5,9 +5,14 @@ const ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/d
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 
 const cases = [
+  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte einen Bericht schreiben', expectedGuide: 'bericht-neu' },
   { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich muss einen Bericht löschen', expectedGuide: 'bericht-durchstreichen' },
-  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte eine Visite anlegen', expectedGuide: 'visite-anlegen' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Wo finde ich den Durchführungsnachweis?', expectedGuide: 'durchfuehrungsnachweis-oeffnen' },
   { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte eine Durchführung stornieren', expectedGuide: 'durchfuehrung-storno' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte Blutdruck als Vitalwert eintragen', expectedGuide: 'vitalwerte-erfassen' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte eine Visite anlegen', expectedGuide: 'visite-anlegen' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Wie komme ich zur Übergabe?', expectedGuide: 'uebergabeformular' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Wie öffne ich das Notfallblatt?', expectedGuide: 'notfallblatt' },
   { endpoint: ROUTER_ENDPOINT, endpointName: 'Klärungsrouter', input: 'Ich habe falsch dokumentiert', expectedSource: 'structured-clarification', expectedOptions: 2 },
 ];
 
