@@ -42,12 +42,14 @@ test('Diagnose speichert keine Gesprächsinhalte dauerhaft', () => {
   assert.doesNotMatch(diagnostics, /console\.(log|info|warn|error)/);
 });
 
-test('Cloud-TTS nutzt die direkte natürliche Kolleginnenstimme und liefert Diagnose-Header', () => {
-  assert.match(tts, /PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts'/);
-  assert.match(tts, /VOICE_NAME = 'Vindemiatrix'/);
-  assert.match(tts, /VOICE_STYLE = 'direct-natural-colleague-v4'/);
-  assert.match(tts, /REQUEST_TIMEOUT_MS = 16_000/);
+test('Cloud-TTS nutzt die neue Pro-Kolleginnenstimme und liefert Diagnose-Header', () => {
+  assert.match(tts, /PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts'/);
+  assert.match(tts, /FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts'/);
+  assert.match(tts, /VOICE_NAME = 'Gacrux'/);
+  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v5'/);
+  assert.match(tts, /REQUEST_TIMEOUT_MS = 20_000/);
   assert.match(tts, /X-DokoHilf-Voice-Style/);
-  assert.match(tts, /natürliche Muttersprachlerin/);
-  assert.match(tts, /keine Hotline, kein Roboterklang/i);
+  assert.match(tts, /erfahrene Kollegin/);
+  assert.match(tts, /Kein Ansagerhythmus/);
+  assert.match(tts, /keine überdeutliche Aussprache/);
 });
