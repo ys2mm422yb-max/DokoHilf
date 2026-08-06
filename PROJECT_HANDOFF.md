@@ -150,6 +150,9 @@ Das rote Kreuz ist ein Element der Dokumentationssoftware. DokoHilf selbst darf 
 - Der Chatverlauf darf im Sprachmodus nicht nach unten wegrutschen.
 - Nutzer können zum Chat wechseln.
 - Natürliche Stimme bleibt `Gacrux`, solange ein späterer bestätigter Hörtest nichts anderes verlangt.
+- Der stabile Pro-TTS-Weg bleibt Primärweg, Flash ist technischer Rückfallweg.
+- Die Begrüßung wird im Browser frühzeitig und ausschließlich im flüchtigen Arbeitsspeicher vorbereitet.
+- Lange sichtbare Anweisungen bleiben vollständig auf dem Bildschirm; für die Sprachausgabe wird die abschließende Kontrollfrage gekürzt, damit die natürliche Stimme schneller beginnen kann.
 - Die Gerätestimme ist nur ein Ausfallersatz.
 - Audio muss durch einen vertrauenswürdigen Nutzertipp auf iPhone und Android entsperrt werden.
 - Keine Aussage, eine Stimme sei persönlich angehört worden, wenn nur technische WAV-Prüfungen vorliegen.
@@ -187,7 +190,7 @@ Die visuelle Referenz für Build 25 wurde im Arbeitsblock „Premium UI und schn
 - Gesprächssequenzen
 - Vitalwerte-Intenttests
 - Sprachfokus- und mobile Layouttests
-- Live-Routing-Smoke-Test
+- stabiler Live-Routing-Smoke-Test
 - Live-TTS-Smoke-Test mit gültigem WAV-Header
 - sichtbarer Build-Marker im erzeugten Pages-Artefakt
 - exakter PR-Head grün
@@ -195,16 +198,19 @@ Die visuelle Referenz für Build 25 wurde im Arbeitsblock „Premium UI und schn
 
 ## 10. Aktueller Arbeitsblock: Build 25
 
-Ziele:
+Pull Request: `#44`
+
+Ziele und Stand:
 
 - Startseite, Sprachmodus und Chat vollständig in ein hochwertiges Designsystem überführen
 - bestehende gute Gacrux-Stimme beibehalten
-- TTS-Latenz deutlich reduzieren
 - Begrüßung im Arbeitsspeicher vorladen, ohne Gesprächsinhalte dauerhaft zu speichern
-- Flash-TTS als schnellen Primärweg prüfen, Pro nur als Rückfallweg
-- In-Memory-Deduplizierung und optionalen Edge-Cache für identische neutrale Anweisungen verwenden
+- gesprochenen Text verkürzen, ohne die sichtbare Anleitung zu kürzen
+- Pro-TTS als stabilen Qualitätsweg beibehalten, Flash nur als Rückfallweg
+- In-Memory-Deduplizierung im Browser und kurzlebigen Edge-Cache für identische neutrale Anweisungen verwenden
 - alle neuen Dateien in Pages-Workflow und Service Worker aufnehmen
 - diese Übergabe dauerhaft im Repository halten
+- Supabase-Funktion `dokohilf-tts` wurde für diesen Stand als Version 14 bereitgestellt; vor Merge Live-Test prüfen
 
 ## 11. Pflege dieser Datei
 
