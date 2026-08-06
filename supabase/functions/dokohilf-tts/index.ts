@@ -4,25 +4,25 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:3000',
 ]);
 
-const PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts';
-const FALLBACK_MODEL = 'gemini-2.5-pro-preview-tts';
+const PRIMARY_MODEL = 'gemini-3.1-flash-tts-preview';
+const FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts';
 const VOICE_NAME = 'Gacrux';
-const VOICE_STYLE = 'natural-spoken-german-colleague-v8-hybrid-fast';
-const PRIMARY_TIMEOUT_MS = 3_200;
-const FALLBACK_TIMEOUT_MS = 1_800;
+const VOICE_STYLE = 'natural-spoken-german-colleague-v8-low-latency';
+const PRIMARY_TIMEOUT_MS = 4_500;
+const PRIMARY_RETRY_TIMEOUT_MS = 3_000;
+const FALLBACK_TIMEOUT_MS = 4_000;
 const MAX_TEXT_CHARS = 520;
 const WINDOW_MS = 60_000;
-const MAX_REQUESTS_PER_WINDOW = 28;
-const CACHE_TTL_MS = 60 * 60_000;
-const CACHE_LIMIT = 128;
+const MAX_REQUESTS_PER_WINDOW = 36;
+const CACHE_TTL_MS = 2 * 60 * 60_000;
+const CACHE_LIMIT = 96;
 
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
 const audioCache = new Map<string, { wav: Uint8Array; model: string; createdAt: number }>();
+const pendingAudio = new Map<string, Promise<{ wav: Uint8Array; model: string; mode: string; latency: number }>>();
 
 function corsHeaders(origin: string | null): Record<string, string> {
-  const allowedOrigin = origin && ALLOWED_ORIGINS.has(origin)
-    ? origin
-    : 'https://ys2mm422yb-max.github.io';
+  const allowedOrigin = origin && ALLOWED_ORIGINS.has(origin) ? origin : 'https://ys2mm422yb-max.github.io';
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'content-type',
@@ -110,37 +110,39 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
 }
 
 function voicePrompt(text: string): string {
-  return `Sprich den folgenden deutschen Text natürlich, klar und zügig wie eine erfahrene Kollegin. Keine Einleitung und kein Ansagerhythmus. Klickbegriffe leicht betonen.\n${text}`;
+  return [
+    'Erzeuge ausschließlich eine deutsche Sprachausgabe.',
+    'Stimme: erfahrene Kollegin, natürlich, ruhig, klar und zügig.',
+    'Normale Satzmelodie, kurze Pausen, kein Ansagerhythmus.',
+    'Lies nur den Text nach der Markierung TRANSKRIPT vor.',
+    'TRANSKRIPT:',
+    text,
+  ].join('\n');
 }
 
-async function requestViaGenerateContent(
-  apiKey: string,
-  model: string,
-  text: string,
-  timeoutMs: number,
-): Promise<Uint8Array> {
+async function requestViaGenerateContent(apiKey: string, model: string, text: string, timeoutMs: number): Promise<Uint8Array> {
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': apiKey,
-    },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
     signal: AbortSignal.timeout(timeoutMs),
     body: JSON.stringify({
       contents: [{ parts: [{ text: voicePrompt(text) }] }],
       generationConfig: {
         responseModalities: ['AUDIO'],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: VOICE_NAME },
-          },
-        },
+        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE_NAME } } },
       },
     }),
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(`tts_generate_${response.status}`);
-  const base64 = payload?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+  const parts = payload?.candidates?.[0]?.content?.parts;
+  const audioPart = Array.isArray(parts)
+    ? parts.find((part: Record<string, unknown>) => {
+      const inlineData = part?.inlineData as Record<string, unknown> | undefined;
+      return typeof inlineData?.data === 'string';
+    })
+    : null;
+  const base64 = audioPart?.inlineData?.data;
   if (typeof base64 !== 'string' || !base64) throw new Error('tts_generate_empty');
   return base64ToBytes(base64);
 }
@@ -172,14 +174,7 @@ function putCached(text: string, wav: Uint8Array, model: string): void {
   }
 }
 
-function audioResponse(
-  origin: string | null,
-  wav: Uint8Array,
-  model: string,
-  mode: string,
-  latency: number,
-  cache: 'hit' | 'miss',
-): Response {
+function audioResponse(origin: string | null, wav: Uint8Array, model: string, mode: string, latency: number, cache: 'hit' | 'miss' | 'shared'): Response {
   return new Response(wav, {
     status: 200,
     headers: {
@@ -194,6 +189,28 @@ function audioResponse(
       'X-DokoHilf-TTS-Cache': cache,
     },
   });
+}
+
+async function generateAudio(apiKey: string, text: string): Promise<{ wav: Uint8Array; model: string; mode: string; latency: number }> {
+  const startedAt = Date.now();
+  let pcm: Uint8Array;
+  let model = PRIMARY_MODEL;
+  let mode = 'gemini-3.1-fast-natural';
+  try {
+    pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text, PRIMARY_TIMEOUT_MS);
+  } catch {
+    try {
+      pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text, PRIMARY_RETRY_TIMEOUT_MS);
+      mode = 'gemini-3.1-fast-retry';
+    } catch {
+      model = FALLBACK_MODEL;
+      mode = 'gemini-2.5-compatible-fallback';
+      pcm = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text, FALLBACK_TIMEOUT_MS);
+    }
+  }
+  const wav = pcmToWav(pcm);
+  putCached(text, wav, model);
+  return { wav, model, mode, latency: Date.now() - startedAt };
 }
 
 Deno.serve(async (req: Request) => {
@@ -214,9 +231,7 @@ Deno.serve(async (req: Request) => {
 
   const text = sanitizeText(parsed.text);
   if (!text) return jsonResponse(origin, 400, { error: 'Es fehlt ein Text.' });
-  if (containsDirectPersonalData(text)) {
-    return jsonResponse(origin, 422, { blocked: true, error: 'Mögliche Echtdaten erkannt. Keine Sprachausgabe erstellt.' });
-  }
+  if (containsDirectPersonalData(text)) return jsonResponse(origin, 422, { blocked: true, error: 'Mögliche Echtdaten erkannt. Keine Sprachausgabe erstellt.' });
 
   const cached = getCached(text);
   if (cached) return audioResponse(origin, cached.wav, cached.model, 'server-memory-cache', 0, 'hit');
@@ -224,28 +239,26 @@ Deno.serve(async (req: Request) => {
   const apiKey = Deno.env.get('GEMINI_API_KEY');
   if (!apiKey) return jsonResponse(origin, 503, { error: 'Die Sprach-KI ist noch nicht eingerichtet.' });
 
-  const startedAt = Date.now();
-  let pcm: Uint8Array;
-  let model = PRIMARY_MODEL;
-  let mode = 'flash-hybrid-fast';
-  try {
-    pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text, PRIMARY_TIMEOUT_MS);
-  } catch (primaryError) {
-    model = FALLBACK_MODEL;
-    mode = 'pro-short-fallback';
+  const key = cacheKey(text);
+  const existing = pendingAudio.get(key);
+  if (existing) {
     try {
-      pcm = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text, FALLBACK_TIMEOUT_MS);
+      const result = await existing;
+      return audioResponse(origin, result.wav, result.model, `${result.mode}-shared`, result.latency, 'shared');
     } catch {
-      const timeout = primaryError instanceof DOMException && primaryError.name === 'TimeoutError';
-      return jsonResponse(origin, timeout ? 504 : 502, {
-        error: timeout
-          ? 'Die natürliche Stimme hat zu lange gebraucht.'
-          : 'Die natürliche Stimme ist gerade nicht verfügbar.',
-      });
+      return jsonResponse(origin, 502, { error: 'Die natürliche Stimme ist gerade nicht verfügbar.' });
     }
   }
 
-  const wav = pcmToWav(pcm);
-  putCached(text, wav, model);
-  return audioResponse(origin, wav, model, mode, Date.now() - startedAt, 'miss');
+  const generation = generateAudio(apiKey, text).finally(() => pendingAudio.delete(key));
+  pendingAudio.set(key, generation);
+  try {
+    const result = await generation;
+    return audioResponse(origin, result.wav, result.model, result.mode, result.latency, 'miss');
+  } catch (error) {
+    const timeout = error instanceof DOMException && error.name === 'TimeoutError';
+    return jsonResponse(origin, timeout ? 504 : 502, {
+      error: timeout ? 'Die natürliche Stimme hat zu lange gebraucht.' : 'Die natürliche Stimme ist gerade nicht verfügbar.',
+    });
+  }
 });
