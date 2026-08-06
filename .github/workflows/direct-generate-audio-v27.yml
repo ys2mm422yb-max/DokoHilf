@@ -40,6 +40,8 @@ jobs:
 
       - name: Generate the next approved Gacrux audio batch
         id: generate
+        env:
+          DOKOHILF_TTS_API: interactions-v1beta
         run: |
           set +e
           node scripts/generate-guide-audio.mjs
