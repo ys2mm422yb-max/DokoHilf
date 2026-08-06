@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: dokohilf-approved-guide-audio-v27-final
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   generate:
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - name: Checkout exact branch head
+      - name: Checkout latest final branch head
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -50,6 +50,7 @@ jobs:
             exit 0
           fi
           git commit -m "Add prebuilt Gacrux audio for approved guides"
+          git pull --rebase origin feat/dark-premium-static-guide-audio-v27
           git push origin HEAD:feat/dark-premium-static-guide-audio-v27
 
       - name: Upload generation evidence
