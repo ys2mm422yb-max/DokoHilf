@@ -2,7 +2,7 @@ name: Generate approved guide audio
 
 on:
   push:
-    branches: [feat/dark-premium-fast-voice-v27]
+    branches: [feat/dark-premium-static-guide-audio-v27]
     paths:
       - assets/guide-audio-catalog.json
       - scripts/generate-guide-audio.mjs
@@ -13,7 +13,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: dokohilf-approved-guide-audio-v27
+  group: dokohilf-approved-guide-audio-v27-final
   cancel-in-progress: false
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: feat/dark-premium-fast-voice-v27
+          ref: feat/dark-premium-static-guide-audio-v27
 
       - name: Use Node.js 20
         uses: actions/setup-node@v4
@@ -39,7 +39,7 @@ jobs:
       - name: Validate manifest, hashes and WAV files
         run: node --test tests/prebuilt-guide-audio.test.mjs
 
-      - name: Commit generated static audio to the feature branch
+      - name: Commit generated static audio to the final feature branch
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -50,7 +50,7 @@ jobs:
             exit 0
           fi
           git commit -m "Add prebuilt Gacrux audio for approved guides"
-          git push origin HEAD:feat/dark-premium-fast-voice-v27
+          git push origin HEAD:feat/dark-premium-static-guide-audio-v27
 
       - name: Upload generation evidence
         if: always()
