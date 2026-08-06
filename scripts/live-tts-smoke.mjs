@@ -4,15 +4,13 @@ const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 const TEST_TEXT = 'Öffne Vitalwerte und klicke oben links auf das grüne Plus.';
 const EXPECTED_VOICE = 'Gacrux';
+const EXPECTED_PARSER = 'raw-steps-content-v1';
 const ALLOWED_STYLES = new Set([
-  'natural-spoken-german-colleague-v7-fast-start',
-  'natural-spoken-german-colleague-v8-low-latency',
-  'natural-spoken-german-colleague-v9-interactions',
+  'natural-spoken-german-colleague-v10-rest-audio',
 ]);
 const ALLOWED_MODELS = new Set([
   'gemini-3.1-flash-tts-preview',
   'gemini-2.5-flash-preview-tts',
-  'gemini-2.5-pro-preview-tts',
 ]);
 const ALLOWED_APIS = new Set([
   'interactions-v1beta',
@@ -49,6 +47,7 @@ async function requestAudio() {
     voice: response.headers.get('x-dokohilf-voice') || '',
     model: response.headers.get('x-dokohilf-tts-model') || '',
     api: response.headers.get('x-dokohilf-tts-api') || '',
+    parser: response.headers.get('x-dokohilf-tts-parser') || '',
     mode: response.headers.get('x-dokohilf-voice-mode') || '',
     style: response.headers.get('x-dokohilf-voice-style') || '',
     cache: response.headers.get('x-dokohilf-tts-cache') || '',
@@ -64,6 +63,7 @@ async function requestAudio() {
   if (bytes.byteLength <= 44) throw new Error('Audiodatei ist leer.');
   if (!header.startsWith('RIFF') || !header.includes('WAVE')) throw new Error(`Ungültiger WAV-Header: ${header}`);
   if (result.voice !== EXPECTED_VOICE) throw new Error(`Falsche Stimme: ${result.voice || 'leer'}`);
+  if (result.parser !== EXPECTED_PARSER) throw new Error(`Falscher REST-Audioparser: ${result.parser || 'leer'}`);
   if (!ALLOWED_STYLES.has(result.style)) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
   if (!ALLOWED_MODELS.has(result.model)) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
   if (!ALLOWED_APIS.has(result.api)) throw new Error(`API-Nachweis fehlt oder ist falsch: ${result.api || 'leer'}`);
@@ -88,7 +88,7 @@ try {
   const second = await runTest();
   report = { passed: true, providerAvailable: true, first: first.result, second: second.result, cacheReuseObserved: ['hit', 'shared'].includes(second.result.cache) };
   await writeFile('artifacts/dokohilf-live-tts.wav', first.bytes);
-  console.log(`DokoHilf Live-TTS: erster Abruf ${first.result.serverLatency} ms, zweiter Abruf ${second.result.serverLatency} ms, API ${first.result.api}, Cache ${second.result.cache}, Stimme ${first.result.voice}, Stil ${first.result.style}, Modell ${first.result.model}.`);
+  console.log(`DokoHilf Live-TTS: erster Abruf ${first.result.serverLatency} ms, zweiter Abruf ${second.result.serverLatency} ms, API ${first.result.api}, Parser ${first.result.parser}, Cache ${second.result.cache}, Stimme ${first.result.voice}, Stil ${first.result.style}, Modell ${first.result.model}.`);
 } catch (error) {
   const providerUnavailable = error instanceof ProviderUnavailableError;
   report = { passed: false, providerAvailable: !providerUnavailable, nonBlockingExternalOutage: providerUnavailable, endpoint: ENDPOINT, error: String(error?.message || error) };
@@ -97,4 +97,4 @@ try {
 }
 
 await writeFile('artifacts/dokohilf-live-tts.json', JSON.stringify(report, null, 2), 'utf8');
-await writeFile('artifacts/dokohilf-live-tts.md', `# DokoHilf Live-TTS\n\n- ${report.passed ? `✅ ${report.first.serverLatency} ms · API ${report.first.api} · Cache ${report.second.cache} · ${report.first.voice} · ${report.first.style} · ${report.first.model}` : report.nonBlockingExternalOutage ? `⚠️ externer Sprachdienst vorübergehend nicht erreichbar: ${report.error}` : `❌ ${report.error}`}\n`, 'utf8');
+await writeFile('artifacts/dokohilf-live-tts.md', `# DokoHilf Live-TTS\n\n- ${report.passed ? `✅ ${report.first.serverLatency} ms · API ${report.first.api} · Parser ${report.first.parser} · Cache ${report.second.cache} · ${report.first.voice} · ${report.first.style} · ${report.first.model}` : report.nonBlockingExternalOutage ? `⚠️ externer Sprachdienst vorübergehend nicht erreichbar: ${report.error}` : `❌ ${report.error}`}\n`, 'utf8');
