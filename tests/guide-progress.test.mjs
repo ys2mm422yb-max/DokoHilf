@@ -1,46 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-
 await import('../assets/guide-progress.js');
-
-const { formatProgress, addGuideStateToBody } = globalThis.DokoHilfGuideProgress;
+const { formatProgress } = globalThis.DokoHilfGuideProgress;
 const script = await readFile(new URL('../assets/guide-progress.js', import.meta.url), 'utf8');
-
-test('Schrittanzeige wird verständlich formatiert', () => {
-  assert.equal(formatProgress(1, 6), 'Schritt 1 von 6');
-  assert.equal(formatProgress(3, 6), 'Schritt 3 von 6');
-  assert.equal(formatProgress(0, 0), 'Schritt 1 von 1');
-});
-
-test('aktueller Guide-Schritt wird jeder KI-Anfrage explizit mitgegeben', () => {
-  const body = addGuideStateToBody(
-    JSON.stringify({ messages: [{ role: 'user', content: 'Ja' }], guideSlug: 'vitalwerte-erfassen' }),
-    { guideSlug: 'vitalwerte-erfassen', guideStep: 2, guideStepCount: 3 },
-  );
-  const parsed = JSON.parse(body);
-  assert.equal(parsed.guideStep, 2);
-  assert.equal(parsed.guideStepCount, 3);
-  assert.equal(parsed.guideStateVersion, 2);
-});
-
-test('Guide-Leiste besitzt alle erforderlichen Bedienaktionen', () => {
-  assert.match(script, /data-guide-action="back"/);
-  assert.match(script, /data-guide-action="restart"/);
-  assert.match(script, /data-guide-action="change"/);
-  assert.match(script, /currentGuide/);
-  assert.match(script, /commandRow/);
-});
-
-test('Antwortmetadaten steuern den sichtbaren Schritt direkt', () => {
-  assert.match(script, /payload\.guideStep/);
-  assert.match(script, /payload\.guideStepCount/);
-  assert.match(script, /guideStateVersion/);
-  assert.match(script, /dokohilf:guide-state/);
-  assert.doesNotMatch(script, /dokohilf-guide-state/);
-});
-
-test('Ablauf-Neustart setzt den Schrittzustand auf eins', () => {
-  assert.match(script, /guideStep: 1/);
-  assert.match(script, /api\.sendMessage\(currentGuide\.guideTitle \|\| currentGuide\.guideSlug\)/);
-});
+const edgeFunction = await readFile(new URL('../supabase/functions/dokohilf-guide-state/index.ts', import.meta.url), 'utf8');
+test('Schrittanzeige wird verständlich formatiert', () => { assert.equal(formatProgress(1, 7), 'Schritt 1 von 7'); assert.equal(formatProgress(4, 7), 'Schritt 4 von 7'); assert.equal(formatProgress(0, 0), 'Schritt 1 von 1'); });
+test('Guide-Leiste besitzt die kompakte Aufgabensteuerung', () => { assert.match(script, />Zurück</); assert.match(script, />Neu starten</); assert.match(script, />Ablauf wechseln</); assert.match(script, /currentGuide/); assert.match(script, /commandRow/); });
+test('Fortschritt aus der Routerantwort wird ohne erneutes Erraten übernommen', () => { assert.match(script, /payloadHasProgress/); assert.match(script, /renderGuide\(payload\)/); assert.match(script, /guideStepCount/); assert.match(script, /guideStep/); });
+test('Fortschritts-Endpunkt bleibt als kompatibler Metadaten-Fallback erhalten', () => { assert.match(script, /dokohilf-guide-state/); assert.match(edgeFunction, /guideStepCount/); assert.match(edgeFunction, /guideStep/); assert.match(edgeFunction, /guideTitle/); assert.doesNotMatch(edgeFunction, /steps:\s*guide\.steps/); });

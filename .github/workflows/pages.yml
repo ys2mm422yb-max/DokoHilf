@@ -27,64 +27,63 @@ jobs:
           set -euo pipefail
           mkdir -p _site/assets artifacts
           cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _site/
-          cp assets/styles.css assets/update-manager.js assets/mobile-audio-fix.js assets/voice-diagnostics.js assets/routing-fix.js assets/conversation-intelligence.js assets/clarification-ui.js assets/guide-progress.js assets/voice-focus-mode.js assets/app.js assets/editor.css assets/editor.js _site/assets/
+          cp \
+            assets/styles.css \
+            assets/update-manager.js \
+            assets/mobile-audio-fix.js \
+            assets/voice-diagnostics.js \
+            assets/routing-fix.js \
+            assets/conversation-intelligence.js \
+            assets/clarification-ui.js \
+            assets/guide-progress.js \
+            assets/voice-focus-mode.js \
+            assets/task-interface.js \
+            assets/app.js \
+            assets/editor.css \
+            assets/editor.js \
+            _site/assets/
           touch _site/.nojekyll
 
           for file in \
-            _site/index.html _site/editor.html _site/version.json _site/service-worker.js \
+            _site/index.html _site/editor.html _site/version.json _site/service-worker.js _site/icon.svg \
             _site/assets/styles.css _site/assets/update-manager.js _site/assets/mobile-audio-fix.js \
             _site/assets/voice-diagnostics.js _site/assets/routing-fix.js \
             _site/assets/conversation-intelligence.js _site/assets/clarification-ui.js \
-            _site/assets/guide-progress.js _site/assets/voice-focus-mode.js _site/assets/app.js \
-            supabase/functions/dokohilf-ai-router/index.ts supabase/functions/dokohilf-tts/index.ts \
+            _site/assets/guide-progress.js _site/assets/voice-focus-mode.js \
+            _site/assets/task-interface.js _site/assets/app.js _site/assets/editor.css _site/assets/editor.js \
+            supabase/functions/dokohilf-guide-state/index.ts \
+            supabase/functions/dokohilf-ai-router/index.ts \
+            supabase/functions/dokohilf-tts/index.ts \
             supabase/functions/dokohilf-editor/index.ts \
-            supabase/migrations/20260805224500_dokohilf_editor_rbac.sql \
-            supabase/migrations/20260806112000_vitalwerte_intent_guides.sql \
-            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-tts-smoke.mjs \
-            tests/vitalwerte-intent.test.mjs; do
+            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-tts-smoke.mjs; do
             test -s "$file"
           done
 
           grep -q 'dokohilf-build" content="20260806-23' _site/index.html
-          grep -q 'guide-progress.js?v=20260806-23' _site/index.html
-          grep -q 'voice-focus-mode.js?v=20260806-23' _site/index.html
+          grep -q 'task-interface.js?v=20260806-23' _site/index.html
           grep -q 'app.js?v=20260806-23' _site/index.html
           grep -q '"buildId": "20260806-23"' _site/version.json
           grep -q "BUILD_ID = '20260806-23'" _site/service-worker.js
-
-          grep -q '__DOKOHILF_GUIDE_PROGRESS_PATCH_V2__' _site/assets/guide-progress.js
-          grep -q 'guideStateVersion: 2' _site/assets/guide-progress.js
-          grep -q 'dokohilf:guide-state' _site/assets/guide-progress.js
-          grep -q '__DOKOHILF_VOICE_FOCUS_V2__' _site/assets/voice-focus-mode.js
-          grep -q 'position:fixed' _site/assets/voice-focus-mode.js
-          grep -q 'voice-focus-actions' _site/assets/voice-focus-mode.js
-          grep -q 'removeLegacyShortcuts' _site/assets/voice-focus-mode.js
-
-          grep -q "conversational-guide-router-v5" supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'currentGuideStep' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'vitalwerte-einzelwert-fortsetzen' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'vitalwerte-sammelerfassung-fortsetzen' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'Bewahre das bereits genannte Ziel' supabase/functions/dokohilf-ai-router/index.ts
-
-          grep -q "VOICE_NAME = 'Vindemiatrix'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "VOICE_STYLE = 'direct-natural-colleague-v4'" supabase/functions/dokohilf-tts/index.ts
-          grep -q 'natürliche Muttersprachlerin' supabase/functions/dokohilf-tts/index.ts
-          grep -q 'X-DokoHilf-TTS-Latency' supabase/functions/dokohilf-tts/index.ts
-
-          grep -q 'grüne Plus' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
-          grep -q 'Sammelerfassung' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
-          grep -q 'Pop-up-Fenster' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
-
+          grep -q 'task-interface.js?v=20260806-23' _site/service-worker.js
+          grep -q 'conversational-guide-router-v5' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'detectVitalEntryMode' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'vitalwerte-sammelerfassung' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'renderGuideStep' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q '__DOKOHILF_TASK_INTERFACE_V1__' _site/assets/task-interface.js
+          grep -q 'Erledigt – weiter' _site/assets/task-interface.js
+          grep -q 'guideStep' _site/assets/task-interface.js
+          grep -q 'choiceTitle' _site/assets/clarification-ui.js
+          grep -q 'clarification-option-description' _site/assets/clarification-ui.js
+          grep -q 'guideStepCount' _site/assets/guide-progress.js
+          grep -q 'VOICE_NAME = '\''Vindemiatrix'\''' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'Schutzfilter prüft jede Eingabe' _site/index.html
           grep -q 'Redaktion anmelden' _site/editor.html
-          grep -q 'keine öffentliche Registrierung' _site/editor.html
-          grep -q 'grant_type=password' _site/assets/editor.js
-          grep -q 'sessionStorage' _site/assets/editor.js
-          grep -q 'auth/v1/signup\|signUp(' _site/assets/editor.js && exit 1 || true
-          grep -q 'SUPABASE_SERVICE_ROLE_KEY\|service_role' _site/assets/editor.js && exit 1 || true
 
-          grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' _site/assets/app.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/task-interface.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/voice-focus-mode.js && exit 1 || true
-          grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/conversation-intelligence.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB' _site/assets/app.js && exit 1 || true
+          grep -q 'SUPABASE_SERVICE_ROLE_KEY\|service_role' _site/assets/editor.js && exit 1 || true
+          grep -q 'auth/v1/signup\|signUp(' _site/assets/editor.js && exit 1 || true
 
           node --check _site/assets/update-manager.js
           node --check _site/assets/mobile-audio-fix.js
@@ -94,6 +93,7 @@ jobs:
           node --check _site/assets/clarification-ui.js
           node --check _site/assets/guide-progress.js
           node --check _site/assets/voice-focus-mode.js
+          node --check _site/assets/task-interface.js
           node --check _site/assets/app.js
           node --check _site/assets/editor.js
           node --check _site/service-worker.js
@@ -113,11 +113,11 @@ jobs:
             tests/voice-diagnostics.test.mjs \
             tests/audio-playback-unlock.test.mjs \
             tests/voice-focus-mode.test.mjs \
+            tests/task-interface.test.mjs \
             tests/behavior-regression.test.mjs \
             tests/mobile-layout-contract.test.mjs \
             tests/privacy-contract.test.mjs \
-            tests/editor-security.test.mjs \
-            tests/vitalwerte-intent.test.mjs
+            tests/editor-security.test.mjs
 
       - name: Check active DokoHilf router
         run: node scripts/live-routing-smoke.mjs

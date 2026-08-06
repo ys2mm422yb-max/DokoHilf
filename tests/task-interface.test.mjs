@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+await import('../assets/task-interface.js');
+const { augmentRequestBody } = globalThis.DokoHilfTaskInterface;
+const script = await readFile(new URL('../assets/task-interface.js', import.meta.url), 'utf8');
+const index = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+test('aktueller Guide-Schritt wird jeder KI-Anfrage mitgegeben', () => { const body = JSON.stringify({ messages: [{ role: 'user', content: 'Ja' }], guideSlug: 'vitalwerte-erfassen' }); const parsed = JSON.parse(augmentRequestBody(body, 3)); assert.equal(parsed.guideStep, 3); assert.equal(parsed.guideSlug, 'vitalwerte-erfassen'); });
+test('Aufgabenoberfläche hebt nur die aktuelle Anweisung hervor', () => { assert.match(script, /is-current-step/); assert.match(script, /is-past-step/); assert.match(script, /decorateMessages/); assert.match(script, /Erledigt – weiter/); assert.match(script, /Ich brauche Hilfe/); });
+test('altes rotes Plus wird dauerhaft entfernt', () => { assert.match(script, /removeLegacyShortcuts/); assert.match(script, /notfallblattButton/); assert.match(script, /label === '\+'/); assert.match(script, /MutationObserver/); });
+test('neue Aufgabenoberfläche wird nach dem Sprachfokus und vor der App geladen', () => { const voiceIndex = index.indexOf('voice-focus-mode.js'); const taskIndex = index.indexOf('task-interface.js'); const appIndex = index.indexOf('app.js'); assert.ok(voiceIndex >= 0 && taskIndex > voiceIndex && appIndex > taskIndex); });
+test('Aufgabenoberfläche speichert keine Gesprächsinhalte dauerhaft', () => { assert.doesNotMatch(script, /localStorage/); assert.doesNotMatch(script, /indexedDB/); assert.doesNotMatch(script, /sessionStorage/); });
