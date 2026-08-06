@@ -1,6 +1,6 @@
 # Finaler Umfang Build 27
 
-Dieser Branch enthält den zusammengeführten Zielumfang für DokoHilf Build `20260806-27`.
+Dieser Release-Branch enthält den zusammengeführten Zielumfang für DokoHilf Build `20260806-27`.
 
 ## Oberfläche
 
@@ -16,25 +16,48 @@ Dieser Branch enthält den zusammengeführten Zielumfang für DokoHilf Build `20
 
 ## Datenschutz
 
+- einmalige Datenschutzbestätigung beim ersten Start
 - zentraler Hinweis im Hauptmenü
 - keine wiederholten Fantasiedaten-Hinweise in normalen Guide-Schritten
 - technischer Eingabefilter bleibt aktiv
 - keine Nutzerstimmen, Diktate, Gesprächsverläufe oder personenbezogenen Inhalte dauerhaft speichern
+- ausschließlich allgemeine freigegebene Guide-Audios dürfen im privaten Bucket und im PWA-Cache liegen
 
 ## Sprache
 
-- bekannte freigegebene Guide-Anweisungen und Begrüßung als vorproduzierte Gacrux-WAV-Dateien
+- TTS v20 mit Gacrux und Roh-REST-Parser `raw-steps-content-v1`
+- bekannte freigegebene Guide-Anweisungen und Begrüßung werden kontrolliert als Gacrux-WAV-Dateien aufgebaut
 - 23 freigegebene Guides, 108 Schritte, 92 eindeutige Schritttexte plus Begrüßung
-- statische Audiodatei wird vor Live-TTS verwendet
-- Live-TTS nur für freie, nicht katalogisierte Antworten
-- kurzer Zeitrahmen für Live-TTS, danach sofort lokale Sofortstimme
+- vorhandene statische Audiodatei wird vor Live-TTS verwendet
+- fehlende statische Einträge nutzen TTS v20
+- nach rund 1,9 Sekunden startet die lokale Sofortstimme
 - statische allgemeine Guide-Audios dürfen offline im PWA-Cache liegen
+- keine WAV-Binärdateien im öffentlichen GitHub- oder Pages-Build
 
-## Abschlussbedingungen
+## Abschlussbedingungen Build 27
 
-- 93 gültige WAV-Dateien mit Manifest, Größe und SHA-256
-- vollständige Routing-, Fach-, Datenschutz-, UI-, Mobile- und Audio-Tests
-- echter mobiler Rendernachweis mit künstlicher App-Oberfläche
-- exakter grüner PR-Head
+- mindestens ein vollständig geprüftes privates Gacrux-Audio mit Manifest, Größe, SHA-256 und gültigem RIFF/WAVE-Inhalt
+- vollständige Routing-, Fach-, Datenschutz-, Sicherheits-, UI-, Mobile- und Audio-Tests
+- echter mobiler Rendernachweis auf 393 × 852
+- Live-Router und Live-TTS-v20-Nachweis
+- identischer Pages- und `gh-pages`-Build
+- exakter grüner PR-#52-Head
 - manueller Merge ohne Auto-Merge und ohne Branch-Löschung
-- Prüfung von main, gh-pages, Supabase und festem Hauptlink nach Veröffentlichung
+- Prüfung von `main`, `gh-pages`, Supabase und festem Hauptlink nach Veröffentlichung
+
+## Separater Audioabschluss
+
+Die vollständige Bibliothek ist ein eigener Ausbauzustand und kein Blocker für die funktionsfähige Build-27-Oberfläche.
+
+Der Audioausbau ist abgeschlossen, wenn:
+
+- Manifest `complete: true` meldet
+- exakt 93 eindeutige Gacrux-Einträge vorhanden sind
+- Größe und SHA-256 jedes Eintrags vorhanden sind
+- repräsentative WAV-Abrufe gültig sind
+- der Builder deaktiviert und der Cronjob entfernt ist
+- die strenge Prüfung erfolgreich ist:
+
+```bash
+DOKOHILF_REQUIRE_COMPLETE_AUDIO=1 node scripts/live-static-guide-audio-smoke.mjs
+```
