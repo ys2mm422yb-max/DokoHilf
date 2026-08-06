@@ -7,14 +7,14 @@ const ALLOWED_ORIGINS = new Set([
 const PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts';
 const FALLBACK_MODEL = 'gemini-2.5-pro-preview-tts';
 const VOICE_NAME = 'Gacrux';
-const VOICE_STYLE = 'natural-spoken-german-colleague-v7-fast-start';
-const PRIMARY_TIMEOUT_MS = 7_500;
-const FALLBACK_TIMEOUT_MS = 6_000;
+const VOICE_STYLE = 'natural-spoken-german-colleague-v8-hybrid-fast';
+const PRIMARY_TIMEOUT_MS = 3_200;
+const FALLBACK_TIMEOUT_MS = 1_800;
 const MAX_TEXT_CHARS = 520;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 28;
-const CACHE_TTL_MS = 15 * 60_000;
-const CACHE_LIMIT = 32;
+const CACHE_TTL_MS = 60 * 60_000;
+const CACHE_LIMIT = 128;
 
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
 const audioCache = new Map<string, { wav: Uint8Array; model: string; createdAt: number }>();
@@ -110,13 +110,7 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
 }
 
 function voicePrompt(text: string): string {
-  return [
-    'Sprich ausschließlich den folgenden deutschen Text.',
-    'Klinge wie eine erfahrene Kollegin direkt neben der Person: natürlich, ruhig, klar und zügig.',
-    'Keine Moderation, kein Ansagerhythmus, keine künstliche Freundlichkeit und keine überdeutliche Aussprache.',
-    'Nutze normale Satzmelodie und kurze natürliche Pausen. Klickbegriffe leicht betonen.',
-    text,
-  ].join('\n');
+  return `Sprich den folgenden deutschen Text natürlich, klar und zügig wie eine erfahrene Kollegin. Keine Einleitung und kein Ansagerhythmus. Klickbegriffe leicht betonen.\n${text}`;
 }
 
 async function requestViaGenerateContent(
@@ -233,12 +227,12 @@ Deno.serve(async (req: Request) => {
   const startedAt = Date.now();
   let pcm: Uint8Array;
   let model = PRIMARY_MODEL;
-  let mode = 'flash-fast-natural-german';
+  let mode = 'flash-hybrid-fast';
   try {
     pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text, PRIMARY_TIMEOUT_MS);
   } catch (primaryError) {
     model = FALLBACK_MODEL;
-    mode = 'pro-quality-fallback';
+    mode = 'pro-short-fallback';
     try {
       pcm = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text, FALLBACK_TIMEOUT_MS);
     } catch {
