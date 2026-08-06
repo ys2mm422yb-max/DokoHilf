@@ -35,6 +35,18 @@ Für beide internen Audio-Tabellen wurden explizite Deny-All-RLS-Policies für `
 
 Die Renderprüfung wartete nach dem Wechsel in den Sprachmodus noch auf den absichtlich ausgeblendeten alten `#workspace`. Der Test wartet nun auf die sichtbare Vollbild-Sprachansicht `.voice-focus-stage` und prüft gleichzeitig, dass `#workspace` im Sprachfokus verborgen bleibt. Die fachlichen und visuellen Anforderungen wurden nicht abgeschwächt.
 
+## Manueller Lauf #229
+
+Der erste manuell gestartete Lauf auf Head `369e7a127b78833927697f842fa54fc136d26436` erreichte die deterministischen Verträge und meldete exakt drei fehlgeschlagene Tests bei 114 von 117 bestandenen Tests.
+
+Die drei Ursachen wurden auf dem Release-Branch behoben:
+
+1. Der Mobile-Vertrag las Build-27-Mikrofonregeln aus `premium-ui-v27.css`, obwohl sie bewusst in der nachgelagerten Interaktionsschicht `ux-v27.css` liegen. Der Test prüft nun beide Ebenen korrekt.
+2. Der Datenschutzvertrag erwartete eine veraltete SQL-Schreibweise. Er prüft nun die tatsächlich angewandte Migration mit `regexp_replace`, Regex-Nachkontrolle und Exception-Grenze, ohne den Datenschutz abzuschwächen.
+3. Die statische Audio-Dokumentation enthielt die ausgeschlossenen Nutzerinhalte nur als Liste. Ein zusätzlicher eindeutiger Satz dokumentiert jetzt ausdrücklich, dass Nutzerstimmen, Diktate, freie Antworten und Gesprächsverläufe nicht dauerhaft gespeichert werden.
+
+Aktueller exakter Head nach diesen Korrekturen: `e73ec9d7ce0ffa693c9ad9f3be946b6cc334c826`.
+
 ## Live-Audit
 
 - Supabase-Projekt aktiv und gesund
@@ -58,6 +70,6 @@ PR #53 bleibt ungemergt, bis `Deploy DokoHilf` auf dem exakten Release-Head voll
 - privaten Guide-Audiobestand
 - exakten Pages-Build
 
-Durch die verbundene GitHub-App erzeugte Pushes und PR-Änderungen lösen keinen Workflow aus. Der Connector stellt keinen direkten Workflow-Dispatch bereit. Deshalb ist einmalig ein manueller Start über **Actions → Deploy DokoHilf → Run workflow** auf Branch `release/build-27-final-validation` erforderlich.
+Durch die verbundene GitHub-App erzeugte Pushes und PR-Änderungen lösen keinen Workflow aus. Der Connector stellt keinen direkten Workflow-Dispatch bereit. Deshalb ist ein manueller Start über **Actions → Deploy DokoHilf → Run workflow** auf Branch `release/build-27-final-validation` erforderlich.
 
 Erst nach vollständig grünem Lauf auf dem dann exakten Head darf manuell gemergt und über den festen Hauptlink veröffentlicht werden.
