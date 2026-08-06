@@ -3,34 +3,61 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 await import('../assets/clarification-ui.js');
+
 const { normalizeOptions, rewriteRequestBody } = globalThis.DokoHilfClarification;
 const frontend = await readFile(new URL('../assets/clarification-ui.js', import.meta.url), 'utf8');
 const router = await readFile(new URL('../supabase/functions/dokohilf-ai-router/index.ts', import.meta.url), 'utf8');
 
-test('nur gültige, eindeutige und beschriebene Auswahlwerte werden dargestellt', () => {
+test('nur gültige und eindeutige freigegebene Auswahlwerte werden dargestellt', () => {
   const options = normalizeOptions([
-    { label: 'Einzelwert erfassen', guideSlug: 'vitalwerte-erfassen', description: 'Grünes Plus und Pop-up' },
-    { label: 'Doppelt', guideSlug: 'vitalwerte-erfassen' },
-    { label: 'Sammelerfassung', guideSlug: 'vitalwerte-sammelerfassung', description: 'Mehrere Werte gleichzeitig' },
+    { label: 'Bericht durchstreichen', guideSlug: 'bericht-durchstreichen' },
+    { label: 'Doppelt', guideSlug: 'bericht-durchstreichen' },
+    { label: 'Durchführung stornieren', guideSlug: 'durchfuehrung-storno' },
     { label: '', guideSlug: 'ungueltig' },
     { label: 'Ungültig', guideSlug: '../secret' },
   ]);
   assert.deepEqual(options, [
-    { label: 'Einzelwert erfassen', guideSlug: 'vitalwerte-erfassen', description: 'Grünes Plus und Pop-up' },
-    { label: 'Sammelerfassung', guideSlug: 'vitalwerte-sammelerfassung', description: 'Mehrere Werte gleichzeitig' },
+    { label: 'Bericht durchstreichen', guideSlug: 'bericht-durchstreichen' },
+    { label: 'Durchführung stornieren', guideSlug: 'durchfuehrung-storno' },
   ]);
 });
+
 test('angeklickte Auswahl wird exakt an den Router übergeben', () => {
-  const body = JSON.stringify({ messages: [{ role: 'user', content: 'Einzelwert erfassen' }] });
-  const rewritten = JSON.parse(rewriteRequestBody(body, 'vitalwerte-erfassen'));
-  assert.equal(rewritten.selectedGuideSlug, 'vitalwerte-erfassen');
+  const body = JSON.stringify({ messages: [{ role: 'user', content: 'Bericht durchstreichen' }] });
+  const rewritten = JSON.parse(rewriteRequestBody(body, 'bericht-durchstreichen'));
+  assert.equal(rewritten.selectedGuideSlug, 'bericht-durchstreichen');
 });
-test('Auswahloberfläche zeigt Titel, Beschreibung und touchfreundliche Karten', () => {
-  assert.match(frontend, /choiceTitle/); assert.match(frontend, /clarification-option-description/); assert.match(frontend, /min-height:76px/); assert.match(frontend, /slice\(0, 3\)/); assert.match(frontend, /dokohilf-ai-router/);
+
+test('Frontend bietet höchstens drei touchfreundliche Auswahlbuttons', () => {
+  assert.match(frontend, /slice\(0, 3\)/);
+  assert.match(frontend, /clarification-option/);
+  assert.match(frontend, /min-height:56px/);
+  assert.match(frontend, /dokohilf-ai-router/);
 });
-test('Router merkt das Erfassungsziel und fragt nur nach Einzel- oder Sammelerfassung', () => {
-  assert.match(router, /detectVitalEntryMode/); assert.match(router, /vital-entry-mode-choice/); assert.match(router, /Wie möchtest du die Vitalwerte erfassen/); assert.match(router, /vitalwerte-sammelerfassung/); assert.match(router, /Grünes Plus oben links/);
+
+test('Router klärt unbestimmte Korrekturen und nutzt nur freigegebene Guides', () => {
+  assert.match(router, /isCorrectionAmbiguous/);
+  assert.match(router, /bericht-durchstreichen/);
+  assert.match(router, /durchfuehrung-storno/);
+  assert.match(router, /status=eq\.approved/);
+  assert.match(router, /selectedGuideSlug/);
 });
-test('Router führt aktive Guides mit explizitem Schrittzustand statt über alte Ja-Zählung', () => {
-  assert.match(router, /currentIndex/); assert.match(router, /guideStep/); assert.match(router, /renderGuideStep/); assert.match(router, /approved-guide-router-/); assert.doesNotMatch(router, /messages:\s*replaceLastUser/);
+
+test('bestätigte freie Antworten bleiben im laufenden Guide und gehen exakt einen Schritt weiter', () => {
+  assert.match(router, /isGuideProgressConfirmation/);
+  assert.match(router, /currentGuideStep/);
+  assert.match(router, /runGuideCommand\(origin, parsed, messages, guides, activeGuide, 'weiter'\)/);
+  assert.match(router, /guide-context-clarification/);
+});
+
+test('Vitalwerte-Auswahl wird strukturiert in Einzel- und Sammelerfassung getrennt', () => {
+  assert.match(router, /vitalEntryOptions/);
+  assert.match(router, /vitalwerte-einzelwert-fortsetzen/);
+  assert.match(router, /vitalwerte-sammelerfassung-fortsetzen/);
+});
+
+test('interne Freigabeformulierungen werden nicht an Nutzer weitergereicht', () => {
+  assert.match(router, /neutralizeInternalText/);
+  assert.match(router, /Dafür ist aktuell noch keine bestätigte Schritt-für-Schritt-Anleitung hinterlegt/);
+  assert.doesNotMatch(frontend, /noch nicht freigegeben/);
 });
