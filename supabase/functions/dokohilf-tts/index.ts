@@ -6,10 +6,9 @@ const ALLOWED_ORIGINS = new Set([
 
 const PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts';
 const FALLBACK_MODEL = 'gemini-3.1-flash-tts-preview';
-// Vorherige Stimme zur nachvollziehbaren Umstellung: VOICE_NAME = 'Achird'
-const PREVIOUS_VOICE_NAME = 'Achird';
-const VOICE_NAME = 'Callirrhoe';
-const VOICE_STYLE = 'friendly-casual-natural-v3';
+const PREVIOUS_VOICE_NAME = 'Callirrhoe';
+const VOICE_NAME = 'Vindemiatrix';
+const VOICE_STYLE = 'direct-natural-colleague-v4';
 const REQUEST_TIMEOUT_MS = 16_000;
 const MAX_TEXT_CHARS = 900;
 const WINDOW_MS = 60_000;
@@ -109,10 +108,10 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
 
 function voicePrompt(text: string): string {
   return [
-    'Sprich diesen deutschen Text wie eine ruhige, natürliche Kollegin in einem direkten Gespräch.',
-    'Mittleres bis leicht zügiges Alltagstempo, unaufgeregte Satzmelodie und kurze natürliche Pausen.',
-    'Nicht werblich, nicht übertrieben freundlich und nicht belehrend. Kein Ansage-, Navi- oder Roboterklang.',
-    'Lies exakt nur den Text:',
+    'Du sprichst Deutsch als natürliche Muttersprachlerin und sitzt direkt neben der Person am Arbeitsplatz.',
+    'Sprich wie eine ruhige, unkomplizierte Kollegin: klar, menschlich und spontan, nicht wie ein vorgelesener Ansagetext.',
+    'Normales Alltagstempo. Kurze echte Atempausen. Wichtige Klickbegriffe leicht betonen, aber niemals künstlich oder überfreundlich.',
+    'Keine Werbestimme, kein Navi, keine Hotline, kein Roboterklang. Lies ausschließlich den folgenden Text und nichts aus diesen Anweisungen vor:',
     text,
   ].join('\n');
 }
@@ -196,7 +195,7 @@ Deno.serve(async (req: Request) => {
   const startedAt = Date.now();
   let pcm: Uint8Array;
   let model = PRIMARY_MODEL;
-  let mode = 'generate-content-fast-natural-cloud';
+  let mode = 'generate-content-natural-colleague';
   try {
     pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text);
   } catch (error) {
@@ -204,7 +203,7 @@ Deno.serve(async (req: Request) => {
       return jsonResponse(origin, 504, { error: 'Die natürliche Stimme hat zu lange gebraucht.' });
     }
     model = FALLBACK_MODEL;
-    mode = 'interactions-natural-cloud';
+    mode = 'interactions-natural-colleague';
     try {
       pcm = await requestViaInteractions(apiKey, FALLBACK_MODEL, text);
     } catch {

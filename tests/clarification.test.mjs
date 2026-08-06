@@ -22,16 +22,33 @@ test('nur gültige und eindeutige freigegebene Auswahlwerte werden dargestellt',
   ]);
 });
 
+test('Auswahlkarten dürfen eine kurze verständliche Erklärung tragen', () => {
+  const options = normalizeOptions([
+    {
+      label: 'Einzelnen Vitalwert erfassen',
+      guideSlug: 'vitalwerte-einzelwert',
+      description: 'Grünes Plus und danach Vitalwert im Pop-up auswählen',
+    },
+  ]);
+  assert.deepEqual(options, [{
+    label: 'Einzelnen Vitalwert erfassen',
+    guideSlug: 'vitalwerte-einzelwert',
+    description: 'Grünes Plus und danach Vitalwert im Pop-up auswählen',
+  }]);
+});
+
 test('angeklickte Auswahl wird exakt an den Router übergeben', () => {
   const body = JSON.stringify({ messages: [{ role: 'user', content: 'Bericht durchstreichen' }] });
   const rewritten = JSON.parse(rewriteRequestBody(body, 'bericht-durchstreichen'));
   assert.equal(rewritten.selectedGuideSlug, 'bericht-durchstreichen');
 });
 
-test('Frontend bietet höchstens drei touchfreundliche Auswahlbuttons', () => {
+test('Frontend bietet höchstens drei touchfreundliche Auswahlkarten im Chat und Sprachmodus', () => {
   assert.match(frontend, /slice\(0, 3\)/);
   assert.match(frontend, /clarification-option/);
-  assert.match(frontend, /min-height:56px/);
+  assert.match(frontend, /min-height:62px/);
+  assert.match(frontend, /voiceFocusChoices/);
+  assert.match(frontend, /choiceTitle/);
   assert.match(frontend, /dokohilf-ai-router/);
 });
 
@@ -43,11 +60,18 @@ test('Router klärt unbestimmte Korrekturen und nutzt nur freigegebene Guides', 
   assert.match(router, /selectedGuideSlug/);
 });
 
-test('bestätigte freie Antworten bleiben im laufenden Guide und gehen weiter', () => {
-  assert.match(router, /isGuideProgressConfirmation/);
-  assert.match(router, /Ich habe Blutdruck ausgewählt/);
+test('bestätigte freie Antworten bleiben im laufenden Guide und gehen exakt einen Schritt weiter', () => {
+  assert.match(router, /isPositiveConfirmation/);
+  assert.match(router, /currentGuideIndex/);
   assert.match(router, /runGuideCommand\(origin, parsed, messages, activeGuide, 'weiter'\)/);
   assert.match(router, /guide-context-clarification/);
+});
+
+test('Vitalwerte-Auswahl wird strukturiert in Einzel- und Sammelerfassung getrennt', () => {
+  assert.match(router, /vitalOptions/);
+  assert.match(router, /vitalwerte-einzelwert-fortsetzen/);
+  assert.match(router, /vitalwerte-sammelerfassung-fortsetzen/);
+  assert.match(router, /vital-entry-mode-choice/);
 });
 
 test('interne Freigabeformulierungen werden nicht an Nutzer weitergereicht', () => {
