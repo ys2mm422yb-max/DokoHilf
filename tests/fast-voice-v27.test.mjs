@@ -24,10 +24,17 @@ test('persistent browser storage is limited to one privacy acknowledgement boole
   assert.deepEqual([...new Set(directKeys)], ['PRIVACY_ACK_KEY']);
 });
 
-test('server uses the current low-latency TTS model and keeps Gacrux', () => {
+test('server uses the current Gemini Interactions TTS path and keeps Gacrux', () => {
   assert.match(server, /PRIMARY_MODEL = 'gemini-3\.1-flash-tts-preview'/);
   assert.match(server, /FALLBACK_MODEL = 'gemini-2\.5-flash-preview-tts'/);
   assert.match(server, /VOICE_NAME = 'Gacrux'/);
+  assert.match(server, /VOICE_STYLE = 'natural-spoken-german-colleague-v9-interactions'/);
+  assert.match(server, /INTERACTIONS_API_REVISION = '2026-05-20'/);
+  assert.match(server, /v1beta\/interactions/);
+  assert.match(server, /response_format: \{ type: 'audio' \}/);
+  assert.match(server, /speech_config: \[\{ voice: VOICE_NAME \}\]/);
+  assert.match(server, /output_audio/);
+  assert.match(server, /X-DokoHilf-TTS-API/);
   assert.match(server, /pendingAudio/);
   assert.match(server, /CACHE_TTL_MS = 2 \* 60 \* 60_000/);
   assert.match(server, /TRANSKRIPT:/);
