@@ -110,7 +110,7 @@ jobs:
           grep -q "orientationchange" _site/assets/voice-diagnostics.js
           grep -q "fallbackReason" _site/assets/voice-diagnostics.js
           grep -q "VOICE_NAME = 'Achird'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "VOICE_STYLE = 'friendly-casual-natural-v2'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_STYLE = 'friendly-casual-natural-v3'" supabase/functions/dokohilf-tts/index.ts
           grep -q "v1beta/interactions" supabase/functions/dokohilf-tts/index.ts
           grep -q "X-DokoHilf-TTS-Latency" supabase/functions/dokohilf-tts/index.ts
 
