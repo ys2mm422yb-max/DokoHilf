@@ -1,0 +1,28 @@
+name: DokoHilf Release Validation Trigger
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  actions: write
+  issues: read
+  pull-requests: read
+
+jobs:
+  trigger-release-validation:
+    if: github.event.issue.pull_request && github.event.issue.number == 53 && github.event.comment.body == '/validate-build-27'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Start automatic release validation
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'release-dispatcher.yml',
+              ref: 'main',
+            });
+            core.notice('Started automatic validation for the exact open PR #53 head.');
