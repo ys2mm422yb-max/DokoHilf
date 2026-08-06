@@ -51,6 +51,17 @@ test('chat controls are compact and command bubbles stay hidden', () => {
   assert.match(ux, /Ich brauche Hilfe/);
 });
 
+test('mobile synchronization is idempotent and cannot feed its own mutation observer', () => {
+  assert.match(ux, /function setTextIfChanged/);
+  assert.match(ux, /node\.textContent === value/);
+  assert.match(ux, /let syncScheduled = false/);
+  assert.match(ux, /function scheduleSync/);
+  assert.match(ux, /requestAnimationFrame\(\(\) =>/);
+  assert.match(ux, /new MutationObserver\(scheduleSync\)/);
+  assert.doesNotMatch(ux, /new MutationObserver\(sync\)/);
+  assert.match(ux, /__DOKOHILF_IDEMPOTENT_SYNC_V27__/);
+});
+
 test('voice starts quickly, uses static audio first and keeps idle microphone compact', () => {
   assert.match(experience, /FAST_FALLBACK_MS = 2400/);
   assert.match(experience, /loadPrebuiltVoice/);
@@ -65,11 +76,15 @@ test('voice starts quickly, uses static audio first and keeps idle microphone co
   assert.match(uxCss, /width:96px/);
 });
 
-test('cloud voice uses Gemini 3.1, Gacrux and transient shared memory', () => {
+test('cloud voice uses Gemini Interactions, Gacrux and transient shared memory', () => {
   assert.match(tts, /VOICE_NAME = 'Gacrux'/);
-  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v8-low-latency'/);
+  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v9-interactions'/);
   assert.match(tts, /PRIMARY_MODEL = 'gemini-3\.1-flash-tts-preview'/);
   assert.match(tts, /FALLBACK_MODEL = 'gemini-2\.5-flash-preview-tts'/);
+  assert.match(tts, /INTERACTIONS_API_REVISION = '2026-05-20'/);
+  assert.match(tts, /v1beta\/interactions/);
+  assert.match(tts, /response_format: \{ type: 'audio' \}/);
+  assert.match(tts, /X-DokoHilf-TTS-API/);
   assert.match(tts, /pendingAudio/);
   assert.match(tts, /CACHE_TTL_MS = 2 \* 60 \* 60_000/);
   assert.match(tts, /TRANSKRIPT:/);
