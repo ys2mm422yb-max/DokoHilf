@@ -1,0 +1,59 @@
+name: DokoHilf Release Dispatcher
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: dokohilf-release-dispatcher
+  cancel-in-progress: false
+
+jobs:
+  dispatch-current-release-head:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch validation once for the current PR 53 head
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = 53;
+
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number });
+            if (pr.state !== 'open') {
+              core.notice('PR #53 is not open; nothing to dispatch.');
+              return;
+            }
+
+            const headSha = pr.head.sha;
+            const headRef = pr.head.ref;
+            const { data } = await github.rest.actions.listWorkflowRuns({
+              owner,
+              repo,
+              workflow_id: 'pages.yml',
+              branch: headRef,
+              event: 'workflow_dispatch',
+              per_page: 100,
+            });
+
+            const existing = data.workflow_runs.filter(run => run.head_sha === headSha);
+            if (existing.length > 0) {
+              core.notice(`Validation already exists for ${headSha}: ${existing[0].html_url}`);
+              return;
+            }
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id: 'pages.yml',
+              ref: headRef,
+            });
+            core.notice(`Dispatched pages.yml for ${headRef} at ${headSha}.`);
