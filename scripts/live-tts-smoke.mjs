@@ -4,12 +4,12 @@ const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 const TEST_TEXT = 'Öffne Vitalwerte und klicke oben links auf das grüne Plus.';
 const EXPECTED_VOICE = 'Gacrux';
-const EXPECTED_STYLE = 'natural-spoken-german-colleague-v5';
+const EXPECTED_STYLE = 'natural-spoken-german-colleague-v7-fast-start';
 const ALLOWED_MODELS = new Set([
-  'gemini-2.5-pro-preview-tts',
   'gemini-2.5-flash-preview-tts',
+  'gemini-2.5-pro-preview-tts',
 ]);
-const MAX_SERVER_LATENCY_MS = 20_000;
+const MAX_SERVER_LATENCY_MS = 8_000;
 
 async function requestAudio() {
   const startedAt = Date.now();
@@ -17,7 +17,7 @@ async function requestAudio() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
     body: JSON.stringify({ text: TEST_TEXT }),
-    signal: AbortSignal.timeout(26_000),
+    signal: AbortSignal.timeout(16_000),
   });
   const bytes = new Uint8Array(await response.arrayBuffer());
   const header = new TextDecoder('ascii').decode(bytes.slice(0, 12));
@@ -29,6 +29,7 @@ async function requestAudio() {
     model: response.headers.get('x-dokohilf-tts-model') || '',
     mode: response.headers.get('x-dokohilf-voice-mode') || '',
     style: response.headers.get('x-dokohilf-voice-style') || '',
+    cache: response.headers.get('x-dokohilf-tts-cache') || '',
     serverLatency: Number(response.headers.get('x-dokohilf-tts-latency') || 0),
     roundTripLatency: Date.now() - startedAt,
     byteLength: bytes.byteLength,
@@ -41,7 +42,8 @@ async function requestAudio() {
   if (result.voice !== EXPECTED_VOICE) throw new Error(`Falsche Stimme: ${result.voice || 'leer'}`);
   if (result.style !== EXPECTED_STYLE) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
   if (!ALLOWED_MODELS.has(result.model)) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
-  if (!result.serverLatency || result.serverLatency > MAX_SERVER_LATENCY_MS) {
+  if (!['hit', 'miss'].includes(result.cache)) throw new Error(`Cache-Nachweis fehlt: ${result.cache || 'leer'}`);
+  if (result.cache !== 'hit' && (!result.serverLatency || result.serverLatency > MAX_SERVER_LATENCY_MS)) {
     throw new Error(`Sprachausgabe zu langsam: ${result.serverLatency || 0} ms`);
   }
   return { result, bytes };
@@ -54,7 +56,7 @@ async function runTest() {
       return await requestAudio();
     } catch (error) {
       lastError = error;
-      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1800));
+      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1500));
     }
   }
   throw lastError;
@@ -63,10 +65,16 @@ async function runTest() {
 await mkdir('artifacts', { recursive: true });
 let report;
 try {
-  const { result, bytes } = await runTest();
-  report = { passed: true, ...result };
-  await writeFile('artifacts/dokohilf-live-tts.wav', bytes);
-  console.log(`DokoHilf Live-TTS: ${result.serverLatency} ms, Stimme ${result.voice}, Modell ${result.model}, ${result.byteLength} Bytes.`);
+  const first = await runTest();
+  const second = await runTest();
+  report = {
+    passed: true,
+    first: first.result,
+    second: second.result,
+    cacheReuseObserved: second.result.cache === 'hit',
+  };
+  await writeFile('artifacts/dokohilf-live-tts.wav', first.bytes);
+  console.log(`DokoHilf Live-TTS: erster Abruf ${first.result.serverLatency} ms, zweiter Abruf ${second.result.serverLatency} ms, Cache ${second.result.cache}, Stimme ${first.result.voice}, Modell ${first.result.model}.`);
 } catch (error) {
   report = { passed: false, endpoint: ENDPOINT, error: String(error?.message || error) };
   console.error(`DokoHilf Live-TTS fehlgeschlagen: ${report.error}`);
@@ -76,6 +84,6 @@ try {
 await writeFile('artifacts/dokohilf-live-tts.json', JSON.stringify(report, null, 2), 'utf8');
 await writeFile(
   'artifacts/dokohilf-live-tts.md',
-  `# DokoHilf Live-TTS\n\n- ${report.passed ? '✅' : '❌'} ${report.passed ? `${report.serverLatency} ms · ${report.voice} · ${report.model} · ${report.byteLength} Bytes` : report.error}\n`,
+  `# DokoHilf Live-TTS\n\n- ${report.passed ? `✅ erster Abruf ${report.first.serverLatency} ms · zweiter Abruf ${report.second.serverLatency} ms · Cache ${report.second.cache} · ${report.first.voice} · ${report.first.model}` : `❌ ${report.error}`}\n`,
   'utf8',
 );
