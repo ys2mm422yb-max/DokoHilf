@@ -54,7 +54,7 @@ function strings(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return [...new Set(value.filter(item => typeof item === 'string').map(item => String(item).trim()).filter(Boolean))].slice(0, 3);
 }
-function sensitive(text: string): boolean {
+function containsSensitiveData(text: string): boolean {
   const raw = text.trim(); const n = normalize(raw);
   if ([/\b[\w.+-]+@[\w.-]+\.[a-z]{2,}\b/i,/\b(?:\+49|0)[\d\s/()-]{7,}\b/,/\b\d{1,2}\.\d{1,2}\.\d{2,4}\b/,
     /\b(?:herr|frau|bewohner(?:in)?|klient(?:in)?|patient(?:in)?)\s+[a-zäöüß-]{2,}/i,
@@ -251,7 +251,7 @@ Deno.serve(async (req: Request) => {
   catch { return respond(origin,400,{error:'Ungültige oder zu große Anfrage.'}); }
   const list=messages(parsed.messages);
   if(!list.length||list.at(-1)?.role!=='user') return respond(origin,400,{error:'Es fehlt eine gültige Nutzernachricht.'});
-  if(list.some(item=>item.role==='user'&&sensitive(item.content))) return respond(origin,422,{blocked:true,error:'Mögliche Echtdaten erkannt. Die Anfrage wurde nicht weiterverarbeitet.'});
+  if(list.some(item=>item.role==='user'&&containsSensitiveData(item.content))) return respond(origin,422,{blocked:true,error:'Mögliche Echtdaten erkannt. Die Anfrage wurde nicht weiterverarbeitet.'});
   let guides: Guide[]; try { guides=await loadGuides(); } catch { return respond(origin,503,{error:'Die freigegebene Wissensbasis ist gerade nicht erreichbar.'}); }
   const text=lastUser(list); const alternatives=strings(parsed.speechAlternatives);
   const active=guides.find(item=>item.slug===String(parsed.guideSlug||''))||null;
