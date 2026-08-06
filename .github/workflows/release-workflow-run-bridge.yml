@@ -1,0 +1,28 @@
+name: DokoHilf Release Validation Bridge
+
+on:
+  workflow_run:
+    workflows: ["Deploy DokoHilf"]
+    types: [completed]
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  start-current-release-validation:
+    if: github.event.workflow_run.run_number == 229
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch exact current PR 53 validation
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'release-dispatcher.yml',
+              ref: 'main',
+            });
+            core.notice('Workflow run #229 completed again; started current exact-head Build 27 validation.');
