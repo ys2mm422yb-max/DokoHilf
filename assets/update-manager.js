@@ -5,6 +5,8 @@
   const VERSION_URL = './version.json';
   const RELOAD_KEY = 'dokohilf-build-reload';
   const CHECK_INTERVAL_MS = 5 * 60 * 1000;
+  const RELOAD_GUARD_MS = 10_000;
+  const WORKER_WAIT_MS = 4_500;
 
   let registration = null;
   let checking = false;
@@ -60,13 +62,29 @@
 
   function reloadOnce(buildId) {
     const key = buildId || 'controller-change';
+    const now = Date.now();
     try {
-      if (sessionStorage.getItem(RELOAD_KEY) === key) return;
-      sessionStorage.setItem(RELOAD_KEY, key);
+      const previous = JSON.parse(sessionStorage.getItem(RELOAD_KEY) || 'null');
+      if (previous?.key === key && now - Number(previous.at || 0) < RELOAD_GUARD_MS) return;
+      sessionStorage.setItem(RELOAD_KEY, JSON.stringify({ key, at: now }));
     } catch {
       // Ein Reload bleibt auch ohne Session Storage möglich.
     }
     window.location.reload();
+  }
+
+  function waitForWorker(worker) {
+    if (!worker || worker.state === 'installed' || worker.state === 'activated') {
+      return Promise.resolve();
+    }
+    return new Promise(resolve => {
+      const timer = window.setTimeout(resolve, WORKER_WAIT_MS);
+      worker.addEventListener('statechange', () => {
+        if (worker.state !== 'installed' && worker.state !== 'activated' && worker.state !== 'redundant') return;
+        window.clearTimeout(timer);
+        resolve();
+      });
+    });
   }
 
   async function activateWaitingWorker() {
@@ -75,7 +93,9 @@
       registration.waiting.postMessage({ type: 'SKIP_WAITING' });
       return true;
     }
+
     await registration.update().catch(() => {});
+    if (registration.installing) await waitForWorker(registration.installing);
     if (registration.waiting) {
       registration.waiting.postMessage({ type: 'SKIP_WAITING' });
       return true;
@@ -98,8 +118,8 @@
       targetBuildId = remoteBuildId;
       setStatus('updating', 'Neue Version wird geladen …');
       const activated = await activateWaitingWorker();
-      if (!activated && reason !== 'startup') {
-        window.setTimeout(() => reloadOnce(remoteBuildId), 900);
+      if (!activated) {
+        window.setTimeout(() => reloadOnce(remoteBuildId), reason === 'startup' ? 350 : 900);
       }
     } catch {
       setStatus('error', 'Updateprüfung gerade nicht möglich');
