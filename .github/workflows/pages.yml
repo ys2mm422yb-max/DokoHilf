@@ -18,15 +18,20 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 120
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build exact static site
+      - name: Generate missing approved Gacrux guide audio
         run: |
           set -euo pipefail
           mkdir -p artifacts
+          node scripts/generate-guide-audio.mjs
+
+      - name: Build exact static site
+        run: |
+          set -euo pipefail
           bash -n scripts/build-static-site-v27.sh
           bash scripts/build-static-site-v27.sh _site
 
@@ -38,7 +43,7 @@ jobs:
             README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md \
             FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md \
             assets/guide-audio-catalog.json assets/guide-audio-manifest.json \
-            scripts/generate-guide-audio.mjs scripts/mobile-render-v27.mjs \
+            scripts/generate-guide-audio.mjs scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh \
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
             scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-screenshot-smoke.mjs \
             tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs \
@@ -46,11 +51,16 @@ jobs:
             test -s "$file"
           done
 
+          test "$(find assets/audio/guides -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')" = "93"
+          grep -q '"entryCount": 93' assets/guide-audio-manifest.json
           grep -q '__DOKOHILF_DARK_PREMIUM_V27__' assets/experience-v27.js
           grep -q '__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__' assets/experience-v27.js
           grep -q 'loadPrebuiltVoice' assets/experience-v27.js
           grep -q 'prebuilt-approved-guide' assets/experience-v27.js
           grep -q 'guide-progress-menu' assets/ux-v27.js
+          grep -q '__DOKOHILF_PRIVACY_ACK_V27__' assets/ux-v27.js
+          grep -q "PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1'" assets/ux-v27.js
+          test "$(grep -o 'localStorage\.[a-zA-Z]*' assets/ux-v27.js | sort -u | tr '\n' ' ')" = "localStorage.getItem localStorage.setItem "
           grep -q 'command-message-hidden' assets/ux-v27.css
           grep -q 'data-voice-state="listening"' assets/ux-v27.css
           grep -q -- '--v27-bg:#020c12' assets/premium-ui-v27.css
@@ -85,7 +95,7 @@ jobs:
           grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' assets/app.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' assets/voice-focus-mode.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|caches.open' assets/experience-v27.js && exit 1 || true
-          grep -q 'localStorage\|indexedDB\|caches.open' assets/ux-v27.js && exit 1 || true
+          grep -q 'indexedDB\|caches.open' assets/ux-v27.js && exit 1 || true
           grep -q '\.jpe\?g\|\.png\|IMG_' CONFIRMED_WORKFLOWS.md && exit 1 || true
 
       - name: Run deterministic behavior and audio regressions
@@ -136,13 +146,17 @@ jobs:
       - name: Check active DokoHilf voice service
         run: node scripts/live-tts-smoke.mjs
 
-      - name: Upload behavior and render evidence
+      - name: Upload behavior, audio and render evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: dokohilf-build-27-evidence-${{ github.run_number }}
-          path: artifacts/
-          if-no-files-found: error
+          path: |
+            artifacts/
+            assets/guide-audio-catalog.json
+            assets/guide-audio-manifest.json
+            assets/audio/guides/*.wav
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Upload Pages artifact
