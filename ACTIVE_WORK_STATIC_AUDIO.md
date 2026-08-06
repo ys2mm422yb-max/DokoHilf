@@ -46,20 +46,21 @@ Build 27 wird nicht durch die vollständige 93er-Bibliothek blockiert. Die App n
 
 Der vollständige 93/93-Abschluss bleibt separat streng prüfbar.
 
-## Bereinigte Altregressionen
+## Manueller Lauf #229 und Korrektur
 
-- `tests/voice-diagnostics.test.mjs` auf TTS v20 und privaten Audiocache migriert
-- `tests/live-build-recovery.test.mjs` auf Build 27 migriert
-- `tests/voice-layout-v26.test.mjs` behält den v26-Layoutschutz und prüft die Build-27-Einbindung
+Der erste manuell gestartete Lauf auf Head `369e7a127b78833927697f842fa54fc136d26436` bestand 114 von 117 Tests. Die drei Vertragsabweichungen wurden behoben:
 
-Die fachlichen Router- und Klickwegregressionen wurden nicht abgeschwächt.
+- Mobile Build-27-Regeln werden jetzt aus der tatsächlich aktiven Schicht `assets/ux-v27.css` geprüft.
+- Der Datenschutztest prüft die tatsächlich angewandte SQL-Migration mit `regexp_replace`, Regex-Verifikation und harter Exception-Grenze.
+- Die Audio-Datenschutzdokumentation benennt die ausgeschlossenen Nutzerinhalte zusätzlich in einem eindeutigen Satz.
+
+Keine Fach-, Sicherheits- oder Datenschutzregel wurde abgeschwächt.
 
 ## Noch vor Merge von Build 27 erforderlich
 
-- in GitHub **Actions → Deploy DokoHilf → Run workflow** den Branch `release/build-27-final-validation` einmal manuell starten
+- in GitHub **Actions → Deploy DokoHilf → Run workflow** den Branch `release/build-27-final-validation` erneut manuell starten
 - dieser Workflow enthält Syntax-, Fach-, Datenschutz-, Sicherheits-, Live-Router-, Live-TTS-, privaten Audio-, Pages-Build- und Playwright-iPhone-Prüfungen
 - Grund: GitHub unterdrückt Workflowereignisse, die durch die verbundene GitHub-App selbst erzeugt werden; der verbundene Connector stellt keinen Workflow-Dispatch bereit
-- auf dem aktuellen PR-#53-Head existiert deshalb noch kein Actions-Lauf
 - erst nach vollständig grünem Lauf auf dem dann exakten PR-#53-Head darf manuell gemergt werden
 - kein Auto-Merge und keine Branch-Löschung
 - PR #52 erst danach als ersetzt schließen; Branch nicht löschen
