@@ -1,20 +1,6 @@
 name: Direct final guide audio v27
 
 on:
-  push:
-    branches: [feat/dark-premium-static-guide-audio-v27]
-    paths:
-      - .github/workflows/direct-generate-audio-v27.yml
-      - assets/guide-audio-catalog.json
-      - assets/guide-audio-generation-status.json
-      - assets/guide-audio-manifest.partial.json
-      - assets/guide-audio-manifest.json
-      - assets/audio/guides/**
-      - scripts/generate-guide-audio.mjs
-      - scripts/live-tts-smoke.mjs
-      - supabase/functions/dokohilf-tts/index.ts
-      - tests/fast-voice-v27.test.mjs
-      - tests/prebuilt-guide-audio.test.mjs
   workflow_dispatch:
 
 permissions:
@@ -76,5 +62,5 @@ jobs:
           if [ -s assets/guide-audio-generation-status.json ]; then
             cat assets/guide-audio-generation-status.json
           fi
-          echo "Static guide audio remains incomplete; the checkpoint commit triggers the next resumable round."
+          echo "Static guide audio remains incomplete. Restart manually only after the external provider quota has recovered."
           exit "${status}"
