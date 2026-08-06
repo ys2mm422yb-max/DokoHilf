@@ -34,7 +34,7 @@ test('dark premium home and workflow shortcuts are present', () => {
   assert.match(css, /--v27-bg:#020c12/);
   assert.match(css, /color-scheme:dark/);
   assert.match(css, /\.examples\{display:grid/);
-  assert.match(index, /Was möchtest du erledigen\?/);
+  assert.match(index, /Wobei brauchst du Hilfe\?|Was möchtest du erledigen\?/);
   assert.match(index, /Häufige Abläufe/);
   assert.match(index, /Bericht anlegen/);
   assert.match(index, /Visite anlegen/);
@@ -62,19 +62,20 @@ test('voice starts quickly and keeps natural audio warm in memory', () => {
   assert.match(ux, /dokohilf_immediate_voice_fallback/);
 });
 
-test('cloud voice uses shorter deadlines and a larger transient cache', () => {
+test('cloud voice uses Gemini 3.1, Gacrux and transient shared memory', () => {
   assert.match(tts, /VOICE_NAME = 'Gacrux'/);
-  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v8-hybrid-fast'/);
-  assert.match(tts, /PRIMARY_TIMEOUT_MS = 3_200/);
-  assert.match(tts, /FALLBACK_TIMEOUT_MS = 1_800/);
-  assert.match(tts, /CACHE_TTL_MS = 60 \* 60_000/);
-  assert.match(tts, /CACHE_LIMIT = 128/);
+  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v8-low-latency'/);
+  assert.match(tts, /PRIMARY_MODEL = 'gemini-3\.1-flash-tts-preview'/);
+  assert.match(tts, /FALLBACK_MODEL = 'gemini-2\.5-flash-preview-tts'/);
+  assert.match(tts, /pendingAudio/);
+  assert.match(tts, /CACHE_TTL_MS = 2 \* 60 \* 60_000/);
+  assert.match(tts, /TRANSKRIPT:/);
 });
 
 test('repeated exercise notices disappear without weakening privacy', () => {
   assert.match(migration, /remove repeated/i);
   assert.match(migration, /guide\.steps::text ilike '%Fantasiedaten%'/);
-  assert.match(index, /Keine persönlichen Daten eingeben/);
+  assert.match(index, /Datenschutz aktiv|Keine persönlichen Daten eingeben/);
   assert.match(index, /Gespräch und Audio werden nicht dauerhaft gespeichert/);
   assert.match(app, /function clientPrivacyGuard/);
   assert.match(app, /BLOCK_MESSAGE/);
