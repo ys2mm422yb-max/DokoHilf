@@ -34,9 +34,9 @@ test('Buggy Punkte im Ladehinweis werden vollständig entfernt', () => {
   assert.match(experience, /Die Anweisung ist schon vollständig sichtbar/);
 });
 
-test('Build 26 lädt und cached beide neuen Assets', () => {
-  assert.match(html, /premium-ui-v26\.css\?v=20260806-26/);
-  assert.match(html, /experience-v26\.js\?v=20260806-26/);
-  assert.match(worker, /premium-ui-v26\.css\?v=20260806-26/);
-  assert.match(worker, /experience-v26\.js\?v=20260806-26/);
+test('Build 27 behält beide v26-Grundassets bei', () => {
+  assert.match(html, /premium-ui-v26\.css\?v=20260806-27/);
+  assert.match(html, /experience-v26\.js\?v=20260806-27/);
+  assert.match(worker, /premium-ui-v26\.css\?v=20260806-27/);
+  assert.match(worker, /experience-v26\.js\?v=20260806-27/);
 });
