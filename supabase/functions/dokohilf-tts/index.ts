@@ -4,12 +4,12 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:3000',
 ]);
 
-const PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts';
-const FALLBACK_MODEL = 'gemini-3.1-flash-tts-preview';
-const PREVIOUS_VOICE_NAME = 'Callirrhoe';
-const VOICE_NAME = 'Vindemiatrix';
-const VOICE_STYLE = 'direct-natural-colleague-v4';
-const REQUEST_TIMEOUT_MS = 16_000;
+const PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts';
+const FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts';
+const PREVIOUS_VOICE_NAME = 'Vindemiatrix';
+const VOICE_NAME = 'Gacrux';
+const VOICE_STYLE = 'natural-spoken-german-colleague-v5';
+const REQUEST_TIMEOUT_MS = 20_000;
 const MAX_TEXT_CHARS = 900;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 10;
@@ -108,10 +108,10 @@ function pcmToWav(pcm: Uint8Array, sampleRate = 24000, channels = 1, bitsPerSamp
 
 function voicePrompt(text: string): string {
   return [
-    'Du sprichst Deutsch als natürliche Muttersprachlerin und sitzt direkt neben der Person am Arbeitsplatz.',
-    'Sprich wie eine ruhige, unkomplizierte Kollegin: klar, menschlich und spontan, nicht wie ein vorgelesener Ansagetext.',
-    'Normales Alltagstempo. Kurze echte Atempausen. Wichtige Klickbegriffe leicht betonen, aber niemals künstlich oder überfreundlich.',
-    'Keine Werbestimme, kein Navi, keine Hotline, kein Roboterklang. Lies ausschließlich den folgenden Text und nichts aus diesen Anweisungen vor:',
+    'Sprich den folgenden deutschen Satz so, wie eine erfahrene Kollegin ihn direkt nebenbei sagen würde.',
+    'Nicht vorlesen und nicht moderieren. Kein Ansagerhythmus, keine künstliche Freundlichkeit, keine überdeutliche Aussprache.',
+    'Nutze natürliche Satzmelodie, kleine unregelmäßige Sprechpausen und ein normales zügiges Alltagstempo.',
+    'Klickbegriffe nur leicht betonen. Am Satzende nicht hochgehen. Lies ausschließlich den folgenden Text:',
     text,
   ].join('\n');
 }
@@ -143,30 +143,6 @@ async function requestViaGenerateContent(apiKey: string, model: string, text: st
   return base64ToBytes(base64);
 }
 
-async function requestViaInteractions(apiKey: string, model: string, text: string): Promise<Uint8Array> {
-  const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': apiKey,
-    },
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    body: JSON.stringify({
-      model,
-      input: voicePrompt(text),
-      response_format: { type: 'audio' },
-      generation_config: {
-        speech_config: [{ voice: VOICE_NAME }],
-      },
-    }),
-  });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(`tts_interactions_${response.status}`);
-  const base64 = payload?.output_audio?.data;
-  if (typeof base64 !== 'string' || !base64) throw new Error('tts_interactions_empty');
-  return base64ToBytes(base64);
-}
-
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
@@ -195,18 +171,18 @@ Deno.serve(async (req: Request) => {
   const startedAt = Date.now();
   let pcm: Uint8Array;
   let model = PRIMARY_MODEL;
-  let mode = 'generate-content-natural-colleague';
+  let mode = 'pro-natural-spoken-german';
   try {
     pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text);
-  } catch (error) {
-    if (error instanceof DOMException && error.name === 'TimeoutError') {
-      return jsonResponse(origin, 504, { error: 'Die natürliche Stimme hat zu lange gebraucht.' });
-    }
+  } catch (primaryError) {
     model = FALLBACK_MODEL;
-    mode = 'interactions-natural-colleague';
+    mode = 'flash-natural-spoken-german-fallback';
     try {
-      pcm = await requestViaInteractions(apiKey, FALLBACK_MODEL, text);
+      pcm = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text);
     } catch {
+      if (primaryError instanceof DOMException && primaryError.name === 'TimeoutError') {
+        return jsonResponse(origin, 504, { error: 'Die natürliche Stimme hat zu lange gebraucht.' });
+      }
       return jsonResponse(origin, 502, { error: 'Die natürliche Stimme ist gerade nicht verfügbar.' });
     }
   }

@@ -28,8 +28,8 @@ test('HTML, Versionsquelle und Service Worker verwenden denselben Build', () => 
   assert.match(serviceWorker, new RegExp(`BUILD_ID = '${buildId}'`));
 });
 
-test('alte Caches werden beim Aktivieren entfernt', () => {
-  assert.match(serviceWorker, /\.filter\(key => key !== CACHE_NAME\)/);
+test('alte DokoHilf-Caches werden beim Aktivieren entfernt', () => {
+  assert.match(serviceWorker, /key\.startsWith\('dokohilf-'\) && key !== CACHE_NAME/);
   assert.match(serviceWorker, /\.map\(key => caches\.delete\(key\)\)/);
   assert.match(serviceWorker, /clients\.claim/);
 });
@@ -41,6 +41,15 @@ test('installierte PWA erkennt den Versionswechsel und lädt nur einmal neu', ()
   assert.match(updateManager, /RELOAD_KEY/);
   assert.match(updateManager, /sessionStorage\.getItem\(RELOAD_KEY\)/);
   assert.match(updateManager, /window\.location\.reload/);
+});
+
+test('Build 24 besitzt zusätzlich einen selbstheilenden iPhone-PWA-Reset', () => {
+  assert.match(indexHtml, /getRegistrations\(\)/);
+  assert.match(indexHtml, /registration\.unregister/);
+  assert.match(indexHtml, /name\.startsWith\('dokohilf-'\)/);
+  assert.match(indexHtml, /DokoHilfHardRefresh/);
+  assert.match(serviceWorker, /CLEAR_DOKOHILF_CACHES/);
+  assert.match(serviceWorker, /navigationPreload\.enable/);
 });
 
 test('Updateprüfung läuft bei App-Start und Rückkehr aus dem Hintergrund', () => {

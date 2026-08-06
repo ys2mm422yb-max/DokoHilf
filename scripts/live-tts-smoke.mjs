@@ -3,10 +3,14 @@ import { mkdir, writeFile } from 'node:fs/promises';
 const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-tts';
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 const TEST_TEXT = 'Öffne Vitalwerte. Für einen einzelnen Wert klickst du oben links auf das grüne Plus.';
-const EXPECTED_VOICE = 'Vindemiatrix';
-const EXPECTED_STYLE = 'direct-natural-colleague-v4';
-const EXPECTED_MODEL = 'gemini-2.5-flash-preview-tts';
-const MAX_LATENCY_MS = 18_000;
+const EXPECTED_VOICE = 'Gacrux';
+const EXPECTED_STYLE = 'natural-spoken-german-colleague-v5';
+const EXPECTED_MODE = 'natural-spoken-german';
+const ALLOWED_MODELS = new Set([
+  'gemini-2.5-pro-preview-tts',
+  'gemini-2.5-flash-preview-tts',
+]);
+const MAX_LATENCY_MS = 24_000;
 
 async function requestAudio() {
   let lastError;
@@ -16,7 +20,7 @@ async function requestAudio() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
         body: JSON.stringify({ text: TEST_TEXT }),
-        signal: AbortSignal.timeout(25_000),
+        signal: AbortSignal.timeout(30_000),
       });
       const bytes = new Uint8Array(await response.arrayBuffer());
       const header = new TextDecoder('ascii').decode(bytes.slice(0, 12));
@@ -38,8 +42,8 @@ async function requestAudio() {
       if (!header.startsWith('RIFF') || !header.includes('WAVE')) throw new Error(`Ungültiger WAV-Header: ${header}`);
       if (result.voice !== EXPECTED_VOICE) throw new Error(`Falsche Stimme: ${result.voice || 'leer'}`);
       if (result.style !== EXPECTED_STYLE) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
-      if (result.model !== EXPECTED_MODEL) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
-      if (!result.mode.includes('natural-colleague')) throw new Error(`Falscher Sprachmodus: ${result.mode || 'leer'}`);
+      if (!ALLOWED_MODELS.has(result.model)) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
+      if (!result.mode.includes(EXPECTED_MODE)) throw new Error(`Falscher Sprachmodus: ${result.mode || 'leer'}`);
       if (!result.latency || result.latency > MAX_LATENCY_MS) throw new Error(`Sprachausgabe zu langsam: ${result.latency || 0} ms`);
       return result;
     } catch (error) {
