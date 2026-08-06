@@ -2,7 +2,7 @@
 
 **Stand:** 6. August 2026  
 **Ziel-Build:** `20260806-27`  
-**Aktiver PR:** `#51`
+**Aktiver Release-PR:** `#52`
 
 ## Ziel
 
