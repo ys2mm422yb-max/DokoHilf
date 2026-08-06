@@ -1,20 +1,21 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 
-const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router';
+const CORE_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai';
+const ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router';
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 
 const cases = [
-  { input: 'Ich muss einen Bericht löschen', expectedGuide: 'bericht-durchstreichen' },
-  { input: 'Ich möchte eine Visite anlegen', expectedGuide: 'visite-anlegen' },
-  { input: 'Ich möchte eine Durchführung stornieren', expectedGuide: 'durchfuehrung-storno' },
-  { input: 'Ich habe falsch dokumentiert', expectedSource: 'structured-clarification', expectedOptions: 2 },
+  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich muss einen Bericht löschen', expectedGuide: 'bericht-durchstreichen' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte eine Visite anlegen', expectedGuide: 'visite-anlegen' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte eine Durchführung stornieren', expectedGuide: 'durchfuehrung-storno' },
+  { endpoint: ROUTER_ENDPOINT, endpointName: 'Klärungsrouter', input: 'Ich habe falsch dokumentiert', expectedSource: 'structured-clarification', expectedOptions: 2 },
 ];
 
 async function requestWithRetry(testCase) {
   let lastError;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      const response = await fetch(ENDPOINT, {
+      const response = await fetch(testCase.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
         body: JSON.stringify({ messages: [{ role: 'user', content: testCase.input }], guideSlug: null }),
@@ -39,9 +40,26 @@ for (const testCase of cases) {
     const passed = testCase.expectedGuide
       ? payload.guideSlug === testCase.expectedGuide
       : payload.source === testCase.expectedSource && options.length === testCase.expectedOptions;
-    results.push({ ...testCase, actualGuide: payload.guideSlug || null, actualSource: payload.source || null, optionCount: options.length, passed });
+    results.push({
+      endpointName: testCase.endpointName,
+      input: testCase.input,
+      expectedGuide: testCase.expectedGuide || null,
+      expectedSource: testCase.expectedSource || null,
+      actualGuide: payload.guideSlug || null,
+      actualSource: payload.source || null,
+      optionCount: options.length,
+      reply: typeof payload.reply === 'string' ? payload.reply : null,
+      passed,
+    });
   } catch (error) {
-    results.push({ ...testCase, error: String(error?.message || error), passed: false });
+    results.push({
+      endpointName: testCase.endpointName,
+      input: testCase.input,
+      expectedGuide: testCase.expectedGuide || null,
+      expectedSource: testCase.expectedSource || null,
+      error: String(error?.message || error),
+      passed: false,
+    });
   }
 }
 
@@ -49,7 +67,7 @@ await mkdir('artifacts', { recursive: true });
 const markdown = [
   '# DokoHilf Live-Routing-Smoke-Test',
   '',
-  ...results.map(result => `- ${result.passed ? '✅' : '❌'} „${result.input}“ → ${result.actualGuide || result.actualSource || result.error || 'keine Antwort'}`),
+  ...results.map(result => `- ${result.passed ? '✅' : '❌'} ${result.endpointName}: „${result.input}“ → ${result.actualGuide || result.actualSource || result.error || 'keine Antwort'}`),
   '',
 ].join('\n');
 await writeFile('artifacts/dokohilf-live-routing.md', markdown, 'utf8');
