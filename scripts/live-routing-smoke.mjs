@@ -5,25 +5,51 @@ const ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/d
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 
 const cases = [
-  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte einen Bericht schreiben', expectedGuide: 'bericht-neu' },
-  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich muss einen Bericht löschen', expectedGuide: 'bericht-durchstreichen' },
-  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Wo finde ich den Durchführungsnachweis?', expectedGuide: 'durchfuehrungsnachweis-oeffnen' },
-  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte eine Durchführung stornieren', expectedGuide: 'durchfuehrung-storno' },
-  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte Blutdruck als Vitalwert eintragen', expectedGuide: 'vitalwerte-erfassen' },
-  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Ich möchte eine Visite anlegen', expectedGuide: 'visite-anlegen' },
-  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Wie komme ich zur Übergabe?', expectedGuide: 'uebergabeformular' },
-  { endpoint: CORE_ENDPOINT, endpointName: 'App-Endpunkt', input: 'Wie öffne ich das Notfallblatt?', expectedGuide: 'notfallblatt' },
-  { endpoint: ROUTER_ENDPOINT, endpointName: 'Klärungsrouter', input: 'Ich habe falsch dokumentiert', expectedSource: 'structured-clarification', expectedOptions: 2 },
+  { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Ich möchte einen Bericht schreiben', expectedGuide: 'bericht-neu' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Ich muss einen Bericht löschen', expectedGuide: 'bericht-durchstreichen' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Wo finde ich den Durchführungsnachweis?', expectedGuide: 'durchfuehrungsnachweis-oeffnen' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Ich möchte eine Durchführung stornieren', expectedGuide: 'durchfuehrung-storno' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Ich möchte Blutdruck als Vitalwert eintragen', expectedGuide: 'vitalwerte-erfassen' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Ich möchte eine Visite anlegen', expectedGuide: 'visite-anlegen' },
+  { endpoint: CORE_ENDPOINT, endpointName: 'Kern-Endpunkt', input: 'Wie komme ich zur Übergabe?', expectedGuide: 'uebergabeformular' },
+  {
+    endpoint: CORE_ENDPOINT,
+    endpointName: 'Kern-Endpunkt',
+    input: 'Wie öffne ich das Notfallblatt?',
+    expectedGuide: 'notfallblatt',
+    expectedReplyIncludes: 'Bewohner',
+  },
+  { endpoint: ROUTER_ENDPOINT, endpointName: 'App-Router', input: 'Ich habe falsch dokumentiert', expectedSource: 'structured-clarification', expectedOptions: 2 },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'App-Router Vitalwerte-Kontext',
+    guideSlug: 'vitalwerte',
+    messages: [
+      { role: 'user', content: 'Wo finde ich die Vitalwerte?' },
+      { role: 'assistant', content: 'Entscheide, ob du einen neuen Vitalwert erfassen oder vorhandene Werte beziehungsweise den Verlauf ansehen möchtest.' },
+      { role: 'user', content: 'Erfassen' },
+    ],
+    expectedGuide: 'vitalwerte-erfassen-fortsetzen',
+    expectedReplyIncludes: 'grüne Plus',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
+    endpointName: 'App-Router ohne Kontext',
+    input: 'Erfassen',
+    expectedSource: 'context-required-clarification',
+    expectedOptions: 0,
+  },
 ];
 
 async function requestWithRetry(testCase) {
   let lastError;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
+      const messages = testCase.messages || [{ role: 'user', content: testCase.input }];
       const response = await fetch(testCase.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
-        body: JSON.stringify({ messages: [{ role: 'user', content: testCase.input }], guideSlug: null }),
+        body: JSON.stringify({ messages, guideSlug: testCase.guideSlug || null }),
         signal: AbortSignal.timeout(15_000),
       });
       const payload = await response.json().catch(() => ({}));
@@ -42,24 +68,29 @@ for (const testCase of cases) {
   try {
     const payload = await requestWithRetry(testCase);
     const options = Array.isArray(payload.options) ? payload.options : [];
-    const passed = testCase.expectedGuide
+    const reply = typeof payload.reply === 'string' ? payload.reply : '';
+    const routingPassed = testCase.expectedGuide
       ? payload.guideSlug === testCase.expectedGuide
       : payload.source === testCase.expectedSource && options.length === testCase.expectedOptions;
+    const replyPassed = !testCase.expectedReplyIncludes
+      || reply.toLowerCase().includes(testCase.expectedReplyIncludes.toLowerCase());
+    const passed = routingPassed && replyPassed;
     results.push({
       endpointName: testCase.endpointName,
-      input: testCase.input,
+      input: testCase.input || testCase.messages?.at(-1)?.content || '',
       expectedGuide: testCase.expectedGuide || null,
       expectedSource: testCase.expectedSource || null,
+      expectedReplyIncludes: testCase.expectedReplyIncludes || null,
       actualGuide: payload.guideSlug || null,
       actualSource: payload.source || null,
       optionCount: options.length,
-      reply: typeof payload.reply === 'string' ? payload.reply : null,
+      reply: reply || null,
       passed,
     });
   } catch (error) {
     results.push({
       endpointName: testCase.endpointName,
-      input: testCase.input,
+      input: testCase.input || testCase.messages?.at(-1)?.content || '',
       expectedGuide: testCase.expectedGuide || null,
       expectedSource: testCase.expectedSource || null,
       error: String(error?.message || error),
