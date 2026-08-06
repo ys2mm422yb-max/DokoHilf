@@ -2,9 +2,9 @@ import { mkdir, writeFile } from 'node:fs/promises';
 
 const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-tts';
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
-const TEST_TEXT = 'Stimmt, dann war die Annahme falsch. Wir starten ganz vorne.';
-const EXPECTED_VOICE = 'Callirrhoe';
-const EXPECTED_STYLE = 'friendly-casual-natural-v3';
+const TEST_TEXT = 'Öffne Vitalwerte. Für einen einzelnen Wert klickst du oben links auf das grüne Plus.';
+const EXPECTED_VOICE = 'Vindemiatrix';
+const EXPECTED_STYLE = 'direct-natural-colleague-v4';
 const EXPECTED_MODEL = 'gemini-2.5-flash-preview-tts';
 const MAX_LATENCY_MS = 18_000;
 
@@ -39,7 +39,7 @@ async function requestAudio() {
       if (result.voice !== EXPECTED_VOICE) throw new Error(`Falsche Stimme: ${result.voice || 'leer'}`);
       if (result.style !== EXPECTED_STYLE) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
       if (result.model !== EXPECTED_MODEL) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
-      if (!result.mode.includes('natural-cloud')) throw new Error(`Falscher Sprachmodus: ${result.mode || 'leer'}`);
+      if (!result.mode.includes('natural-colleague')) throw new Error(`Falscher Sprachmodus: ${result.mode || 'leer'}`);
       if (!result.latency || result.latency > MAX_LATENCY_MS) throw new Error(`Sprachausgabe zu langsam: ${result.latency || 0} ms`);
       return result;
     } catch (error) {
