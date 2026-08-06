@@ -1,14 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 
 const root = new URL('../', import.meta.url);
 const catalog = JSON.parse(await readFile(new URL('assets/guide-audio-catalog.json', root), 'utf8'));
-const manifest = JSON.parse(await readFile(new URL('assets/guide-audio-manifest.json', root), 'utf8'));
 const experience = await readFile(new URL('assets/experience-v27.js', root), 'utf8');
-const worker = await readFile(new URL('service-worker.js', root), 'utf8');
+const diagnostics = await readFile(new URL('assets/voice-diagnostics.js', root), 'utf8');
+const tts = await readFile(new URL('supabase/functions/dokohilf-tts/index.ts', root), 'utf8');
 const policy = await readFile(new URL('PREBUILT_AUDIO.md', root), 'utf8');
+const rules = await readFile(new URL('PROJECT_RULES.md', root), 'utf8');
 
 function normalizeKey(value) {
   return String(value || '')
@@ -22,51 +22,25 @@ function normalizeKey(value) {
     .trim();
 }
 
-function sha256(bytes) {
-  return createHash('sha256').update(bytes).digest('hex');
-}
-
-function isWave(bytes) {
-  return bytes.length > 44
-    && bytes.subarray(0, 4).toString('ascii') === 'RIFF'
-    && bytes.subarray(8, 12).toString('ascii') === 'WAVE';
-}
-
 test('catalog covers greeting and all 92 unique approved guide steps', () => {
   assert.equal(catalog.schemaVersion, 1);
   assert.equal(catalog.voice, 'Gacrux');
   assert.equal(catalog.entries.length, 93);
   assert.equal(new Set(catalog.entries.map(entry => entry.file)).size, 93);
+  assert.equal(new Set(catalog.entries.map(entry => normalizeKey(entry.text))).size, 93);
 });
 
-test('manifest exposes one unique static Gacrux audio per optimized instruction', () => {
-  assert.equal(manifest.schemaVersion, 1);
-  assert.equal(manifest.buildId, '20260806-27');
-  assert.equal(manifest.voice, 'Gacrux');
-  assert.equal(manifest.source, 'approved-guide-static-audio');
-  assert.equal(manifest.entryCount, 93);
-  assert.equal(manifest.entries.length, 93);
-  assert.equal(new Set(manifest.entries.map(entry => entry.key)).size, 93);
-  for (const entry of manifest.entries) {
-    assert.equal(entry.key, normalizeKey(entry.text));
-    assert.match(entry.file, /^\.\/assets\/audio\/guides\/\d{3}\.wav$/);
-    assert.ok(entry.bytes > 44);
-    assert.match(entry.sha256, /^[a-f0-9]{64}$/);
-    assert.equal(entry.voice, 'Gacrux');
-  }
+test('browser maps the local compatibility request to the fixed private manifest endpoint', () => {
+  assert.match(diagnostics, /LOCAL_MANIFEST_MARKER = '\/assets\/guide-audio-manifest\.json'/);
+  assert.match(diagnostics, /GUIDE_AUDIO_ENDPOINT = 'https:\/\/efifbuqctylsujiauabg\.supabase\.co\/functions\/v1\/dokohilf-guide-audio'/);
+  assert.match(diagnostics, /manifest=1&build=20260806-27/);
+  assert.match(diagnostics, /GUIDE_AUDIO_CACHE = 'dokohilf-approved-guide-audio-20260806-27'/);
+  assert.match(diagnostics, /fetchGuideManifest/);
+  assert.match(diagnostics, /fetchCachedGuideAudio/);
+  assert.match(diagnostics, /__DOKOHILF_REMOTE_GUIDE_AUDIO_V27__/);
 });
 
-test('all static audio files are valid WAV files matching manifest sizes and hashes', async () => {
-  for (const entry of manifest.entries) {
-    const bytes = Buffer.from(await readFile(new URL(entry.file.replace(/^\.\//, ''), root)));
-    assert.equal(isWave(bytes), true, `${entry.file} is not RIFF/WAVE`);
-    assert.equal(bytes.length, entry.bytes, `${entry.file} size mismatch`);
-    assert.equal(sha256(bytes), entry.sha256, `${entry.file} hash mismatch`);
-  }
-});
-
-test('browser prefers prebuilt guide audio and only falls through to timed live TTS', () => {
-  assert.match(experience, /guide-audio-manifest\.json\?v=20260806-27/);
+test('browser prefers approved guide audio and only then uses timed live TTS', () => {
   assert.match(experience, /loadPrebuiltManifest/);
   assert.match(experience, /loadPrebuiltVoice/);
   assert.match(experience, /prebuilt-approved-guide/);
@@ -75,17 +49,21 @@ test('browser prefers prebuilt guide audio and only falls through to timed live 
   assert.match(experience, /fastRace\(loadNaturalVoice/);
 });
 
-test('service worker installs the manifest and caches approved WAV files for offline reuse', () => {
-  assert.match(worker, /guide-audio-manifest\.json\?v=20260806-27/);
-  assert.match(worker, /cacheApprovedGuideAudio/);
-  assert.match(worker, /assets\/audio\/guides/);
-  assert.match(worker, /cacheFirstAudio/);
-  assert.match(worker, /CACHE_APPROVED_GUIDE_AUDIO/);
+test('TTS source validates raw REST audio and exposes auditable evidence headers', () => {
+  assert.match(tts, /VOICE_NAME = 'Gacrux'/);
+  assert.match(tts, /INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'/);
+  assert.match(tts, /extractInteractionAudio/);
+  assert.match(tts, /root\.steps/);
+  assert.match(tts, /step\.content/);
+  assert.match(tts, /X-DokoHilf-TTS-Parser/);
+  assert.match(tts, /Content-Type': 'audio\/wav'/);
 });
 
-test('static audio exception is narrowly documented and excludes user content', () => {
+test('static audio exception is narrow and excludes every user-content source', () => {
   assert.match(policy, /23 freigegebene Guides/);
   assert.match(policy, /92 eindeutige Schritttexte/);
   assert.match(policy, /Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe/);
   assert.match(policy, /nicht dauerhaft gespeichert/);
+  assert.match(rules, /allgemeine, fachlich freigegebene Guide-Anweisungen/);
+  assert.match(rules, /Nutzerantworten, Checks, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten/);
 });
