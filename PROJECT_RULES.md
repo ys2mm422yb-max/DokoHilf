@@ -1,7 +1,7 @@
 # DokoHilf – verbindliche Projektregeln
 
 **Status:** Verbindlich  
-**Stand:** 5. August 2026
+**Stand:** 6. August 2026
 
 > Diese Datei ist vor jeder Arbeit an DokoHilf vollständig zu lesen. Bei rechtlicher, datenschutzrechtlicher oder technischer Unsicherheit gilt: stoppen, nichts veröffentlichen, keine Daten importieren und keine Echtdaten verwenden.
 
@@ -13,13 +13,15 @@
 - Vor jeder Schreibaktion müssen Owner, Repository, Branch und Supabase-Projekt-ID geprüft werden.
 - Keine projektübergreifenden Secrets, Umgebungsvariablen, Datenbanken, Buckets oder Deployments.
 - Kein Auto-Merge und kein automatisches Löschen von Branches.
+- Nie direkt auf `main` arbeiten. Änderungen erfolgen über eigenen Branch, Pull Request, grünen exakten Head und manuellen Merge.
 
-## 2. Öffentlicher Name
+## 2. Öffentlicher Name und Hauptlink
 
 - In öffentlich sichtbaren Repository-, Projekt-, Funktions-, Seiten- und Produktnamen wird ausschließlich **DokoHilf** verwendet.
-- Der Name der eingesetzten Fremdsoftware erscheint nur intern dort, wo er für Rechts-, Lizenz- oder Freigabeprüfungen zwingend erforderlich ist.
-- Keine Logos oder Marken des Softwareherstellers ohne konkrete schriftliche Freigabe.
-- Die Anwendung darf nicht wie ein offizielles Produkt oder eine offizielle Partnerschaft wirken.
+- Die Anwendung darf nicht wie ein offizielles Produkt oder eine offizielle Partnerschaft des Softwareherstellers wirken.
+- Keine Herstellerlogos oder Marken ohne konkrete schriftliche Freigabe.
+- Einziger fester öffentlicher Hauptlink: `https://ys2mm422yb-max.github.io/DokoHilf/`.
+- Keine Vorschau-, Cache-, Versions-, Branch- oder Ausweichlinks gegenüber Nutzern nennen.
 
 ## 3. Zweck und technische Grenzen
 
@@ -28,25 +30,31 @@
 - Kein Scraping, Reverse Engineering, automatisiertes Auslesen oder Nutzen nicht dokumentierter Schnittstellen.
 - Keine Speicherung von Zugangsdaten der eingesetzten Fremdsoftware.
 - Keine medizinischen, pflegerischen oder betreuerischen Entscheidungen durch die Anwendung.
-- Antworten stammen nur aus redaktionell gepflegten und freigegebenen Anleitungen. Keine frei erfundenen KI-Antworten zu internen Abläufen.
+- Bedienantworten stammen nur aus redaktionell gepflegten und freigegebenen Anleitungen.
+- Gemini darf Nutzerabsichten und freie Antworten interpretieren, aber niemals interne Klickwege erfinden.
 
 ## 4. Urheber-, Marken- und Lizenzschutz
 
 - Keine Handbücher, FAQs, Videos, Tabellen, Grafiken, Schulungsunterlagen oder Texte des Herstellers kopieren oder nur oberflächlich umformulieren.
 - Inhalte aus geschützten Kundenportalen dürfen nicht übernommen oder veröffentlicht werden.
 - Anleitungen werden vollständig selbst formuliert.
-- Vor Nutzung offizieller Screenshots, Grafiken, Logos oder Textbausteine müssen Nutzungsrechte und betriebliche Freigabe schriftlich geklärt sein.
 - Der Lizenzvertrag des Arbeitgebers mit dem Softwarehersteller muss vor produktivem Einsatz geprüft werden.
 
-## 5. Screenshots und Abbildungen
+## 5. Absolute Chat-only-Regel für Bilder
 
-- Bevorzugt werden neutrale, selbst erstellte schematische Abbildungen.
-- Original-Screenshots nur aus einem ausdrücklich freigegebenen Test- oder Schulungssystem.
-- Keine Screenshots aus produktiven Bewohner- oder Klientenakten.
-- Keine echten Namen, Initialen, Fotos, Geburtsdaten, Bewohnernummern, Diagnosen, Medikamente, Termine, Berichte, Adressen oder Kontaktdaten.
-- Schwärzungen müssen endgültig sein. Keine wiederherstellbaren Ebenen, Overlays, Metadaten oder zuschneidbaren Ränder.
-- Bilder werden vor Upload neu exportiert und auf EXIF- und Vorschau-Metadaten geprüft.
-- Interne Bilder niemals öffentlich im Repository speichern; nur in einem privaten Storage-Bucket mit geprüften Zugriffsregeln.
+Die vom Nutzer zur Bestätigung geschickten Bilder und Screenshots bleiben **ausschließlich im jeweiligen Chat**.
+
+Sie dürfen niemals:
+
+- in GitHub-Dateien, Commits, Branches, Issues, Pull Requests oder Actions-Artefakte gelangen;
+- in Supabase-Tabellen, Storage-Buckets, Edge Functions, Logs oder Backups gespeichert werden;
+- in die öffentliche oder installierte App eingebaut werden;
+- in Testfälle, Dokumentationen, Präsentationen oder andere externe Dateien übernommen werden;
+- erneut hochgeladen, verlinkt oder als Bildnachweis veröffentlicht werden.
+
+Aus den Bildern dürfen ausschließlich anonymisierte, selbst formulierte Text-Klickwege abgeleitet werden. Sichtbare Namen, Benutzerkennungen, Datumsangaben, Bewohnerinformationen oder andere Bildinhalte werden nicht übernommen.
+
+Für automatisierte visuelle Tests werden ausschließlich künstliche Oberflächen und Fantasiedaten verwendet.
 
 ## 6. Vollständiges Echtdatenverbot
 
@@ -54,7 +62,7 @@ Bis zur schriftlichen Freigabe durch Arbeitgeber, IT und Datenschutz gilt:
 
 - keine Bewohner-, Klienten-, Patienten- oder Angehörigendaten;
 - keine Gesundheitsdaten;
-- keine echten Berichte, Übergaben, Medikamentenpläne oder Termine;
+- keine echten Berichte, Übergaben, Medikamentenpläne, Vitalwerte oder Termine;
 - keine echten Mitarbeiterdaten außer technisch notwendigen Projekt-Testkonten;
 - keine Exporte aus der eingesetzten Dokumentationssoftware;
 - keine Echtdaten in Logs, Fehlermeldungen, Screenshots, Issues, Commits oder Pull Requests.
@@ -65,43 +73,42 @@ Testdaten müssen vollständig erfunden sein und dürfen keiner realen Person na
 
 - Datensparsamkeit, Zweckbindung und definierte Löschfristen.
 - Keine Werbung, Nutzertracking, Analyse-SDKs, Social-Media-Pixel oder unnötigen Cookies.
-- Suchanfragen, IP-Adressen und Nutzungsverläufe werden nicht dauerhaft gespeichert, solange kein genehmigter Zweck und keine Löschfrist bestehen.
+- Gesprächsverläufe und Audio werden nicht dauerhaft im Browser gespeichert.
+- Flüchtige Audio-Caches dürfen ausschließlich im Arbeitsspeicher existieren und müssen mit dem Prozess enden.
 - Vor Produktivstart müssen Verantwortlicher, Rechtsgrundlage, Datenschutzhinweis, Löschkonzept, Berechtigungskonzept und Auftragsverarbeitungsverträge geklärt sein.
 - Eine EU-Region ersetzt keine vollständige DSGVO-Prüfung.
 
 ## 8. Supabase-Sicherheit
 
-- Jede exponierte Tabelle erhält Row Level Security (RLS).
-- `anon` erhält keinen Zugriff auf interne Inhalte.
+- Jede exponierte Tabelle erhält Row Level Security, soweit sie nicht ausschließlich serverseitig mit Service Role genutzt wird.
+- `anon` erhält keinen unkontrollierten Zugriff auf interne Inhalte.
 - Öffentliche Selbstregistrierung bleibt deaktiviert; Nutzer werden kontrolliert eingeladen oder freigeschaltet.
-- Normale Mitarbeitende lesen, Redakteure bearbeiten freigegebene Inhalte, Administratoren verwalten Konten und Rollen.
 - Rollen niemals aus nutzerveränderbarem `user_metadata` ableiten.
 - `service_role`, Secret Keys, Datenbankpasswörter und privilegierte Schlüssel niemals im Browser, Repository, Issue, Chat oder Screenshot speichern.
 - Im Frontend nur Publishable Key und nur zusammen mit geprüften RLS-Regeln.
-- Storage-Buckets mit internen Bildern bleiben privat.
-- Jede Migration enthält Grants, RLS und Policies.
+- Jede Migration enthält erforderliche Grants, RLS und Policies.
 - Vor Veröffentlichung Security Advisor und Zugriffstests prüfen.
 
-## 9. GitHub und Secrets
+## 9. GitHub, Veröffentlichung und Secrets
 
-- Repository bleibt zunächst privat.
-- Keine Echtdaten im Repository oder in der Git-Historie.
+- Das Repository ist aktuell öffentlich; deshalb dürfen dort ausschließlich neutrale, anonymisierte und veröffentlichungsfähige Inhalte liegen.
+- Keine Echtdaten oder internen Screenshots im Repository oder in der Git-Historie.
 - Keine `.env`-Dateien oder Secrets committen.
-- Dependencies sparsam einsetzen, Versionen festlegen und Lockfile committen.
-- Keine internen Screenshots oder Fallinformationen in Issues und Pull Requests.
-- Interne Inhalte dürfen nicht im statischen HTML- oder JavaScript-Bundle liegen.
+- Keine internen Fallinformationen in Issues und Pull Requests.
+- Statische App-Bundles dürfen keine internen oder personenbezogenen Inhalte enthalten.
+- `main` ist Integrationsbranch; `gh-pages` ist der tatsächlich ausgelieferte Branch.
+- Veröffentlichungen erfolgen nur nach grünem exakten PR-Head und anschließendem manuellen Merge.
+- Nach Merge müssen `main`, `gh-pages` und der feste öffentliche Hauptlink geprüft werden.
 
-## 10. Veröffentlichung und fester Hauptlink
+## 10. Fachliche Sicherheitsregeln
 
-- Einziger fester öffentlicher Hauptlink: `https://ys2mm422yb-max.github.io/DokoHilf/`.
-- Dieser Link wird nicht als „Testlink“ bezeichnet, sondern als fester öffentlicher Hauptlink beziehungsweise fester DokoHilf-Link.
-- Veröffentlichte Änderungen dürfen nur über diesen Link bereitgestellt und gegenüber Nutzern genannt werden.
-- Keine wechselnden Vorschau-, Versions-, Cache-, Branch- oder Ausweichlinks nennen.
-- Keine Queryparameter oder künstlichen Cache-Links als alternative öffentliche Adresse verwenden.
-- Öffentliche Prototypen enthalten ausschließlich Fantasiedaten und neutrale Abbildungen.
-- Eine öffentlich erreichbare Loginseite bedeutet nicht, dass interne Inhalte öffentlich sein dürfen.
-- Produktives Hosting und Login müssen vor Einsatz durch Arbeitgeber und IT freigegeben werden.
-- Bis dahin nur inhaltsleere Demos beziehungsweise Fantasiedaten veröffentlichen.
+- Visiten werden immer als **durchgeführt** dokumentiert, niemals als abgeschlossen.
+- Berichte werden nicht endgültig gelöscht, sondern nachvollziehbar durchgestrichen.
+- Falsch abgezeichnete Durchführungen werden im Durchführungsnachweis storniert.
+- Medikation ist in DokoHilf ausschließlich ein Leseweg. Keine Änderung, Dosierung, Pause, Fortsetzung, Absetzung, Korrektur, Ergänzung oder Löschung anleiten.
+- Bei An- und Abwesenheiten wird `Von` immer eingetragen. `Bis` nur, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist; niemals schätzen.
+- Nicht bestätigte Formularfelder oder interne Abläufe werden nicht erfunden.
+- `CONFIRMED_WORKFLOWS.md` ist die verbindliche Fachquelle für bestätigte lokale Klickwege.
 
 ## 11. Erforderliche Freigaben vor echtem Einsatz
 
@@ -109,7 +116,6 @@ Testdaten müssen vollständig erfunden sein und dürfen keiner realen Person na
 - IT;
 - Datenschutzbeauftragte Stelle;
 - Prüfung der Lizenz- und Nutzungsrechte;
-- Freigabe für Screenshots und Markenhinweise;
 - Berechtigungs- und Offboarding-Prozess;
 - Datenschutzhinweis für Mitarbeitende;
 - Backup-, Lösch-, Update- und Sicherheitskonzept;
@@ -123,13 +129,12 @@ Eine Anleitung darf erst veröffentlicht werden, wenn alle Punkte erfüllt sind:
 
 - vollständig selbst formulierter Text;
 - keine echten Personen- oder Gesundheitsdaten;
-- Abbildungen endgültig anonymisiert oder reine Testdaten;
-- Nutzungsrecht der Abbildung dokumentiert;
+- keine Bilder aus dem Nutzerchat;
 - kein Eindruck eines offiziellen Herstellerprodukts;
-- fachlich von einer zuständigen Person geprüft;
+- fachlich durch den Nutzer oder eine zuständige Rolle bestätigt;
 - Prüfdatum und verantwortliche Rolle hinterlegt;
 - alte oder falsche Versionen gesperrt;
-- nur berechtigte Nutzer können zugreifen;
+- nur freigegebene Klickwege werden ausgegeben;
 - keine internen Inhalte im öffentlichen Repository oder Frontend-Bundle.
 
 Bei einem Nein: keine Veröffentlichung.
@@ -140,8 +145,8 @@ Die Arbeit wird sofort gestoppt, wenn:
 
 - Repository oder Supabase-Projekt-ID nicht eindeutig sind;
 - ein anderes Projekt betroffen sein könnte;
-- echte Bewohner- oder Gesundheitsdaten auftauchen;
-- ein Screenshot nicht nachweislich freigegeben und endgültig anonymisiert ist;
+- echte Bewohner- oder Gesundheitsdaten übernommen werden müssten;
+- ein Bild aus dem Chat außerhalb des Chats gespeichert werden soll;
 - fremde Handbuchtexte übernommen werden sollen;
 - ein geheimer Schlüssel im Frontend oder Repository landen würde;
 - eine Veröffentlichung interne Inhalte öffentlich sichtbar machen könnte;
