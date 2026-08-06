@@ -36,7 +36,12 @@ jobs:
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
             scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-static-guide-audio-smoke.mjs scripts/live-screenshot-smoke.mjs \
             tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs \
-            supabase/functions/dokohilf-ai-router/index.ts supabase/functions/dokohilf-tts/index.ts; do
+            supabase/functions/dokohilf-ai-router/index.ts \
+            supabase/functions/dokohilf-tts/index.ts \
+            supabase/functions/dokohilf-guide-audio/index.ts \
+            supabase/functions/dokohilf-guide-audio-build/index.ts \
+            supabase/migrations/20260806194500_create_static_guide_audio_registry.sql \
+            supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql; do
             test -s "$file"
           done
 
@@ -65,6 +70,12 @@ jobs:
           grep -q 'root.steps' supabase/functions/dokohilf-tts/index.ts
           grep -q 'step.content' supabase/functions/dokohilf-tts/index.ts
           grep -q 'X-DokoHilf-TTS-Parser' supabase/functions/dokohilf-tts/index.ts
+          grep -q "BUCKET = 'dokohilf-guide-audio'" supabase/functions/dokohilf-guide-audio/index.ts
+          grep -q 'public, max-age=31536000, immutable' supabase/functions/dokohilf-guide-audio/index.ts
+          grep -q 'constantTimeEqual' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q 'x-dokohilf-build-token' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q 'dokohilf_internal_build_control' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q "'0 \* \* \* \*'" supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql
           grep -q 'Bilder bleiben ausschließlich im Chat' CONFIRMED_WORKFLOWS.md
 
           node --check assets/update-manager.js
@@ -155,7 +166,7 @@ jobs:
       - name: Check active dynamic voice fallback
         run: node scripts/live-tts-smoke.mjs
 
-      - name: Require complete private approved guide audio
+      - name: Validate available private approved guide audio
         run: node scripts/live-static-guide-audio-smoke.mjs
 
       - name: Build exact releasable static site
