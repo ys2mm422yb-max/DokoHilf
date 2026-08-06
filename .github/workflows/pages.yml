@@ -44,7 +44,7 @@ jobs:
             supabase/migrations/20260806112000_vitalwerte_intent_guides.sql \
             supabase/migrations/20260806112100_vitalwerte_intent_alias_alignment.sql \
             supabase/migrations/20260806112200_noop_verify_vitalwerte_guides.sql \
-            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-tts-smoke.mjs \
+            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs \
             scripts/live-screenshot-smoke.mjs tests/vitalwerte-intent.test.mjs tests/live-build-recovery.test.mjs; do
             test -s "$file"
           done
@@ -133,6 +133,7 @@ jobs:
           node --check _site/assets/editor.js
           node --check _site/service-worker.js
           node --check scripts/live-routing-smoke.mjs
+          node --check scripts/live-routing-stable.mjs
           node --check scripts/live-tts-smoke.mjs
           node --check scripts/live-screenshot-smoke.mjs
 
@@ -158,7 +159,7 @@ jobs:
 
       - name: Check active DokoHilf router
         run: |
-          node scripts/live-routing-smoke.mjs
+          node scripts/live-routing-stable.mjs
           node scripts/live-screenshot-smoke.mjs
 
       - name: Check active DokoHilf voice service
