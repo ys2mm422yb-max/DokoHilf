@@ -2,11 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [index, css, uxCss, experience, ux, app, serviceWorker, version, tts, migration] = await Promise.all([
+const [index, css, uxCss, experience, diagnostics, ux, app, serviceWorker, version, tts, migration] = await Promise.all([
   readFile('index.html', 'utf8'),
   readFile('assets/premium-ui-v27.css', 'utf8'),
   readFile('assets/ux-v27.css', 'utf8'),
   readFile('assets/experience-v27.js', 'utf8'),
+  readFile('assets/voice-diagnostics.js', 'utf8'),
   readFile('assets/ux-v27.js', 'utf8'),
   readFile('assets/app.js', 'utf8'),
   readFile('service-worker.js', 'utf8'),
@@ -70,21 +71,28 @@ test('voice starts quickly, uses static audio first and keeps idle microphone co
   assert.match(experience, /memory = new Map/);
   assert.match(experience, /__DOKOHILF_DARK_PREMIUM_V27__/);
   assert.match(experience, /__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__/);
+  assert.match(diagnostics, /dokohilf-guide-audio/);
+  assert.match(diagnostics, /manifest=1&build=20260806-27/);
+  assert.match(diagnostics, /fetchCachedGuideAudio/);
   assert.match(ux, /HARD_FALLBACK_MS = 1900/);
   assert.match(ux, /dokohilf_immediate_voice_fallback/);
   assert.match(uxCss, /data-voice-state="listening"/);
   assert.match(uxCss, /width:96px/);
 });
 
-test('cloud voice uses Gemini Interactions, Gacrux and transient shared memory', () => {
+test('cloud voice uses raw Gemini Interactions REST audio, Gacrux and transient memory', () => {
   assert.match(tts, /VOICE_NAME = 'Gacrux'/);
-  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v9-interactions'/);
+  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio'/);
   assert.match(tts, /PRIMARY_MODEL = 'gemini-3\.1-flash-tts-preview'/);
   assert.match(tts, /FALLBACK_MODEL = 'gemini-2\.5-flash-preview-tts'/);
   assert.match(tts, /INTERACTIONS_API_REVISION = '2026-05-20'/);
+  assert.match(tts, /INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'/);
   assert.match(tts, /v1beta\/interactions/);
   assert.match(tts, /response_format: \{ type: 'audio' \}/);
+  assert.match(tts, /root\.steps/);
+  assert.match(tts, /step\.content/);
   assert.match(tts, /X-DokoHilf-TTS-API/);
+  assert.match(tts, /X-DokoHilf-TTS-Parser/);
   assert.match(tts, /pendingAudio/);
   assert.match(tts, /CACHE_TTL_MS = 2 \* 60 \* 60_000/);
   assert.match(tts, /TRANSKRIPT:/);
