@@ -27,7 +27,7 @@ jobs:
           set -euo pipefail
           mkdir -p _site/assets artifacts
           cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _site/
-          cp assets/styles.css assets/update-manager.js assets/mobile-audio-fix.js assets/voice-diagnostics.js assets/routing-fix.js assets/clarification-ui.js assets/guide-progress.js assets/app.js assets/editor.css assets/editor.js _site/assets/
+          cp assets/styles.css assets/update-manager.js assets/mobile-audio-fix.js assets/voice-diagnostics.js assets/routing-fix.js assets/clarification-ui.js assets/guide-progress.js assets/voice-focus-mode.js assets/app.js assets/editor.css assets/editor.js _site/assets/
           touch _site/.nojekyll
 
           test -s _site/index.html
@@ -40,6 +40,7 @@ jobs:
           test -s _site/assets/routing-fix.js
           test -s _site/assets/clarification-ui.js
           test -s _site/assets/guide-progress.js
+          test -s _site/assets/voice-focus-mode.js
           test -s _site/assets/app.js
           test -s _site/assets/editor.css
           test -s _site/assets/editor.js
@@ -54,6 +55,7 @@ jobs:
           test -s tests/fixtures/routing-fixtures.mjs
           test -s tests/helpers/routing-contract.mjs
           test -s tests/audio-playback-unlock.test.mjs
+          test -s tests/voice-focus-mode.test.mjs
           test -s scripts/run-behavior-regressions.mjs
           test -s scripts/live-routing-smoke.mjs
           test -s scripts/live-tts-smoke.mjs
@@ -61,15 +63,16 @@ jobs:
           grep -q "Sprachgespräch" _site/index.html
           grep -q "data-select-mode=\"chat\"" _site/index.html
           grep -q "Hauptmenü" _site/index.html
-          grep -q "dokohilf-build\" content=\"20260806-19" _site/index.html
-          grep -q "update-manager.js?v=20260806-19" _site/index.html
-          grep -q "mobile-audio-fix.js?v=20260806-19" _site/index.html
-          grep -q "voice-diagnostics.js?v=20260806-19" _site/index.html
-          grep -q "routing-fix.js?v=20260806-19" _site/index.html
-          grep -q "clarification-ui.js?v=20260806-19" _site/index.html
-          grep -q "guide-progress.js?v=20260806-19" _site/index.html
-          grep -q "app.js?v=20260806-19" _site/index.html
-          grep -q '"buildId": "20260806-19"' _site/version.json
+          grep -q "dokohilf-build\" content=\"20260806-20" _site/index.html
+          grep -q "update-manager.js?v=20260806-20" _site/index.html
+          grep -q "mobile-audio-fix.js?v=20260806-20" _site/index.html
+          grep -q "voice-diagnostics.js?v=20260806-20" _site/index.html
+          grep -q "routing-fix.js?v=20260806-20" _site/index.html
+          grep -q "clarification-ui.js?v=20260806-20" _site/index.html
+          grep -q "guide-progress.js?v=20260806-20" _site/index.html
+          grep -q "voice-focus-mode.js?v=20260806-20" _site/index.html
+          grep -q "app.js?v=20260806-20" _site/index.html
+          grep -q '"buildId": "20260806-20"' _site/version.json
 
           grep -q "Redaktion anmelden" _site/editor.html
           grep -q "keine öffentliche Registrierung" _site/editor.html
@@ -133,6 +136,14 @@ jobs:
           grep -q "dokohilf-guide-state" _site/assets/guide-progress.js
           grep -q "guideStepCount" supabase/functions/dokohilf-guide-state/index.ts
 
+          grep -q "__DOKOHILF_VOICE_FOCUS_MODE__" _site/assets/voice-focus-mode.js
+          grep -q "voice-focus-instruction" _site/assets/voice-focus-mode.js
+          grep -q "latestAssistantInstruction" _site/assets/voice-focus-mode.js
+          grep -q "data-switch-mode=\"chat\"" _site/assets/voice-focus-mode.js
+          grep -q "voiceFocusRing" _site/assets/voice-focus-mode.js
+          grep -q "voiceFocusSpeak" _site/assets/voice-focus-mode.js
+          grep -q "messages{display:none!important}" _site/assets/voice-focus-mode.js
+
           grep -q "type EditorRole = 'staff' | 'editor' | 'admin'" supabase/functions/dokohilf-editor/index.ts
           grep -q "guide_status_forbidden" supabase/functions/dokohilf-editor/index.ts
           grep -q "containsSensitiveData" supabase/functions/dokohilf-editor/index.ts
@@ -142,10 +153,11 @@ jobs:
           grep -q "dokohilf_reject_public_signup" supabase/migrations/20260805224500_dokohilf_editor_rbac.sql
           grep -q "Before User Created" docs/EDITOR_ROLLOUT.md
 
-          grep -q "BUILD_ID = '20260806-19'" _site/service-worker.js
-          grep -q "voice-diagnostics.js?v=20260806-19" _site/service-worker.js
-          grep -q "clarification-ui.js?v=20260806-19" _site/service-worker.js
-          grep -q "guide-progress.js?v=20260806-19" _site/service-worker.js
+          grep -q "BUILD_ID = '20260806-20'" _site/service-worker.js
+          grep -q "voice-diagnostics.js?v=20260806-20" _site/service-worker.js
+          grep -q "clarification-ui.js?v=20260806-20" _site/service-worker.js
+          grep -q "guide-progress.js?v=20260806-20" _site/service-worker.js
+          grep -q "voice-focus-mode.js?v=20260806-20" _site/service-worker.js
           grep -q "DOKOHILF_UPDATED" _site/service-worker.js
           grep -q "clients.claim" _site/service-worker.js
           grep -q "version.json" _site/service-worker.js
@@ -162,6 +174,7 @@ jobs:
 
           # Keine dauerhafte Speicherung von Gesprächsverläufen.
           grep -q "localStorage\|indexedDB\|dokohilf-ai-history" _site/assets/app.js && exit 1 || true
+          grep -q "localStorage\|indexedDB\|sessionStorage" _site/assets/voice-focus-mode.js && exit 1 || true
           grep -q "PLACEHOLDER" _site/index.html && exit 1 || true
 
           node --check _site/assets/update-manager.js
@@ -170,6 +183,7 @@ jobs:
           node --check _site/assets/routing-fix.js
           node --check _site/assets/clarification-ui.js
           node --check _site/assets/guide-progress.js
+          node --check _site/assets/voice-focus-mode.js
           node --check _site/assets/app.js
           node --check _site/assets/editor.js
           node --check _site/service-worker.js
@@ -187,6 +201,7 @@ jobs:
             tests/clarification.test.mjs \
             tests/voice-diagnostics.test.mjs \
             tests/audio-playback-unlock.test.mjs \
+            tests/voice-focus-mode.test.mjs \
             tests/behavior-regression.test.mjs \
             tests/mobile-layout-contract.test.mjs \
             tests/privacy-contract.test.mjs \
