@@ -55,7 +55,9 @@ jobs:
             supabase/functions/dokohilf-ai-router/index.ts \
             supabase/functions/dokohilf-tts/index.ts \
             supabase/functions/dokohilf-editor/index.ts \
-            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-tts-smoke.mjs; do
+            supabase/migrations/20260806112000_vitalwerte_intent_guides.sql \
+            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-tts-smoke.mjs \
+            tests/vitalwerte-intent.test.mjs; do
             test -s "$file"
           done
 
@@ -65,17 +67,27 @@ jobs:
           grep -q '"buildId": "20260806-23"' _site/version.json
           grep -q "BUILD_ID = '20260806-23'" _site/service-worker.js
           grep -q 'task-interface.js?v=20260806-23' _site/service-worker.js
+
           grep -q 'conversational-guide-router-v5' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'detectVitalEntryMode' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'vitalwerte-sammelerfassung' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'renderGuideStep' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'wantsVitalEntry' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'currentGuideStep' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'guidePayload' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'vitalwerte-einzelwert-fortsetzen' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'vitalwerte-sammelerfassung-fortsetzen' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'Bewahre das bereits genannte Ziel' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'containsSensitiveData' supabase/functions/dokohilf-ai-router/index.ts
+
+          grep -q 'grüne Plus' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
+          grep -q 'Sammelerfassung' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
+          grep -q 'Pop-up-Fenster' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
+
           grep -q '__DOKOHILF_TASK_INTERFACE_V1__' _site/assets/task-interface.js
           grep -q 'Erledigt – weiter' _site/assets/task-interface.js
           grep -q 'guideStep' _site/assets/task-interface.js
           grep -q 'choiceTitle' _site/assets/clarification-ui.js
           grep -q 'clarification-option-description' _site/assets/clarification-ui.js
           grep -q 'guideStepCount' _site/assets/guide-progress.js
-          grep -q 'VOICE_NAME = '\''Vindemiatrix'\''' supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_NAME = 'Vindemiatrix'" supabase/functions/dokohilf-tts/index.ts
           grep -q 'Schutzfilter prüft jede Eingabe' _site/index.html
           grep -q 'Redaktion anmelden' _site/editor.html
 
@@ -117,7 +129,8 @@ jobs:
             tests/behavior-regression.test.mjs \
             tests/mobile-layout-contract.test.mjs \
             tests/privacy-contract.test.mjs \
-            tests/editor-security.test.mjs
+            tests/editor-security.test.mjs \
+            tests/vitalwerte-intent.test.mjs
 
       - name: Check active DokoHilf router
         run: node scripts/live-routing-smoke.mjs
