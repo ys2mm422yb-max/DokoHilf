@@ -23,12 +23,12 @@
   }
 
   function hasPrivacyAcknowledgement() {
-    try { return window.localStorage.getItem(PRIVACY_ACK_KEY) === 'yes'; }
+    try { return window.sessionStorage.getItem(PRIVACY_ACK_KEY) === 'yes'; }
     catch { return false; }
   }
 
   function rememberPrivacyAcknowledgement() {
-    try { window.localStorage.setItem(PRIVACY_ACK_KEY, 'yes'); }
+    try { window.sessionStorage.setItem(PRIVACY_ACK_KEY, 'yes'); }
     catch { /* In eingeschränkten Browsermodi gilt die Bestätigung nur für die aktuelle Ansicht. */ }
   }
 
