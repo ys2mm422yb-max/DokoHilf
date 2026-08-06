@@ -1,19 +1,21 @@
-const BUILD_ID = '20260806-24';
+const BUILD_ID = '20260806-25';
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}`;
 const CORE_FILES = [
   './',
   './index.html',
   './version.json',
-  './assets/styles.css?v=20260806-24',
-  './assets/update-manager.js?v=20260806-24',
-  './assets/mobile-audio-fix.js?v=20260806-24',
-  './assets/voice-diagnostics.js?v=20260806-24',
-  './assets/routing-fix.js?v=20260806-24',
-  './assets/conversation-intelligence.js?v=20260806-24',
-  './assets/clarification-ui.js?v=20260806-24',
-  './assets/guide-progress.js?v=20260806-24',
-  './assets/voice-focus-mode.js?v=20260806-24',
-  './assets/app.js?v=20260806-24',
+  './assets/styles.css?v=20260806-25',
+  './assets/premium-ui-v25.css?v=20260806-25',
+  './assets/update-manager.js?v=20260806-25',
+  './assets/mobile-audio-fix.js?v=20260806-25',
+  './assets/voice-diagnostics.js?v=20260806-25',
+  './assets/routing-fix.js?v=20260806-25',
+  './assets/conversation-intelligence.js?v=20260806-25',
+  './assets/clarification-ui.js?v=20260806-25',
+  './assets/guide-progress.js?v=20260806-25',
+  './assets/voice-focus-mode.js?v=20260806-25',
+  './assets/experience-v25.js?v=20260806-25',
+  './assets/app.js?v=20260806-25',
   './manifest.webmanifest',
   './icon.svg',
 ];
