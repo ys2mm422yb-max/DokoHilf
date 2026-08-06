@@ -55,9 +55,9 @@ jobs:
           grep -q 'dokohilf-build" content="20260806-27' _site/index.html
           grep -q 'KI · v27' _site/index.html
           grep -q 'premium-ui-v27.css?v=20260806-27' _site/index.html
-          grep -q 'ux-v27.css?v=20260806-27' _site/index.html
           grep -q 'experience-v27.js?v=20260806-27' _site/index.html
           grep -q 'ux-v27.js?v=20260806-27' _site/index.html
+          grep -q 'ux-v27.css?v=20260806-27' _site/index.html
           grep -q '"buildId": "20260806-27"' _site/version.json
           grep -q "BUILD_ID = '20260806-27'" _site/service-worker.js
 
