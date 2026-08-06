@@ -150,8 +150,9 @@ Das rote Kreuz ist ein Element der Dokumentationssoftware. DokoHilf selbst darf 
 - Der Chatverlauf darf im Sprachmodus nicht nach unten wegrutschen.
 - Nutzer können zum Chat wechseln.
 - Natürliche Stimme bleibt `Gacrux`, solange ein späterer bestätigter Hörtest nichts anderes verlangt.
-- Der stabile Pro-TTS-Weg bleibt Primärweg, Flash ist technischer Rückfallweg.
+- Der bewährte Pro-TTS-Weg ist Primärweg, Flash ist technischer Rückfallweg.
 - Die Begrüßung wird im Browser frühzeitig und ausschließlich im flüchtigen Arbeitsspeicher vorbereitet.
+- Identische Sprachanfragen innerhalb derselben geöffneten App werden nur im flüchtigen Arbeitsspeicher wiederverwendet; es gibt keinen persistenten Gesprächs- oder Audiocache.
 - Lange sichtbare Anweisungen bleiben vollständig auf dem Bildschirm; für die Sprachausgabe wird die abschließende Kontrollfrage gekürzt, damit die natürliche Stimme schneller beginnen kann.
 - Die Gerätestimme ist nur ein Ausfallersatz.
 - Audio muss durch einen vertrauenswürdigen Nutzertipp auf iPhone und Android entsperrt werden.
@@ -206,11 +207,10 @@ Ziele und Stand:
 - bestehende gute Gacrux-Stimme beibehalten
 - Begrüßung im Arbeitsspeicher vorladen, ohne Gesprächsinhalte dauerhaft zu speichern
 - gesprochenen Text verkürzen, ohne die sichtbare Anleitung zu kürzen
-- Pro-TTS als stabilen Qualitätsweg beibehalten, Flash nur als Rückfallweg
-- In-Memory-Deduplizierung im Browser und kurzlebigen Edge-Cache für identische neutrale Anweisungen verwenden
+- bewährten Pro-TTS-Qualitätsweg beibehalten, Flash nur als Rückfallweg
 - alle neuen Dateien in Pages-Workflow und Service Worker aufnehmen
 - diese Übergabe dauerhaft im Repository halten
-- Supabase-Funktion `dokohilf-tts` wurde für diesen Stand als Version 14 bereitgestellt; vor Merge Live-Test prüfen
+- Supabase-Funktion `dokohilf-tts` wurde für diesen Stand als Version 15 mit dem bewährten Gacrux-Backend bereitgestellt; vor Merge Live-Test prüfen
 
 ## 11. Pflege dieser Datei
 
