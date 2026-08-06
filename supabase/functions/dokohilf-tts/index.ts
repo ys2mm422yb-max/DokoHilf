@@ -4,12 +4,12 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:3000',
 ]);
 
-const PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts';
-const FALLBACK_MODEL = 'gemini-2.5-pro-preview-tts';
+const PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts';
+const FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts';
 const VOICE_NAME = 'Gacrux';
 const VOICE_STYLE = 'natural-spoken-german-colleague-v6-fast';
-const PRIMARY_TIMEOUT_MS = 8_000;
-const FALLBACK_TIMEOUT_MS = 14_000;
+const PRIMARY_TIMEOUT_MS = 12_000;
+const FALLBACK_TIMEOUT_MS = 8_000;
 const MAX_TEXT_CHARS = 900;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 14;
@@ -238,12 +238,12 @@ Deno.serve(async (req: Request) => {
 
   let pcm: Uint8Array;
   let model = PRIMARY_MODEL;
-  let mode = 'flash-fast-natural-german';
+  let mode = 'pro-natural-german';
   try {
     pcm = await requestViaGenerateContent(apiKey, PRIMARY_MODEL, text, PRIMARY_TIMEOUT_MS);
   } catch (primaryError) {
     model = FALLBACK_MODEL;
-    mode = 'pro-natural-german-fallback';
+    mode = 'flash-natural-german-fallback';
     try {
       pcm = await requestViaGenerateContent(apiKey, FALLBACK_MODEL, text, FALLBACK_TIMEOUT_MS);
     } catch {
