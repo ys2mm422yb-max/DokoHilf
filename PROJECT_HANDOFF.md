@@ -2,7 +2,7 @@
 
 **Status:** Verbindliche Arbeitsquelle  
 **Stand:** 6. August 2026  
-**Aktueller Ziel-Build:** `20260806-26`
+**Aktueller veröffentlichter Build:** `20260806-26`
 
 > Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md` und diese Datei. Danach werden der tatsächliche GitHub-, GitHub-Actions-, GitHub-Pages- und Supabase-Stand geprüft. Veränderliche Zustände niemals nur aus dieser Übergabe übernehmen.
 
@@ -84,7 +84,7 @@ Aktuell bestätigt sind:
 
 ## 5. Gesprächslogik ab Router v9
 
-Supabase-Funktion `dokohilf-ai-router`, aktive Zielversion: **11** mit Header `conversational-guide-router-v9`.
+Supabase-Funktion `dokohilf-ai-router`, aktive Version: **11** mit Header `conversational-guide-router-v9`.
 
 Verbindliches Verhalten:
 
@@ -105,7 +105,7 @@ Verbindliches Verhalten:
 
 Natürliche Stimme: **Gacrux**.
 
-Supabase-Funktion `dokohilf-tts`, aktive Zielversion: **16**.
+Supabase-Funktion `dokohilf-tts`, aktive Version: **16**.
 
 Technik:
 
@@ -175,12 +175,12 @@ Technik:
 - exakter PR-Head grün
 - nach Merge tatsächlichen Inhalt von `main`, `gh-pages` und festem Hauptlink prüfen
 
-## 11. Arbeitsblöcke und Stand
+## 11. Abgeschlossene Arbeitsblöcke und veröffentlichter Stand
 
 ### Blöcke 1–4: Fachwissen und Standardabläufe
 
 - Branch: `feat/confirmed-workflows-blocks-1-4`
-- PR: `#45`
+- PR: `#45`, gemergt
 - Merge-Commit: `e5446014a6e4e6941101d4d1746a02e49d951729`
 - Migration: `20260806153000_confirmed_workflows_blocks_1_4.sql`
 - Supabase-Migration angewandt
@@ -189,13 +189,17 @@ Technik:
 ### Blöcke 5–9: KI, Sprache, Layout, Gesamtprüfung und Veröffentlichung
 
 - Branch: `feat/intelligent-router-fast-voice-layout-v26`
-- PR: `#46`
-- Ziel-Build: `20260806-26`
+- PR: `#46`, gemergt
+- geprüfter exakter Head: `e31db60c650d8c9808c86433054d7d1de29eef78`
+- Merge-Commit: `374969932028a7f47aea0bbcc4b7f31d23bae441`
+- veröffentlichter Build: `20260806-26`
 - Router v9 und TTS v16 sind aktiv.
-- Geprüfter Head vor dieser Übergabeergänzung: `6dff72269ffc7c317d4915cc89b8eb34b30264e1`.
 - Prüfergebnis: 165/165 Routingfälle, 3/3 Gesprächssequenzen, 12/12 Workflow-Marker, 99/99 Tests, 14/14 Live-Dialoge und Screenshot-Regressionsprüfung grün.
 - TTS-Anbieter HTTP 502; fehlender WAV-Nachweis transparent als Artefakt dokumentiert.
-- Nach dieser Übergabeergänzung den neuen exakten Head erneut prüfen. Danach Merge, `main`, `gh-pages` und öffentlicher Hauptlink kontrollieren.
+- `main` und `gh-pages` enthalten beide Build `20260806-26`.
+- `gh-pages/index.html` enthält den Build-Marker, Router v26 sowie die neuen Sprach- und Layout-Assets.
+- Der alte Entwurfs-PR `#40` wurde als ersetzt geschlossen; sein Branch wurde nicht gelöscht.
+- Nach diesem Stand bestehen keine offenen Pull Requests.
 
 ## 12. Pflege dieser Datei
 
