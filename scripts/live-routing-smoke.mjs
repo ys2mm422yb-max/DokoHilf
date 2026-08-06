@@ -66,6 +66,17 @@ const cases = [
   },
   {
     endpoint: ROUTER_ENDPOINT,
+    endpointName: 'Freie Bestätigung im laufenden Vitalwerte-Guide',
+    guideSlug: 'vitalwerte-erfassen',
+    messages: [
+      { role: 'assistant', content: 'Wähle den Vitalwert oder ein vorhandenes Vitalwert-Set aus, zum Beispiel Blutdruck, Puls, Temperatur oder Gewicht. Ist der richtige Vitalwert ausgewählt?' },
+      { role: 'user', content: 'Ich habe Blutdruck ausgewählt' },
+    ],
+    expectedGuide: 'vitalwerte-erfassen',
+    expectedReplyIncludes: 'Datum',
+  },
+  {
+    endpoint: ROUTER_ENDPOINT,
     endpointName: 'Gemini-Dialogmanager',
     guideSlug: 'bericht-neu',
     messages: [
