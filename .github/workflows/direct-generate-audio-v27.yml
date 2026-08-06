@@ -51,11 +51,7 @@ jobs:
       - name: Persist every successful audio and checkpoint
         run: |
           set -euo pipefail
-          git add -A \
-            assets/audio/guides \
-            assets/guide-audio-generation-status.json \
-            assets/guide-audio-manifest.partial.json \
-            assets/guide-audio-manifest.json
+          git add -A assets
           if git diff --cached --quiet; then
             echo "No new guide audio progress in this round."
             exit 0
