@@ -32,8 +32,10 @@ jobs:
             assets/premium-ui-v25.css \
             assets/premium-ui-v26.css \
             assets/premium-ui-v27.css \
+            assets/ux-v27.css \
             assets/experience-v26.js \
             assets/experience-v27.js \
+            assets/ux-v27.js \
             assets/update-manager.js \
             assets/mobile-audio-fix.js \
             assets/voice-diagnostics.js \
@@ -52,7 +54,8 @@ jobs:
             README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md \
             _site/index.html _site/editor.html _site/version.json _site/service-worker.js \
             _site/assets/styles.css _site/assets/premium-ui-v25.css _site/assets/premium-ui-v26.css \
-            _site/assets/premium-ui-v27.css _site/assets/experience-v26.js _site/assets/experience-v27.js \
+            _site/assets/premium-ui-v27.css _site/assets/ux-v27.css \
+            _site/assets/experience-v26.js _site/assets/experience-v27.js _site/assets/ux-v27.js \
             _site/assets/update-manager.js _site/assets/mobile-audio-fix.js \
             _site/assets/voice-diagnostics.js _site/assets/routing-fix.js \
             _site/assets/conversation-intelligence.js _site/assets/clarification-ui.js \
@@ -77,8 +80,9 @@ jobs:
           grep -q 'premium-ui-v25.css?v=20260806-27' _site/index.html
           grep -q 'premium-ui-v26.css?v=20260806-27' _site/index.html
           grep -q 'premium-ui-v27.css?v=20260806-27' _site/index.html
-          grep -q 'experience-v26.js?v=20260806-27' _site/index.html
+          grep -q 'ux-v27.css?v=20260806-27' _site/index.html
           grep -q 'experience-v27.js?v=20260806-27' _site/index.html
+          grep -q 'ux-v27.js?v=20260806-27' _site/index.html
           grep -q 'guide-progress.js?v=20260806-27' _site/index.html
           grep -q 'voice-focus-mode.js?v=20260806-27' _site/index.html
           grep -q 'app.js?v=20260806-27' _site/index.html
@@ -99,18 +103,18 @@ jobs:
           grep -q 'voice-focus-actions' _site/assets/voice-focus-mode.js
           grep -q 'removeLegacyShortcuts' _site/assets/voice-focus-mode.js
 
-          grep -q '__DOKOHILF_PREMIUM_EXPERIENCE_V26__' _site/assets/experience-v26.js
-          grep -q 'warmGreeting' _site/assets/experience-v26.js
-          grep -q 'nextSpokenText' _site/assets/experience-v26.js
-          grep -q 'prefetchText' _site/assets/experience-v26.js
-          grep -q 'const memory = new Map' _site/assets/experience-v26.js
           grep -q '__DOKOHILF_DARK_PREMIUM_V27__' _site/assets/experience-v27.js
           grep -q 'FAST_FALLBACK_MS = 2400' _site/assets/experience-v27.js
           grep -q 'removeRepeatedExerciseNotice' _site/assets/experience-v27.js
           grep -q 'payload.nextSpokenText' _site/assets/experience-v27.js
+          grep -q '__DOKOHILF_UX_CLEANUP_V27__' _site/assets/ux-v27.js
+          grep -q 'HARD_FALLBACK_MS = 1900' _site/assets/ux-v27.js
+          grep -q 'compactGuideMenu' _site/assets/ux-v27.js
           grep -q -- '--v27-bg:#020c12' _site/assets/premium-ui-v27.css
           grep -q 'color-scheme:dark' _site/assets/premium-ui-v27.css
           grep -q 'grid-template-rows:minmax(86px,auto)' _site/assets/premium-ui-v27.css
+          grep -q 'guide-progress-menu' _site/assets/ux-v27.css
+          grep -q 'command-message-hidden' _site/assets/ux-v27.css
 
           grep -q '__DOKOHILF_STRUCTURED_CLARIFICATION__' _site/assets/clarification-ui.js
           grep -q 'voiceFocusChoices' _site/assets/clarification-ui.js
@@ -155,8 +159,8 @@ jobs:
 
           grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' _site/assets/app.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/voice-focus-mode.js && exit 1 || true
-          grep -q 'localStorage\|indexedDB\|caches.open' _site/assets/experience-v26.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage\|caches.open' _site/assets/experience-v27.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB\|sessionStorage\|caches.open' _site/assets/ux-v27.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/conversation-intelligence.js && exit 1 || true
           grep -q '\.jpe\?g\|\.png\|IMG_' CONFIRMED_WORKFLOWS.md && exit 1 || true
 
@@ -168,8 +172,8 @@ jobs:
           node --check _site/assets/clarification-ui.js
           node --check _site/assets/guide-progress.js
           node --check _site/assets/voice-focus-mode.js
-          node --check _site/assets/experience-v26.js
           node --check _site/assets/experience-v27.js
+          node --check _site/assets/ux-v27.js
           node --check _site/assets/app.js
           node --check _site/assets/editor.js
           node --check _site/service-worker.js
