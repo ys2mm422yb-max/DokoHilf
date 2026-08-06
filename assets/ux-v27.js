@@ -96,6 +96,11 @@
     if (help) help.textContent = 'Ich brauche Hilfe';
   }
 
+  function polishPrivacyCopy() {
+    const note = document.querySelector('.composer-wrap > p');
+    if (note) note.textContent = 'Gespräch und persönliche Audioinhalte werden nicht gespeichert. Der Schutzfilter prüft jede Eingabe.';
+  }
+
   function polishVoice() {
     const shell = document.getElementById('appShell');
     const status = document.getElementById('voiceStatus');
@@ -113,6 +118,7 @@
   function sync() {
     compactGuideMenu();
     cleanConversation();
+    polishPrivacyCopy();
     polishVoice();
   }
 
