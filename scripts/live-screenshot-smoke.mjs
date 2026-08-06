@@ -21,7 +21,7 @@ const payload = await response.json().catch(() => ({}));
 const options = Array.isArray(payload.options) ? payload.options : [];
 const reply = typeof payload.reply === 'string' ? payload.reply : '';
 const passed = response.ok
-  && payload.source === 'vital-entry-mode-choice'
+  && String(payload.source || '').startsWith('vital-entry-mode-choice')
   && payload.guideSlug == null
   && options.length === 2
   && /einzelnen wert/i.test(reply)
