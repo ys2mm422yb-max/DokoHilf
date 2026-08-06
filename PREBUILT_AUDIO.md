@@ -42,6 +42,8 @@ Der öffentliche GitHub-Pages-Build enthält keine WAV-Binärdateien und kein lo
 
 Die Ausnahme von der sonstigen Regel „Audio nur flüchtig“ gilt ausschließlich für statische, allgemeine und fachlich freigegebene Bedienanweisungen.
 
+**Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe werden nicht dauerhaft gespeichert.** Dasselbe gilt für Namen, Fallinhalte, Gesundheitsdaten, Checks und individuelle Eingaben.
+
 Nicht dauerhaft gespeichert werden:
 
 - Nutzerstimmen
