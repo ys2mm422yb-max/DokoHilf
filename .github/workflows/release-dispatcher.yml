@@ -1,4 +1,4 @@
-name: DokoHilf Release Dispatcher
+name: DokoHilf Automatic Release Validation
 
 on:
   schedule:
@@ -6,54 +6,261 @@ on:
   workflow_dispatch:
 
 permissions:
-  actions: write
   contents: read
   pull-requests: read
+  statuses: write
 
 concurrency:
-  group: dokohilf-release-dispatcher
+  group: dokohilf-automatic-release-validation
   cancel-in-progress: false
 
 jobs:
-  dispatch-current-release-head:
+  resolve-release-head:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    outputs:
+      head_sha: ${{ steps.resolve.outputs.head_sha }}
+      should_validate: ${{ steps.resolve.outputs.should_validate }}
     steps:
-      - name: Dispatch validation once for the current PR 53 head
+      - name: Resolve exact open PR 53 head
+        id: resolve
         uses: actions/github-script@v7
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const pull_number = 53;
-
+            const statusContext = 'DokoHilf/Build 27 validation';
             const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number });
+
             if (pr.state !== 'open') {
-              core.notice('PR #53 is not open; nothing to dispatch.');
+              core.notice('PR #53 is not open; no release validation is required.');
+              core.setOutput('head_sha', '');
+              core.setOutput('should_validate', 'false');
               return;
             }
 
             const headSha = pr.head.sha;
-            const headRef = pr.head.ref;
-            const { data } = await github.rest.actions.listWorkflowRuns({
+            const { data: combined } = await github.rest.repos.getCombinedStatusForRef({
               owner,
               repo,
-              workflow_id: 'pages.yml',
-              branch: headRef,
-              event: 'workflow_dispatch',
-              per_page: 100,
+              ref: headSha,
             });
+            const existing = combined.statuses.find(status => status.context === statusContext);
+            const forced = context.eventName === 'workflow_dispatch';
 
-            const existing = data.workflow_runs.filter(run => run.head_sha === headSha);
-            if (existing.length > 0) {
-              core.notice(`Validation already exists for ${headSha}: ${existing[0].html_url}`);
-              return;
+            core.setOutput('head_sha', headSha);
+            core.setOutput('should_validate', forced || !existing ? 'true' : 'false');
+            if (existing && !forced) {
+              core.notice(`Head ${headSha} already has ${statusContext}=${existing.state}; waiting for a new head.`);
+            } else {
+              core.notice(`Validating exact PR #53 head ${headSha}.`);
             }
 
-            await github.rest.actions.createWorkflowDispatch({
-              owner,
-              repo,
-              workflow_id: 'pages.yml',
-              ref: headRef,
+  validate-release-head:
+    needs: resolve-release-head
+    if: needs.resolve-release-head.outputs.should_validate == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve-release-head.outputs.head_sha }}
+
+      - name: Mark exact head validation pending
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ needs.resolve-release-head.outputs.head_sha }}',
+              state: 'pending',
+              context: 'DokoHilf/Build 27 validation',
+              description: 'Automatische vollständige Build-27-Prüfung läuft.',
+              target_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
             });
-            core.notice(`Dispatched pages.yml for ${headRef} at ${headSha}.`);
+
+      - name: Validate source contracts and syntax
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+
+          for file in \
+            README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md \
+            FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md \
+            assets/guide-audio-catalog.json \
+            scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh \
+            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
+            scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-static-guide-audio-smoke.mjs scripts/live-screenshot-smoke.mjs \
+            tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs \
+            supabase/functions/dokohilf-ai-router/index.ts \
+            supabase/functions/dokohilf-tts/index.ts \
+            supabase/functions/dokohilf-guide-audio/index.ts \
+            supabase/functions/dokohilf-guide-audio-build/index.ts \
+            supabase/migrations/20260806194500_create_static_guide_audio_registry.sql \
+            supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql; do
+            test -s "$file"
+          done
+
+          grep -q '__DOKOHILF_DARK_PREMIUM_V27__' assets/experience-v27.js
+          grep -q '__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__' assets/experience-v27.js
+          grep -q 'loadPrebuiltVoice' assets/experience-v27.js
+          grep -q 'prebuilt-approved-guide' assets/experience-v27.js
+          grep -q '__DOKOHILF_REMOTE_GUIDE_AUDIO_V27__' assets/voice-diagnostics.js
+          grep -q 'dokohilf-guide-audio' assets/voice-diagnostics.js
+          grep -q 'guide-progress-menu' assets/ux-v27.js
+          grep -q '__DOKOHILF_PRIVACY_ACK_V27__' assets/ux-v27.js
+          grep -q '__DOKOHILF_IDEMPOTENT_SYNC_V27__' assets/ux-v27.js
+          grep -q "PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1'" assets/ux-v27.js
+          test "$(grep -o 'localStorage\.[a-zA-Z]*' assets/ux-v27.js | sort -u | tr '\n' ' ')" = "localStorage.getItem localStorage.setItem "
+          grep -q 'command-message-hidden' assets/ux-v27.css
+          grep -q 'data-voice-state="listening"' assets/ux-v27.css
+          grep -q -- '--v27-bg:#020c12' assets/premium-ui-v27.css
+          grep -q 'color-scheme:dark' assets/premium-ui-v27.css
+          grep -q 'conversational-guide-router-v9' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'medication-view-only-safety-v9' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q "VOICE_NAME = 'Gacrux'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "PRIMARY_MODEL = 'gemini-3.1-flash-tts-preview'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'" supabase/functions/dokohilf-tts/index.ts
+          grep -q 'root.steps' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'step.content' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'X-DokoHilf-TTS-Parser' supabase/functions/dokohilf-tts/index.ts
+          grep -q "BUCKET = 'dokohilf-guide-audio'" supabase/functions/dokohilf-guide-audio/index.ts
+          grep -q 'public, max-age=31536000, immutable' supabase/functions/dokohilf-guide-audio/index.ts
+          grep -q 'constantTimeEqual' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q 'x-dokohilf-build-token' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q 'dokohilf_internal_build_control' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q "'0 \* \* \* \*'" supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql
+          grep -q 'Bilder bleiben ausschließlich im Chat' CONFIRMED_WORKFLOWS.md
+
+          node --check assets/update-manager.js
+          node --check assets/mobile-audio-fix.js
+          node --check assets/voice-diagnostics.js
+          node --check assets/routing-fix.js
+          node --check assets/conversation-intelligence.js
+          node --check assets/clarification-ui.js
+          node --check assets/guide-progress.js
+          node --check assets/voice-focus-mode.js
+          node --check assets/experience-v27.js
+          node --check assets/ux-v27.js
+          node --check assets/app.js
+          node --check assets/editor.js
+          node --check service-worker.js
+          node --check scripts/mobile-render-v27.mjs
+          node --check scripts/live-routing-smoke.mjs
+          node --check scripts/live-routing-stable.mjs
+          node --check scripts/live-tts-smoke.mjs
+          node --check scripts/live-static-guide-audio-smoke.mjs
+          node --check scripts/live-screenshot-smoke.mjs
+
+          grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' assets/app.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB\|sessionStorage' assets/voice-focus-mode.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB' assets/experience-v27.js && exit 1 || true
+          grep -q 'indexedDB' assets/ux-v27.js && exit 1 || true
+          grep -q '\.jpe\?g\|\.png\|IMG_' CONFIRMED_WORKFLOWS.md && exit 1 || true
+
+      - name: Run deterministic fachliche, privacy and UI contracts
+        run: |
+          set -euo pipefail
+          node scripts/run-behavior-regressions.mjs
+          node --test \
+            tests/greeting-routing.test.mjs \
+            tests/pwa-update.test.mjs \
+            tests/pwa-transition.test.mjs \
+            tests/guide-progress.test.mjs \
+            tests/clarification.test.mjs \
+            tests/voice-diagnostics.test.mjs \
+            tests/audio-playback-unlock.test.mjs \
+            tests/voice-focus-mode.test.mjs \
+            tests/behavior-regression.test.mjs \
+            tests/mobile-layout-contract.test.mjs \
+            tests/privacy-contract.test.mjs \
+            tests/editor-security.test.mjs \
+            tests/vitalwerte-intent.test.mjs \
+            tests/live-build-recovery.test.mjs \
+            tests/confirmed-workflows.test.mjs \
+            tests/intelligent-router-v26.test.mjs \
+            tests/voice-layout-v26.test.mjs \
+            tests/dark-premium-v27.test.mjs \
+            tests/fast-voice-v27.test.mjs \
+            tests/prebuilt-guide-audio.test.mjs
+
+      - name: Build isolated UI test surface
+        run: |
+          set -euo pipefail
+          mkdir -p _ui_site/assets artifacts/mobile-v27
+          cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _ui_site/
+          cp -R assets/. _ui_site/assets/
+          rm -rf _ui_site/assets/audio
+          rm -f _ui_site/assets/guide-audio-manifest.json
+          touch _ui_site/.nojekyll
+
+      - name: Render and interact with iPhone layout
+        env:
+          DOKOHILF_UI_MOCK: '1'
+          DOKOHILF_RENDER_URL: http://127.0.0.1:4173/
+          DOKOHILF_RENDER_OUTPUT: artifacts/mobile-v27
+        run: |
+          set -euo pipefail
+          npm install --no-save --package-lock=false playwright@1.54.2
+          npx playwright install --with-deps chromium
+          python3 -m http.server 4173 --directory _ui_site >artifacts/mobile-v27-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+          node scripts/mobile-render-v27.mjs
+
+      - name: Check active DokoHilf router
+        run: |
+          node scripts/live-routing-stable.mjs
+          node scripts/live-screenshot-smoke.mjs
+
+      - name: Check active dynamic voice fallback
+        run: node scripts/live-tts-smoke.mjs
+
+      - name: Validate available private approved guide audio
+        run: node scripts/live-static-guide-audio-smoke.mjs
+
+      - name: Build exact releasable static site
+        run: |
+          set -euo pipefail
+          bash -n scripts/build-static-site-v27.sh
+          bash scripts/build-static-site-v27.sh _site
+
+      - name: Upload behavior, UI and audio evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dokohilf-automatic-build-27-evidence-${{ github.run_number }}
+          path: |
+            artifacts/
+            assets/guide-audio-catalog.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Publish exact-head validation status
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          JOB_STATUS: ${{ job.status }}
+        with:
+          script: |
+            const success = process.env.JOB_STATUS === 'success';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ needs.resolve-release-head.outputs.head_sha }}',
+              state: success ? 'success' : 'failure',
+              context: 'DokoHilf/Build 27 validation',
+              description: success
+                ? 'Build-27-Prüfung vollständig erfolgreich.'
+                : 'Build-27-Prüfung fehlgeschlagen; Logs und Artefakte prüfen.',
+              target_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
