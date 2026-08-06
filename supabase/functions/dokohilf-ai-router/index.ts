@@ -244,7 +244,7 @@ function wantsMultipleVitalwerte(text: string): boolean {
 
 function wantsSingleVitalwert(text: string): boolean {
   const n = normalize(text);
-  return /\b(einzelwert|einzelerfassung|einzeln|einen vitalwert|grunes plus)\b/.test(n)
+  return /\b(einzelwert|einzelerfassung|einzeln|ein einzelner|einen einzelnen|einzelnen wert|ein wert|einen vitalwert|grunes plus)\b/.test(n)
     || /\b(blutdruck|puls|temperatur|gewicht|blutzucker|sauerstoffsattigung)\b/.test(n);
 }
 
@@ -286,9 +286,6 @@ function guidePayload(guide: GuideRecord, stepNumber: number, source = 'approved
 
   const safeStep = Math.max(1, Math.min(stepNumber, count));
   const step = guide.steps[safeStep - 1] || {};
-  const options = guide.slug === 'vitalwerte-erfassen' && safeStep === 3
-    ? undefined
-    : undefined;
   return {
     reply: `${step.text || ''}\n\n${step.check || 'Bist du dort?'}`.trim(),
     guideSlug: guide.slug,
@@ -298,7 +295,6 @@ function guidePayload(guide: GuideRecord, stepNumber: number, source = 'approved
     guideStepCount: count,
     model: 'approved-guide-stateful',
     source,
-    ...(options ? { options } : {}),
   };
 }
 
