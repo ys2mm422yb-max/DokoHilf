@@ -2,41 +2,46 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const css = await readFile(new URL('../assets/premium-ui-v26.css', import.meta.url), 'utf8');
-const experience = await readFile(new URL('../assets/experience-v26.js', import.meta.url), 'utf8');
+const legacyCss = await readFile(new URL('../assets/premium-ui-v26.css', import.meta.url), 'utf8');
+const currentCss = await readFile(new URL('../assets/premium-ui-v27.css', import.meta.url), 'utf8');
+const experience = await readFile(new URL('../assets/experience-v27.js', import.meta.url), 'utf8');
 const worker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 
-test('Anweisung und Mikrofon liegen in getrennten Grid-Zeilen', () => {
-  assert.match(css, /voice-focus-main/);
-  assert.match(css, /grid-template-rows:minmax\(92px,auto\) minmax\(0,1fr\)/);
-  assert.match(css, /voice-focus-instruction[\s\S]*max-height/);
-  assert.match(css, /#voiceFocusConsoleSlot[\s\S]*min-height:0/);
+test('bewährte Trennung von Anweisung und Mikrofon bleibt erhalten', () => {
+  assert.match(legacyCss, /voice-focus-main/);
+  assert.match(legacyCss, /grid-template-rows:minmax\(92px,auto\) minmax\(0,1fr\)/);
+  assert.match(legacyCss, /voice-focus-instruction[\s\S]*max-height/);
+  assert.match(legacyCss, /#voiceFocusConsoleSlot[\s\S]*min-height:0/);
 });
 
 test('lange Anweisungen bleiben lesbar und überdecken die Animation nicht', () => {
-  assert.match(css, /voice-focus-instruction[\s\S]*overflow:auto/);
-  assert.match(css, /overflow-wrap:anywhere/);
-  assert.match(css, /z-index:4/);
-  assert.match(css, /voice-focus-stage \.voice-orb[\s\S]*clamp/);
+  assert.match(legacyCss, /voice-focus-instruction[\s\S]*overflow:auto/);
+  assert.match(legacyCss, /overflow-wrap:anywhere/);
+  assert.match(legacyCss, /z-index:4/);
+  assert.match(legacyCss, /voice-focus-stage \.voice-orb[\s\S]*clamp/);
 });
 
-test('kleine und niedrige iPhones erhalten kleinere Animationen', () => {
-  assert.match(css, /@media\(max-width:680px\)/);
-  assert.match(css, /@media\(max-height:760px\)/);
-  assert.match(css, /@media\(max-height:650px\)/);
-  assert.match(css, /width:104px/);
+test('kleine und niedrige iPhones behalten die verdichtete Darstellung', () => {
+  assert.match(legacyCss, /@media\(max-width:680px\)/);
+  assert.match(legacyCss, /@media\(max-height:760px\)/);
+  assert.match(legacyCss, /@media\(max-height:650px\)/);
+  assert.match(legacyCss, /width:104px/);
+  assert.match(currentCss, /@media\(max-width:680px\)/);
+  assert.match(currentCss, /@media\(max-height:760px\)/);
 });
 
-test('Buggy Punkte im Ladehinweis werden vollständig entfernt', () => {
-  assert.match(css, /voice-copy strong:after\{content:none/);
-  assert.match(experience, /Stimme lädt/);
-  assert.match(experience, /Die Anweisung ist schon vollständig sichtbar/);
+test('Ladehinweis bleibt ohne buggy animierte Punkte', () => {
+  assert.match(legacyCss, /voice-copy strong:after\{content:none/);
+  assert.match(experience, /Stimme startet/);
+  assert.match(experience, /Bekannte Schritte starten direkt/);
 });
 
-test('Build 26 lädt und cached beide neuen Assets', () => {
-  assert.match(html, /premium-ui-v26\.css\?v=20260806-26/);
-  assert.match(html, /experience-v26\.js\?v=20260806-26/);
-  assert.match(worker, /premium-ui-v26\.css\?v=20260806-26/);
-  assert.match(worker, /experience-v26\.js\?v=20260806-26/);
+test('Build 27 lädt die bewährte v26-Basisschicht und die neue v27-Erfahrung gemeinsam', () => {
+  assert.match(html, /premium-ui-v26\.css\?v=20260806-27/);
+  assert.match(html, /premium-ui-v27\.css\?v=20260806-27/);
+  assert.match(html, /experience-v27\.js\?v=20260806-27/);
+  assert.match(worker, /premium-ui-v26\.css\?v=20260806-27/);
+  assert.match(worker, /premium-ui-v27\.css\?v=20260806-27/);
+  assert.match(worker, /experience-v27\.js\?v=20260806-27/);
 });
