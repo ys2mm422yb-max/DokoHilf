@@ -73,6 +73,7 @@ jobs:
 
           grep -q '__DOKOHILF_PREMIUM_EXPERIENCE_V25__' _site/assets/experience-v25.js
           grep -q 'warmGreeting' _site/assets/experience-v25.js
+          grep -q 'optimizeSpokenText' _site/assets/experience-v25.js
           grep -q 'const memory = new Map' _site/assets/experience-v25.js
           grep -q -- '--dh-deep' _site/assets/premium-ui-v25.css
           grep -q 'voice-focus-stage' _site/assets/premium-ui-v25.css
@@ -93,9 +94,10 @@ jobs:
 
           grep -q "VOICE_NAME = 'Gacrux'" supabase/functions/dokohilf-tts/index.ts
           grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v6-fast'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "FALLBACK_MODEL = 'gemini-2.5-pro-preview-tts'" supabase/functions/dokohilf-tts/index.ts
-          grep -q 'PRIMARY_TIMEOUT_MS = 8_000' supabase/functions/dokohilf-tts/index.ts
+          grep -q "PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts'" supabase/functions/dokohilf-tts/index.ts
+          grep -q 'PRIMARY_TIMEOUT_MS = 12_000' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'FALLBACK_TIMEOUT_MS = 8_000' supabase/functions/dokohilf-tts/index.ts
           grep -q 'X-DokoHilf-TTS-Cache' supabase/functions/dokohilf-tts/index.ts
           grep -q 'audioCache' supabase/functions/dokohilf-tts/index.ts
 
