@@ -9,13 +9,21 @@ on:
       - assets/**
       - scripts/mobile-render-v27.mjs
       - .github/workflows/ui-validation-v27.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - index.html
+      - service-worker.js
+      - assets/**
+      - scripts/mobile-render-v27.mjs
+      - .github/workflows/ui-validation-v27.yml
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: dokohilf-ui-v27-${{ github.ref }}
+  group: dokohilf-ui-v27-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
