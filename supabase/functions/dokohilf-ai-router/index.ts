@@ -42,7 +42,7 @@ function jsonResponse(origin: string | null, status: number, body: unknown): Res
     headers: {
       ...corsHeaders(origin),
       'Content-Type': 'application/json; charset=utf-8',
-      'X-DokoHilf-Router': 'conversational-guide-router-v3',
+      'X-DokoHilf-Router': 'conversational-guide-router-v4',
     },
   });
 }
@@ -156,8 +156,12 @@ function previousAssistant(messages: ChatMessage[]): string {
   return '';
 }
 
+function latestUser(messages: ChatMessage[]): string {
+  return [...messages].reverse().find(message => message.role === 'user')?.content || '';
+}
+
 function inferSpokenSelection(messages: ChatMessage[]): string | null {
-  const lastUser = [...messages].reverse().find(message => message.role === 'user')?.content || '';
+  const lastUser = latestUser(messages);
   const assistant = normalize(previousAssistant(messages));
   const n = normalize(lastUser);
 
@@ -190,6 +194,44 @@ function saysNothingIsOpen(text: string): boolean {
 function isSimpleGuideCommand(text: string): boolean {
   const n = normalize(text);
   return /^(weiter|ja|ok|okay|gemacht|fertig|passt|erledigt|nochmal|erneut|wiederholen|noch einmal|zuruck|einen schritt zuruck|ich finde das nicht|finde ich nicht|sehe ich nicht)$/.test(n);
+}
+
+function hasNegativeProgressSignal(text: string): boolean {
+  const n = normalize(text);
+  return /\b(nicht|nichts|nix|noch nicht|falsch|keine|kein|finde nicht|sehe nicht|geht nicht|klappt nicht|weiss nicht|weis nicht)\b/.test(n);
+}
+
+function isGuideProgressConfirmation(messages: ChatMessage[]): boolean {
+  const user = normalize(latestUser(messages));
+  const assistant = normalize(previousAssistant(messages));
+  if (!user || hasNegativeProgressSignal(user)) return false;
+
+  if (/^(ja|ok|okay|passt|fertig|gemacht|erledigt|weiter)$/.test(user)) return true;
+
+  const completionVerb = /\b(geoffnet|ausgewahlt|angeklickt|geklickt|eingetragen|erfasst|eingegeben|ausgefullt|gespeichert|bestatigt|sichtbar|durchgefuhrt)\b/;
+  const firstPersonOrState = /\b(ich|habe|hab|ist|sind|wurde|wurden|jetzt)\b/;
+  if (completionVerb.test(user) && firstPersonOrState.test(user)) return true;
+
+  const questionAboutSelection = /\b(richtig|vitalwert|ausgewahlt)\b/.test(assistant) && /\?/.test(previousAssistant(messages));
+  if (questionAboutSelection
+    && /\b(blutdruck|puls|temperatur|gewicht|vitalwert|set)\b/.test(user)
+    && /\b(ausgewahlt|genommen|markiert|angeklickt)\b/.test(user)) {
+    return true;
+  }
+
+  const questionAboutOpening = /\b(geoffnet|offen|eingabemaske|bereich)\b/.test(assistant);
+  if (questionAboutOpening && /\b(offen|geoffnet|auf)\b/.test(user)) return true;
+
+  return false;
+}
+
+function guideContextClarification(origin: string | null, activeGuide: GuideRecord): Response {
+  return jsonResponse(origin, 200, {
+    reply: 'Ich bin nicht sicher, wie deine Antwort zum aktuellen Schritt gehört. Ist der Schritt erledigt? Antworte bitte mit „Ja“, „Nochmal“ oder „Ich finde das nicht“.',
+    guideSlug: activeGuide.slug,
+    guideTitle: activeGuide.title,
+    source: 'guide-context-clarification',
+  });
 }
 
 function looksLikeVitalwert(text: string): boolean {
@@ -301,13 +343,14 @@ async function interpretGuideReply(
 ): Promise<DialogueDecision> {
   const catalog = guides.map(guide => ({ slug: guide.slug, title: guide.title, aliases: guide.aliases }));
   const lastAssistant = previousAssistant(messages);
-  const lastUser = [...messages].reverse().find(message => message.role === 'user')?.content || '';
+  const lastUser = latestUser(messages);
   const prompt = [
     'Du bist der Dialogmanager von DokoHilf. Du interpretierst nur, was die Person im laufenden Bedienablauf meint.',
     'Du darfst niemals neue Klickwege, Menünamen oder Schritte erfinden. Die eigentliche Anleitung kommt anschließend ausschließlich aus einem freigegebenen Guide.',
     'Antworte ausschließlich als kompaktes JSON ohne Markdown.',
     'Erlaubte action-Werte: continue, repeat, back, restart_current, start_guide, cancel, clarify, fallback.',
     'Bei start_guide muss guideSlug exakt aus dem Katalog stammen.',
+    'Wenn die Person bestätigt, dass sie den beschriebenen Schritt erledigt hat, wähle continue. Beispiel: „Ich habe Blutdruck ausgewählt“ nach der Frage, ob der richtige Vitalwert ausgewählt ist.',
     'Wenn die Person widerspricht, eine falsche Voraussetzung nennt oder sagt, dass noch nichts geöffnet ist, darfst du das nicht ignorieren und nicht einfach denselben Schritt wiederholen.',
     'Bei clarify darf reply höchstens 35 Wörter enthalten und nur natürlich nachfragen oder den Irrtum anerkennen, aber keinen neuen Klickweg formulieren.',
     `Aktiver Guide: ${JSON.stringify({ slug: activeGuide.slug, title: activeGuide.title })}`,
@@ -437,6 +480,10 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  if (activeGuide && isGuideProgressConfirmation(messages)) {
+    return runGuideCommand(origin, parsed, messages, activeGuide, 'weiter');
+  }
+
   if (activeGuide && !isSimpleGuideCommand(lastText)) {
     const apiKey = Deno.env.get('GEMINI_API_KEY');
     if (apiKey) {
@@ -466,6 +513,7 @@ Deno.serve(async (req: Request) => {
         });
       }
     }
+    return guideContextClarification(origin, activeGuide);
   }
 
   const result = await forwardToCore(parsed);
