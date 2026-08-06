@@ -239,18 +239,27 @@ Der vollständige 93/93-Bestand ist kein Merge-Blocker für die sichtbare Build-
 - veröffentlichter Hauptlink zeigt weiterhin Build 26
 - kein Merge und keine Veröffentlichung von Build 27 vor vollständig grünem exakten PR-#53-Head
 
-## 13. Offener technischer CI-Punkt
+## 13. Manueller Actions-Lauf #229
+
+Der erste manuell gestartete Lauf **Deploy DokoHilf #229** auf Head `369e7a127b78833927697f842fa54fc136d26436` scheiterte im deterministischen Vertragsschritt mit 114 von 117 bestandenen Tests.
+
+Die drei Ursachen wurden anschließend behoben:
+
+1. Der Mobile-Vertrag prüfte Build-27-Mikrofonregeln in der falschen Stylesheet-Ebene. Die aktiven Regeln liegen korrekt in `assets/ux-v27.css` und werden dort jetzt geprüft.
+2. Der Datenschutzvertrag erwartete eine alte SQL-Schreibweise. Er prüft jetzt die tatsächlich angewandte Migration mit `regexp_replace`, Regex-Nachkontrolle und harter Exception-Grenze.
+3. `PREBUILT_AUDIO.md` dokumentiert jetzt zusätzlich in einem eindeutigen Satz, dass Nutzerstimmen, Diktate, freie Antworten und Gesprächsverläufe nicht dauerhaft gespeichert werden.
+
+Die Sicherheits-, Datenschutz- und Fachanforderungen wurden dabei nicht abgeschwächt.
+
+## 14. Offener technischer CI-Punkt
 
 - GitHub unterdrückt Workflowereignisse, die durch die verbundene GitHub-App selbst erzeugt werden.
-- Das wurde mit Push, PR-Neuanlage, Schließen/Wiederöffnen und `ready_for_review` geprüft.
 - Ein direkter Workflow-Dispatch ist im verbundenen GitHub-Connector nicht verfügbar.
-- Auf dem aktuellen PR-#53-Head existiert deshalb noch kein Actions-Lauf und kein Statuscheck.
-- Ältere Actions-Läufe gehören zu früheren Heads und sind kein Nachweis für den aktuellen Release-Head.
-- Vor Merge muss der Workflow **Deploy DokoHilf** einmal über die GitHub-Oberfläche manuell auf dem Branch `release/build-27-final-validation` gestartet werden.
+- Nach den Korrekturen von Lauf #229 muss **Deploy DokoHilf** erneut manuell auf Branch `release/build-27-final-validation` gestartet werden.
 - Erst nach vollständig grünem Lauf auf dem dann exakten Head darf manuell gemergt werden.
 - Kein Auto-Merge und keine Branch-Löschung vorher.
 
-## 14. Neue Repositoryquellen Build 27
+## 15. Neue Repositoryquellen Build 27
 
 - `assets/premium-ui-v27.css`
 - `assets/ux-v27.css`
@@ -266,7 +275,7 @@ Der vollständige 93/93-Bestand ist kein Merge-Blocker für die sichtbare Build-
 - `scripts/mobile-render-v27.mjs`
 - `scripts/build-static-site-v27.sh`
 
-## 15. Pflege dieser Datei
+## 16. Pflege dieser Datei
 
 Nach jedem größeren Arbeitsblock sind mindestens zu aktualisieren:
 
