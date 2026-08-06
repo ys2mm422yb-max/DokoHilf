@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#020c12">
+  <meta name="theme-color" content="#061018">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DokoHilf">
@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="assets/premium-ui-v25.css?v=20260806-27" data-dokohilf-premium-v25>
   <link rel="stylesheet" href="assets/premium-ui-v26.css?v=20260806-27" data-dokohilf-premium-v26>
   <link rel="stylesheet" href="assets/premium-ui-v27.css?v=20260806-27" data-dokohilf-premium-v27>
+  <link rel="stylesheet" href="assets/ux-v27.css?v=20260806-27" data-dokohilf-ux-v27>
   <script>
     (() => {
       'use strict';
@@ -51,28 +52,20 @@
           if (sessionStorage.getItem(key) === 'running') return;
           sessionStorage.setItem(key, 'running');
         } catch { /* Reload funktioniert auch ohne Session Storage. */ }
-
         try {
-          const registrations = 'serviceWorker' in navigator
-            ? await navigator.serviceWorker.getRegistrations()
-            : [];
+          const registrations = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistrations() : [];
           await Promise.all(registrations.map(registration => registration.unregister().catch(() => false)));
         } catch { /* no-op */ }
-
         try {
           const keys = 'caches' in window ? await caches.keys() : [];
           await Promise.all(keys.filter(name => name.startsWith('dokohilf-')).map(name => caches.delete(name)));
         } catch { /* no-op */ }
-
         window.location.reload();
       }
 
       async function verifyRemoteBuild() {
         try {
-          const response = await nativeFetch(`./version.json?check=${Date.now()}`, {
-            cache: 'no-store',
-            headers: { 'Cache-Control': 'no-cache' },
-          });
+          const response = await nativeFetch(`./version.json?check=${Date.now()}`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
           if (!response.ok) return;
           const payload = await response.json();
           if (payload?.buildId && payload.buildId !== BUILD_ID) await hardRefresh(payload.buildId);
@@ -92,7 +85,7 @@
     <header class="topbar">
       <div class="brand" aria-label="DokoHilf">
         <img src="icon.svg" alt="" width="48" height="48">
-        <span><strong>DokoHilf</strong><small>Bedienhilfe</small></span>
+        <span><strong>DokoHilf</strong><small>KI-Bedienungshilfe</small></span>
       </div>
       <div class="top-actions">
         <button class="build-pill" id="buildPill" type="button" aria-label="Version 20260806-27 und Updateprüfung">KI · v27</button>
@@ -107,8 +100,8 @@
     <main class="main-content">
       <section class="start-screen" id="startScreen" aria-labelledby="startTitle">
         <div class="start-copy">
-          <h1 id="startTitle">Was möchtest du erledigen?</h1>
-          <p>Wähle einen Ablauf oder starte ein Sprachgespräch.</p>
+          <h1 id="startTitle">Wobei brauchst du Hilfe?</h1>
+          <p>Sprich mit DokoHilf oder schreibe deine Bedienfrage.</p>
         </div>
 
         <div class="mode-grid" aria-label="Bedienart auswählen">
@@ -116,7 +109,7 @@
             <span class="mode-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48"><rect x="17" y="7" width="14" height="23" rx="7"/><path d="M11 24v2c0 7 6 13 13 13s13-6 13-13v-2M24 39v5M17 44h14"/></svg>
             </span>
-            <span class="mode-text"><strong>Sprechen</strong><small>DokoHilf hört zu und führt dich Schritt für Schritt.</small></span>
+            <span class="mode-text"><strong>Sprechen</strong><small>DokoHilf antwortet laut und führt dich Schritt für Schritt.</small></span>
             <span class="mode-arrow" aria-hidden="true">›</span>
           </button>
 
@@ -124,32 +117,31 @@
             <span class="mode-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48"><path d="M9 10h30v23H22l-9 7v-7H9z"/><path d="M16 18h16M16 24h11"/></svg>
             </span>
-            <span class="mode-text"><strong>Schreiben</strong><small>Schreibe oder diktiere. Alles bleibt übersichtlich zum Nachlesen.</small></span>
+            <span class="mode-text"><strong>Schreiben</strong><small>Antworten bleiben klar, ruhig und übersichtlich zum Nachlesen.</small></span>
             <span class="mode-arrow" aria-hidden="true">›</span>
           </button>
         </div>
 
-        <div class="examples">
+        <div class="examples" aria-label="Häufige Abläufe">
           <span>Häufige Abläufe</span>
           <button type="button" data-prompt="Ich möchte einen Bericht schreiben">Bericht anlegen</button>
           <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite anlegen</button>
           <button type="button" data-prompt="Ich möchte Vitalwerte eingeben">Vitalwerte erfassen</button>
           <button type="button" data-prompt="Wie erfasse ich eine An- oder Abwesenheit?">An-/Abwesenheit</button>
-          <button type="button" data-prompt="Wie kann ich die Medikation ansehen?">Medikation ansehen</button>
-          <button type="button" data-prompt="Wie lege ich ein Formular an?">Formular anlegen</button>
-          <button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe anzeigen</button>
+          <button type="button" data-prompt="Ich möchte die Medikation ansehen">Medikation ansehen</button>
+          <button type="button" data-prompt="Wie lege ich ein Formular an?">Formular erstellen</button>
         </div>
 
         <div class="safety-note" role="note">
-          <strong>Keine persönlichen Daten eingeben.</strong>
-          <span>Nutze DokoHilf nur für allgemeine Bedienfragen.</span>
+          <strong>Datenschutz aktiv.</strong>
+          <span>Bitte keine persönlichen Angaben eingeben.</span>
         </div>
       </section>
 
       <section class="workspace" id="workspace" hidden>
         <nav class="mode-switch" aria-label="Bedienart wechseln">
-          <button type="button" data-switch-mode="voice"><span aria-hidden="true">●</span> Sprachmodus</button>
-          <button type="button" data-switch-mode="chat"><span aria-hidden="true">▰</span> Chat</button>
+          <button type="button" data-switch-mode="voice"><span aria-hidden="true">●</span> Sprechen</button>
+          <button type="button" data-switch-mode="chat"><span aria-hidden="true">▰</span> Schreiben</button>
         </nav>
 
         <section class="voice-console" id="voiceConsole" hidden aria-label="Sprachgespräch">
@@ -169,11 +161,11 @@
 
         <section class="chat-head" id="chatHead" hidden>
           <h1>Was möchtest du machen?</h1>
-          <p>Schreib einfach dein Ziel. DokoHilf führt dich nur durch bestätigte Abläufe.</p>
+          <p>Schreib so, wie du es einer Kollegin sagen würdest. DokoHilf merkt sich dein Ziel.</p>
           <div class="quick-prompts">
-            <button type="button" data-prompt="Wie komme ich zur Übergabe?">Zur Übergabe</button>
+            <button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe</button>
             <button type="button" data-prompt="Ich habe mich in einem Bericht verschrieben">Bericht korrigieren</button>
-            <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite anlegen</button>
+            <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite</button>
           </div>
         </section>
 
@@ -182,25 +174,25 @@
           <div class="command-row" id="commandRow" hidden aria-label="Schnelle Antworten">
             <button type="button" data-command="weiter">Weiter</button>
             <button type="button" data-command="nochmal">Nochmal</button>
-            <button type="button" data-command="ich finde das nicht">Ich finde das nicht</button>
+            <button type="button" data-command="ich finde das nicht">Ich brauche Hilfe</button>
             <button type="button" data-command="zurück">Zurück</button>
           </div>
         </section>
       </section>
 
-      <footer class="legal-note">Diese Anwendung ist eine unabhängige interne Arbeitshilfe der Einrichtung. Sie wurde nicht vom Hersteller der eingesetzten Dokumentationssoftware entwickelt, betrieben oder geprüft.</footer>
+      <footer class="legal-note">Unabhängige interne Arbeitshilfe. Nicht vom Hersteller der Dokumentationssoftware entwickelt oder geprüft.</footer>
     </main>
 
     <footer class="composer-wrap" id="composerWrap" hidden>
       <form class="composer" id="chatForm">
         <label class="sr-only" for="chatInput">Nachricht an DokoHilf</label>
-        <textarea id="chatInput" rows="1" maxlength="350" placeholder="Schreib deine Bedienfrage …" autocomplete="off" autocapitalize="sentences"></textarea>
+        <textarea id="chatInput" rows="1" maxlength="350" placeholder="Bedienfrage schreiben …" autocomplete="off" autocapitalize="sentences"></textarea>
         <button class="small-mic" id="smallMicButton" type="button" aria-label="Frage diktieren">
           <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="4" width="10" height="15" rx="5"/><path d="M7 15v1c0 5 4 9 9 9s9-4 9-9v-1M16 25v4"/></svg>
         </button>
         <button class="send-button" type="submit">Senden</button>
       </form>
-      <p>Gespräch wird nicht gespeichert. Der Schutzfilter prüft jede Eingabe vor der KI.</p>
+      <p>Gespräch und Audio werden nicht dauerhaft gespeichert.</p>
     </footer>
 
     <div class="update-toast" id="updateToast" hidden aria-live="polite">DokoHilf wurde automatisch aktualisiert.</div>
@@ -214,8 +206,8 @@
   <script src="assets/clarification-ui.js?v=20260806-27"></script>
   <script src="assets/guide-progress.js?v=20260806-27"></script>
   <script src="assets/voice-focus-mode.js?v=20260806-27"></script>
-  <script src="assets/experience-v26.js?v=20260806-27"></script>
   <script src="assets/experience-v27.js?v=20260806-27"></script>
+  <script src="assets/ux-v27.js?v=20260806-27"></script>
   <script src="assets/app.js?v=20260806-27" defer></script>
   <script>
     document.getElementById('buildPill')?.addEventListener('click', () => {
