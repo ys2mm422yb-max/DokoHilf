@@ -8,25 +8,30 @@ test('Sprachmodus zeigt nur aktuelle Anweisung und zentrale Animation', () => {
   assert.match(source, /voice-focus-instruction/);
   assert.match(source, /voice-focus-stage/);
   assert.match(source, /latestAssistantInstruction/);
-  assert.match(source, /\.messages\{display:none!important\}/);
+  assert.match(source, /\.conversation.*display:none!important/);
   assert.match(source, /Aktuelle Anweisung/);
 });
 
-test('Sprechanimation bleibt im sichtbaren Bereich und wird nicht mehr nach unten geschoben', () => {
-  assert.match(source, /overflow:hidden!important/);
-  assert.match(source, /height:calc\(100dvh - 64px\)/);
-  assert.match(source, /position:relative!important/);
-  assert.match(source, /bottom:auto!important/);
+test('Sprechanimation liegt als feste Vollbildansicht über dem Chat', () => {
+  assert.match(source, /position:fixed/);
+  assert.match(source, /inset:64px 0 0/);
+  assert.match(source, /overflow:hidden/);
   assert.match(source, /voiceFocusRing/);
   assert.match(source, /voiceFocusSpeak/);
 });
 
 test('Schrittsteuerung und Wechsel zum Chat bleiben erreichbar', () => {
   assert.match(source, /data-switch-mode="chat"/);
-  assert.match(source, /\.command-row\{position:fixed/);
-  assert.match(source, /currentProgressLabel/);
-  assert.match(source, /guideProgressTitle/);
-  assert.match(source, /guideProgressStep/);
+  assert.match(source, /voice-focus-actions/);
+  assert.match(source, /data-voice-command="weiter"/);
+  assert.match(source, /DokoHilfGuideProgress/);
+  assert.match(source, /dokohilf:guide-state/);
+});
+
+test('Alte rote Kurzbefehle werden auch bei späterem Einfügen entfernt', () => {
+  assert.match(source, /removeLegacyShortcuts/);
+  assert.match(source, /notfallblattButton/);
+  assert.match(source, /MutationObserver\(removeLegacyShortcuts\)/);
 });
 
 test('Sprachfokus speichert keine Gesprächsinhalte dauerhaft', () => {
