@@ -13,7 +13,14 @@ const requestWindows = new Map<string, { startedAt: number; count: number }>();
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
 type GuideOption = { label: string; guideSlug: string };
 type GuideStep = { text?: string; check?: string; stuck?: string };
-type GuideRecord = { slug: string; title: string; aliases: string[]; steps: GuideStep[] };
+type GuideRecord = {
+  slug: string;
+  title: string;
+  aliases: string[];
+  steps: GuideStep[];
+  troubleshooting?: Record<string, string>;
+  version?: number;
+};
 type CoreResult = { status: number; payload: Record<string, unknown> };
 type DialogueDecision = {
   action: 'continue' | 'repeat' | 'back' | 'restart_current' | 'start_guide' | 'cancel' | 'clarify' | 'fallback';
@@ -42,7 +49,7 @@ function jsonResponse(origin: string | null, status: number, body: unknown): Res
     headers: {
       ...corsHeaders(origin),
       'Content-Type': 'application/json; charset=utf-8',
-      'X-DokoHilf-Router': 'conversational-guide-router-v4',
+      'X-DokoHilf-Router': 'conversational-guide-router-v5',
     },
   });
 }
@@ -121,7 +128,7 @@ async function loadApprovedGuides(): Promise<GuideRecord[]> {
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!url || !serviceKey) throw new Error('knowledge_unavailable');
   const response = await fetch(
-    `${url}/rest/v1/dokohilf_guides?select=slug,title,aliases,steps&status=eq.approved`,
+    `${url}/rest/v1/dokohilf_guides?select=slug,title,aliases,steps,troubleshooting,version&status=eq.approved`,
     { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } },
   );
   if (!response.ok) throw new Error('knowledge_unavailable');
@@ -138,6 +145,13 @@ function correctionOptions(guides: GuideRecord[]): GuideOption[] {
   return [
     optionFor(guides, 'bericht-durchstreichen', 'Bericht durchstreichen'),
     optionFor(guides, 'durchfuehrung-storno', 'Durchführung stornieren'),
+  ].filter((item): item is GuideOption => Boolean(item));
+}
+
+function vitalEntryOptions(guides: GuideRecord[]): GuideOption[] {
+  return [
+    optionFor(guides, 'vitalwerte-einzelwert-fortsetzen', 'Einzelnen Vitalwert erfassen'),
+    optionFor(guides, 'vitalwerte-sammelerfassung-fortsetzen', 'Mehrere Vitalwerte über Sammelerfassung'),
   ].filter((item): item is GuideOption => Boolean(item));
 }
 
@@ -160,40 +174,26 @@ function latestUser(messages: ChatMessage[]): string {
   return [...messages].reverse().find(message => message.role === 'user')?.content || '';
 }
 
-function inferSpokenSelection(messages: ChatMessage[]): string | null {
-  const lastUser = latestUser(messages);
-  const assistant = normalize(previousAssistant(messages));
-  const n = normalize(lastUser);
-
-  const asksVitalChoice = /vitalwert/.test(assistant)
-    && /erfass/.test(assistant)
-    && /(ansehen|nachsehen|verlauf|vorhandene werte)/.test(assistant);
-  if (asksVitalChoice && /^(erfassen|neu erfassen|neuen wert erfassen)$/.test(n)) {
-    return 'vitalwerte-erfassen-fortsetzen';
-  }
-
-  if (/was mochtest du korrigieren/.test(assistant)) {
-    if (/\b(bericht|berichtseintrag|pflegebericht)\b/.test(n)) return 'bericht-durchstreichen';
-    if (/\b(durchfuhrung|durchfuhrungsnachweis|nachweis|massnahme)\b/.test(n)) return 'durchfuehrung-storno';
-  }
-  return null;
-}
-
-function isBareVitalChoice(text: string): boolean {
-  return /^(erfassen|neu erfassen|nachsehen|ansehen|verlauf)$/.test(normalize(text));
-}
-
-function saysNothingIsOpen(text: string): boolean {
-  const n = normalize(text);
-  return /\b(nichts|nix|noch nichts)\b.*\b(geoffnet|offen)\b/.test(n)
-    || /\b(hab|habe)\b.*\b(nichts|noch nichts)\b.*\b(geoffnet|offen)\b/.test(n)
-    || /\bwelches\b.*\b(fenster|bereich)\b/.test(n)
-    || /\bich bin noch nicht\b.*\b(vitalwert|doku|bereich|fenster)\b/.test(n);
-}
-
 function isSimpleGuideCommand(text: string): boolean {
   const n = normalize(text);
   return /^(weiter|ja|ok|okay|gemacht|fertig|passt|erledigt|nochmal|erneut|wiederholen|noch einmal|zuruck|einen schritt zuruck|ich finde das nicht|finde ich nicht|sehe ich nicht)$/.test(n);
+}
+
+function isRepeat(text: string): boolean {
+  return /^(nochmal|erneut|wiederholen|noch einmal)$/.test(normalize(text));
+}
+
+function isBack(text: string): boolean {
+  return /^(zuruck|einen schritt zuruck)$/.test(normalize(text));
+}
+
+function isExplicitStuck(text: string): boolean {
+  const n = normalize(text);
+  return /\b(finde|sehe|erkenne|entdecke)\b.*\b(nicht|nirgends)\b/.test(n)
+    || /\b(kann|konnte)\b.*\b(nicht finden|nicht sehen|nicht offnen)\b/.test(n)
+    || /^(geht|klappt|funktioniert) nicht\b/.test(n)
+    || /^(ich komme|komme) nicht weiter\b/.test(n)
+    || /^(ich finde es nicht|ich finde das nicht|finde ich nicht|sehe ich nicht)$/.test(n);
 }
 
 function hasNegativeProgressSignal(text: string): boolean {
@@ -205,7 +205,6 @@ function isGuideProgressConfirmation(messages: ChatMessage[]): boolean {
   const user = normalize(latestUser(messages));
   const assistant = normalize(previousAssistant(messages));
   if (!user || hasNegativeProgressSignal(user)) return false;
-
   if (/^(ja|ok|okay|passt|fertig|gemacht|erledigt|weiter)$/.test(user)) return true;
 
   const completionVerb = /\b(geoffnet|ausgewahlt|angeklickt|geklickt|eingetragen|erfasst|eingegeben|ausgefullt|gespeichert|bestatigt|sichtbar|durchgefuhrt)\b/;
@@ -214,34 +213,133 @@ function isGuideProgressConfirmation(messages: ChatMessage[]): boolean {
 
   const questionAboutSelection = /\b(richtig|vitalwert|ausgewahlt)\b/.test(assistant) && /\?/.test(previousAssistant(messages));
   if (questionAboutSelection
-    && /\b(blutdruck|puls|temperatur|gewicht|vitalwert|set)\b/.test(user)
-    && /\b(ausgewahlt|genommen|markiert|angeklickt)\b/.test(user)) {
-    return true;
-  }
+    && /\b(blutdruck|puls|temperatur|gewicht|blutzucker|sauerstoff|vitalwert|set)\b/.test(user)
+    && /\b(ausgewahlt|genommen|markiert|angeklickt)\b/.test(user)) return true;
 
-  const questionAboutOpening = /\b(geoffnet|offen|eingabemaske|bereich)\b/.test(assistant);
-  if (questionAboutOpening && /\b(offen|geoffnet|auf)\b/.test(user)) return true;
-
-  return false;
+  const questionAboutOpening = /\b(geoffnet|offen|eingabemaske|bereich|popup|pop up)\b/.test(assistant);
+  return questionAboutOpening && /\b(offen|geoffnet|auf)\b/.test(user);
 }
 
-function guideContextClarification(origin: string | null, activeGuide: GuideRecord): Response {
-  return jsonResponse(origin, 200, {
-    reply: 'Ich bin nicht sicher, wie deine Antwort zum aktuellen Schritt gehört. Ist der Schritt erledigt? Antworte bitte mit „Ja“, „Nochmal“ oder „Ich finde das nicht“.',
-    guideSlug: activeGuide.slug,
-    guideTitle: activeGuide.title,
-    source: 'guide-context-clarification',
-  });
+function saysNothingIsOpen(text: string): boolean {
+  const n = normalize(text);
+  return /\b(nichts|nix|noch nichts)\b.*\b(geoffnet|offen)\b/.test(n)
+    || /\b(hab|habe)\b.*\b(nichts|noch nichts)\b.*\b(geoffnet|offen)\b/.test(n)
+    || /\bwelches\b.*\b(fenster|bereich)\b/.test(n)
+    || /\bich bin noch nicht\b.*\b(vitalwert|doku|bereich|fenster)\b/.test(n);
 }
 
 function looksLikeVitalwert(text: string): boolean {
+  return /\b(vitalwert|vitalwerte|vital wert|blutdruck|puls|temperatur|gewicht|blutzucker|sauerstoffsattigung|sauerstoff)\b/.test(normalize(text));
+}
+
+function wantsVitalEntry(text: string): boolean {
   const n = normalize(text);
-  return /\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|gewicht)\b/.test(n);
+  return looksLikeVitalwert(n) && /\b(eingeben|eintragen|erfassen|anlegen|dokumentieren|messen|neuer|neue|neu)\b/.test(n);
+}
+
+function wantsMultipleVitalwerte(text: string): boolean {
+  const n = normalize(text);
+  return /\b(sammelerfassung|mehrere|mehreren|gleichzeitig|alle werte|mehrere werte)\b/.test(n);
+}
+
+function wantsSingleVitalwert(text: string): boolean {
+  const n = normalize(text);
+  return /\b(einzelwert|einzelerfassung|einzeln|einen vitalwert|grunes plus)\b/.test(n)
+    || /\b(blutdruck|puls|temperatur|gewicht|blutzucker|sauerstoffsattigung)\b/.test(n);
 }
 
 function looksLikeAlbertMisrecognition(text: string): boolean {
   const n = normalize(text);
   return /^(albert|allwert|vital wert) erfassen$/.test(n) || /\balbert\b.*\berfass/.test(n);
+}
+
+function currentGuideStep(parsed: Record<string, unknown>, messages: ChatMessage[], guide: GuideRecord): number {
+  const explicit = Number(parsed.guideStep);
+  if (Number.isInteger(explicit) && explicit >= 1 && explicit <= Math.max(1, guide.steps.length)) return explicit;
+
+  const lastAssistant = normalize(previousAssistant(messages));
+  for (let index = guide.steps.length - 1; index >= 0; index -= 1) {
+    const text = normalize(guide.steps[index]?.text || '');
+    if (text && (lastAssistant.includes(text) || text.includes(lastAssistant))) return index + 1;
+    const prefix = text.slice(0, 55);
+    if (prefix.length > 20 && lastAssistant.includes(prefix)) return index + 1;
+  }
+  return 1;
+}
+
+function stuckHint(guide: GuideRecord, step: GuideStep): string {
+  if (step.stuck) return step.stuck;
+  const hints = Object.values(guide.troubleshooting || {});
+  return hints[0] || `Bleibe beim aktuellen Schritt und suche genau nach der genannten Stelle: ${step.text || ''}`;
+}
+
+function guidePayload(guide: GuideRecord, stepNumber: number, source = 'approved-guide-stateful'): Record<string, unknown> {
+  const count = Math.max(1, guide.steps.length);
+  if (stepNumber > count) {
+    return {
+      reply: 'Damit ist dieser Ablauf durchgeführt. Wobei brauchst du als Nächstes Hilfe?',
+      guideSlug: null,
+      completedGuideSlug: guide.slug,
+      source: 'approved-guide-completed',
+    };
+  }
+
+  const safeStep = Math.max(1, Math.min(stepNumber, count));
+  const step = guide.steps[safeStep - 1] || {};
+  const options = guide.slug === 'vitalwerte-erfassen' && safeStep === 3
+    ? undefined
+    : undefined;
+  return {
+    reply: `${step.text || ''}\n\n${step.check || 'Bist du dort?'}`.trim(),
+    guideSlug: guide.slug,
+    guideTitle: guide.title,
+    guideVersion: guide.version || 1,
+    guideStep: safeStep,
+    guideStepCount: count,
+    model: 'approved-guide-stateful',
+    source,
+    ...(options ? { options } : {}),
+  };
+}
+
+function choicePayload(origin: string | null, guides: GuideRecord[], guide: GuideRecord): Response {
+  return jsonResponse(origin, 200, {
+    ...guidePayload(guide, 3, 'vital-entry-choice'),
+    options: vitalEntryOptions(guides),
+  });
+}
+
+function startGuide(origin: string | null, guides: GuideRecord[], slug: string, prefix = ''): Response {
+  const guide = guides.find(item => item.slug === slug);
+  if (!guide) return jsonResponse(origin, 400, { error: 'Diese Anleitung ist nicht freigegeben.' });
+  const payload = guidePayload(guide, 1);
+  if (prefix && typeof payload.reply === 'string') payload.reply = `${prefix}${payload.reply}`;
+  return jsonResponse(origin, 200, payload);
+}
+
+function runGuideCommand(
+  origin: string | null,
+  parsed: Record<string, unknown>,
+  messages: ChatMessage[],
+  guides: GuideRecord[],
+  guide: GuideRecord,
+  command: 'weiter' | 'nochmal' | 'zurück',
+): Response {
+  const current = currentGuideStep(parsed, messages, guide);
+  if (guide.slug === 'vitalwerte-erfassen' && current === 3 && command === 'weiter') {
+    return choicePayload(origin, guides, guide);
+  }
+  const next = command === 'weiter' ? current + 1 : command === 'zurück' ? Math.max(1, current - 1) : current;
+  return jsonResponse(origin, 200, guidePayload(guide, next));
+}
+
+function repeatWithStuckHint(origin: string | null, parsed: Record<string, unknown>, messages: ChatMessage[], guide: GuideRecord): Response {
+  const current = currentGuideStep(parsed, messages, guide);
+  const step = guide.steps[Math.max(0, current - 1)] || {};
+  return jsonResponse(origin, 200, {
+    ...guidePayload(guide, current, 'approved-guide-stuck-help'),
+    reply: `${stuckHint(guide, step)}\n\nKlappt es so?`,
+  });
 }
 
 function neutralizeInternalText(payload: Record<string, unknown>): Record<string, unknown> {
@@ -270,56 +368,6 @@ async function forwardToCore(body: Record<string, unknown>): Promise<CoreResult>
   return { status: response.status, payload: safePayload };
 }
 
-function replaceLastUser(messages: ChatMessage[], content: string): ChatMessage[] {
-  const copy = messages.map(message => ({ ...message }));
-  for (let index = copy.length - 1; index >= 0; index -= 1) {
-    if (copy[index].role === 'user') {
-      copy[index] = { role: 'user', content };
-      return copy;
-    }
-  }
-  copy.push({ role: 'user', content });
-  return copy;
-}
-
-async function startGuide(
-  origin: string | null,
-  parsed: Record<string, unknown>,
-  messages: ChatMessage[],
-  guides: GuideRecord[],
-  slug: string,
-  prefix = '',
-): Promise<Response> {
-  const guide = guides.find(item => item.slug === slug);
-  if (!guide) return jsonResponse(origin, 400, { error: 'Diese Anleitung ist nicht freigegeben.' });
-  const result = await forwardToCore({
-    ...parsed,
-    messages: replaceLastUser(messages, guide.title),
-    guideSlug: null,
-    selectedGuideSlug: undefined,
-  });
-  if (prefix && typeof result.payload.reply === 'string') {
-    result.payload.reply = `${prefix}${result.payload.reply}`;
-    result.payload.source = 'ai-context-recovery';
-  }
-  return jsonResponse(origin, result.status, result.payload);
-}
-
-async function runGuideCommand(
-  origin: string | null,
-  parsed: Record<string, unknown>,
-  messages: ChatMessage[],
-  activeGuide: GuideRecord,
-  command: 'weiter' | 'nochmal' | 'zurück',
-): Promise<Response> {
-  const result = await forwardToCore({
-    ...parsed,
-    messages: replaceLastUser(messages, command),
-    guideSlug: activeGuide.slug,
-  });
-  return jsonResponse(origin, result.status, result.payload);
-}
-
 function extractModelText(payload: Record<string, unknown>): string {
   const candidates = payload.candidates;
   if (!Array.isArray(candidates)) return '';
@@ -338,25 +386,25 @@ async function interpretGuideReply(
   apiKey: string,
   guides: GuideRecord[],
   activeGuide: GuideRecord,
+  currentStep: number,
   messages: ChatMessage[],
   alternatives: string[],
 ): Promise<DialogueDecision> {
   const catalog = guides.map(guide => ({ slug: guide.slug, title: guide.title, aliases: guide.aliases }));
-  const lastAssistant = previousAssistant(messages);
-  const lastUser = latestUser(messages);
   const prompt = [
-    'Du bist der Dialogmanager von DokoHilf. Du interpretierst nur, was die Person im laufenden Bedienablauf meint.',
-    'Du darfst niemals neue Klickwege, Menünamen oder Schritte erfinden. Die eigentliche Anleitung kommt anschließend ausschließlich aus einem freigegebenen Guide.',
+    'Du bist der Dialogmanager von DokoHilf. Du interpretierst ausschließlich die letzte Aussage im laufenden Bedienablauf.',
+    'Die Klickschritte stammen nur aus freigegebenen Guides. Erfinde niemals Menüs, Felder oder Schritte.',
+    'Bewahre das bereits genannte Ziel. Wenn jemand Vitalwerte eingeben will, frage später nicht erneut, ob er erfassen oder ansehen will.',
     'Antworte ausschließlich als kompaktes JSON ohne Markdown.',
     'Erlaubte action-Werte: continue, repeat, back, restart_current, start_guide, cancel, clarify, fallback.',
     'Bei start_guide muss guideSlug exakt aus dem Katalog stammen.',
-    'Wenn die Person bestätigt, dass sie den beschriebenen Schritt erledigt hat, wähle continue. Beispiel: „Ich habe Blutdruck ausgewählt“ nach der Frage, ob der richtige Vitalwert ausgewählt ist.',
-    'Wenn die Person widerspricht, eine falsche Voraussetzung nennt oder sagt, dass noch nichts geöffnet ist, darfst du das nicht ignorieren und nicht einfach denselben Schritt wiederholen.',
-    'Bei clarify darf reply höchstens 35 Wörter enthalten und nur natürlich nachfragen oder den Irrtum anerkennen, aber keinen neuen Klickweg formulieren.',
-    `Aktiver Guide: ${JSON.stringify({ slug: activeGuide.slug, title: activeGuide.title })}`,
-    `Letzte Anweisung: ${JSON.stringify(lastAssistant)}`,
-    `Nutzeraussage: ${JSON.stringify(lastUser)}`,
-    `Mögliche Spracherkennungs-Alternativen: ${JSON.stringify(alternatives)}`,
+    'Eine Bestätigung des aktuellen Schritts bedeutet continue. Ein Widerspruch oder eine fehlende Voraussetzung darf nicht ignoriert werden.',
+    'Bei clarify darf reply höchstens 35 Wörter enthalten und nur natürlich nachfragen, ohne Klickwege zu erfinden.',
+    `Aktiver Guide: ${JSON.stringify({ slug: activeGuide.slug, title: activeGuide.title, step: currentStep })}`,
+    `Aktueller Schritt: ${JSON.stringify(activeGuide.steps[currentStep - 1] || {})}`,
+    `Letzte Anweisung: ${JSON.stringify(previousAssistant(messages))}`,
+    `Nutzeraussage: ${JSON.stringify(latestUser(messages))}`,
+    `Spracherkennungs-Alternativen: ${JSON.stringify(alternatives)}`,
     `Freigegebene Guides: ${JSON.stringify(catalog)}`,
   ].join('\n');
 
@@ -374,14 +422,11 @@ async function interpretGuideReply(
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) return { action: 'fallback' };
-  const raw = extractModelText(payload as Record<string, unknown>);
   try {
-    const parsed = JSON.parse(raw) as DialogueDecision;
+    const parsed = JSON.parse(extractModelText(payload as Record<string, unknown>)) as DialogueDecision;
     const actions = new Set(['continue','repeat','back','restart_current','start_guide','cancel','clarify','fallback']);
     if (!actions.has(parsed.action)) return { action: 'fallback' };
-    if (parsed.action === 'start_guide' && !guides.some(guide => guide.slug === parsed.guideSlug)) {
-      return { action: 'fallback' };
-    }
+    if (parsed.action === 'start_guide' && !guides.some(guide => guide.slug === parsed.guideSlug)) return { action: 'fallback' };
     if (parsed.action === 'clarify') {
       const reply = typeof parsed.reply === 'string' ? parsed.reply.trim().slice(0, 220) : '';
       return reply ? { action: 'clarify', reply } : { action: 'fallback' };
@@ -423,99 +468,106 @@ Deno.serve(async (req: Request) => {
     return jsonResponse(origin, 503, { error: 'Die freigegebene Wissensbasis ist gerade nicht erreichbar.' });
   }
 
-  const lastText = messages[messages.length - 1].content;
+  const lastText = latestUser(messages);
   const alternatives = sanitizeStrings(parsed.speechAlternatives);
+  const candidates = [lastText, ...alternatives];
   const activeGuideSlug = typeof parsed.guideSlug === 'string' ? parsed.guideSlug : '';
   const activeGuide = guides.find(guide => guide.slug === activeGuideSlug) || null;
-  const explicitSelection = typeof parsed.selectedGuideSlug === 'string' ? parsed.selectedGuideSlug : '';
-  const spokenSelection = inferSpokenSelection(messages);
-  const selectedSlug = explicitSelection || spokenSelection;
+  const selectedSlug = typeof parsed.selectedGuideSlug === 'string' ? parsed.selectedGuideSlug : '';
 
-  if (selectedSlug) {
-    return startGuide(origin, parsed, messages, guides, selectedSlug);
-  }
+  if (selectedSlug) return startGuide(origin, guides, selectedSlug);
 
-  if (activeGuide?.slug === 'vitalwerte-erfassen-fortsetzen' && saysNothingIsOpen(lastText)) {
-    return startGuide(
-      origin,
-      parsed,
-      messages,
-      guides,
-      'vitalwerte-erfassen',
-      'Stimmt – dann war die Annahme falsch. Wir starten ganz vorne. ',
-    );
-  }
-
-  const allSpeechCandidates = [lastText, ...alternatives];
-  const hasVitalAlternative = allSpeechCandidates.some(looksLikeVitalwert);
-  if (!activeGuide && hasVitalAlternative && allSpeechCandidates.some(text => /\berfass/.test(normalize(text)))) {
-    return startGuide(origin, parsed, messages, guides, 'vitalwerte-erfassen');
+  if (!activeGuide && candidates.some(looksLikeVitalwert) && candidates.some(wantsVitalEntry)) {
+    if (candidates.some(wantsMultipleVitalwerte)) return startGuide(origin, guides, 'vitalwerte-sammelerfassung');
+    if (candidates.some(wantsSingleVitalwert)) return startGuide(origin, guides, 'vitalwerte-einzelwert');
+    return startGuide(origin, guides, 'vitalwerte-erfassen');
   }
 
   if (!activeGuide && looksLikeAlbertMisrecognition(lastText)) {
     const option = optionFor(guides, 'vitalwerte-erfassen', 'Vitalwerte erfassen');
     return jsonResponse(origin, 200, {
-      reply: 'Ich habe „Albert erfassen“ verstanden. Meinst du einen Vitalwert erfassen?',
+      reply: 'Ich habe „Albert erfassen“ verstanden. Meinst du Vitalwerte erfassen?',
       guideSlug: null,
       source: 'speech-recognition-clarification',
       options: option ? [option] : [],
     });
   }
 
-  if (isBareVitalChoice(lastText)) {
-    return jsonResponse(origin, 200, {
-      reply: 'Möchtest du einen Vitalwert erfassen oder vorhandene Werte beziehungsweise den Verlauf ansehen?',
-      guideSlug: null,
-      source: 'context-required-clarification',
-    });
-  }
-
   if (isCorrectionAmbiguous(lastText)) {
-    const options = correctionOptions(guides);
     return jsonResponse(origin, 200, {
-      reply: 'Was möchtest du korrigieren: einen Bericht oder eine Durchführung? Tippe auf eine Auswahl oder sage den Namen.',
+      reply: 'Was möchtest du korrigieren: einen Bericht oder eine Durchführung?',
       guideSlug: null,
       source: 'structured-clarification',
-      options,
+      options: correctionOptions(guides),
     });
   }
 
-  if (activeGuide && isGuideProgressConfirmation(messages)) {
-    return runGuideCommand(origin, parsed, messages, activeGuide, 'weiter');
-  }
+  if (activeGuide) {
+    const current = currentGuideStep(parsed, messages, activeGuide);
 
-  if (activeGuide && !isSimpleGuideCommand(lastText)) {
-    const apiKey = Deno.env.get('GEMINI_API_KEY');
-    if (apiKey) {
-      const decision = await interpretGuideReply(apiKey, guides, activeGuide, messages, alternatives);
-      if (decision.action === 'continue') return runGuideCommand(origin, parsed, messages, activeGuide, 'weiter');
-      if (decision.action === 'repeat') return runGuideCommand(origin, parsed, messages, activeGuide, 'nochmal');
-      if (decision.action === 'back') return runGuideCommand(origin, parsed, messages, activeGuide, 'zurück');
-      if (decision.action === 'restart_current') {
-        return startGuide(origin, parsed, messages, guides, activeGuide.slug, 'Okay, wir beginnen diesen Ablauf noch einmal von vorne. ');
+    if (activeGuide.slug === 'vitalwerte-erfassen' && current === 3) {
+      if (wantsMultipleVitalwerte(lastText)) return startGuide(origin, guides, 'vitalwerte-sammelerfassung-fortsetzen');
+      if (wantsSingleVitalwert(lastText)) return startGuide(origin, guides, 'vitalwerte-einzelwert-fortsetzen');
+      if (/\b(erfassen|eingeben|eintragen|ja|weiter|ok|okay)\b/.test(normalize(lastText))) return choicePayload(origin, guides, activeGuide);
+    }
+
+    if (saysNothingIsOpen(lastText)) {
+      if (activeGuide.slug === 'vitalwerte-einzelwert-fortsetzen') {
+        return startGuide(origin, guides, 'vitalwerte-einzelwert', 'Stimmt – dann beginnen wir vorne. ');
       }
-      if (decision.action === 'start_guide' && decision.guideSlug) {
-        return startGuide(origin, parsed, messages, guides, decision.guideSlug, 'Verstanden. Ich wechsle zum passenden Ablauf. ');
-      }
-      if (decision.action === 'cancel') {
-        return jsonResponse(origin, 200, {
-          reply: 'Okay, ich stoppe diesen Ablauf. Was möchtest du stattdessen erledigen?',
-          guideSlug: null,
-          source: 'ai-dialogue-cancel',
-        });
-      }
-      if (decision.action === 'clarify' && decision.reply) {
-        return jsonResponse(origin, 200, {
-          reply: decision.reply,
-          guideSlug: activeGuide.slug,
-          guideTitle: activeGuide.title,
-          source: 'ai-dialogue-clarification',
-        });
+      if (activeGuide.slug === 'vitalwerte-sammelerfassung-fortsetzen') {
+        return startGuide(origin, guides, 'vitalwerte-sammelerfassung', 'Stimmt – dann beginnen wir vorne. ');
       }
     }
-    return guideContextClarification(origin, activeGuide);
+
+    if (isRepeat(lastText)) return runGuideCommand(origin, parsed, messages, guides, activeGuide, 'nochmal');
+    if (isBack(lastText)) return runGuideCommand(origin, parsed, messages, guides, activeGuide, 'zurück');
+    if (isExplicitStuck(lastText)) return repeatWithStuckHint(origin, parsed, messages, activeGuide);
+    if (isGuideProgressConfirmation(messages)) return runGuideCommand(origin, parsed, messages, guides, activeGuide, 'weiter');
+
+    if (!isSimpleGuideCommand(lastText)) {
+      const apiKey = Deno.env.get('GEMINI_API_KEY');
+      if (apiKey) {
+        const decision = await interpretGuideReply(apiKey, guides, activeGuide, current, messages, alternatives);
+        if (decision.action === 'continue') return runGuideCommand(origin, parsed, messages, guides, activeGuide, 'weiter');
+        if (decision.action === 'repeat') return runGuideCommand(origin, parsed, messages, guides, activeGuide, 'nochmal');
+        if (decision.action === 'back') return runGuideCommand(origin, parsed, messages, guides, activeGuide, 'zurück');
+        if (decision.action === 'restart_current') return startGuide(origin, guides, activeGuide.slug, 'Okay, wir beginnen diesen Ablauf noch einmal. ');
+        if (decision.action === 'start_guide' && decision.guideSlug) return startGuide(origin, guides, decision.guideSlug, 'Verstanden. Ich wechsle zum passenden Ablauf. ');
+        if (decision.action === 'cancel') {
+          return jsonResponse(origin, 200, {
+            reply: 'Okay, ich stoppe diesen Ablauf. Was möchtest du stattdessen erledigen?',
+            guideSlug: null,
+            source: 'ai-dialogue-cancel',
+          });
+        }
+        if (decision.action === 'clarify' && decision.reply) {
+          return jsonResponse(origin, 200, {
+            reply: decision.reply,
+            guideSlug: activeGuide.slug,
+            guideTitle: activeGuide.title,
+            guideStep: current,
+            guideStepCount: activeGuide.steps.length,
+            source: 'ai-dialogue-clarification',
+          });
+        }
+      }
+      return jsonResponse(origin, 200, {
+        reply: 'Ich bin nicht sicher, wie das zum aktuellen Schritt gehört. Ist der Schritt erledigt, oder brauchst du Hilfe dabei?',
+        guideSlug: activeGuide.slug,
+        guideTitle: activeGuide.title,
+        guideStep: current,
+        guideStepCount: activeGuide.steps.length,
+        source: 'guide-context-clarification',
+      });
+    }
   }
 
   const result = await forwardToCore(parsed);
+  const routedSlug = typeof result.payload.guideSlug === 'string' ? result.payload.guideSlug : '';
+  if (routedSlug) {
+    const routedGuide = guides.find(guide => guide.slug === routedSlug);
+    if (routedGuide) return jsonResponse(origin, 200, guidePayload(routedGuide, 1, 'approved-guide-core-routed'));
+  }
   return jsonResponse(origin, result.status, result.payload);
 });
