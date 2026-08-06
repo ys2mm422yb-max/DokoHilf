@@ -2,10 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [index, css, experience, serviceWorker, version, tts, migration] = await Promise.all([
+const [index, css, uxCss, experience, ux, app, serviceWorker, version, tts, migration] = await Promise.all([
   readFile('index.html', 'utf8'),
   readFile('assets/premium-ui-v27.css', 'utf8'),
+  readFile('assets/ux-v27.css', 'utf8'),
   readFile('assets/experience-v27.js', 'utf8'),
+  readFile('assets/ux-v27.js', 'utf8'),
+  readFile('assets/app.js', 'utf8'),
   readFile('service-worker.js', 'utf8'),
   readFile('version.json', 'utf8'),
   readFile('supabase/functions/dokohilf-tts/index.ts', 'utf8'),
@@ -15,11 +18,15 @@ const [index, css, experience, serviceWorker, version, tts, migration] = await P
 test('build 27 assets are wired consistently', () => {
   assert.match(index, /dokohilf-build" content="20260806-27/);
   assert.match(index, /premium-ui-v27\.css\?v=20260806-27/);
+  assert.match(index, /ux-v27\.css\?v=20260806-27/);
   assert.match(index, /experience-v27\.js\?v=20260806-27/);
+  assert.match(index, /ux-v27\.js\?v=20260806-27/);
   assert.match(index, /KI · v27/);
   assert.match(serviceWorker, /BUILD_ID = '20260806-27'/);
   assert.match(serviceWorker, /premium-ui-v27\.css\?v=20260806-27/);
+  assert.match(serviceWorker, /ux-v27\.css\?v=20260806-27/);
   assert.match(serviceWorker, /experience-v27\.js\?v=20260806-27/);
+  assert.match(serviceWorker, /ux-v27\.js\?v=20260806-27/);
   assert.equal(JSON.parse(version).buildId, '20260806-27');
 });
 
@@ -35,6 +42,15 @@ test('dark premium home and workflow shortcuts are present', () => {
   assert.doesNotMatch(index, /Fantasiedaten/);
 });
 
+test('chat controls are compact and command bubbles stay hidden', () => {
+  assert.match(uxCss, /guide-progress-menu/);
+  assert.match(uxCss, /command-message-hidden/);
+  assert.match(uxCss, /data-command="nochmal"/);
+  assert.match(ux, /compactGuideMenu/);
+  assert.match(ux, /commands = new Set/);
+  assert.match(ux, /Ich brauche Hilfe/);
+});
+
 test('voice starts quickly and keeps natural audio warm in memory', () => {
   assert.match(experience, /FAST_FALLBACK_MS = 2400/);
   assert.match(experience, /fastRace\(loadNaturalVoice/);
@@ -42,6 +58,8 @@ test('voice starts quickly and keeps natural audio warm in memory', () => {
   assert.match(experience, /payload\.nextSpokenText/);
   assert.match(experience, /memory = new Map/);
   assert.match(experience, /__DOKOHILF_DARK_PREMIUM_V27__/);
+  assert.match(ux, /HARD_FALLBACK_MS = 1900/);
+  assert.match(ux, /dokohilf_immediate_voice_fallback/);
 });
 
 test('cloud voice uses shorter deadlines and a larger transient cache', () => {
@@ -53,9 +71,11 @@ test('cloud voice uses shorter deadlines and a larger transient cache', () => {
   assert.match(tts, /CACHE_LIMIT = 128/);
 });
 
-test('repeated exercise notices are removed centrally without weakening privacy', () => {
+test('repeated exercise notices disappear without weakening privacy', () => {
   assert.match(migration, /remove repeated/i);
   assert.match(migration, /guide\.steps::text ilike '%Fantasiedaten%'/);
   assert.match(index, /Keine persönlichen Daten eingeben/);
-  assert.match(index, /Schutzfilter prüft jede Eingabe/);
+  assert.match(index, /Gespräch und Audio werden nicht dauerhaft gespeichert/);
+  assert.match(app, /function clientPrivacyGuard/);
+  assert.match(app, /BLOCK_MESSAGE/);
 });
