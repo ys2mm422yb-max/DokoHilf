@@ -24,7 +24,7 @@ function looksSensitive(value) {
 test('öffentliche Verarbeitungskette blockiert Echtdaten vor KI und Sprachausgabe', () => {
   assert.match(app, /clientPrivacyGuard/);
   assert.match(app, /BLOCK_MESSAGE/);
-  assert.match(router, /containsSensitiveData/);
+  assert.match(router, /function\s+(?:containsSensitiveData|sensitive)\s*\(/);
   assert.match(router, /Die Anfrage wurde nicht weiterverarbeitet/);
   assert.match(tts, /containsDirectPersonalData/);
   assert.match(aiCore, /DATENSCHUTZ UND SICHERHEIT/);
