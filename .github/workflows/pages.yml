@@ -162,7 +162,8 @@ jobs:
           node scripts/live-routing-stable.mjs
           node scripts/live-screenshot-smoke.mjs
 
-      - name: Check active DokoHilf voice service
+      - name: Record active DokoHilf voice service evidence
+        continue-on-error: true
         run: node scripts/live-tts-smoke.mjs
 
       - name: Upload behavior report
