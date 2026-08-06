@@ -1,0 +1,21 @@
+name: Cancel stale audio generator
+
+on:
+  push:
+    branches: [feat/dark-premium-static-guide-audio-v27]
+    paths:
+      - .github/workflows/cancel-stale-audio-run.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dokohilf-approved-guide-audio-v27-final
+  cancel-in-progress: true
+
+jobs:
+  cancel-stale-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm stale generator cancellation
+        run: echo "The obsolete standalone audio generator has been superseded by PR validation."
