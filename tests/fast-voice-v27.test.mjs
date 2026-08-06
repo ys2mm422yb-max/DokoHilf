@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const experience = await readFile('assets/experience-v27.js', 'utf8');
+const diagnostics = await readFile('assets/voice-diagnostics.js', 'utf8');
 const ux = await readFile('assets/ux-v27.js', 'utf8');
 const server = await readFile('supabase/functions/dokohilf-tts/index.ts', 'utf8');
 const migration = await readFile('supabase/migrations/20260806173000_remove_repeated_exercise_notices.sql', 'utf8');
@@ -24,17 +25,34 @@ test('persistent browser storage is limited to one privacy acknowledgement boole
   assert.deepEqual([...new Set(directKeys)], ['PRIVACY_ACK_KEY']);
 });
 
-test('server uses the current Gemini Interactions TTS path and keeps Gacrux', () => {
+test('approved guide audio uses the fixed private Supabase manifest and cache', () => {
+  assert.match(diagnostics, /dokohilf-guide-audio/);
+  assert.match(diagnostics, /manifest=1&build=20260806-27/);
+  assert.match(diagnostics, /dokohilf-approved-guide-audio-20260806-27/);
+  assert.match(diagnostics, /isLocalManifestRequest/);
+  assert.match(diagnostics, /fetchGuideManifest/);
+  assert.match(diagnostics, /fetchCachedGuideAudio/);
+  assert.match(diagnostics, /__DOKOHILF_REMOTE_GUIDE_AUDIO_V27__/);
+  assert.match(experience, /loadPrebuiltVoice/);
+  assert.match(experience, /prebuilt-approved-guide/);
+});
+
+test('server parses raw Gemini Interactions REST audio and keeps Gacrux', () => {
   assert.match(server, /PRIMARY_MODEL = 'gemini-3\.1-flash-tts-preview'/);
   assert.match(server, /FALLBACK_MODEL = 'gemini-2\.5-flash-preview-tts'/);
   assert.match(server, /VOICE_NAME = 'Gacrux'/);
-  assert.match(server, /VOICE_STYLE = 'natural-spoken-german-colleague-v9-interactions'/);
+  assert.match(server, /VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio'/);
   assert.match(server, /INTERACTIONS_API_REVISION = '2026-05-20'/);
+  assert.match(server, /INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'/);
   assert.match(server, /v1beta\/interactions/);
   assert.match(server, /response_format: \{ type: 'audio' \}/);
   assert.match(server, /speech_config: \[\{ voice: VOICE_NAME \}\]/);
-  assert.match(server, /output_audio/);
-  assert.match(server, /X-DokoHilf-TTS-API/);
+  assert.match(server, /root\.steps/);
+  assert.match(server, /step\.content/);
+  assert.match(server, /extractInteractionAudio/);
+  assert.match(server, /X-DokoHilf-TTS-Parser/);
+  assert.match(server, /responseStatusForError/);
+  assert.match(server, /status === 429/);
   assert.match(server, /pendingAudio/);
   assert.match(server, /CACHE_TTL_MS = 2 \* 60 \* 60_000/);
   assert.match(server, /TRANSKRIPT:/);
