@@ -69,12 +69,16 @@ Bis zur schriftlichen Freigabe durch Arbeitgeber, IT und Datenschutz gilt:
 
 Testdaten müssen vollständig erfunden sein und dürfen keiner realen Person nachgebildet werden.
 
-## 7. Datenschutz
+## 7. Datenschutz, lokale Speicherung und Audio
 
 - Datensparsamkeit, Zweckbindung und definierte Löschfristen.
 - Keine Werbung, Nutzertracking, Analyse-SDKs, Social-Media-Pixel oder unnötigen Cookies.
-- Gesprächsverläufe und Audio werden nicht dauerhaft im Browser gespeichert.
-- Flüchtige Audio-Caches dürfen ausschließlich im Arbeitsspeicher existieren und müssen mit dem Prozess enden.
+- Gesprächsverläufe, Nutzerstimmen, Diktate, freie Sprachantworten und personenbezogene Audioinhalte werden nicht dauerhaft im Browser, Repository oder in Supabase gespeichert.
+- Flüchtige Caches für dynamische Sprachantworten dürfen ausschließlich im Arbeitsspeicher existieren und müssen mit dem Prozess enden.
+- Als eng begrenzte Ausnahme dürfen **allgemeine, fachlich freigegebene Guide-Anweisungen** einmal mit Gacrux erzeugt und als statische WAV-Dateien in der App ausgeliefert und im PWA-Cache gespeichert werden.
+- Diese statischen Dateien dürfen ausschließlich aus `step.text` freigegebener Guides entstehen. Nutzerantworten, Checks, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten sind als Audioquelle ausgeschlossen.
+- Jede statische Guide-Audiodatei benötigt einen dokumentierten Textschlüssel, gültigen WAV-Header, Dateigröße und SHA-256 im Manifest. Ändert sich der freigegebene Text, muss die Datei neu erzeugt werden.
+- Lokal dauerhaft gespeichert werden darf genau ein unpersönliches Ja/Nein-Merkmal: `dokohilf-privacy-ack-v1=yes`. Es zeigt ausschließlich an, dass der zentrale Datenschutz-Hinweis bereits bestätigt wurde. Keine Zeit, Identität, Gerätekennung oder weitere Nutzungsinformation speichern.
 - Vor Produktivstart müssen Verantwortlicher, Rechtsgrundlage, Datenschutzhinweis, Löschkonzept, Berechtigungskonzept und Auftragsverarbeitungsverträge geklärt sein.
 - Eine EU-Region ersetzt keine vollständige DSGVO-Prüfung.
 
@@ -135,6 +139,7 @@ Eine Anleitung darf erst veröffentlicht werden, wenn alle Punkte erfüllt sind:
 - Prüfdatum und verantwortliche Rolle hinterlegt;
 - alte oder falsche Versionen gesperrt;
 - nur freigegebene Klickwege werden ausgegeben;
+- statische Guide-Audios stimmen exakt mit dem freigegebenen Text und Manifest überein;
 - keine internen Inhalte im öffentlichen Repository oder Frontend-Bundle.
 
 Bei einem Nein: keine Veröffentlichung.
@@ -149,6 +154,7 @@ Die Arbeit wird sofort gestoppt, wenn:
 - ein Bild aus dem Chat außerhalb des Chats gespeichert werden soll;
 - fremde Handbuchtexte übernommen werden sollen;
 - ein geheimer Schlüssel im Frontend oder Repository landen würde;
+- eine statische Audiodatei Nutzer-, Gesprächs- oder personenbezogene Inhalte enthalten könnte;
 - eine Veröffentlichung interne Inhalte öffentlich sichtbar machen könnte;
 - eine notwendige rechtliche oder betriebliche Freigabe fehlt.
 
