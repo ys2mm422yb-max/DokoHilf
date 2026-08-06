@@ -43,16 +43,20 @@ jobs:
             supabase/migrations/20260806112100_vitalwerte_intent_alias_alignment.sql \
             supabase/migrations/20260806112200_noop_verify_vitalwerte_guides.sql \
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-tts-smoke.mjs \
-            tests/vitalwerte-intent.test.mjs; do
+            scripts/live-screenshot-smoke.mjs tests/vitalwerte-intent.test.mjs tests/live-build-recovery.test.mjs; do
             test -s "$file"
           done
 
-          grep -q 'dokohilf-build" content="20260806-23' _site/index.html
-          grep -q 'guide-progress.js?v=20260806-23' _site/index.html
-          grep -q 'voice-focus-mode.js?v=20260806-23' _site/index.html
-          grep -q 'app.js?v=20260806-23' _site/index.html
-          grep -q '"buildId": "20260806-23"' _site/version.json
-          grep -q "BUILD_ID = '20260806-23'" _site/service-worker.js
+          grep -q 'dokohilf-build" content="20260806-24' _site/index.html
+          grep -q 'guide-progress.js?v=20260806-24' _site/index.html
+          grep -q 'voice-focus-mode.js?v=20260806-24' _site/index.html
+          grep -q 'app.js?v=20260806-24' _site/index.html
+          grep -q '"buildId": "20260806-24"' _site/version.json
+          grep -q "BUILD_ID = '20260806-24'" _site/service-worker.js
+          grep -q '__DOKOHILF_DIRECT_ROUTER_V24__' _site/index.html
+          grep -q 'KI · v24' _site/index.html
+          grep -q 'DokoHilfHardRefresh' _site/index.html
+          grep -q 'CLEAR_DOKOHILF_CACHES' _site/service-worker.js
 
           grep -q '__DOKOHILF_GUIDE_PROGRESS_PATCH_V2__' _site/assets/guide-progress.js
           grep -q 'guideStateVersion: 2' _site/assets/guide-progress.js
@@ -75,9 +79,10 @@ jobs:
           grep -q 'vitalwerte-sammelerfassung-fortsetzen' supabase/functions/dokohilf-ai-router/index.ts
           grep -q 'Die einmal genannte Absicht bleibt bestehen' supabase/functions/dokohilf-ai-router/index.ts
 
-          grep -q "VOICE_NAME = 'Vindemiatrix'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "VOICE_STYLE = 'direct-natural-colleague-v4'" supabase/functions/dokohilf-tts/index.ts
-          grep -q 'natürliche Muttersprachlerin' supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_NAME = 'Gacrux'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v5'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "PRIMARY_MODEL = 'gemini-2.5-pro-preview-tts'" supabase/functions/dokohilf-tts/index.ts
+          grep -q 'erfahrene Kollegin' supabase/functions/dokohilf-tts/index.ts
           grep -q 'X-DokoHilf-TTS-Latency' supabase/functions/dokohilf-tts/index.ts
 
           grep -q 'grüne Plus' supabase/migrations/20260806112000_vitalwerte_intent_guides.sql
@@ -108,6 +113,7 @@ jobs:
           node --check _site/service-worker.js
           node --check scripts/live-routing-smoke.mjs
           node --check scripts/live-tts-smoke.mjs
+          node --check scripts/live-screenshot-smoke.mjs
 
       - name: Run deterministic behavior regressions
         run: |
@@ -126,10 +132,13 @@ jobs:
             tests/mobile-layout-contract.test.mjs \
             tests/privacy-contract.test.mjs \
             tests/editor-security.test.mjs \
-            tests/vitalwerte-intent.test.mjs
+            tests/vitalwerte-intent.test.mjs \
+            tests/live-build-recovery.test.mjs
 
       - name: Check active DokoHilf router
-        run: node scripts/live-routing-smoke.mjs
+        run: |
+          node scripts/live-routing-smoke.mjs
+          node scripts/live-screenshot-smoke.mjs
 
       - name: Check active DokoHilf voice service
         run: node scripts/live-tts-smoke.mjs
