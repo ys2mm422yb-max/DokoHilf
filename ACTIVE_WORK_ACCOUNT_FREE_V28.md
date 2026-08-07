@@ -28,7 +28,10 @@ Die 38 Guide-Versionen sind keine Konten-, Personen- oder Falldaten und bleiben 
 - Die frühere Edge Function `dokohilf-editor` enthält nur noch einen datenfreien `410 Gone`-Ruhestandscode und verlangt zusätzlich ein JWT.
 - Die leeren Rollen- und Audit-Tabellen, Rollenfunktionen, Editor-Policies und personengebundenen Spalten werden entfernt.
 - Der technische Versionsverlauf allgemeiner Guides bleibt ohne Personenbezug bestehen.
+- Explizite restriktive RLS-Policies verweigern `anon` und `authenticated` jeden Zugriff auf Guides und Guide-Versionen.
 - Ein aktiver `BEFORE INSERT`-Trigger auf `auth.users` blockiert jede Kontoerstellung serverseitig, einschließlich direkter Signups und Admin-Einladungen.
+- Die lokale Supabase-Konfiguration deaktiviert globale, anonyme, E-Mail- und SMS-Signups zusätzlich. Der Live-Schutz bleibt der datenbankseitige Trigger, weil die gehostete Auth-Konfiguration nicht durch eine SQL-Migration gesteuert wird.
+- Blocker und Guide-Archivierung liegen als `SECURITY INVOKER` in einem nicht exponierten technischen Schema; der Rückbau führt keine privilegierte Funktion im öffentlichen Schema ein.
 - Die Migration bricht ab, falls vor ihrer Ausführung unerwartet doch Konten oder Personenreferenzen vorhanden sind.
 
 ## Pflichtprüfungen

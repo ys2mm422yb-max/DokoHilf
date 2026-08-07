@@ -12,6 +12,7 @@ const [
   edge,
   config,
   migration,
+  denyPolicies,
   historicalRbac,
   historicalHardening,
   historicalIndexes,
@@ -26,6 +27,7 @@ const [
   readFile(new URL('../supabase/functions/dokohilf-editor/index.ts', import.meta.url), 'utf8'),
   read('supabase/config.toml'),
   readFile(new URL('../supabase/migrations/20260807230003_remove_app_account_infrastructure.sql', import.meta.url), 'utf8'),
+  read('supabase/migrations/20260807232000_deny_all_app_guide_access.sql'),
   read('supabase/migrations/20260805224500_dokohilf_editor_rbac.sql'),
   read('supabase/migrations/20260805230000_dokohilf_editor_security_hardening.sql'),
   read('supabase/migrations/20260805231500_dokohilf_editor_performance_indexes.sql'),
@@ -75,6 +77,9 @@ test('früherer Editor-Endpunkt ist ein dauerhafter JWT-geschützter Ruhestandsp
   assert.match(edge, /permanently-account-free-v28/);
   assert.doesNotMatch(edge, /fetch\(|SUPABASE_|auth\/v1|dokohilf_user_roles|sessionStorage/);
   assert.match(config, /\[functions\.dokohilf-editor\]\s+verify_jwt = true/s);
+  assert.match(config, /\[auth\]\s+enable_signup = false\s+enable_anonymous_sign_ins = false/s);
+  assert.match(config, /\[auth\.email\]\s+enable_signup = false/s);
+  assert.match(config, /\[auth\.sms\]\s+enable_signup = false/s);
 });
 
 test('Migration entfernt nur leere Accountstrukturen und erhält allgemeine Guides', () => {
@@ -98,12 +103,15 @@ test('Migration entfernt nur leere Accountstrukturen und erhält allgemeine Guid
 
 test('serverseitiger Trigger verhindert jede spätere Kontoerstellung', () => {
   assert.match(migration, /lock table auth\.users in share row exclusive mode/);
+  assert.match(migration, /create schema if not exists dokohilf_internal/);
   assert.match(migration, /create trigger dokohilf_block_all_user_creation/);
   assert.match(migration, /before insert on auth\.users/);
+  assert.match(migration, /dokohilf_internal\.block_auth_user_insert/);
   assert.match(migration, /DokoHilf is permanently account-free/);
+  assert.doesNotMatch(migration, /security definer/i);
 
   const archiveFunction = migration.slice(migration.indexOf(
-    'create or replace function public.dokohilf_archive_guide_version()',
+    'create or replace function dokohilf_internal.archive_guide_version()',
   ));
   assert.match(archiveFunction, /insert into public\.dokohilf_guide_versions/);
   assert.doesNotMatch(archiveFunction, /changed_by|approved_by/);
@@ -115,9 +123,18 @@ test('Migration löscht oder leert keine allgemeinen Guides und Versionen', () =
   assert.doesNotMatch(migration, /drop\s+table\s+(?:if\s+exists\s+)?public\.dokohilf_(?:guides|guide_versions)/i);
 });
 
+test('Guide-Tabellen besitzen ausdrückliche RLS-Sperren für jede App-Rolle', () => {
+  assert.match(denyPolicies, /dokohilf_guides_deny_all_app_access/);
+  assert.match(denyPolicies, /dokohilf_guide_versions_deny_all_app_access/);
+  assert.equal((denyPolicies.match(/as restrictive/g) || []).length, 2);
+  assert.equal((denyPolicies.match(/to anon, authenticated/g) || []).length, 2);
+  assert.equal((denyPolicies.match(/using \(false\)/g) || []).length, 2);
+  assert.equal((denyPolicies.match(/with check \(false\)/g) || []).length, 2);
+});
+
 test('Guide-Archivierung bleibt technisch erhalten und vollständig personenfrei', () => {
   const archiveFunction = migration.slice(migration.indexOf(
-    'create or replace function public.dokohilf_archive_guide_version()',
+    'create or replace function dokohilf_internal.archive_guide_version()',
   ));
   assert.match(archiveFunction, /create trigger dokohilf_guides_archive_version/);
   assert.match(archiveFunction, /change_note/);
@@ -134,6 +151,7 @@ test('historische Editor-Migrationen sind ausdrücklich als stillgelegt markiert
 test('CI verankert Ruhestandsfunktion, Migration und Konto-frei-Test', () => {
   assert.match(workflow, /supabase\/functions\/dokohilf-editor\/index\.ts/);
   assert.match(workflow, /supabase\/migrations\/20260807230003_remove_app_account_infrastructure\.sql/);
+  assert.match(workflow, /supabase\/migrations\/20260807232000_deny_all_app_guide_access\.sql/);
   assert.match(workflow, /tests\/account-free-product\.test\.mjs/);
   assert.match(workflow, /dokohilf_block_all_user_creation/);
 });

@@ -38,10 +38,18 @@ begin
 end
 $$;
 
-create or replace function public.dokohilf_block_auth_user_insert()
+create schema if not exists dokohilf_internal;
+revoke all on schema dokohilf_internal
+  from public, anon, authenticated, service_role;
+grant usage on schema dokohilf_internal to supabase_auth_admin;
+
+comment on schema dokohilf_internal is
+  'Nicht exponierte technische DokoHilf-Funktionen; keine Konten-, Rollen- oder Personendaten.';
+
+create or replace function dokohilf_internal.block_auth_user_insert()
 returns trigger
 language plpgsql
-security definer
+security invoker
 set search_path = ''
 as $$
 begin
@@ -51,15 +59,17 @@ begin
 end
 $$;
 
-revoke all on function public.dokohilf_block_auth_user_insert()
-  from public, anon, authenticated, service_role, supabase_auth_admin;
+revoke all on function dokohilf_internal.block_auth_user_insert()
+  from public, anon, authenticated, service_role;
+grant execute on function dokohilf_internal.block_auth_user_insert()
+  to supabase_auth_admin;
 
 drop trigger if exists dokohilf_block_all_user_creation on auth.users;
 create trigger dokohilf_block_all_user_creation
 before insert on auth.users
-for each row execute function public.dokohilf_block_auth_user_insert();
+for each row execute function dokohilf_internal.block_auth_user_insert();
 
-comment on function public.dokohilf_block_auth_user_insert() is
+comment on function dokohilf_internal.block_auth_user_insert() is
   'Permanent server-side invariant: DokoHilf never creates application accounts.';
 
 drop policy if exists dokohilf_roles_select_authorized
@@ -107,10 +117,10 @@ revoke all on table public.dokohilf_guide_versions
 grant select on table public.dokohilf_guides,
   public.dokohilf_guide_versions to service_role;
 
-create or replace function public.dokohilf_archive_guide_version()
+create or replace function dokohilf_internal.archive_guide_version()
 returns trigger
 language plpgsql
-security definer
+security invoker
 set search_path = ''
 as $$
 begin
@@ -158,12 +168,12 @@ begin
 end
 $$;
 
-revoke all on function public.dokohilf_archive_guide_version()
+revoke all on function dokohilf_internal.archive_guide_version()
   from public, anon, authenticated, service_role;
 
 create trigger dokohilf_guides_archive_version
 before update or delete on public.dokohilf_guides
-for each row execute function public.dokohilf_archive_guide_version();
+for each row execute function dokohilf_internal.archive_guide_version();
 
 comment on table public.dokohilf_guides is
   'Allgemeine, unpersoenliche DokoHilf-Anleitungen; keine Konten, Profile oder Falldaten.';
