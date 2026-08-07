@@ -27,7 +27,7 @@ test('aktuelle Basisschicht verhindert weiterhin Überlagerungen', () => {
 
 test('neue Balance-Schicht gruppiert Schritt, Mikrofon und Status statt den Konsolenbereich aufzuspannen', () => {
   assert.match(balanceCss, /voice-focus-inner\{[\s\S]*grid-template-rows:auto minmax\(0,1fr\) auto!important/);
-  assert.match(balanceCss, /voice-focus-main\{[\s\S]*justify-content:flex-start!important[\s\S]*gap:14px!important/);
+  assert.match(balanceCss, /voice-focus-main\{[\s\S]*justify-content:flex-start!important[\s\S]*gap:16px!important/);
   assert.match(balanceCss, /#voiceFocusConsoleSlot\{[\s\S]*flex:0 0 auto!important[\s\S]*height:auto!important/);
   assert.match(balanceCss, /voice-console\{[\s\S]*justify-content:flex-start!important[\s\S]*height:auto!important/);
   assert.match(balanceCss, /data-voice-state="listening"[\s\S]*width:138px!important/);
@@ -43,6 +43,7 @@ test('kleine und niedrige iPhones behalten die verdichtete Darstellung', () => {
   assert.match(legacyCss, /@media\(max-width:680px\)/);
   assert.match(currentCss, /voice-focus-stage/);
   assert.match(balanceCss, /@media\(max-width:680px\)/);
+  assert.match(balanceCss, /gap:18px!important/);
   assert.match(balanceCss, /width:82px!important/);
   assert.match(balanceCss, /width:134px!important/);
   assert.match(balanceCss, /@media\(max-height:760px\)/);
