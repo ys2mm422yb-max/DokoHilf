@@ -42,7 +42,7 @@ test('GitHub-Build erzeugt alle bestätigten statischen Sprachsätze ohne TTS-AP
   assert.match(builder, /supertonic_text/);
   assert.match(builder, /'„': ''/);
   assert.match(build, /DOKOHILF_REQUIRE_STATIC_SUPERTONIC/);
-  assert.match(build, /statische Supertonic-Sprachbestand unvollständig/);
+  assert.match(build, /Statischer Supertonic-Sprachbestand unvollständig/);
   assert.match(extras, /Okay\. Schau oben in die grüne Reiterleiste/);
   assert.match(extras, /Die Medikation darf hier nur angesehen werden/);
   assert.match(extras, /Der Ablauf ist erledigt/);
