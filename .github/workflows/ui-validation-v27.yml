@@ -1,0 +1,88 @@
+name: Validate dark iPhone UI v27
+
+on:
+  push:
+    branches: [feat/dark-premium-v27-final]
+    paths:
+      - index.html
+      - service-worker.js
+      - assets/**
+      - scripts/mobile-render-v27.mjs
+      - .github/workflows/ui-validation-v27.yml
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - index.html
+      - service-worker.js
+      - assets/**
+      - scripts/mobile-render-v27.mjs
+      - .github/workflows/ui-validation-v27.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dokohilf-ui-v27-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-iphone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout exact feature head
+        uses: actions/checkout@v4
+
+      - name: Build isolated UI test surface
+        run: |
+          set -euo pipefail
+          mkdir -p _ui_site/assets artifacts/mobile-v27
+          cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _ui_site/
+          cp -R assets/. _ui_site/assets/
+          cat > _ui_site/assets/guide-audio-manifest.json <<'JSON'
+          {
+            "schemaVersion": 1,
+            "buildId": "20260806-27",
+            "voice": "Gacrux",
+            "source": "ui-render-isolated",
+            "entryCount": 0,
+            "entries": []
+          }
+          JSON
+          touch _ui_site/.nojekyll
+          test -s _ui_site/index.html
+          grep -q 'KI · v27' _ui_site/index.html
+          grep -q -- '--v27-bg:#020c12' _ui_site/assets/premium-ui-v27.css
+          grep -q '__DOKOHILF_PRIVACY_ACK_V27__' _ui_site/assets/ux-v27.js
+
+      - name: Install Chromium test runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.54.2
+          npx playwright install --with-deps chromium
+
+      - name: Render and interact at iPhone size
+        env:
+          DOKOHILF_UI_MOCK: '1'
+          DOKOHILF_RENDER_URL: http://127.0.0.1:4173/
+          DOKOHILF_RENDER_OUTPUT: artifacts/mobile-v27
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --directory _ui_site >artifacts/mobile-v27-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+          node scripts/mobile-render-v27.mjs
+
+      - name: Upload real render evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dokohilf-dark-ui-v27-${{ github.run_number }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 30

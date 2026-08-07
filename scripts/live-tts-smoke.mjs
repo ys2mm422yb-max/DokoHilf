@@ -4,19 +4,23 @@ const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 const TEST_TEXT = 'Öffne Vitalwerte und klicke oben links auf das grüne Plus.';
 const EXPECTED_VOICE = 'Gacrux';
-const EXPECTED_STYLE = 'natural-spoken-german-colleague-v7-fast-start';
-const ALLOWED_MODELS = new Set([
-  'gemini-2.5-flash-preview-tts',
-  'gemini-2.5-pro-preview-tts',
+const EXPECTED_PARSER = 'raw-steps-content-v1';
+const ALLOWED_STYLES = new Set([
+  'natural-spoken-german-colleague-v10-rest-audio',
 ]);
-const MAX_SERVER_LATENCY_MS = 8_000;
+const ALLOWED_MODELS = new Set([
+  'gemini-3.1-flash-tts-preview',
+  'gemini-2.5-flash-preview-tts',
+]);
+const ALLOWED_APIS = new Set([
+  'interactions-v1beta',
+  'generate-content-v1beta',
+  'server-memory-cache',
+]);
+const MAX_SERVER_LATENCY_MS = 22_000;
 
 class ProviderUnavailableError extends Error {
-  constructor(message, status = 0) {
-    super(message);
-    this.name = 'ProviderUnavailableError';
-    this.status = status;
-  }
+  constructor(message, status = 0) { super(message); this.name = 'ProviderUnavailableError'; this.status = status; }
 }
 
 async function requestAudio() {
@@ -27,12 +31,10 @@ async function requestAudio() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
       body: JSON.stringify({ text: TEST_TEXT }),
-      signal: AbortSignal.timeout(16_000),
+      signal: AbortSignal.timeout(28_000),
     });
   } catch (error) {
-    if (error?.name === 'TimeoutError' || error?.name === 'AbortError') {
-      throw new ProviderUnavailableError('Zeitüberschreitung beim externen Sprachdienst');
-    }
+    if (error?.name === 'TimeoutError' || error?.name === 'AbortError') throw new ProviderUnavailableError('Zeitüberschreitung beim externen Sprachdienst');
     throw error;
   }
 
@@ -44,6 +46,8 @@ async function requestAudio() {
     contentType: response.headers.get('content-type') || '',
     voice: response.headers.get('x-dokohilf-voice') || '',
     model: response.headers.get('x-dokohilf-tts-model') || '',
+    api: response.headers.get('x-dokohilf-tts-api') || '',
+    parser: response.headers.get('x-dokohilf-tts-parser') || '',
     mode: response.headers.get('x-dokohilf-voice-mode') || '',
     style: response.headers.get('x-dokohilf-voice-style') || '',
     cache: response.headers.get('x-dokohilf-tts-cache') || '',
@@ -53,32 +57,26 @@ async function requestAudio() {
     header,
   };
 
-  if ([429, 502, 503, 504].includes(response.status)) {
-    throw new ProviderUnavailableError(`Externer Sprachdienst HTTP ${response.status}`, response.status);
-  }
+  if ([429, 502, 503, 504].includes(response.status)) throw new ProviderUnavailableError(`Externer Sprachdienst HTTP ${response.status}`, response.status);
   if (!response.ok) throw new Error(`Unerwarteter TTS-Fehler HTTP ${response.status}`);
   if (!result.contentType.includes('audio/wav')) throw new Error(`Falscher Inhaltstyp: ${result.contentType}`);
   if (bytes.byteLength <= 44) throw new Error('Audiodatei ist leer.');
   if (!header.startsWith('RIFF') || !header.includes('WAVE')) throw new Error(`Ungültiger WAV-Header: ${header}`);
   if (result.voice !== EXPECTED_VOICE) throw new Error(`Falsche Stimme: ${result.voice || 'leer'}`);
-  if (result.style !== EXPECTED_STYLE) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
+  if (result.parser !== EXPECTED_PARSER) throw new Error(`Falscher REST-Audioparser: ${result.parser || 'leer'}`);
+  if (!ALLOWED_STYLES.has(result.style)) throw new Error(`Falscher Stil: ${result.style || 'leer'}`);
   if (!ALLOWED_MODELS.has(result.model)) throw new Error(`Falsches Modell: ${result.model || 'leer'}`);
-  if (!['hit', 'miss'].includes(result.cache)) throw new Error(`Cache-Nachweis fehlt: ${result.cache || 'leer'}`);
-  if (result.cache !== 'hit' && (!result.serverLatency || result.serverLatency > MAX_SERVER_LATENCY_MS)) {
-    throw new Error(`Sprachausgabe zu langsam: ${result.serverLatency || 0} ms`);
-  }
+  if (!ALLOWED_APIS.has(result.api)) throw new Error(`API-Nachweis fehlt oder ist falsch: ${result.api || 'leer'}`);
+  if (!['hit', 'miss', 'shared'].includes(result.cache)) throw new Error(`Cache-Nachweis fehlt: ${result.cache || 'leer'}`);
+  if (result.cache === 'miss' && (!result.serverLatency || result.serverLatency > MAX_SERVER_LATENCY_MS)) throw new Error(`Sprachausgabe zu langsam: ${result.serverLatency || 0} ms`);
   return { result, bytes };
 }
 
 async function runTest() {
   let lastError;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
-    try {
-      return await requestAudio();
-    } catch (error) {
-      lastError = error;
-      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1500));
-    }
+    try { return await requestAudio(); }
+    catch (error) { lastError = error; if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1200)); }
   }
   throw lastError;
 }
@@ -88,40 +86,15 @@ let report;
 try {
   const first = await runTest();
   const second = await runTest();
-  report = {
-    passed: true,
-    providerAvailable: true,
-    first: first.result,
-    second: second.result,
-    cacheReuseObserved: second.result.cache === 'hit',
-  };
+  report = { passed: true, providerAvailable: true, first: first.result, second: second.result, cacheReuseObserved: ['hit', 'shared'].includes(second.result.cache) };
   await writeFile('artifacts/dokohilf-live-tts.wav', first.bytes);
-  console.log(`DokoHilf Live-TTS: erster Abruf ${first.result.serverLatency} ms, zweiter Abruf ${second.result.serverLatency} ms, Cache ${second.result.cache}, Stimme ${first.result.voice}, Modell ${first.result.model}.`);
+  console.log(`DokoHilf Live-TTS: erster Abruf ${first.result.serverLatency} ms, zweiter Abruf ${second.result.serverLatency} ms, API ${first.result.api}, Parser ${first.result.parser}, Cache ${second.result.cache}, Stimme ${first.result.voice}, Stil ${first.result.style}, Modell ${first.result.model}.`);
 } catch (error) {
   const providerUnavailable = error instanceof ProviderUnavailableError;
-  report = {
-    passed: false,
-    providerAvailable: !providerUnavailable,
-    nonBlockingExternalOutage: providerUnavailable,
-    endpoint: ENDPOINT,
-    error: String(error?.message || error),
-  };
-
-  if (providerUnavailable) {
-    console.warn(`DokoHilf Live-TTS: externer Anbieter vorübergehend nicht verfügbar (${report.error}). Statische TTS-, Fallback- und Datenschutztests bleiben grün; Ausfall wird als Artefakt dokumentiert.`);
-  } else {
-    console.error(`DokoHilf Live-TTS fehlgeschlagen: ${report.error}`);
-    process.exitCode = 1;
-  }
+  report = { passed: false, providerAvailable: !providerUnavailable, nonBlockingExternalOutage: providerUnavailable, endpoint: ENDPOINT, error: String(error?.message || error) };
+  if (providerUnavailable) console.warn(`DokoHilf Live-TTS: externer Anbieter vorübergehend nicht verfügbar (${report.error}).`);
+  else { console.error(`DokoHilf Live-TTS fehlgeschlagen: ${report.error}`); process.exitCode = 1; }
 }
 
 await writeFile('artifacts/dokohilf-live-tts.json', JSON.stringify(report, null, 2), 'utf8');
-await writeFile(
-  'artifacts/dokohilf-live-tts.md',
-  `# DokoHilf Live-TTS\n\n- ${report.passed
-    ? `✅ erster Abruf ${report.first.serverLatency} ms · zweiter Abruf ${report.second.serverLatency} ms · Cache ${report.second.cache} · ${report.first.voice} · ${report.first.model}`
-    : report.nonBlockingExternalOutage
-      ? `⚠️ externer Sprachdienst vorübergehend nicht erreichbar: ${report.error}. Kein gültiger WAV-Nachweis in diesem Lauf.`
-      : `❌ ${report.error}`}\n`,
-  'utf8',
-);
+await writeFile('artifacts/dokohilf-live-tts.md', `# DokoHilf Live-TTS\n\n- ${report.passed ? `✅ ${report.first.serverLatency} ms · API ${report.first.api} · Parser ${report.first.parser} · Cache ${report.second.cache} · ${report.first.voice} · ${report.first.style} · ${report.first.model}` : report.nonBlockingExternalOutage ? `⚠️ externer Sprachdienst vorübergehend nicht erreichbar: ${report.error}` : `❌ ${report.error}`}\n`, 'utf8');

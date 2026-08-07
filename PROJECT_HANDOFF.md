@@ -2,7 +2,8 @@
 
 **Status:** Verbindliche Arbeitsquelle  
 **Stand:** 6. August 2026  
-**Aktueller veröffentlichter Build:** `20260806-26`
+**Veröffentlichter Build:** `20260806-26`  
+**Aktueller Ziel-Build:** `20260806-27`
 
 > Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md` und diese Datei. Danach werden der tatsächliche GitHub-, GitHub-Actions-, GitHub-Pages- und Supabase-Stand geprüft. Veränderliche Zustände niemals nur aus dieser Übergabe übernehmen.
 
@@ -10,206 +11,280 @@
 
 - Einziges Repository: `ys2mm422yb-max/DokoHilf`
 - Einziges Supabase-Projekt: `efifbuqctylsujiauabg`
+- Region: Frankfurt, `eu-central-1`
 - Fester öffentlicher Hauptlink: `https://ys2mm422yb-max.github.io/DokoHilf/`
-- Andere Repositories und Projekte, insbesondere DungeonVeil, Runeborn oder dungeon, niemals öffnen, verändern oder verbinden.
-- Keine Echtdaten, Bewohnerdaten, Gesundheitsdaten, Mitarbeiterdaten oder produktiven Zugänge.
-- Keine produktive Vivendi-Datenbank, API, nicht dokumentierte Schnittstelle oder Scraping-Verbindung.
-- Keine Herstellerlogos, geschützten Handbuchtexte oder internen Screenshots im öffentlichen Repository.
-- Die zur Bestätigung verwendeten Bilder bleiben ausschließlich im jeweiligen Chat. Sie dürfen niemals in GitHub, Supabase, Issues, Pull Requests, Tests, Artefakte oder die öffentliche App übernommen werden.
-- In Repository und Supabase werden nur anonymisierte, selbst formulierte Klickwege und künstliche Testfälle gespeichert.
+- Andere Repositories und Supabase-Projekte niemals öffnen, verändern oder verbinden.
+- Keine produktive Verbindung zur Dokumentationssoftware, keine nicht dokumentierten Schnittstellen und kein Scraping.
+- Keine echten Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten.
+- Nutzerbilder und Screenshots bleiben ausschließlich im jeweiligen Chat. Sie dürfen niemals in GitHub, Supabase, Tests, Artefakte oder die App gelangen.
 
-## 2. Verbindlicher GitHub-Arbeitsablauf
+## 2. Verbindlicher GitHub-Ablauf
 
-1. Vor jedem Eingriff echten Stand auf `main`, offene Pull Requests, Actions und Pages prüfen.
+1. Vor jedem Eingriff `main`, offene Pull Requests, Actions, `gh-pages` und Supabase prüfen.
 2. Nie direkt auf `main` arbeiten.
-3. Eigener Branch pro Arbeitsblock.
-4. Änderungen, Tests und Nachweise im Repository speichern.
-5. Pull Request gegen `main` erstellen.
-6. Nur den exakten PR-Head mergen, wenn alle erforderlichen Checks grün sind.
-7. Kein Auto-Merge aktivieren.
-8. Branches nicht automatisch löschen.
-9. Veröffentlichung ausschließlich über den festen Hauptlink prüfen.
-10. `gh-pages` ist der tatsächlich ausgelieferte Pages-Branch und wird durch `.github/workflows/publish-gh-pages.yml` aus `main` synchronisiert.
+3. Eigener Branch und Pull Request pro Arbeitsblock.
+4. Änderungen, Entscheidungen, Tests, Fehler und Restarbeiten dauerhaft im Repository dokumentieren.
+5. Nur den vollständig grünen exakten PR-Head manuell mergen.
+6. Kein Auto-Merge und keine automatische Branch-Löschung.
+7. Nach Merge `main`, `gh-pages`, aktive Edge Functions und den festen Hauptlink kontrollieren.
+8. Gegenüber dem Nutzer niemals alternative Preview-, Branch-, Cache- oder Query-Links nennen.
 
 ## 3. Verbindliche Fachquelle
 
-`CONFIRMED_WORKFLOWS.md` enthält alle vom Nutzer bestätigten anonymisierten Klickwege. Bei einem Widerspruch mit älteren Texten gilt diese Datei als fachliche Quelle. Supabase-Guides müssen mit ihr übereinstimmen.
+`CONFIRMED_WORKFLOWS.md` enthält alle bestätigten anonymisierten Klickwege. Supabase-Guides und Routerantworten müssen damit übereinstimmen. Nicht bestätigte Abläufe, Feldnamen oder fachliche Inhalte werden nicht erfunden.
 
-Aktuell bestätigt sind:
+Bestätigt sind:
 
-- Bericht anlegen einschließlich vorgelagerter Kategorieauswahl
-- automatisch verknüpfte Protokolle bei `Kontakt – alles außer Arzt` und `Sturzereignis`
+- Bericht anlegen einschließlich Kategorieauswahl und automatisch verknüpfter Protokolle
 - Bericht durchstreichen
 - Folgebericht erstellen
 - falsch abgezeichnete Durchführung stornieren
-- Visite mit vorgeschalteter Bewohnerauswahl und Status durchgeführt
+- Visite mit vorgeschalteter Bewohnerauswahl und Status **durchgeführt**
 - Vitalwerte als getrennte Einzel- und Sammelerfassung
 - An-/Abwesenheit mit harter Von-/Bis-Regel
 - Medikation ausschließlich ansehen
 - Formulare anlegen
-- Notfallblatt aufrufen
-- Übergabe über `Was war los?`
+- Notfallblatt öffnen
+- Übergabe über `Analyse → Was war los? → Alle anzeigen → Alles ausklappen`
 
-## 4. Architektur
+## 4. Architektur des Ziel-Builds 27
 
 ### Frontend
 
-- Statische PWA auf GitHub Pages
+- statische PWA auf GitHub Pages
 - Einstieg: `index.html`
 - Kernlogik: `assets/app.js`
-- Dialogzustand: `assets/guide-progress.js`
+- Gesprächszustand: `assets/guide-progress.js`
 - strukturierte Auswahl: `assets/clarification-ui.js`
 - Sprachfokus: `assets/voice-focus-mode.js`
 - Audio-Entsperrung: `assets/mobile-audio-fix.js`
-- Sprachdiagnose: `assets/voice-diagnostics.js`
 - Updateverwaltung: `assets/update-manager.js`
-- Premium-Grunddesign: `assets/premium-ui-v25.css`
-- Build-26-Sprachlayout ohne Text-/Mikrofonüberlappung: `assets/premium-ui-v26.css`
-- Build-26-Sprachvorbereitung und flüchtiges Vorladen: `assets/experience-v26.js`
+- Dark-Design: `assets/premium-ui-v27.css`
+- kompakte Bedienung und Erststart-Datenschutz: `assets/ux-v27.css` und `assets/ux-v27.js`
+- statische und dynamische Sprachausgabe: `assets/experience-v27.js`
+- Weiterleitung und Gerätecache des privaten Audiokatalogs: `assets/voice-diagnostics.js`
+- statischer Audio-Textkatalog: `assets/guide-audio-catalog.json`
+- gemeinsamer Pages-Build: `scripts/build-static-site-v27.sh`
+- mobile Renderprüfung: `scripts/mobile-render-v27.mjs`
 
-### Supabase Edge Functions
+Der öffentliche Pages-Build enthält keine WAV-Binärdateien und kein lokales Audio-Manifest. Freigegebene Guide-Audios werden aus einem privaten Supabase-Bucket über einen kontrollierten Leseendpunkt ausgeliefert und auf dem Gerät gecacht.
 
-- `dokohilf-ai`: Kernrouting und Wissensantworten
-- `dokohilf-ai-router`: zustandsbasierter Gesprächsrouter für freigegebene Guides
-- `dokohilf-tts`: natürliche Sprachausgabe
-- `dokohilf-editor`: geschützter Redaktionsbereich
+### Supabase
 
-### Wissensbasis
+Aktiv und live nachgeprüft:
 
-- Freigegebene Guides liegen in `public.dokohilf_guides`.
-- Themenzuordnungen liegen in `public.dokohilf_topics`.
-- Die KI darf bestätigte Klickwege niemals erfinden oder verändern.
-- Freie Formulierungen werden auf freigegebene Ziele geroutet.
-- Innerhalb eines laufenden Guides interpretiert Gemini nur die Bedeutung der Nutzerantwort. Die ausgegebenen Schritte stammen weiterhin ausschließlich aus freigegebenen Guides.
+- `dokohilf-ai-router`: Version **11**, Marker `conversational-guide-router-v9`
+- `dokohilf-tts`: Version **20**
+- `dokohilf-guide-audio`: Version **1**, kontrollierter Manifest- und WAV-Leseendpunkt
+- `dokohilf-guide-audio-build`: Version **2**, intern token-geschützter Builder
+- `dokohilf-editor`: Version **1**, JWT-geschützter Redaktionsbereich
+- freigegebene Guides: `public.dokohilf_guides`
+- Themenzuordnungen: `public.dokohilf_topics`
+- Audio-Registry: `public.dokohilf_static_guide_audio`
+- interner Builderzustand: `public.dokohilf_internal_build_control`
+- privater Storage-Bucket: `dokohilf-guide-audio`
+- temporäre Diagnose-, Export-, Batch-, Store- und Snapshot-Endpunkte sind neutralisiert und antworten nur noch HTTP 410
 
-## 5. Gesprächslogik ab Router v9
+## 5. Gesprächslogik
 
-Supabase-Funktion `dokohilf-ai-router`, aktive Version: **11** mit Header `conversational-guide-router-v9`.
+- Eine klar genannte Absicht bleibt erhalten.
+- `Ich möchte Vitalwerte eingeben` bedeutet bereits Erfassen.
+- Bei Vitalwerten wird nur zwischen Einzelwert und Sammelerfassung unterschieden.
+- Bestätigungen führen exakt einen Schritt weiter.
+- Verneinungen und Probleme gelten nicht als erledigt.
+- Ein klar genanntes neues Ziel ersetzt den alten Ablauf sauber.
+- Medikationsänderungen werden blockiert; angeboten wird ausschließlich der bestätigte Leseweg.
+- Ausgegebene Klickschritte stammen nur aus freigegebenen Guides.
+- Routerantworten enthalten `spokenText` und `nextSpokenText`.
 
-Verbindliches Verhalten:
+## 6. Verbindliches Oberflächenziel Build 27
 
-- Eine einmal klar genannte Absicht bleibt erhalten.
-- `Ich möchte Vitalwerte eingeben` bedeutet bereits Erfassen, nicht Nachsehen.
-- Bei Vitalwerten wird nur noch zwischen Einzelwert und Sammelerfassung unterschieden.
-- Normale Bestätigungen wie `Ich habe Blutdruck ausgewählt`, `ist geöffnet` oder `wurde gespeichert` führen genau einen Schritt weiter.
-- Verneinungen und Probleme wie `noch nicht`, `geht nicht` oder `ich finde das nicht` gelten nicht als erledigt.
-- Frühere Ja-Antworten dürfen keine späteren Schritte überspringen.
-- Ein eindeutig genanntes neues Ziel ersetzt den alten Ablauf sauber.
-- Mehrdeutige Korrekturen werden strukturiert geklärt.
-- Unbekannte Abläufe werden nicht erfunden.
-- Medikationsänderungen werden nicht angeleitet; angeboten wird ausschließlich der bestätigte Leseweg.
-- Router-Antworten enthalten `spokenText` für die kurze Sprachausgabe und `nextSpokenText` zum Vorladen des nächsten bekannten Schritts.
-- Gemini darf nur aus der Liste freigegebener Guide-Slugs auswählen und erhält ein kurzes Zeitlimit.
+- dunkle Grundfläche in Petrol/Schwarz mit grünen und blauen Akzenten
+- flache kompakte Kopfzeile
+- Hauptmenü mit **Sprechen** und **Schreiben**
+- häufige bestätigte Abläufe direkt im Hauptmenü
+- einmalige Datenschutzbestätigung beim ersten Start; gespeichert wird ausschließlich `dokohilf-privacy-ack-v1=yes`
+- keine wiederholten Fantasiedaten-Hinweise in normalen Guide-Schritten
+- technischer Datenschutzfilter bleibt vollständig aktiv
+- Ablaufsteuerung als schmale Fortschrittszeile
+- `Zurück`, `Neu starten` und `Anderer Ablauf` im Drei-Punkte-Menü
+- pro Schritt nur **Weiter** und **Ich brauche Hilfe** sichtbar
+- Bedienkommandos erscheinen nicht als normale Chatnachrichten
+- Mikrofon bleibt im Leerlauf kompakt und wird erst beim Zuhören oder Sprechen groß
+- kleine und niedrige iPhones erhalten eine verdichtete Sprachansicht
+- Sprachfokus zeigt `.voice-focus-stage`; der alte `#workspace` bleibt darin verborgen
 
-## 6. Sprachmodus ab Build 26
+## 7. Sprache
 
 Natürliche Stimme: **Gacrux**.
 
-Supabase-Funktion `dokohilf-tts`, aktive Version: **16**.
+### TTS v20
 
-Technik:
+Der Fehler von TTS v19 wurde behoben: Das rohe Gemini-Interactions-REST-Audio liegt zuverlässig in `steps[].content[]`, nicht zwingend im SDK-Komfortfeld `output_audio`.
 
-- Primärmodell: `gemini-2.5-flash-preview-tts` für schnelleren Start
-- Fallback: `gemini-2.5-pro-preview-tts`
-- Stil: `natural-spoken-german-colleague-v7-fast-start`
-- serverseitiger flüchtiger Arbeitsspeicher-Cache für identische kurze Anweisungen
-- clientseitiger flüchtiger Arbeitsspeicher-Cache
-- der nächste bekannte Guide-Schritt wird bereits vorbereitet, während der aktuelle Schritt läuft
-- sichtbare Anleitung bleibt vollständig; gesprochen wird nur die aktuelle Anweisung ohne die abschließende Kontrollfrage
-- keine dauerhafte Speicherung von Audio oder Gesprächsinhalten
-- Gerätestimme nur als Ausfallersatz
-- Audio-Entsperrung erfolgt durch einen vertrauenswürdigen Nutzertipp auf iPhone und Android
-- Keine Behauptung, eine Stimme persönlich angehört zu haben, wenn nur WAV, Header, Modell und Laufzeit technisch geprüft wurden.
+TTS v20:
 
-### Externer TTS-Ausfall
+- liest das rohe REST-Audio über Parser `raw-steps-content-v1`
+- akzeptiert kompatible `inlineData`- und `inline_data`-Strukturen
+- wandelt PCM in gültige RIFF/WAVE-Dateien um
+- gibt echte Providerstatus 429/502/503/504 weiter
+- weist Stimme, Modell, API-Weg, Parser, Stil, Cache und Laufzeit in Response-Headern nach
+- verwendet primär `gemini-3.1-flash-tts-preview`
+- verwendet als Fallback `gemini-2.5-flash-preview-tts`
+- Stil: `natural-spoken-german-colleague-v10-rest-audio`
 
-- Der externe Gemini-TTS-Anbieter antwortete am 6. August 2026 in mehreren unveränderten Wiederholungen ausschließlich mit HTTP 502.
-- Dieser Fremddienst-Ausfall wird im Actions-Artefakt dokumentiert; es liegt für diesen Lauf kein neuer gültiger WAV-Nachweis vor.
-- Statische TTS-, Modell-, Stimmen-, Cache-, Fallback- und Datenschutztests bleiben verpflichtend und sind grün.
-- Eine erfolgreiche, aber technisch falsche Antwort – falscher Inhaltstyp, WAV-Header, Stimme, Modell, Stil, Cache-Nachweis oder zu hohe Laufzeit – bleibt ein harter Testfehler.
-- Ausschließlich dokumentierte HTTP-429/502/503/504- oder Timeout-Ausfälle nach mehreren unveränderten Wiederholungen dürfen den ansonsten vollständig grünen exakten Head nicht blockieren.
+Bereits nachgewiesener gültiger Live-Abruf:
 
-## 7. Sprachlayout und Design ab Build 26
+- HTTP 200
+- `Content-Type: audio/wav`
+- 101804 Bytes
+- Stimme `Gacrux`
+- Modell `gemini-3.1-flash-tts-preview`
+- API `interactions-v1beta`
+- Parser `raw-steps-content-v1`
+- gültiger RIFF/WAVE-Anfang
 
-- Startseite, Chat und Sprachmodus bleiben ein einheitliches hochwertiges Produkt.
-- Die aktuelle Anweisung und die Mikrofonanimation liegen in getrennten Grid-Bereichen.
-- Lange Anweisungen scrollen innerhalb ihrer Karte und dürfen die Animation nicht überdecken.
-- Auf kleinen oder niedrigen iPhones wird die Animation automatisch verkleinert.
-- Der fehlerhafte animierte Punkttext hinter dem Ladehinweis ist entfernt.
-- Der Ladehinweis lautet kurz `Stimme lädt`; die sichtbare Anweisung ist währenddessen bereits lesbar.
-- Große Touchflächen, klare Typografie, ruhige grünbasierte Gestaltung und konsistente Abstände bleiben verbindlich.
+### Statische freigegebene Anweisungen
 
-## 8. Datenschutz und Sicherheitsregeln
+- Datenbasis: 23 freigegebene Guides, 108 Schritte, 92 eindeutige Schritttexte plus Begrüßung
+- Zielbestand: exakt 93 geprüfte Gacrux-WAV-Dateien
+- Quelle ausschließlich allgemeines `step.text` freigegebener Guides
+- Nutzerantworten, Checks, Diktate, Namen, Fall- und Gesundheitsdaten sind ausgeschlossen
+- vorhandene statische Dateien werden vor Live-TTS verwendet
+- fehlende statische Einträge fallen auf TTS v20 zurück
+- nach rund 1,9 Sekunden startet die lokale Sofortstimme
+- keine stummen Platzhalter, falschen Stimmen oder ungeprüften Dateien veröffentlichen
 
-- Keine echten Namen, Berichte, Diagnosen, Medikamente, Messwerte oder anderen personenbezogenen Inhalte in App, Tests oder Dokumentation.
-- Testfälle verwenden ausschließlich allgemeine Bedienfragen und Fantasiedaten.
-- Keine persistente Gesprächshistorie im Browser.
-- Keine persistente Audiospeicherung im Browser oder in Supabase.
-- Medikation ist in DokoHilf ein reiner Leseweg.
-- Nicht bestätigte Formularfelder oder fachliche Inhalte werden nicht erfunden.
+## 8. Live-Audit vom 6. August 2026
 
-## 9. Veröffentlichung und Updateverhalten
+Supabase-Projekt `efifbuqctylsujiauabg` ist `ACTIVE_HEALTHY`.
+
+Nachgeprüft:
+
+- 23 freigegebene Guides
+- 108 freigegebene Schritte
+- Audio-Registry: 1/93
+- privater Bucket: ein Audioobjekt, `public=false`
+- Datei 000: `20260806-27/000.wav`, 301484 Bytes
+- SHA-256: `007bc2cd09297f0d45150bb79cd82ed5c7e85ca83263b7023f11732bfd4bac82`
+- Gacrux, Gemini 3.1 Flash TTS, Interactions API, Parser `raw-steps-content-v1`
+- Builder aktiviert
+- Cronjob `dokohilf-static-guide-audio-v27`: aktiv, `0 * * * *`
+- Builderfunktion nur für `service_role` ausführbar; `anon` und `authenticated` haben kein Execute-Recht
+- Audio- und Buildertabellen mit RLS
+- Supabase-Sicherheitsberater: keine Lints
+- Performance-Berater meldet nur informative, bisher unbenutzte Indizes neuer Redaktionsbereiche
+- weitere neue Audioerzeugungen werden derzeit häufig durch Provider-HTTP-429 begrenzt
+
+Der vollständige 93/93-Bestand ist kein Merge-Blocker für die sichtbare Build-27-Oberfläche. Er bleibt ein separater strenger Abschluss.
+
+## 9. Veröffentlichung
 
 - `main` ist Integrationsbranch.
-- `gh-pages` ist der tatsächlich veröffentlichte Branch.
-- `.github/workflows/pages.yml` validiert Build, Router, TTS, Datenschutz, Dialoge und Layout.
-- `.github/workflows/publish-gh-pages.yml` kopiert die vollständige statische App aus `main` nach `gh-pages`.
-- `version.json`, `index.html`, `service-worker.js`, Asset-Queryparameter und Workflow-Prüfungen müssen dieselbe Build-ID verwenden.
-- Öffentlicher Browser und installierte PWA müssen nach Veröffentlichung denselben Build anzeigen.
-- Niemals alternative Cache-, Branch- oder Vorschau-URLs gegenüber dem Nutzer nennen.
+- `gh-pages` ist der tatsächlich ausgelieferte Branch.
+- `scripts/build-static-site-v27.sh` erzeugt für beide Veröffentlichungswege denselben Build.
+- `version.json`, `index.html`, `service-worker.js`, Asset-Queryparameter und Workflows müssen dieselbe Build-ID enthalten.
+- Der Pages-Build enthält keine Audio-Binärdateien.
+- Vor Veröffentlichung müssen der verfügbare private Audiobestand, Live-TTS v20, Router, Datenschutzverträge und iPhone-Render geprüft sein.
 
-## 10. Pflichtprüfungen vor Merge
+## 10. Pflichtprüfungen vor Merge von Build 27
 
 - Syntaxprüfung aller geänderten JavaScript-Dateien
-- statische Build- und Dateiprüfungen
-- Datenschutz- und Sicherheitsverträge
+- statische Build-, Sicherheits- und Datenschutzverträge
 - 165 Routingregressionen und Gesprächssequenzen
-- Tests aller bestätigten Arbeitsabläufe
-- Vitalwerte-Intenttests
-- Zielwechsel- und Medikationssicherheitstests
-- Sprachfokus- und mobile Layouttests
-- Kurzbildschirmtests gegen Text-/Mikrofonüberlappung
-- stabiler Live-Routing-Test gegen die aktive Edge Function
-- Live-TTS-Test mit gültigem WAV-Header, Gacrux, Modell- und Cache-Nachweis; bei einem dokumentierten externen HTTP-429/502/503/504- oder Timeout-Ausfall gelten die Regeln aus Abschnitt 6
-- sichtbarer Build-Marker im erzeugten Pages-Artefakt
-- exakter PR-Head grün
-- nach Merge tatsächlichen Inhalt von `main`, `gh-pages` und festem Hauptlink prüfen
+- alle bestätigten Fachabläufe
+- Vitalwerte-, Zielwechsel- und Medikationssicherheit
+- Dark-UI, kompakte Guide-Steuerung und Erststart-Datenschutz
+- mobiler Playwright-Render auf 393 × 852 mit künstlichen Router- und Audioantworten
+- kein horizontaler Überlauf
+- kompakte Leerlauf- und größere aktive Mikrofonansicht
+- Live-Router
+- Live-TTS v20 mit Gacrux und Parsernachweis
+- privates Audio-Manifest mit mindestens einem geprüften Eintrag
+- RIFF/WAVE-, Größen- und SHA-256-Prüfung der verfügbaren statischen Dateien
+- sichtbarer Build-Marker im Pages-Artefakt
+- vollständig grüner exakter PR-Head
 
-## 11. Abgeschlossene Arbeitsblöcke und veröffentlichter Stand
+## 11. Abgeschlossene Stände
 
-### Blöcke 1–4: Fachwissen und Standardabläufe
+### Fachabläufe
 
-- Branch: `feat/confirmed-workflows-blocks-1-4`
-- PR: `#45`, gemergt
-- Merge-Commit: `e5446014a6e4e6941101d4d1746a02e49d951729`
-- Migration: `20260806153000_confirmed_workflows_blocks_1_4.sql`
-- Supabase-Migration angewandt
+- PR #45 gemergt
 - `CONFIRMED_WORKFLOWS.md` erstellt
+- Migration `20260806153000_confirmed_workflows_blocks_1_4.sql` angewandt
 
-### Blöcke 5–9: KI, Sprache, Layout, Gesamtprüfung und Veröffentlichung
+### Build 26
 
-- Branch: `feat/intelligent-router-fast-voice-layout-v26`
-- PR: `#46`, gemergt
-- geprüfter exakter Head: `e31db60c650d8c9808c86433054d7d1de29eef78`
-- Merge-Commit: `374969932028a7f47aea0bbcc4b7f31d23bae441`
-- veröffentlichter Build: `20260806-26`
-- Router v9 und TTS v16 sind aktiv.
-- Prüfergebnis: 165/165 Routingfälle, 3/3 Gesprächssequenzen, 12/12 Workflow-Marker, 99/99 Tests, 14/14 Live-Dialoge und Screenshot-Regressionsprüfung grün.
-- TTS-Anbieter HTTP 502; fehlender WAV-Nachweis transparent als Artefakt dokumentiert.
-- `main` und `gh-pages` enthalten beide Build `20260806-26`.
-- `gh-pages/index.html` enthält den Build-Marker, Router v26 sowie die neuen Sprach- und Layout-Assets.
-- Der alte Entwurfs-PR `#40` wurde als ersetzt geschlossen; sein Branch wurde nicht gelöscht.
-- Nach diesem Stand bestehen keine offenen Pull Requests.
+- PR #46 gemergt
+- Build `20260806-26` auf `main` und `gh-pages` veröffentlicht
+- Router v9 und TTS v16 aktiviert
+- PR #47 mit finaler Build-26-Übergabe gemergt
 
-## 12. Pflege dieser Datei
+### Build-27-Vorarbeit
+
+- PR #49, #50 und #51 als ersetzt geschlossen; Branches nicht gelöscht
+- PR #52 enthält den vollständigen Build-27-Produktstand und bleibt bis zur erfolgreichen Prüfung von PR #53 offen
+- TTS v20, privater Guide-Audio-Endpunkt, Builder, Registry, privater Bucket und stündlicher Cronjob sind aktiv
+- veraltete Build-26- und TTS-v16-Testannahmen wurden auf Build 27 migriert
+- iPhone-Renderprüfung wurde auf die tatsächlich sichtbare Vollbild-Sprachansicht korrigiert
+
+## 12. Aktiver Arbeitsstand Build 27
+
+- **einziger finaler Release-Branch:** `release/build-27-final-validation`
+- **einziger finaler Release-PR:** **#53**
+- Zielbranch: `main`
+- Ziel-Build: `20260806-27`
+- PR #53 ist offen und mergebar
+- PR #52 bleibt bis zum grünen Nachweis von PR #53 offen und wird danach als ersetzt geschlossen; sein Branch bleibt bestehen
+- veröffentlichter Hauptlink zeigt weiterhin Build 26
+- kein Merge und keine Veröffentlichung von Build 27 vor vollständig grünem exakten PR-#53-Head
+
+## 13. Manueller Actions-Lauf #229
+
+Der erste manuell gestartete Lauf **Deploy DokoHilf #229** auf Head `369e7a127b78833927697f842fa54fc136d26436` scheiterte im deterministischen Vertragsschritt mit 114 von 117 bestandenen Tests.
+
+Die drei Ursachen wurden anschließend behoben:
+
+1. Der Mobile-Vertrag prüfte Build-27-Mikrofonregeln in der falschen Stylesheet-Ebene. Die aktiven Regeln liegen korrekt in `assets/ux-v27.css` und werden dort jetzt geprüft.
+2. Der Datenschutzvertrag erwartete eine alte SQL-Schreibweise. Er prüft jetzt die tatsächlich angewandte Migration mit `regexp_replace`, Regex-Nachkontrolle und harter Exception-Grenze.
+3. `PREBUILT_AUDIO.md` dokumentiert jetzt zusätzlich in einem eindeutigen Satz, dass Nutzerstimmen, Diktate, freie Antworten und Gesprächsverläufe nicht dauerhaft gespeichert werden.
+
+Die Sicherheits-, Datenschutz- und Fachanforderungen wurden dabei nicht abgeschwächt.
+
+## 14. Offener technischer CI-Punkt
+
+- GitHub unterdrückt Workflowereignisse, die durch die verbundene GitHub-App selbst erzeugt werden.
+- Ein direkter Workflow-Dispatch ist im verbundenen GitHub-Connector nicht verfügbar.
+- Nach den Korrekturen von Lauf #229 muss **Deploy DokoHilf** erneut manuell auf Branch `release/build-27-final-validation` gestartet werden.
+- Erst nach vollständig grünem Lauf auf dem dann exakten Head darf manuell gemergt werden.
+- Kein Auto-Merge und keine Branch-Löschung vorher.
+
+## 15. Neue Repositoryquellen Build 27
+
+- `assets/premium-ui-v27.css`
+- `assets/ux-v27.css`
+- `assets/ux-v27.js`
+- `assets/experience-v27.js`
+- `assets/guide-audio-catalog.json`
+- `supabase/functions/dokohilf-guide-audio/index.ts`
+- `supabase/functions/dokohilf-guide-audio-build/index.ts`
+- `supabase/migrations/20260806194500_create_static_guide_audio_registry.sql`
+- `supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql`
+- `supabase/migrations/20260806204000_deny_public_audio_table_access.sql`
+- `scripts/live-static-guide-audio-smoke.mjs`
+- `scripts/mobile-render-v27.mjs`
+- `scripts/build-static-site-v27.sh`
+
+## 16. Pflege dieser Datei
 
 Nach jedem größeren Arbeitsblock sind mindestens zu aktualisieren:
 
-- aktueller veröffentlichter Build
-- wichtige Architekturänderungen
-- neu bestätigte Klickwege
-- offene Probleme
-- neue harte Regeln und Nutzerentscheidungen
-- relevante Pull Requests, Funktionsversionen und Migrationsstände
+- veröffentlichter und Ziel-Build
+- Architekturänderungen
+- bestätigte Klickwege
+- offene Probleme und harte Blocker
+- neue Regeln und Nutzerentscheidungen
+- Pull Requests, Funktionsversionen und Migrationen
+- tatsächliche Test- und Veröffentlichungsnachweise
 
-Diese Datei ersetzt nicht die Prüfung des Live-Stands. Sie verhindert, dass ein neuer Chat fachliche Entscheidungen, bestätigte Abläufe und Arbeitsregeln erneut beim Nutzer erfragen muss.
+Diese Datei ersetzt niemals die Prüfung des echten Live-Stands. Sie verhindert, dass ein neuer Chat Entscheidungen und bestätigte Abläufe erneut beim Nutzer erfragen muss.

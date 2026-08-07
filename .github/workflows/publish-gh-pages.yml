@@ -15,45 +15,22 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
 
-      - name: Build static Pages directory
+      - name: Validate available private Gacrux guide audio
         run: |
           set -euo pipefail
-          mkdir -p _site/assets
-          cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _site/
-          cp \
-            assets/styles.css \
-            assets/premium-ui-v25.css \
-            assets/premium-ui-v26.css \
-            assets/experience-v26.js \
-            assets/update-manager.js \
-            assets/mobile-audio-fix.js \
-            assets/voice-diagnostics.js \
-            assets/routing-fix.js \
-            assets/conversation-intelligence.js \
-            assets/clarification-ui.js \
-            assets/guide-progress.js \
-            assets/voice-focus-mode.js \
-            assets/app.js \
-            assets/editor.css \
-            assets/editor.js \
-            _site/assets/
-          touch _site/.nojekyll
+          node --check scripts/live-static-guide-audio-smoke.mjs
+          node scripts/live-static-guide-audio-smoke.mjs
 
-          test -s _site/index.html
-          test -s _site/version.json
-          test -s _site/assets/premium-ui-v25.css
-          test -s _site/assets/premium-ui-v26.css
-          test -s _site/assets/experience-v26.js
-          grep -q 'dokohilf-build" content="20260806-26' _site/index.html
-          grep -q 'KI · v26' _site/index.html
-          grep -q 'premium-ui-v26.css?v=20260806-26' _site/index.html
-          grep -q 'experience-v26.js?v=20260806-26' _site/index.html
-          grep -q '"buildId": "20260806-26"' _site/version.json
-          grep -q "BUILD_ID = '20260806-26'" _site/service-worker.js
+      - name: Build exact static Pages directory
+        run: |
+          set -euo pipefail
+          bash -n scripts/build-static-site-v27.sh
+          bash scripts/build-static-site-v27.sh _site
 
       - name: Publish exact site to gh-pages
         env:

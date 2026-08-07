@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -12,156 +13,99 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: dokohilf-pages-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
-      - name: Checkout repository
+      - name: Checkout exact repository head
         uses: actions/checkout@v4
 
-      - name: Validate and build static site
+      - name: Validate source contracts and syntax
         run: |
           set -euo pipefail
-          mkdir -p _site/assets artifacts
-          cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _site/
-          cp \
-            assets/styles.css \
-            assets/premium-ui-v25.css \
-            assets/premium-ui-v26.css \
-            assets/experience-v26.js \
-            assets/update-manager.js \
-            assets/mobile-audio-fix.js \
-            assets/voice-diagnostics.js \
-            assets/routing-fix.js \
-            assets/conversation-intelligence.js \
-            assets/clarification-ui.js \
-            assets/guide-progress.js \
-            assets/voice-focus-mode.js \
-            assets/app.js \
-            assets/editor.css \
-            assets/editor.js \
-            _site/assets/
-          touch _site/.nojekyll
+          mkdir -p artifacts
 
           for file in \
-            README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md \
-            _site/index.html _site/editor.html _site/version.json _site/service-worker.js \
-            _site/assets/styles.css _site/assets/premium-ui-v25.css _site/assets/premium-ui-v26.css \
-            _site/assets/experience-v26.js _site/assets/update-manager.js _site/assets/mobile-audio-fix.js \
-            _site/assets/voice-diagnostics.js _site/assets/routing-fix.js \
-            _site/assets/conversation-intelligence.js _site/assets/clarification-ui.js \
-            _site/assets/guide-progress.js _site/assets/voice-focus-mode.js _site/assets/app.js \
-            supabase/functions/dokohilf-ai-router/index.ts supabase/functions/dokohilf-tts/index.ts \
-            supabase/functions/dokohilf-editor/index.ts \
-            supabase/migrations/20260805224500_dokohilf_editor_rbac.sql \
-            supabase/migrations/20260806112000_vitalwerte_intent_guides.sql \
-            supabase/migrations/20260806112100_vitalwerte_intent_alias_alignment.sql \
-            supabase/migrations/20260806112200_noop_verify_vitalwerte_guides.sql \
-            supabase/migrations/20260806153000_confirmed_workflows_blocks_1_4.sql \
-            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-routing-stable.mjs \
-            scripts/live-tts-smoke.mjs scripts/live-screenshot-smoke.mjs \
-            tests/vitalwerte-intent.test.mjs tests/live-build-recovery.test.mjs \
-            tests/confirmed-workflows.test.mjs tests/intelligent-router-v26.test.mjs tests/voice-layout-v26.test.mjs; do
+            README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md \
+            FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md \
+            assets/guide-audio-catalog.json \
+            scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh \
+            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
+            scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-static-guide-audio-smoke.mjs scripts/live-screenshot-smoke.mjs \
+            tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs \
+            supabase/functions/dokohilf-ai-router/index.ts \
+            supabase/functions/dokohilf-tts/index.ts \
+            supabase/functions/dokohilf-guide-audio/index.ts \
+            supabase/functions/dokohilf-guide-audio-build/index.ts \
+            supabase/migrations/20260806194500_create_static_guide_audio_registry.sql \
+            supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql; do
             test -s "$file"
           done
 
-          grep -q 'dokohilf-build" content="20260806-26' _site/index.html
-          grep -q 'premium-ui-v25.css?v=20260806-26' _site/index.html
-          grep -q 'premium-ui-v26.css?v=20260806-26' _site/index.html
-          grep -q 'experience-v26.js?v=20260806-26' _site/index.html
-          grep -q 'guide-progress.js?v=20260806-26' _site/index.html
-          grep -q 'voice-focus-mode.js?v=20260806-26' _site/index.html
-          grep -q 'app.js?v=20260806-26' _site/index.html
-          grep -q '"buildId": "20260806-26"' _site/version.json
-          grep -q "BUILD_ID = '20260806-26'" _site/service-worker.js
-          grep -q '__DOKOHILF_DIRECT_ROUTER_V26__' _site/index.html
-          grep -q 'KI · v26' _site/index.html
-          grep -q 'Wobei brauchst du Hilfe?' _site/index.html
-          grep -q 'DokoHilfHardRefresh' _site/index.html
-          grep -q 'CLEAR_DOKOHILF_CACHES' _site/service-worker.js
-
-          grep -q '__DOKOHILF_GUIDE_PROGRESS_PATCH_V2__' _site/assets/guide-progress.js
-          grep -q 'guideStateVersion: 2' _site/assets/guide-progress.js
-          grep -q 'dokohilf:guide-state' _site/assets/guide-progress.js
-          grep -q '__DOKOHILF_VOICE_FOCUS_V2__' _site/assets/voice-focus-mode.js
-          grep -q 'position:fixed' _site/assets/voice-focus-mode.js
-          grep -q 'voice-focus-actions' _site/assets/voice-focus-mode.js
-          grep -q 'removeLegacyShortcuts' _site/assets/voice-focus-mode.js
-
-          grep -q '__DOKOHILF_PREMIUM_EXPERIENCE_V26__' _site/assets/experience-v26.js
-          grep -q 'warmGreeting' _site/assets/experience-v26.js
-          grep -q 'nextSpokenText' _site/assets/experience-v26.js
-          grep -q 'prefetchText' _site/assets/experience-v26.js
-          grep -q 'const memory = new Map' _site/assets/experience-v26.js
-          grep -q -- '--dh-deep' _site/assets/premium-ui-v25.css
-          grep -q 'grid-template-rows:minmax(92px,auto)' _site/assets/premium-ui-v26.css
-          grep -q 'voice-copy strong:after{content:none' _site/assets/premium-ui-v26.css
-
-          grep -q '__DOKOHILF_STRUCTURED_CLARIFICATION__' _site/assets/clarification-ui.js
-          grep -q 'voiceFocusChoices' _site/assets/clarification-ui.js
-          grep -q 'choiceTitle' _site/assets/clarification-ui.js
-          grep -q 'description' _site/assets/clarification-ui.js
-
+          grep -q '__DOKOHILF_DARK_PREMIUM_V27__' assets/experience-v27.js
+          grep -q '__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__' assets/experience-v27.js
+          grep -q 'loadPrebuiltVoice' assets/experience-v27.js
+          grep -q 'prebuilt-approved-guide' assets/experience-v27.js
+          grep -q '__DOKOHILF_REMOTE_GUIDE_AUDIO_V27__' assets/voice-diagnostics.js
+          grep -q 'dokohilf-guide-audio' assets/voice-diagnostics.js
+          grep -q 'guide-progress-menu' assets/ux-v27.js
+          grep -q '__DOKOHILF_PRIVACY_ACK_V27__' assets/ux-v27.js
+          grep -q '__DOKOHILF_IDEMPOTENT_SYNC_V27__' assets/ux-v27.js
+          grep -q "PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1'" assets/ux-v27.js
+          test "$(grep -o 'localStorage\.[a-zA-Z]*' assets/ux-v27.js | sort -u | tr '\n' ' ')" = "localStorage.getItem localStorage.setItem "
+          grep -q 'command-message-hidden' assets/ux-v27.css
+          grep -q 'data-voice-state="listening"' assets/ux-v27.css
+          grep -q -- '--v27-bg:#020c12' assets/premium-ui-v27.css
+          grep -q 'color-scheme:dark' assets/premium-ui-v27.css
           grep -q 'conversational-guide-router-v9' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'explicitGuideRoute' supabase/functions/dokohilf-ai-router/index.ts
           grep -q 'medication-view-only-safety-v9' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'nextSpokenText' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'vitalwerte-einzelwert-fortsetzen' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'vitalwerte-sammelerfassung-fortsetzen' supabase/functions/dokohilf-ai-router/index.ts
-
           grep -q "VOICE_NAME = 'Gacrux'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v7-fast-start'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts'" supabase/functions/dokohilf-tts/index.ts
-          grep -q "FALLBACK_MODEL = 'gemini-2.5-pro-preview-tts'" supabase/functions/dokohilf-tts/index.ts
-          grep -q 'PRIMARY_TIMEOUT_MS = 7_500' supabase/functions/dokohilf-tts/index.ts
-          grep -q 'audioCache' supabase/functions/dokohilf-tts/index.ts
-          grep -q 'X-DokoHilf-TTS-Cache' supabase/functions/dokohilf-tts/index.ts
-
-          grep -q 'Kontakt – alles außer Arzt' supabase/migrations/20260806153000_confirmed_workflows_blocks_1_4.sql
-          grep -q 'Klienten auswählen' supabase/migrations/20260806153000_confirmed_workflows_blocks_1_4.sql
-          grep -q 'Vitalwerte Sammelerf.' supabase/migrations/20260806153000_confirmed_workflows_blocks_1_4.sql
-          grep -q 'lasse „Bis“ leer und schätze niemals' supabase/migrations/20260806153000_confirmed_workflows_blocks_1_4.sql
-          grep -q 'Medikation ausschließlich ansehen' supabase/migrations/20260806153000_confirmed_workflows_blocks_1_4.sql
-
-          grep -q 'Jeder neue Chat liest zuerst vollständig' PROJECT_HANDOFF.md
-          grep -q 'CONFIRMED_WORKFLOWS.md' PROJECT_HANDOFF.md
+          grep -q "VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "PRIMARY_MODEL = 'gemini-3.1-flash-tts-preview'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "FALLBACK_MODEL = 'gemini-2.5-flash-preview-tts'" supabase/functions/dokohilf-tts/index.ts
+          grep -q "INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'" supabase/functions/dokohilf-tts/index.ts
+          grep -q 'root.steps' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'step.content' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'X-DokoHilf-TTS-Parser' supabase/functions/dokohilf-tts/index.ts
+          grep -q "BUCKET = 'dokohilf-guide-audio'" supabase/functions/dokohilf-guide-audio/index.ts
+          grep -q 'public, max-age=31536000, immutable' supabase/functions/dokohilf-guide-audio/index.ts
+          grep -q 'constantTimeEqual' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q 'x-dokohilf-build-token' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q 'dokohilf_internal_build_control' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q "'0 \* \* \* \*'" supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql
           grep -q 'Bilder bleiben ausschließlich im Chat' CONFIRMED_WORKFLOWS.md
-          grep -q 'CONFIRMED_WORKFLOWS.md' README.md
 
-          grep -q 'Redaktion anmelden' _site/editor.html
-          grep -q 'keine öffentliche Registrierung' _site/editor.html
-          grep -q 'grant_type=password' _site/assets/editor.js
-          grep -q 'sessionStorage' _site/assets/editor.js
-          grep -q 'auth/v1/signup\|signUp(' _site/assets/editor.js && exit 1 || true
-          grep -q 'SUPABASE_SERVICE_ROLE_KEY\|service_role' _site/assets/editor.js && exit 1 || true
-
-          grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' _site/assets/app.js && exit 1 || true
-          grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/voice-focus-mode.js && exit 1 || true
-          grep -q 'localStorage\|indexedDB\|caches.open' _site/assets/experience-v26.js && exit 1 || true
-          grep -q 'localStorage\|indexedDB\|sessionStorage' _site/assets/conversation-intelligence.js && exit 1 || true
-          grep -q '\.jpe\?g\|\.png\|IMG_' CONFIRMED_WORKFLOWS.md && exit 1 || true
-
-          node --check _site/assets/update-manager.js
-          node --check _site/assets/mobile-audio-fix.js
-          node --check _site/assets/voice-diagnostics.js
-          node --check _site/assets/routing-fix.js
-          node --check _site/assets/conversation-intelligence.js
-          node --check _site/assets/clarification-ui.js
-          node --check _site/assets/guide-progress.js
-          node --check _site/assets/voice-focus-mode.js
-          node --check _site/assets/experience-v26.js
-          node --check _site/assets/app.js
-          node --check _site/assets/editor.js
-          node --check _site/service-worker.js
+          node --check assets/update-manager.js
+          node --check assets/mobile-audio-fix.js
+          node --check assets/voice-diagnostics.js
+          node --check assets/routing-fix.js
+          node --check assets/conversation-intelligence.js
+          node --check assets/clarification-ui.js
+          node --check assets/guide-progress.js
+          node --check assets/voice-focus-mode.js
+          node --check assets/experience-v27.js
+          node --check assets/ux-v27.js
+          node --check assets/app.js
+          node --check assets/editor.js
+          node --check service-worker.js
+          node --check scripts/mobile-render-v27.mjs
           node --check scripts/live-routing-smoke.mjs
           node --check scripts/live-routing-stable.mjs
           node --check scripts/live-tts-smoke.mjs
+          node --check scripts/live-static-guide-audio-smoke.mjs
           node --check scripts/live-screenshot-smoke.mjs
 
-      - name: Run deterministic behavior regressions
+          grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' assets/app.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB\|sessionStorage' assets/voice-focus-mode.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB' assets/experience-v27.js && exit 1 || true
+          grep -q 'indexedDB' assets/ux-v27.js && exit 1 || true
+          grep -q '\.jpe\?g\|\.png\|IMG_' CONFIRMED_WORKFLOWS.md && exit 1 || true
+
+      - name: Run deterministic fachliche, privacy and UI contracts
         run: |
           set -euo pipefail
           node scripts/run-behavior-regressions.mjs
@@ -182,23 +126,65 @@ jobs:
             tests/live-build-recovery.test.mjs \
             tests/confirmed-workflows.test.mjs \
             tests/intelligent-router-v26.test.mjs \
-            tests/voice-layout-v26.test.mjs
+            tests/voice-layout-v26.test.mjs \
+            tests/dark-premium-v27.test.mjs \
+            tests/fast-voice-v27.test.mjs \
+            tests/prebuilt-guide-audio.test.mjs
+
+      - name: Build isolated UI test surface
+        run: |
+          set -euo pipefail
+          mkdir -p _ui_site/assets artifacts/mobile-v27
+          cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _ui_site/
+          cp -R assets/. _ui_site/assets/
+          rm -rf _ui_site/assets/audio
+          rm -f _ui_site/assets/guide-audio-manifest.json
+          touch _ui_site/.nojekyll
+
+      - name: Render and interact with iPhone layout
+        env:
+          DOKOHILF_UI_MOCK: '1'
+          DOKOHILF_RENDER_URL: http://127.0.0.1:4173/
+          DOKOHILF_RENDER_OUTPUT: artifacts/mobile-v27
+        run: |
+          set -euo pipefail
+          npm install --no-save --package-lock=false playwright@1.54.2
+          npx playwright install --with-deps chromium
+          python3 -m http.server 4173 --directory _ui_site >artifacts/mobile-v27-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+          node scripts/mobile-render-v27.mjs
 
       - name: Check active DokoHilf router
         run: |
           node scripts/live-routing-stable.mjs
           node scripts/live-screenshot-smoke.mjs
 
-      - name: Check active DokoHilf voice service
+      - name: Check active dynamic voice fallback
         run: node scripts/live-tts-smoke.mjs
 
-      - name: Upload behavior report
+      - name: Validate available private approved guide audio
+        run: node scripts/live-static-guide-audio-smoke.mjs
+
+      - name: Build exact releasable static site
+        run: |
+          set -euo pipefail
+          bash -n scripts/build-static-site-v27.sh
+          bash scripts/build-static-site-v27.sh _site
+
+      - name: Upload behavior, UI and audio evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dokohilf-behavior-report-${{ github.run_number }}
-          path: artifacts/
-          if-no-files-found: error
+          name: dokohilf-build-27-evidence-${{ github.run_number }}
+          path: |
+            artifacts/
+            assets/guide-audio-catalog.json
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Upload Pages artifact
@@ -219,7 +205,6 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

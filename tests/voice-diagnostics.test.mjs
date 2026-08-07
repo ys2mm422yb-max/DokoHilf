@@ -7,7 +7,7 @@ await import('../assets/voice-diagnostics.js');
 const { fallbackReason, calculateKeyboardOffset } = globalThis.DokoHilfVoiceDiagnostics;
 const diagnostics = await readFile(new URL('../assets/voice-diagnostics.js', import.meta.url), 'utf8');
 const tts = await readFile(new URL('../supabase/functions/dokohilf-tts/index.ts', import.meta.url), 'utf8');
-const experience = await readFile(new URL('../assets/experience-v26.js', import.meta.url), 'utf8');
+const experience = await readFile(new URL('../assets/experience-v27.js', import.meta.url), 'utf8');
 
 test('Fallback-Gründe werden verständlich und ohne Gesprächsinhalte abgebildet', () => {
   assert.equal(fallbackReason(new Error('tts_timeout')), 'Zeitüberschreitung der natürlichen Stimme');
@@ -43,17 +43,21 @@ test('Diagnose speichert keine Gesprächsinhalte dauerhaft', () => {
   assert.doesNotMatch(diagnostics, /console\.(log|info|warn|error)/);
 });
 
-test('Cloud-TTS startet mit Flash und behält Gacrux mit begrenztem Pro-Fallback', () => {
-  assert.match(tts, /PRIMARY_MODEL = 'gemini-2.5-flash-preview-tts'/);
-  assert.match(tts, /FALLBACK_MODEL = 'gemini-2.5-pro-preview-tts'/);
+test('Cloud-TTS nutzt Gemini Interactions, Gacrux und den Roh-REST-Audioparser', () => {
+  assert.match(tts, /PRIMARY_MODEL = 'gemini-3\.1-flash-tts-preview'/);
+  assert.match(tts, /FALLBACK_MODEL = 'gemini-2\.5-flash-preview-tts'/);
   assert.match(tts, /VOICE_NAME = 'Gacrux'/);
-  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v7-fast-start'/);
-  assert.match(tts, /PRIMARY_TIMEOUT_MS = 7_500/);
+  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio'/);
+  assert.match(tts, /PRIMARY_TIMEOUT_MS = 8_000/);
   assert.match(tts, /FALLBACK_TIMEOUT_MS = 6_000/);
+  assert.match(tts, /INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'/);
+  assert.match(tts, /root\.steps/);
+  assert.match(tts, /step\.content/);
   assert.match(tts, /audioCache/);
   assert.match(tts, /X-DokoHilf-TTS-Cache/);
+  assert.match(tts, /X-DokoHilf-TTS-Parser/);
   assert.match(tts, /erfahrene Kollegin/);
-  assert.match(tts, /Keine Moderation/);
+  assert.match(tts, /TRANSKRIPT:/);
 });
 
 test('Client kürzt nur die Sprachausgabe und lädt den nächsten Guide-Schritt vor', () => {
@@ -62,6 +66,15 @@ test('Client kürzt nur die Sprachausgabe und lädt den nächsten Guide-Schritt 
   assert.match(experience, /nextSpokenText/);
   assert.match(experience, /prefetchText/);
   assert.match(experience, /const memory = new Map/);
-  assert.match(experience, /Stimme lädt/);
+  assert.match(experience, /loadPrebuiltVoice/);
+  assert.match(experience, /fastRace\(loadNaturalVoice/);
   assert.doesNotMatch(experience, /localStorage|indexedDB|caches\.open/);
+});
+
+test('freigegebene Guide-Audios nutzen ausschließlich den festen privaten Cache-Endpunkt', () => {
+  assert.match(diagnostics, /GUIDE_AUDIO_ENDPOINT = 'https:\/\/efifbuqctylsujiauabg\.supabase\.co\/functions\/v1\/dokohilf-guide-audio'/);
+  assert.match(diagnostics, /manifest=1&build=20260806-27/);
+  assert.match(diagnostics, /dokohilf-approved-guide-audio-20260806-27/);
+  assert.match(diagnostics, /fetchGuideManifest/);
+  assert.match(diagnostics, /fetchCachedGuideAudio/);
 });
