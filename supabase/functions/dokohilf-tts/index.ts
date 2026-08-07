@@ -93,6 +93,47 @@ function isRateLimited(req: Request): boolean {
   return current.count > MAX_REQUESTS_PER_WINDOW;
 }
 
+function constantTimeEqual(left: string, right: string): boolean {
+  if (!left || !right || left.length !== right.length) return false;
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
+  }
+  return difference === 0;
+}
+
+async function isTrustedStaticAudioBuilder(req: Request): Promise<boolean> {
+  const suppliedToken = req.headers.get('x-dokohilf-build-token') || '';
+  if (!/^[a-f0-9]{64}$/i.test(suppliedToken)) return false;
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const serviceRole = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseUrl || !serviceRole) return false;
+
+  try {
+    const controlUrl = new URL('/rest/v1/dokohilf_internal_build_control', supabaseUrl);
+    controlUrl.searchParams.set('select', 'build_token,enabled');
+    controlUrl.searchParams.set('id', 'eq.true');
+    controlUrl.searchParams.set('limit', '1');
+    const response = await fetch(controlUrl, {
+      headers: {
+        apikey: serviceRole,
+        Authorization: `Bearer ${serviceRole}`,
+        Accept: 'application/json',
+      },
+      signal: AbortSignal.timeout(3_000),
+    });
+    if (!response.ok) return false;
+    const rows = await response.json() as Array<{ build_token?: unknown; enabled?: unknown }>;
+    const row = Array.isArray(rows) ? rows[0] : null;
+    return row?.enabled === true
+      && typeof row.build_token === 'string'
+      && constantTimeEqual(suppliedToken, row.build_token);
+  } catch {
+    return false;
+  }
+}
+
 function sanitizeText(value: unknown): string {
   if (typeof value !== 'string') return '';
   return value
@@ -447,7 +488,9 @@ Deno.serve(async (req: Request) => {
   if (origin && !ALLOWED_ORIGINS.has(origin)) {
     return jsonResponse(origin, 403, { error: 'Diese Herkunft ist nicht freigegeben.' });
   }
-  if (isRateLimited(req)) {
+
+  const trustedStaticBuilder = await isTrustedStaticAudioBuilder(req);
+  if (!trustedStaticBuilder && isRateLimited(req)) {
     return jsonResponse(origin, 429, { error: 'Zu viele Sprachanfragen. Bitte kurz warten.' });
   }
 
@@ -464,7 +507,7 @@ Deno.serve(async (req: Request) => {
 
   const text = sanitizeText(parsed.text);
   if (!text) return jsonResponse(origin, 400, { error: 'Es fehlt ein Text.' });
-  if (containsDirectPersonalData(text)) {
+  if (!trustedStaticBuilder && containsDirectPersonalData(text)) {
     return jsonResponse(origin, 422, {
       blocked: true,
       error: 'Mögliche Echtdaten erkannt. Keine Sprachausgabe erstellt.',
