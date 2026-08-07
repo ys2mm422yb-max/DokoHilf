@@ -70,11 +70,13 @@ test('Router v9 hält Ziele, erkennt neue Ziele und schützt Medikation', () => 
   assert.match(router, /Vitalwerte Sammelerf\./);
 });
 
-test('dauerhafte Übergabe verweist auf bestätigte anonymisierte Abläufe und TTS v20', () => {
+test('dauerhafte Übergabe verweist auf bestätigte anonymisierte Abläufe und den aktuellen Sprachstand', () => {
   assert.match(handoff, /Jeder neue Chat liest zuerst vollständig/);
-  assert.match(handoff, /TTS v20/);
+  assert.match(handoff, /dokohilf-tts` \*\*v21\*\*/);
+  assert.match(handoff, /dokohilf-guide-audio-build` \*\*v3\*\*/);
   assert.match(handoff, /raw-steps-content-v1/);
-  assert.match(handoff, /privaten Supabase-Bucket/);
+  assert.match(handoff, /privaten (?:Supabase-)?Bucket/);
+  assert.match(handoff, /1,2 Sekunden/);
   assert.match(confirmed, /Bilder bleiben ausschließlich im Chat/);
   assert.match(confirmed, /Klienten auswählen/);
   assert.match(confirmed, /Bis leer lassen und niemals schätzen/);

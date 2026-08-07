@@ -1,9 +1,9 @@
 # DokoHilf – Sprachlatenz und iPhone-Sprachlayout
 
-**Status:** Client- und Layoutfix veröffentlicht; statische Gacrux-Bibliothek wird serverseitig fertiggestellt  
+**Status:** Abgeschlossen und veröffentlicht; statische Gacrux-Bibliothek baut sich kontrolliert weiter auf  
 **Stand:** 7. August 2026  
-**Erster Produkt-PR:** #64  
-**Aktueller Folgebranch:** `fix/static-gacrux-builder-20260807`
+**Client-/Layout-PR:** #64  
+**Server-/Builder-PR:** #65
 
 ## Nutzerbeobachtung
 
@@ -14,31 +14,29 @@ Im veröffentlichten Build 27 war das dunkle Sprachdesign deutlich verbessert, a
 
 Die vom Nutzer zur Beurteilung gezeigte Oberfläche bleibt gemäß Projektregel ausschließlich im Chat. Dieses Dokument enthält nur anonymisierte technische Erkenntnisse.
 
-## Live-Diagnose
-
-Am 7. August 2026 wurden die aktuellen Supabase-Edge-Function-Logs des ausschließlich für DokoHilf freigegebenen Projekts geprüft.
-
-Ergebnis:
+## Live-Diagnose vom 7. August 2026
 
 - `dokohilf-ai-router` antwortete bei den beobachteten Aufrufen typischerweise innerhalb weniger hundert Millisekunden.
-- `dokohilf-guide-audio` lieferte vorhandene statische Audios beziehungsweise das Manifest im Bereich von grob 0,2 bis 1,1 Sekunden.
+- `dokohilf-guide-audio` lieferte vorhandene statische Audios beziehungsweise das Manifest grob im Bereich 0,2 bis 1,1 Sekunden.
 - `dokohilf-tts` v20 benötigte bei erfolgreichen aktuellen Aufrufen unter anderem etwa 6,5 Sekunden, 8,7 Sekunden und 13,5 Sekunden.
-- Zusätzlich traten aktuelle HTTP-429-Antworten des TTS-Pfads auf.
-- In `public.dokohilf_static_guide_audio` waren bei der Diagnose für Build `20260806-27` erst 4 von 93 vorgesehenen statischen Audios registriert. Daher fielen die meisten freigegebenen Schritte weiterhin auf Live-TTS zurück.
-- Der vorhandene interne Builder erzeugte ursprünglich nur einen Eintrag pro Stunde. Für eine feste Bibliothek mit 93 allgemeinen Guide-Texten war das unnötig langsam.
+- Zusätzlich traten echte HTTP-429-Antworten des TTS-Providers auf.
+- Die statische Gacrux-Bibliothek stand bei Beginn der Diagnose erst bei 4/93 Einträgen.
 
-Damit war die wahrgenommene Wartezeit real und nicht nur eine irreführende Ladeanimation.
+Die wahrgenommene Wartezeit war damit real und nicht nur eine Ladeanimation.
 
-## Produktfix PR #64
+## Produktfix PR #64 – Client und iPhone-Layout
 
-### Client-Sprachstart
+Finaler exakter Head: `6ddc93f7f1e22258132b741b80866c9615a2ea91`  
+Merge-Commit: `d3f8d16956defeefa7d9a4d5cbbd76c63d03db9a`
+
+### Sprachstart
 
 `assets/ux-v27.js`:
 
-- harter Sprachfallback von 1900 ms auf 1200 ms verkürzt
-- langsame TTS-Anfrage wird beim Fallback über `AbortController` abgebrochen
-- natürliche Gacrux-Stimme bleibt bevorzugt, wenn statisches oder dynamisches Audio rechtzeitig verfügbar ist
-- iOS-`speechSynthesis` erhält einen Resume-Watchdog mit mehreren kurzen Wiederholungen, damit die Sofortstimme nach dem Fallback tatsächlich startet
+- harter dynamischer TTS-Fallback von 1900 ms auf **1200 ms** verkürzt
+- langsame dynamische TTS-Anfrage wird beim Fallback mit `AbortController` abgebrochen
+- Gacrux bleibt bevorzugt, wenn statisches oder dynamisches Audio rechtzeitig verfügbar ist
+- iOS-`speechSynthesis` erhält einen Resume-Watchdog, damit die lokale Sofortstimme nach dem Fallback nicht stumm in einem pausierten Zustand hängen bleibt
 - Statushinweis erklärt die automatische Sofortstimme klarer
 - keine neue persistente Speicherung
 
@@ -46,24 +44,17 @@ Damit war die wahrgenommene Wartezeit real und nicht nur eine irreführende Lade
 
 `assets/ux-v27.css`:
 
-- allgemeiner Versionsstatus wird im fokussierten Sprachmodus ausgeblendet
+- allgemeiner Versionsstatus im fokussierten Sprachmodus ausgeblendet
 - Sprachfläche beginnt Safe-Area-abhängig unterhalb der festen Kopfzeile
 - Abstand zwischen Anweisung und Mikrofon vergrößert
-- auf niedrigen Displays bleibt eine verdichtete Variante erhalten
+- verdichtete Variante für niedrige Displays bleibt erhalten
 
-### Render- und Vertragstests
+### Tests und Veröffentlichung
 
-- `tests/fast-voice-v27.test.mjs` prüft 1200-ms-Fallback, AbortController und iOS-Resume-Watchdog
-- `tests/voice-layout-v26.test.mjs` prüft Safe-Area-Inset, ausgeblendeten Versionsstatus und getrennte Sprachbereiche
-- `scripts/mobile-render-v27.mjs` prüft auf iPhone-Größe die reale Geometrie von Kopfzeile und Sprachfläche sowie den ausgeblendeten Versionsstatus
-- der Render-Test behandelt PWA-Neuladungen robust und setzt seinen unpersönlichen Datenschutz-Erststartzustand deterministisch
+Finaler PR-Head war vollständig grün:
 
-### Finaler CI- und Merge-Stand PR #64
-
-Finaler exakter Head: `6ddc93f7f1e22258132b741b80866c9615a2ea91`
-
-- separate `Validate dark iPhone UI v27` Prüfung vollständig erfolgreich
-- `Deploy DokoHilf` Validierung vollständig erfolgreich
+- separate `Validate dark iPhone UI v27` Prüfung erfolgreich
+- `Deploy DokoHilf` Validierung erfolgreich
 - 165/165 Routingfälle bestanden
 - 3/3 Gesprächssequenzen bestanden
 - 12/12 bestätigte Workflow-Marker vorhanden
@@ -71,61 +62,97 @@ Finaler exakter Head: `6ddc93f7f1e22258132b741b80866c9615a2ea91`
 - iPhone-Render erfolgreich
 - Live-Router erfolgreich
 - dynamischer Voice-Fallback erfolgreich
-- vorhandenes privates Guide-Audio erfolgreich geprüft
+- privates Guide-Audio erfolgreich geprüft
 - exakter statischer Site-Build erfolgreich
 
-PR #64 wurde ausschließlich auf diesem vollständig grünen Head manuell gemergt.
+`gh-pages/assets/ux-v27.js` wurde nach Merge mit `HARD_FALLBACK_MS = 1200` geprüft.  
+`gh-pages/assets/ux-v27.css` wurde mit ausgeblendeter `.build-status`, Safe-Area-Inset und getrenntem Sprachlayout geprüft.
 
-Merge-Commit: `d3f8d16956defeefa7d9a4d5cbbd76c63d03db9a`
+Kein Auto-Merge; Branch nicht automatisch gelöscht.
 
-Kein Auto-Merge und keine automatische Branch-Löschung.
+## Nachgelagerter statischer Audio-Blocker
 
-## Statische Gacrux-Bibliothek: nachgelagerter Blocker
+PR #64 beschleunigte den vorhandenen statischen Builder zunächst von einmal pro Stunde auf einmal pro Minute. Beim ersten Live-Lauf blieb Index 4 mit HTTP 422 hängen.
 
-PR #64 enthielt zusätzlich die Migration `20260807093000_accelerate_static_guide_audio_builder.sql`, die den vorhandenen Builder vorübergehend von einmal pro Stunde auf einmal pro Minute beschleunigt. Nach dem Merge wurde diese Migration im freigegebenen DokoHilf-Supabase-Projekt angewendet und ein erster Builderlauf sofort angestoßen.
+Grund:
 
-Dabei wurde ein weiterer, zuvor nicht sichtbarer serverseitiger Konflikt entdeckt:
+- Index 4 ist ein allgemeiner, fachlich freigegebener Guide-Text.
+- Der öffentliche TTS-Datenschutzheuristikfilter erkennt bestimmte Rollenbegriffe absichtlich konservativ.
+- Der Builder nutzte denselben öffentlichen Filterpfad wie freie Nutzertexte.
 
-- Index 4 der freigegebenen Bibliothek enthält den allgemeinen Guide-Text „Bestätige mit OK und kontrolliere, ob der Folgebericht beim Bewohner sichtbar ist.“
-- Der öffentliche TTS-Datenschutzfilter bewertet bestimmte generische Rollenbegriffe absichtlich konservativ.
-- Deshalb wurde dieser fest freigegebene Buildertext mit HTTP 422 blockiert, obwohl er keine konkreten Personendaten enthält.
-- Der beschleunigte Cron wurde unmittelbar wieder deaktiviert, damit nicht jede Minute derselbe fehlgeschlagene Builderlauf erzeugt wird.
+Der Minuten-Cron wurde sofort wieder deaktiviert, bis ein sicherer serverseitiger Sonderpfad vorlag. Der öffentliche Datenschutzfilter wurde **nicht** gelockert.
 
-Wichtig: Der öffentliche Datenschutzfilter wird **nicht** gelockert.
+## Produktfix PR #65 – sicherer Gacrux-Builder
 
-## Sicherer Folgefix auf `fix/static-gacrux-builder-20260807`
+Finaler exakter Head: `affff5b53b0ae1a5f0b97688b5a6b49d78bd94a1`  
+Merge-Commit: `6afc9267756b5fa1617b8b067f246598a44bd90a`
 
-### `supabase/functions/dokohilf-guide-audio-build/index.ts`
+`Deploy DokoHilf` Run #256 war auf diesem exakten Head vollständig erfolgreich.
 
-- der bereits serverseitig geschützte Builder reicht seinen vorhandenen internen Build-Token nun auch an `dokohilf-tts` weiter
-- der Tokenwert selbst bleibt ausschließlich in der geschützten Datenbanktabelle und wird nicht in GitHub, Browsercode oder Dokumentation gespeichert
+### `dokohilf-guide-audio-build`
 
-### `supabase/functions/dokohilf-tts/index.ts`
+- Builder reicht seinen bereits vorhandenen **serverseitig gelesenen** internen Build-Token an `dokohilf-tts` weiter
+- kein Tokenwert liegt im Repository, Browsercode oder in dieser Dokumentation
+
+### `dokohilf-tts`
 
 - neue Funktion `isTrustedStaticAudioBuilder()`
-- ein interner Builderrequest gilt nur dann als vertrauenswürdig, wenn ein formal gültiger 64-stelliger Token vorliegt und dieser serverseitig gegen `dokohilf_internal_build_control` mit Service-Role-Zugriff und konstantzeitlichem Vergleich geprüft wurde
-- nur dieser authentifizierte interne Builder darf den heuristischen Nutzertext-Filter und den öffentlichen Request-Rate-Limiter für die **bereits fachlich freigegebenen statischen Guide-Texte** umgehen
-- alle normalen Browser-, Sprach- und Chat-TTS-Anfragen behalten den bisherigen Datenschutzfilter vollständig bei
-- ein falscher, fehlender oder nicht mehr aktivierter Token erhält keinerlei Sonderbehandlung
+- Sonderbehandlung nur bei formal gültigem 64-stelligem Token
+- Token wird serverseitig mit Service-Role-Zugriff gegen `dokohilf_internal_build_control` geprüft
+- Vergleich erfolgt konstantzeitlich
+- nur dieser authentifizierte interne Builder darf für bereits freigegebene statische Guide-Texte den Nutzertext-Heuristikfilter und den öffentlichen Request-Rate-Limiter umgehen
+- Browser-, Chat- und normale Sprach-TTS-Anfragen behalten den bestehenden Datenschutzfilter unverändert
 
-### Neue Wiederanlauf-Migration
+### Live-Deployment
 
-`supabase/migrations/20260807095000_resume_static_guide_audio_builder.sql`:
+Nach Merge wurden exakt die gemergten Funktionen veröffentlicht:
 
-- aktiviert den Builder nur, solange weniger als 93 freigegebene Audios vorhanden sind
-- entfernt einen eventuell noch vorhandenen alten Cronjob idempotent
-- startet anschließend wieder genau einen Builderlauf pro Minute
-- sobald 93/93 erreicht sind, deaktiviert der vorhandene Builder seine Steuerung selbst und entfernt den Cronjob
+- `dokohilf-tts` **v21**
+- `dokohilf-guide-audio-build` **v3**
 
-### Tests
+Beide sind im ausschließlich freigegebenen Projekt `efifbuqctylsujiauabg` aktiv.
 
-`tests/prebuilt-guide-audio.test.mjs` prüft zusätzlich:
+### Wiederanlaufmigration
 
-- Builder sendet nur den serverseitig gelesenen Token
-- TTS validiert den Token serverseitig und konstantzeitlich
-- Datenschutz- und Rate-Limit-Ausnahme hängt ausschließlich an `trustedStaticBuilder`
-- keine Tokenkonstante landet in GitHub
-- Wiederanlaufmigration enthält keinen geheimen Token
+`supabase/migrations/20260807095000_resume_static_guide_audio_builder.sql` wurde live angewendet.
+
+Aktive Regel:
+
+- ein allgemeiner freigegebener Gacrux-Text pro Minute
+- nur solange weniger als 93 Einträge existieren
+- bei 93/93 deaktiviert der bestehende Builder seine Steuerung und entfernt den Cron selbst
+- keine Nutzerstimmen, Diktate oder freien Antworten werden vorgebaut
+
+Live geprüft: Cronjob `dokohilf-static-guide-audio-v27` ist aktiv mit `* * * * *`.
+
+## Live-Nachweis des sicheren Builders
+
+Der zuvor blockierte Index 4 wurde nach Deployment erneut angestoßen:
+
+- HTTP 200
+- Status `created`
+- Registry-Zuwachs von 4 auf 5
+
+Damit ist nachgewiesen, dass der authentifizierte Builder den freigegebenen allgemeinen Text erzeugen kann, ohne den öffentlichen Datenschutzfilter zu lockern.
+
+Zusätzlich wurde der vom Nutzer aktuell gezeigte Visiten-Schritt priorisiert:
+
+- Katalogindex 33: `Öffne „Doku-Erweitert“ und wähle „Visiten“.`
+- erster unmittelbarer Versuch traf einen echten Provider-429
+- späterer kontrollierter Versuch war erfolgreich
+- Index 33 ist als statisches Gacrux-Audio registriert
+
+Letzter Live-Bestand bei Abschlussprüfung: **7/93** mit den Indizes `0,1,2,3,4,5,33`. Diese Zahl ist veränderlich und muss künftig live geprüft werden, weil der Builder weiterläuft.
+
+## Warum die Nutzererfahrung jetzt besser ist
+
+Für bekannte Schritte gibt es drei Ebenen:
+
+1. Bereits vorhandenes statisches Gacrux-Audio startet ohne erneute Live-TTS-Erzeugung.
+2. Falls ein Text noch nicht statisch vorhanden ist, darf dynamisches Gacrux nur kurz auf sich warten lassen.
+3. Nach 1,2 Sekunden übernimmt die lokale Sofortstimme; der iOS-Watchdog sorgt dafür, dass sie tatsächlich startet.
+
+Damit blockiert eine 6–13 Sekunden langsame oder rate-limitierte Live-TTS-Anfrage den Sprachdialog nicht mehr minutenlang oder stumm.
 
 ## Sicherheits- und Datenschutzgrenze
 
@@ -134,18 +161,13 @@ Wichtig: Der öffentliche Datenschutzfilter wird **nicht** gelockert.
 - keine Nutzerbilder oder Screenshots übernommen
 - Gacrux bleibt die bevorzugte natürliche Stimme
 - statische Audios bleiben ausschließlich auf allgemeine fachlich freigegebene Guide-Texte begrenzt
-- der öffentliche TTS-Datenschutzfilter bleibt unverändert streng
-- interner Builder-Token bleibt ausschließlich serverseitig und wird weder in GitHub noch im Browser dokumentiert oder ausgegeben
+- öffentlicher TTS-Datenschutzfilter bleibt unverändert streng
+- interner Builder-Token bleibt ausschließlich serverseitig
 
-## Nächste Veröffentlichungsschritte
+## Nächster Produktblock
 
-1. Folge-PR gegen `main`
-2. vollständige Prüfung des exakten Folge-PR-Heads
-3. nur bei vollständig grünem exakten Head manueller Merge
-4. danach `dokohilf-tts` und `dokohilf-guide-audio-build` aus exakt diesem gemergten Stand deployen
-5. Wiederanlaufmigration im ausschließlich freigegebenen DokoHilf-Supabase-Projekt anwenden
-6. mindestens einen zuvor blockierten allgemeinen Guide-Text erfolgreich als Gacrux-WAV aufbauen und Registry-Zuwachs nachweisen
-7. `main`, `gh-pages` und öffentlichen Hauptlink prüfen
-8. Abschlussstand erneut dauerhaft dokumentieren
+Dieser Sprach-/Layout-Arbeitsblock ist abgeschlossen. Der nächste bereits dokumentierte Produktblock bleibt:
 
-Kein Auto-Merge und keine automatische Branch-Löschung.
+`ACTIVE_WORK_DETAIL_HELP.md` – detaillierte Hilfeschleife für **„Ich brauche Hilfe / Ich finde das nicht“**.
+
+Vor Beginn trotzdem immer den aktuellen GitHub-, Actions-, Pages-, Supabase- und statischen Audio-Bestand live prüfen.
