@@ -100,8 +100,8 @@ Das ist **keine automatische rechtliche Freigabe** für einen organisationsweite
 
 PR #78 wurde erst auf dem exakten Head `591f945d68675aa323090143ca2934957e5c093c` manuell gemergt, nachdem alle vier Pflichtworkflows auf genau diesem Head grün waren:
 
-1. `Validate local voice v28 iOS Android` – grün,
-2. `Validate detailed help iOS Android` – grün,
+1. `Validate local voice v28 iOS Android` – grün; Pflicht-Viewport **iOS 393×852** und **Android 412×915** jeweils erfolgreich,
+2. `Validate detailed help iOS Android` – grün; beide mobilen Plattformprofile erfolgreich,
 3. `Validate dark iPhone UI v27` – grün,
 4. `Deploy DokoHilf` – grün; darin 132/132 deterministische Fach-/Privacy-/UI-Verträge, iOS-/Android-Render, Routerprüfung und exakter statischer Release-Build erfolgreich.
 
