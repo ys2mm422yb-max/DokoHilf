@@ -1,146 +1,168 @@
 # Aktiver Arbeitsstand – Detailhilfe bei „Ich brauche Hilfe / Ich finde das nicht“
 
 **Stand:** 7. August 2026  
-**Status:** auf Branch `feature/detail-help-orientation-20260807` umgesetzt; PR-/CI-Abschluss ausstehend  
-**Ausgangsbuild:** `20260806-27`  
+**Status:** **fertig, gemergt und auf `gh-pages` ausgeliefert**  
+**Build:** `20260806-27`  
+**Produkt-PR:** `#74` – gemergt  
+**Finaler geprüfter Head:** `e770efa6060d9ced966d57870baa52eff04cc710`  
+**Merge-Commit:** `644e93aa55997b0ac62c45db2daf232d1650a646`  
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
-## Aktuelles Nutzerfeedback
+## Nutzerentscheidung
 
-Der Nutzer hat die veröffentlichte Chatführung erneut praktisch getestet. Beim Satz sinngemäß **„Ich finde die Vitalwerte nicht, wo sind die?“** startete DokoHilf zwar den richtigen Vitalwerte-Guide, behandelte die Situation danach aber noch zu sehr wie einen normalen Ablauf: Schrittkarte plus `Weiter` statt einer echten Fehlersuche.
+Der Nutzer hat die veröffentlichte Führung praktisch getestet. Bei der Frage sinngemäß **„Ich finde die Vitalwerte nicht, wo sind die?“** startete DokoHilf zwar den passenden Guide, behandelte das Orientierungsproblem aber anschließend noch wie einen normalen Ablauf mit `Weiter`.
 
-Die neue verbindliche Produktentscheidung lautet daher:
+Seit PR #74 gilt deshalb verbindlich:
 
-- Sobald DokoHilf erkennt, dass der Nutzer **einen Klickweg oder Menüpunkt nicht findet**, wechselt die laufende Führung in einen eigenen Orientierungs-/Detailhilfemodus.
-- Dieser Modus stellt zuerst Rückfragen zum sichtbaren Bildschirmzustand.
-- Er erklärt den aktuellen bestätigten Klickweg deutlich genauer.
-- `Weiter` darf während dieser Fehlersuche nicht angeboten werden.
-- Erst nach einer echten Bestätigung, dass der gesuchte Punkt gefunden wurde, darf der normale Guide weitergehen.
+- Erkennt DokoHilf, dass jemand **einen Klickweg, Reiter oder Menüpunkt nicht findet**, wechselt die Führung in einen eigenen Orientierungs-/Detailhilfemodus.
+- Der aktuelle Guide und aktuelle Schritt bleiben erhalten.
+- Der Problemhinweis markiert den Schritt **nicht** als erledigt.
+- `Weiter` wird während der Fehlersuche ausgeblendet.
+- DokoHilf fragt zuerst, **was der Nutzer tatsächlich sieht**.
+- Erst nach bestätigtem Fund des gesuchten Punkts wird der normale Guide wieder freigegeben.
+- Nicht bestätigte Vivendi-Wege, Alternativmenüs oder Feldbezeichnungen dürfen nicht erfunden werden.
+- Fehlt der bestätigte Punkt wirklich, stoppt DokoHilf und führt zum letzten sicheren Einstieg zurück oder empfiehlt menschliche Unterstützung.
+- Dieselbe Logik gilt im Schreib- und Sprachmodus.
 
-Die zugrunde liegenden Nutzerbilder bleiben ausschließlich im Chat. Sie werden nicht in GitHub, Supabase, Tests, Issues, PRs oder Artefakte übernommen.
+Die zugrunde liegenden Nutzerbilder bleiben ausschließlich im Chat. Sie wurden nicht in GitHub, Supabase, Tests, Issues, PRs, Artefakte oder die App übernommen.
 
-## Verbindliches Verhalten
+## Erkennung typischer Probleme
 
-- Aktuelle Absicht und aktueller Guide bleiben erhalten.
-- Ein Problemhinweis markiert den aktuellen Schritt **nicht** als erledigt.
-- Erkannt werden unter anderem Aussagen wie:
-  - `Ich finde das nicht`
-  - `Ich sehe den Menüpunkt nicht`
-  - `Wo sind die Vitalwerte?`
-  - `Wo muss ich klicken?`
-  - `Bei mir heißt das anders`
-  - `Ich bin auf einer anderen Seite / in einem anderen Reiter`
-  - `Ich weiß nicht, wo ich bin`
-  - `Ich brauche Hilfe`
-- Danach wird zuerst der sichtbare Zustand geklärt.
-- Hilfetexte verwenden ausschließlich bestätigte lokale Bezeichnungen und bestätigte sichere Rückwege.
-- DokoHilf darf keinen Vivendi-Klickweg, Feldnamen oder eine alternative Funktion erfinden.
-- Fehlt ein Menüpunkt an der bestätigten Stelle wirklich, stoppt DokoHilf und sagt ausdrücklich, dass kein bestätigter Alternativweg vorliegt.
-- In diesem Fall wird zum letzten sicheren Einstieg zurückgeführt oder menschliche Unterstützung empfohlen.
-- Sprachmodus und Schreibmodus nutzen dieselbe Logik.
-- Die Detailhilfe bleibt vollständig flüchtig im Arbeitsspeicher; keine Gesprächs- oder Hilfesitzung wird dauerhaft gespeichert.
+Der Detailhilfemodus berücksichtigt unter anderem Formulierungen wie:
 
-## Konkreter Vitalwerte-Fall
+- `Ich finde das nicht`
+- `Ich sehe den Menüpunkt nicht`
+- `Wo sind die Vitalwerte?`
+- `Wo ist ...?`
+- `Wo muss ich klicken / drücken / tippen?`
+- `Bei mir heißt das anders`
+- `Ich bin auf einer anderen Seite / in einem anderen Reiter`
+- `Ich weiß nicht, wo ich bin`
+- `Ich komme nicht weiter`
+- `Ich brauche Hilfe`
 
-Für die aktuell vom Nutzer gezeigte Situation ist die neue Führung bewusst detaillierter:
+## Vitalwerte – jetzt bestätigtes Verhalten
+
+Für den vom Nutzer gezeigten Fall läuft die Hilfe bewusst detailliert:
 
 1. DokoHilf sagt ausdrücklich, dass jetzt **nur die richtige Stelle gesucht** und noch kein Schritt abgeschlossen wird.
 2. Orientierung auf den bestätigten Einstieg **Doku-Erweitert**.
-3. Strukturierte Rückfrage, z. B.:
+3. Erste strukturierte Rückfrage:
    - `Doku-Erweitert ist offen`
    - `Ich bin in Doku / einem anderen Reiter`
    - `Doku-Erweitert fehlt`
    - `Ich weiß nicht, wo ich bin`
-4. Erst nach bestätigtem `Doku-Erweitert ist offen` wird genauer erklärt:
-   - `Vitalwerte` und `Vitalwerte Sammelerf.` sind zwei getrennte Einträge.
+4. Erst nach bestätigtem `Doku-Erweitert ist offen` erklärt DokoHilf genauer:
+   - `Vitalwerte` und `Vitalwerte Sammelerf.` sind **zwei getrennte Einträge**.
    - Für einen einzelnen Vitalwert wird `Vitalwerte` benötigt.
-5. Zweite Rückfrage:
+5. Zweite strukturierte Rückfrage:
    - `Vitalwerte sehe ich`
-   - `Ich sehe nur Vitalwerte Sammelerf.`
-   - `Vitalwerte fehlt`
+   - `Ich sehe nur „Vitalwerte Sammelerf.“`
+   - `„Vitalwerte“ fehlt`
    - `Ich bin mir nicht sicher`
-6. Nur bei `Vitalwerte sehe ich` endet der Hilfemodus und der normale Guide darf weitergehen.
-7. Bei fehlendem Eintrag wird **nicht** geraten. DokoHilf nennt die Fachgrenze und empfiehlt bei weiterhin fehlendem Menüpunkt menschliche Unterstützung.
+6. Nur bei `Vitalwerte sehe ich` endet der Hilfemodus und `Weiter` darf wieder erscheinen.
+7. Bei `Vitalwerte fehlt` wird nicht geraten. DokoHilf sagt ausdrücklich, dass kein bestätigter Alternativ-Klickweg vorliegt.
 
 ## Technische Umsetzung
 
 ### `assets/detail-help-v27.js`
 
-Neue kontrollierte Client-Hilfelogik vor dem normalen KI-Router:
+Kontrollierte, flüchtige Client-Hilfelogik:
 
-- erkennt Problem-/Orientierungsformulierungen;
-- übernimmt bei bereits laufendem Guide dessen Slug und Schritt;
-- kann bei klar benanntem bestätigtem Ziel wie Vitalwerte den passenden sicheren Einstieg initialisieren;
-- hält eine ausschließlich flüchtige Hilfesitzung im RAM;
-- erzeugt strukturierte Hilfefragen und Antwortschaltflächen;
+- erkennt Orientierungs-/Problemformulierungen vor einem normalen KI-Roundtrip;
+- übernimmt bei laufendem Guide dessen Slug und Schritt;
+- initialisiert bei eindeutig bestätigtem Ziel wie Vitalwerte einen sicheren Orientierungseinstieg;
+- hält die Hilfesitzung ausschließlich im RAM;
+- erzeugt strukturierte Rückfragen und Antwortschaltflächen;
 - hält `guideStep` während der Fehlersuche stabil;
-- blendet die normale `Weiter`-Zeile während `helpMode` aus;
-- beendet den Hilfemodus erst nach bestätigtem Fund oder bewusster Übergabe an menschliche Unterstützung;
-- stellt dieselben Hilfefragen im Chat und in der fokussierten Voice-Oberfläche bereit;
-- enthält keine Zugriffe auf `localStorage`, `sessionStorage` oder `indexedDB`.
+- blendet `#commandRow` und damit `Weiter` im `helpMode` aus;
+- beendet die Hilfeschleife erst nach bestätigtem Fund oder bewusster Übergabe an menschliche Unterstützung;
+- verwendet dieselben Antwortoptionen in Chat und Voice;
+- greift nicht auf `localStorage`, `sessionStorage` oder `indexedDB` zu.
 
-Die bestehende serverseitige Routerlogik bleibt als zweite Sicherheitsebene erhalten. Der neue Clientmodus greift bewusst früher, damit eine offensichtliche Orientierungsfrage nicht erst durch einen normalen Guide-Schritt läuft.
+### Wrapper-Reihenfolge
 
-### Release-Einbindung
+Die Release-Injektion ist absichtlich:
 
-`scripts/apply-detail-help-v27.mjs` aktiviert die neue Datei ausschließlich im gebauten Release-Artefakt direkt nach `conversation-intelligence.js` und vor den bestehenden Clarification-/Guide-Progress-Schichten.
+`clarification-ui.js → detail-help-v27.js → guide-progress.js`
 
-Der gebaute Service Worker erhält:
+Dadurch:
 
-- `assets/detail-help-v27.js?v=20260806-27` im Core-Cache;
-- Revision `20260807-detail-help-cross-platform-1`.
+- sieht die Detailhilfe den ursprünglichen Bedienwunsch **bevor** die normale Routerlogik ihn umschreibt;
+- kann `guide-progress.js` die synthetische sichere Hilfsantwort trotzdem lesen und den aktuellen Schritt korrekt anzeigen;
+- bleibt die bestehende serverseitige Routerlogik eine zweite Sicherheitsebene für alle nicht lokal abgefangenen Fälle.
 
-Damit erhalten installierte PWAs trotz unveränderter Build-ID einen neuen Service-Worker-Zyklus.
+Die Einbindung erfolgt über `scripts/apply-detail-help-v27.mjs` beim exakten Release-Build.
+
+### PWA-Auslieferung
+
+Der ausgelieferte Service Worker auf `gh-pages` trägt:
+
+`HOTFIX_REVISION = '20260807-detail-help-cross-platform-1'`
+
+und cached:
+
+`./assets/detail-help-v27.js?v=20260806-27`
+
+Im ausgelieferten `index.html` liegt die Datei tatsächlich zwischen `clarification-ui.js` und `guide-progress.js`.
 
 ## Cross-Platform-QA
 
-Die seit PR #71 verbindliche Regel gilt auch für diesen Block: **iOS und Android** werden gleichwertig geprüft.
+Die verbindliche Mobile-Regel aus PR #71 bleibt erfüllt. Der reale Detailhilfe-Test läuft auf:
 
-Neue separate Workflow-Datei `.github/workflows/detail-help-mobile.yml` prüft den exakt gebauten Release-Stand auf:
+- iOS: **393 × 852**
+- Android/Pixel: **412 × 915**
 
-- iOS-Profil: 393 × 852
-- Android-/Pixel-Profil: 412 × 915
-
-Der reale Render-Test `scripts/detail-help-render-v27.mjs` prüft auf beiden Profilen:
+Auf beiden Profilen wird derselbe Vitalwerte-Problemfall vollständig durchgeklickt:
 
 1. freie Frage `Hallo ich finde die Vitalwerte nicht wo sind die?`;
-2. Detailhilfe startet statt normalem Weiter-Schritt;
-3. vier strukturierte Orientierungsantworten erscheinen;
-4. Guide bleibt zunächst bei Schritt 1 von 2;
-5. `Weiter` ist im Hilfemodus verborgen;
-6. nach `Doku-Erweitert ist offen` wird Schritt 2 detailliert erklärt;
-7. `Vitalwerte Sammelerf.` wird als separater Eintrag erklärt;
-8. bei `Vitalwerte fehlt` wird kein Alternativweg erfunden;
-9. der Guide bleibt am aktuellen Schritt und wird nicht als erledigt markiert;
-10. keine horizontale Überlagerung/kein Overflow;
-11. dieselbe Hilfelogik erscheint im Voice-Modus;
-12. die lokale Detailhilfe benötigt für diesen klaren Fall keinen unnötigen AI-Router-Roundtrip.
+2. Detailhilfe statt normalem `Weiter`;
+3. vier strukturierte Orientierungsantworten;
+4. zunächst `Schritt 1 von 2`;
+5. `Weiter` verborgen;
+6. nach `Doku-Erweitert ist offen` detaillierter Schritt 2;
+7. Erklärung des separaten Eintrags `Vitalwerte Sammelerf.`;
+8. `Vitalwerte fehlt` stoppt an der Fachgrenze;
+9. kein erfundener Alternativweg;
+10. Guide wird nicht als erledigt markiert;
+11. kein horizontaler Overflow;
+12. dieselbe Hilfelogik im Voice-Modus;
+13. für diesen eindeutig lokalen Hilfefall kein unnötiger AI-Router-Roundtrip.
 
-## Tests
+## Finaler Validierungsstand PR #74
 
-`tests/detail-help-v27.test.mjs` prüft zusätzlich deterministisch:
+Exakter Head `e770efa6060d9ced966d57870baa52eff04cc710`:
 
-- Erkennung typischer Problemformulierungen;
-- Vitalwerte-Orientierung nur mit bestätigten Begriffen;
-- keine erfundenen Alternativen;
-- gemeinsame Chat-/Voice-Logik;
-- `Weiter` bleibt während Hilfe verborgen;
-- keine dauerhafte Speicherung;
-- Release-Injektion und neue PWA-Revision.
+- **Deploy DokoHilf #296** – erfolgreich
+- **Validate dark iPhone UI v27 #49** – erfolgreich
+- **Validate detailed help iOS Android #7** – erfolgreich
+  - Source-/Syntaxverträge grün
+  - 7/7 neue deterministische Detailhilfe-Tests grün
+  - exakter Release-Build grün
+  - realer Detailhilfe-Render auf iOS grün
+  - realer Detailhilfe-Render auf Android grün
 
-## Datenschutz
+PR #74 wurde danach manuell mit exakt diesem Head gemergt. Der Branch wurde nicht automatisch gelöscht.
 
-Keine vom Nutzer hochgeladenen Bilder, Echtdaten, Namen, Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten wurden in die Umsetzung übernommen. Die UI-Tests verwenden ausschließlich künstliche Bedienfragen.
+## Live-/Repository-Verifikation nach Merge
 
-## Noch erforderlich
+Verifiziert:
 
-1. Pull Request gegen den aktuellen `main` öffnen.
-2. Exakten PR-Head über `Deploy DokoHilf` und `Validate detailed help iOS Android` vollständig prüfen.
-3. Auftretende Fehler nur auf diesem Branch korrigieren.
-4. Nur vollständig grünen exakten Head manuell mergen.
-5. Branch nicht automatisch löschen.
-6. Nach Merge `main`, Pages-Build, Service-Worker-Revision und festen Hauptlink prüfen.
-7. Finalen Merge-/Live-Stand anschließend zusätzlich in `PROJECT_HANDOFF.md` dokumentieren.
+- `main` enthält Merge-Commit `644e93aa55997b0ac62c45db2daf232d1650a646`;
+- PR #74 ist `closed` + `merged`;
+- `gh-pages/service-worker.js` enthält Revision `20260807-detail-help-cross-platform-1` und `detail-help-v27.js` im Core-Cache;
+- `gh-pages/index.html` lädt `clarification-ui.js → detail-help-v27.js → guide-progress.js` in der vorgesehenen Reihenfolge;
+- die bisherige PWA-Icon-Auslieferung für iOS und Android bleibt erhalten.
+
+## Datenschutz und Fachgrenze
+
+Keine Nutzerbilder, Echtdaten, Namen, Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten wurden in die Umsetzung übernommen. Die automatisierten Screenshots enthalten ausschließlich künstliche App-Zustände und Bedienfragen.
+
+Detailhilfe darf weiterhin nur aus `CONFIRMED_WORKFLOWS.md` und anderen ausdrücklich bestätigten DokoHilf-Fachquellen ableiten. Wenn eine sichtbare Abweichung nicht bestätigt ist, sagt DokoHilf das offen und erfindet keinen Klickweg.
+
+## Nächster sinnvoller Ausbau
+
+Die Grundlogik ist fertig und live. Weitere Detailhilfen können nun **pro bestätigtem Ablauf** mit zusätzlichen sicheren Bildschirmzuständen ergänzt werden – zum Beispiel Visite, Bericht, Formulare oder Durchführung – ohne das Grundverhalten neu zu bauen.
 
 ## Dauerhafte Dokumentationsregel
 
