@@ -65,5 +65,6 @@ test('Release-Build aktiviert und cached die Detailhilfe mit neuer PWA-Revision'
   assert.match(buildScript, /20260807-detail-help-cross-platform-1/);
   assert.match(applyScript, /detail-help-v27\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyScript, /HOTFIX_REVISION = '\$\{REVISION\}'/);
-  assert.match(applyScript, /conversation-intelligence marker/);
+  assert.match(applyScript, /clarification-ui marker/);
+  assert.match(applyScript, /clarificationIndex < helpIndex && helpIndex < progressIndex/);
 });
