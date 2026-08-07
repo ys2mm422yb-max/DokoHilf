@@ -57,13 +57,20 @@ grep -q "detail-help-polish-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "detail-help-render-sync-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "\"buildId\": \"$BUILD_ID\"" "$SITE_DIR/version.json"
 grep -q "BUILD_ID = '$BUILD_ID'" "$SITE_DIR/service-worker.js"
-grep -q "HOTFIX_REVISION = '20260807-local-natural-voice-v28-1'" "$SITE_DIR/service-worker.js"
+grep -q "HOTFIX_REVISION = '20260807-local-natural-voice-v28-2'" "$SITE_DIR/service-worker.js"
+grep -q "APPROVED_AUDIO_CACHE = 'dokohilf-approved-guide-audio-v28-1'" "$SITE_DIR/service-worker.js"
 grep -q "local-voice-v28.js?v=$BUILD_ID" "$SITE_DIR/service-worker.js"
 grep -q "vendor/supertonic-web-v28.mjs?v=$BUILD_ID" "$SITE_DIR/service-worker.js"
 grep -q "local-voice-gate-v28.js?v=$BUILD_ID" "$SITE_DIR/service-worker.js"
 grep -q 'LOCAL_VOICE_MODEL_CACHE' "$SITE_DIR/service-worker.js"
 grep -q '__DOKOHILF_LOCAL_VOICE_V28__' "$SITE_DIR/assets/local-voice-v28.js"
+grep -q 'if (voiceEntry) arm();' "$SITE_DIR/assets/local-voice-v28.js"
+grep -q 'const IOS_TOTAL_STEPS = 2;' "$SITE_DIR/assets/local-voice-v28.js"
 grep -q '__DOKOHILF_LOCAL_VOICE_GATE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q '__DOKOHILF_STATIC_FIRST_VOICE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q 'static-approved-guide-v28' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q 'dokohilf-guide-audio?manifest=1' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q 'IOS_LOCAL_TIMEOUT_MS = 20000' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_LOCAL_VOICE_ONLY_V28__' "$SITE_DIR/assets/ux-v27.js"
 grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ === true' "$SITE_DIR/assets/app.js"
@@ -75,10 +82,6 @@ grep -q '__DOKOHILF_DETAIL_HELP_RENDER_SYNC_V27__' "$SITE_DIR/assets/detail-help
 
 if grep -q 'voice-diagnostics.js' "$SITE_DIR/index.html"; then
   echo "v28 darf die alte Gacrux-/Gerätestimmen-Diagnostik nicht laden." >&2
-  exit 1
-fi
-if grep -q 'dokohilf-guide-audio?manifest=' "$SITE_DIR/service-worker.js"; then
-  echo "v28 darf keine Gacrux-Guide-Audios mehr im Service Worker vorladen." >&2
   exit 1
 fi
 
@@ -95,4 +98,4 @@ if find "$SITE_DIR" -type f -iname '*.wav' | grep -q .; then
   exit 1
 fi
 
-echo "DokoHilf $BUILD_ID mit lokaler natürlicher Supertonic-Stimme, ohne Cloud-TTS/Systemstimme, iOS-/Android-QA, Detailhilfe und direkten Anleitungen gebaut."
+echo "DokoHilf $BUILD_ID mit freigegebenen statischen Audios zuerst, lokaler Supertonic-Stimme für freie Antworten, ohne Systemstimme, iOS-/Android-QA, Detailhilfe und direkten Anleitungen gebaut."
