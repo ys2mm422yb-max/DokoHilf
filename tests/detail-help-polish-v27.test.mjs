@@ -25,10 +25,12 @@ test('Detailhilfe zeigt kurze nutzernahe Texte statt interner Zustandsformulieru
   assert.doesNotMatch(source, /Ich markiere noch keinen Schritt als erledigt/);
 });
 
-test('Bereits gerenderte Detailhilfe-Buttons werden wirklich auf kurze Labels synchronisiert', () => {
+test('Bereits gerenderte Detailhilfe-Buttons werden wirklich und idempotent auf kurze Labels synchronisiert', () => {
   assert.match(syncSource, /'area-open': 'Doku-Erweitert offen'/);
   assert.match(syncSource, /'other-page': 'Anderer Reiter \/ andere Seite'/);
-  assert.match(syncSource, /button\.querySelector\('small'\)\?\.remove\(\)/);
+  assert.match(syncSource, /span\.textContent !== label/);
+  assert.match(syncSource, /button\.dataset\.detailHelpLabel !== label/);
+  assert.match(syncSource, /if \(small\) small\.remove\(\)/);
   assert.match(syncSource, /MutationObserver/);
   assert.match(syncSource, /__DOKOHILF_DETAIL_HELP_RENDER_SYNC_V27__/);
 });
