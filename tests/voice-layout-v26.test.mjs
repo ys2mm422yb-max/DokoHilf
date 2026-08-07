@@ -62,8 +62,8 @@ test('v28 deaktiviert den alten 180-ms-Gerätestimmenpfad und nutzt lokale Ausga
   assert.match(localVoice, /const MODEL_CACHE = 'dokohilf-local-voice-model-v28-1'/);
 });
 
-test('Service Worker erzwingt die v28-Voice-Revision ohne die Voice-Balance zu verlieren', () => {
-  assert.match(worker, /HOTFIX_REVISION = '20260807-local-natural-voice-v28-1'/);
+test('Service Worker erzwingt die v28-2-Voice-Revision ohne die Voice-Balance zu verlieren', () => {
+  assert.match(worker, /HOTFIX_REVISION = '20260807-local-natural-voice-v28-2'/);
   assert.match(worker, /voice-stage-balance-v27\.css\?v=20260807-28/);
   assert.match(worker, /direct-guides-chat-v27\.css\?v=20260807-28/);
   assert.match(worker, /local-voice-v28\.js\?v=20260807-28/);
