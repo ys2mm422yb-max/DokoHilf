@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
-  const HARD_FALLBACK_MS = 1900;
+  const HARD_FALLBACK_MS = 1200;
   const PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1';
   const previousFetch = window.fetch.bind(window);
   const commands = new Set(['weiter', 'nochmal', 'zurück', 'zuruck', 'ich finde das nicht', 'ich brauche hilfe']);
@@ -71,15 +71,54 @@
   window.fetch = (input, init = {}) => {
     const url = typeof input === 'string' ? input : input?.url;
     const method = String(init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
-    const request = previousFetch(input, init);
-    if (typeof url !== 'string' || !url.includes(TTS_MARKER) || method !== 'POST') return request;
+    if (typeof url !== 'string' || !url.includes(TTS_MARKER) || method !== 'POST') return previousFetch(input, init);
+
+    const controller = new AbortController();
+    const originalSignal = init.signal || (input instanceof Request ? input.signal : null);
+    const abortFromOriginal = () => controller.abort();
+    if (originalSignal) {
+      if (originalSignal.aborted) abortFromOriginal();
+      else originalSignal.addEventListener('abort', abortFromOriginal, { once: true });
+    }
+
+    const request = previousFetch(input, { ...init, signal: controller.signal });
     let timer;
     const timeout = new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error('dokohilf_immediate_voice_fallback')), HARD_FALLBACK_MS);
+      timer = setTimeout(() => {
+        controller.abort();
+        reject(new Error('dokohilf_immediate_voice_fallback'));
+      }, HARD_FALLBACK_MS);
     });
     request.catch(() => {});
-    return Promise.race([request, timeout]).finally(() => clearTimeout(timer));
+    return Promise.race([request, timeout]).finally(() => {
+      clearTimeout(timer);
+      originalSignal?.removeEventListener?.('abort', abortFromOriginal);
+    });
   };
+
+  function installSpeechSynthesisWatchdog() {
+    const synth = window.speechSynthesis;
+    if (!synth || typeof synth.speak !== 'function' || window.__DOKOHILF_SPEECH_RESUME_WATCHDOG_V27__) return;
+    const nativeSpeak = synth.speak.bind(synth);
+
+    synth.speak = utterance => {
+      let startedOrFinished = false;
+      const settle = () => { startedOrFinished = true; };
+      utterance?.addEventListener?.('start', settle, { once: true });
+      utterance?.addEventListener?.('end', settle, { once: true });
+      utterance?.addEventListener?.('error', settle, { once: true });
+
+      nativeSpeak(utterance);
+      const resumeIfNeeded = () => {
+        if (startedOrFinished) return;
+        try { synth.resume(); } catch { /* iOS kann resume während eines Zustandswechsels ablehnen. */ }
+      };
+      resumeIfNeeded();
+      [120, 320, 700, 1100].forEach(delay => window.setTimeout(resumeIfNeeded, delay));
+    };
+
+    window.__DOKOHILF_SPEECH_RESUME_WATCHDOG_V27__ = true;
+  }
 
   function compactGuideMenu() {
     const bar = document.getElementById('guideProgress');
@@ -128,7 +167,7 @@
     const current = normalize(status.textContent);
     if (shell.dataset.voiceState === 'thinking' || current.includes('stimme wird vorbereitet') || current.includes('stimme ladt')) {
       changed = setTextIfChanged(status, 'Stimme startet …') || changed;
-      changed = setTextIfChanged(hint, 'Bekannte Schritte starten direkt. Freie Antworten wechseln nach kurzer Zeit zur Sofortstimme.') || changed;
+      changed = setTextIfChanged(hint, 'Gacrux startet sofort, wenn sie bereit ist. Dauert es länger, übernimmt automatisch die Sofortstimme.') || changed;
     }
     if (badge && /geratestimme|ersatz/.test(normalize(badge.textContent))) {
       changed = setTextIfChanged(badge, 'Sofortstimme') || changed;
@@ -166,6 +205,7 @@
     });
   }
 
+  installSpeechSynthesisWatchdog();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true });
   else initialize();
   window.DokoHilfUxV27 = {
