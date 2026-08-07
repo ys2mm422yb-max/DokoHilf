@@ -37,9 +37,10 @@ test('Systemstimme bleibt gesperrt und freigegebener Cache überlebt normalen PW
   assert.match(worker, /20260807-local-natural-voice-v28-2/);
 });
 
-test('Hotfix bleibt für iOS und Android sowie ohne Nutzerbilder dokumentiert', () => {
+test('Hotfix bleibt für iOS und Android mit neutraler öffentlicher Dokumentation abgesichert', () => {
   assert.match(hotfixDoc, /iOS 393×852/);
   assert.match(hotfixDoc, /Android 412×915/);
-  assert.match(hotfixDoc, /keine Nutzerbilder\/Screenshots außerhalb des Chats/);
+  assert.match(hotfixDoc, /ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Projektinhalte/);
+  assert.doesNotMatch(hotfixDoc, /Nutzerbild|Screenshot.*Chat|Bilder.*Chat|Vivendi-Bilder/i);
   assert.match(hotfixDoc, /9 statische Gacrux-Audios/);
 });
