@@ -38,7 +38,7 @@
     const text = String(value || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
     if (!text) return '';
     const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map(part => part.trim()).filter(Boolean) || [text];
-    const short = sentences.slice(0, 2).join(' ').trim();
+    const short = sentences.join(' ').trim();
     if (short.length <= 240) return short;
     const clipped = short.slice(0, 235).replace(/\s+\S*$/, '').trim();
     return `${clipped || short.slice(0, 235)}.`;
