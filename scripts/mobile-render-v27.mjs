@@ -226,8 +226,9 @@ try {
   await page.locator('[data-select-mode="chat"]').click();
   await page.locator('#workspace').waitFor({ state: 'visible' });
   await page.locator('.chat-head').waitFor({ state: 'visible' });
-  assert((await page.locator('.chat-eyebrow').innerText()).trim() === 'DokoHilf Chat', 'Kompakte Chat-Kennung fehlt.');
-  assert((await page.locator('.chat-head h1').innerText()).trim() === 'Schreib deine Frage.', 'Alte Build-27-Schicht überschreibt den kompakten Chatkopf.');
+  const chatEyebrow = page.locator('.chat-eyebrow');
+  assert((await chatEyebrow.textContent())?.trim() === 'DokoHilf Chat', 'Kompakte Chat-Kennung fehlt.');
+  assert((await page.locator('.chat-head h1').textContent())?.trim() === 'Schreib deine Frage.', 'Alte Build-27-Schicht überschreibt den kompakten Chatkopf.');
   const chatLayout = await layoutState();
   assert(chatLayout.documentWidth <= chatLayout.viewportWidth + 1, `Chat hat auf ${PROFILE} horizontalen Überlauf.`);
   const chatHeadBox = await page.locator('.chat-head').boundingBox();
