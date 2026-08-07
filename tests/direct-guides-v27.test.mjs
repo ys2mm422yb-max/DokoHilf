@@ -87,8 +87,8 @@ test('iOS und Android sind für diese mobile Änderung gleichberechtigte Freigab
   assert.match(css, /env\(safe-area-inset-right\)/);
 });
 
-test('PWA cached die Direkt-Guide-Logik innerhalb der aktuellen v28-2-Revision', () => {
-  assert.match(worker, /HOTFIX_REVISION = '20260807-local-natural-voice-v28-2'/);
+test('PWA cached die Direkt-Guide-Logik innerhalb der aktuellen v28-3-Revision', () => {
+  assert.match(worker, /HOTFIX_REVISION = '20260807-voice-guides-report-v28-3'/);
   assert.match(worker, /direct-guides-v27\.js\?v=20260807-28/);
   assert.match(worker, /direct-guides-chat-v27\.css\?v=20260807-28/);
 });
