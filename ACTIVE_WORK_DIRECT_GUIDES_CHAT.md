@@ -19,14 +19,15 @@ Die zugrunde liegenden lokalen Bilder bleiben ausschließlich im Chat und werden
 
 Direkte Anleitungen stammen ausschließlich aus `CONFIRMED_WORKFLOWS.md`. Vor Umsetzung wurden zusätzlich die aktuell freigegebenen Supabase-Guides geprüft. Keine neue fachliche Navigation wurde erfunden.
 
-Direkt verfügbar:
+Im tatsächlich gerenderten Hauptmenü sind sieben häufige Abläufe sichtbar und werden daher alle direkt geführt:
 
 - Bericht anlegen
 - Visite anlegen
 - Vitalwerte erfassen
 - An-/Abwesenheit
 - Medikation ansehen
-- Formular erstellen
+- Formular anlegen
+- Übergabe anzeigen
 
 Vitalwerte verzweigen vor der Anleitung ausschließlich in die zwei bestätigten Varianten:
 
@@ -44,15 +45,24 @@ Neue lokale, rein allgemeine Direktansicht:
 - zeigt die vollständigen bestätigten Schritte als nummerierte Karten
 - zeigt bestätigte Sicherheitsregeln als Hinweis beziehungsweise Warnung
 - Vitalwerte besitzen eine explizite Zwei-Wege-Auswahl
+- Übergabe enthält exakt die vier bestätigten Schritte `Analyse → Was war los? → Alle anzeigen → Alles ausklappen`
 - Rückkehr führt direkt ins Hauptmenü
 - keine KI-Anfrage ist nötig, um eine häufige Anleitung zu öffnen
 - keine Nutzer- oder Falldaten werden gespeichert
 
+Zusätzlich besitzt die Datei jetzt bewusst die letzte Laufzeitkontrolle über die häufigen Abläufe und den kompakten Chatkopf. Grund: `assets/experience-v27.js` aus der bisherigen Build-27-Schicht baut diese Bereiche beim Start nachträglich um. Da `direct-guides-v27.js` danach geladen wird, setzt es anschließend verbindlich wieder:
+
+- sieben `data-direct-guide`-Schaltflächen
+- `Häufige Abläufe · direkt öffnen`
+- `Schreib deine Frage.` als kompakten Chatkopf
+
+Damit kann die ältere Experience-Schicht die neue Produktentscheidung nicht mehr überschreiben.
+
 ### `index.html`
 
-Die sechs Hauptmenü-Schaltflächen unter `Häufige Abläufe` verwenden jetzt `data-direct-guide` statt `data-prompt`.
+Die statischen sechs Kern-Schaltflächen unter `Häufige Abläufe` verwenden bereits `data-direct-guide` statt `data-prompt`. Die siebte sichtbare Schaltfläche `Übergabe anzeigen`, die bisher durch die Experience-Schicht ergänzt wurde, wird zur Laufzeit ebenfalls als Direktanleitung gesetzt.
 
-Der Schreibmodus erhält eine kompaktere Kopie:
+Der Schreibmodus enthält:
 
 - Eyebrow `DokoHilf Chat`
 - Überschrift `Schreib deine Frage.`
@@ -81,52 +91,63 @@ Die Schnellfragen innerhalb des Chatmodus bleiben bewusst Chat-Prompts. Damit bl
 
 ### Deterministisch
 
-`tests/direct-guides-v27.test.mjs` prüft:
+`tests/direct-guides-v27.test.mjs` prüft jetzt:
 
-- exakt sechs direkte häufige Abläufe
-- kein alter Bericht-/Visite-Chat-Prompt auf diesen Hauptmenü-Schaltflächen
+- die Laufzeitübernahme aller sieben sichtbaren häufigen Abläufe
 - bestätigte Bericht-/Visite-Inhalte
 - ausschließlich zwei Vitalwerte-Varianten
+- die vier bestätigten Übergabe-Schritte
 - harte An-/Abwesenheits- und Medikationsregeln
 - eigener Direkt-Guide-Modus ohne Chat/Composer
-- kompakter Chatvertrag
+- dass der kompakte Chatkopf nach dem älteren Experience-Pass erneut gesetzt wird
 - PWA-Core-Cache und Revisionsmarker
 
-Der Test ist jetzt ausdrücklich Bestandteil des verpflichtenden `Deploy DokoHilf`-Workflows. Zusätzlich prüft der Workflow Syntax und Vorhandensein von `assets/direct-guides-v27.js` sowie, dass die Datei keinen `localStorage`- oder `indexedDB`-Zugriff enthält.
+Der Test ist ausdrücklich Bestandteil des verpflichtenden `Deploy DokoHilf`-Workflows. Zusätzlich prüft der Workflow Syntax und Vorhandensein von `assets/direct-guides-v27.js` sowie, dass die Datei keinen `localStorage`- oder `indexedDB`-Zugriff enthält.
 
 ### Echter iPhone-Render
 
-`scripts/mobile-render-v27.mjs` wurde erweitert. Auf 393 × 852 muss der Test jetzt tatsächlich:
+`scripts/mobile-render-v27.mjs` prüft auf 393 × 852 jetzt tatsächlich:
 
-1. `Bericht anlegen` im Hauptmenü anklicken
-2. direkt die vollständige 12-Schritt-Anleitung sehen
-3. bestätigen, dass der Chat-Arbeitsbereich verborgen bleibt
-4. horizontalen Überlauf ausschließen
-5. Vitalwerte öffnen und genau zwei Varianten sehen
-6. die sechs Schritte der Sammelerfassung sehen
-7. anschließend den Schreibmodus öffnen
-8. den kompakten Chatkopf und die Begrüßung prüfen
-9. danach weiterhin den bestehenden schrittweisen Chat und den Sprachmodus testen
+1. sieben sichtbare häufige Abläufe als Direktanleitungen
+2. `Bericht anlegen` öffnet direkt die vollständige 12-Schritt-Anleitung
+3. Chat-Arbeitsbereich bleibt dabei verborgen
+4. kein horizontaler Überlauf
+5. Vitalwerte bietet genau zwei Varianten
+6. Sammelerfassung zeigt sechs bestätigte Schritte
+7. Übergabe zeigt exakt vier bestätigte Schritte
+8. anschließend kompakter Schreibmodus mit `Schreib deine Frage.`
+9. bestehender schrittweiser Chat bleibt erreichbar
+10. Sprachmodus bleibt geometrisch überlappungsfrei
 
-## Erster PR-#69-Lauf
+## Validierungsverlauf PR #69
 
-`Deploy DokoHilf` Run #268 lief auf dem ersten PR-Head und erreichte:
+### Run #268
+
+Der erste Hauptlauf erreichte:
 
 - 165/165 Routingfälle erfolgreich
 - 3/3 Gesprächssequenzen erfolgreich
 - 12/12 bestätigte Workflow-Marker vorhanden
 - 121 von 122 damals registrierten deterministischen Tests erfolgreich
 
-Der einzige Fehler war ein **veralteter Testvertrag** in `tests/voice-layout-v26.test.mjs`: Er verlangte noch exakt die frühere Service-Worker-Revision `20260807-fluid-voice-layout-1`, obwohl dieser Produktblock absichtlich die neue Revision `20260807-direct-guides-chat-2` benötigt, um die PWA zu aktualisieren. Der Sprachvertrag selbst – 180-ms-Fallback, Safe-Area und Voice-Flexlayout – war grün.
+Einziger Fehler: veralteter Service-Worker-Revisionsvertrag in `tests/voice-layout-v26.test.mjs`. Er erwartete noch `20260807-fluid-voice-layout-1`. Die neue Produktrevision `20260807-direct-guides-chat-2` wurde daraufhin korrekt als aktueller Vertrag registriert.
+
+### Run #271
+
+Nach Aufnahme des neuen Direkt-Guide-Tests waren **129/129 deterministische Tests grün**. Der echte iPhone-Render deckte anschließend einen realen Laufzeitkonflikt auf:
+
+- Auf dem gerenderten Screenshot erschienen weiterhin sieben alte häufige Abläufe als Chat-Prompts.
+- Ursache war `assets/experience-v27.js`: dessen `ensureWorkflowButtons()` ersetzt die Startseiten-Schaltflächen nach dem statischen HTML erneut.
+- Dieselbe Schicht überschreibt außerdem den kompakten Chatkopf.
+
+Das Render-Artefakt enthielt keine Console- oder Page-Errors. Der Test hat damit einen echten Produktkonflikt zwischen zwei Frontend-Schichten gefunden, keinen flüchtigen Browserfehler.
 
 Korrektur:
 
-- Revisionsprüfung auf den aktuellen Hotfix umgestellt
-- weiterhin ausdrücklich geprüft, dass `ux-v27.js` und `ux-v27.css` im Service-Worker-Core enthalten bleiben
-- neuer Direkt-Guide-Test in den Hauptworkflow aufgenommen
-- `assets/direct-guides-v27.js` in Pflichtdateien und Syntaxprüfung aufgenommen
-
-Damit wird beim nächsten exakten Head nicht nur die alte Regression, sondern auch die neue Direkt-Guide-Fachlogik verpflichtend geprüft.
+- `direct-guides-v27.js` setzt nach der Experience-Schicht alle sieben sichtbaren häufigen Abläufe verbindlich als Direktanleitungen.
+- `Übergabe anzeigen` wurde als bestätigte vierstufige Direktanleitung ergänzt.
+- der kompakte Chatkopf wird nach der Experience-Schicht ebenfalls verbindlich wiederhergestellt.
+- iPhone-Test prüft jetzt explizit alle sieben Direkt-Schaltflächen, Übergabe und den tatsächlich sichtbaren Chatkopf.
 
 ## Noch erforderlich
 
