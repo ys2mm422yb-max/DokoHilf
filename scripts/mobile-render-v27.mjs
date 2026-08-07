@@ -176,7 +176,8 @@ try {
   assert(await page.locator('[data-select-mode="voice"]').isVisible(), 'Sprechen-Karte fehlt.');
   assert(await page.locator('[data-select-mode="chat"]').isVisible(), 'Schreiben-Karte fehlt.');
   assert(await page.getByRole('button', { name: 'Bericht anlegen' }).isVisible(), 'Häufiger Ablauf Bericht fehlt.');
-  assert(await page.locator('[data-direct-guide]').count() === 6, 'Häufige Abläufe sind nicht vollständig als direkte Anleitungen verdrahtet.');
+  assert(await page.locator('.examples button[data-direct-guide]').count() === 7, 'Die sieben sichtbaren häufigen Abläufe sind nicht vollständig als direkte Anleitungen verdrahtet.');
+  assert(await page.getByRole('button', { name: 'Übergabe anzeigen' }).isVisible(), 'Direkte Übergabe-Anleitung fehlt.');
   await page.screenshot({ path: `${OUTPUT_DIR}/01-start-dark-iphone.png`, fullPage: true });
 
   // Häufige Abläufe öffnen die vollständige Anleitung direkt – ohne Chat dazwischen.
@@ -201,11 +202,18 @@ try {
   await page.locator('[data-direct-guide-close]').first().click();
   await page.locator('#startScreen').waitFor({ state: 'visible' });
 
+  await page.getByRole('button', { name: 'Übergabe anzeigen' }).click();
+  await directGuide.waitFor({ state: 'visible' });
+  assert(await directGuide.locator('.direct-guide-step').count() === 4, 'Übergabe zeigt nicht die vier bestätigten Schritte.');
+  await page.locator('[data-direct-guide-close]').first().click();
+  await page.locator('#startScreen').waitFor({ state: 'visible' });
+
   // Schreiben ist jetzt eine kompakte eigene Gesprächsansicht.
   await page.locator('[data-select-mode="chat"]').click();
   await page.locator('#workspace').waitFor({ state: 'visible' });
   await page.locator('.chat-head').waitFor({ state: 'visible' });
   assert((await page.locator('.chat-eyebrow').innerText()).trim() === 'DokoHilf Chat', 'Kompakte Chat-Kennung fehlt.');
+  assert((await page.locator('.chat-head h1').innerText()).trim() === 'Schreib deine Frage.', 'Alte Build-27-Schicht überschreibt den kompakten Chatkopf.');
   assert(await page.locator('.message.assistant .bubble').first().isVisible(), 'Begrüßung im Chat fehlt.');
   const chatLayout = await layoutState();
   assert(chatLayout.documentWidth <= chatLayout.viewportWidth + 1, 'Chat hat horizontalen Überlauf.');
@@ -270,7 +278,9 @@ try {
     mockServices: USE_MOCK_SERVICES,
     identity,
     privacyAcknowledgementStored: true,
+    directGuideButtonCount: 7,
     directGuideStepCount: 12,
+    handoverStepCount: 4,
     vitalVariantCount: 2,
     chatHeadHeight: chatHeadBox?.height,
     visibleCommands,
