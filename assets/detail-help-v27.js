@@ -2,7 +2,7 @@
   'use strict';
 
   const CORE_MARKER = '/functions/v1/dokohilf-ai';
-  const HELP_SOURCE = 'detail-help-orientation-v27';
+  const SOURCE = 'detail-help-orientation-v27';
 
   const GUIDE_META = Object.freeze({
     vitalwerte: { title: 'Vitalwerte öffnen', count: 2, entry: 'Doku-Erweitert', target: 'Vitalwerte', family: 'vitalwerte' },
@@ -26,7 +26,7 @@
     berichtssuche: { title: 'Nach Berichtseinträgen suchen', count: 4, entry: 'Berichte', target: 'Berichtssuche' },
   });
 
-  const HELP_OPTIONS = Object.freeze({
+  const OPTION_SETS = Object.freeze({
     orientation: [
       ['area-open', 'Doku-Erweitert ist offen', 'Ich sehe den Reiter bereits geöffnet.'],
       ['other-page', 'Ich bin in Doku / einem anderen Reiter', 'Ich sehe gerade eine andere Seite.'],
@@ -84,10 +84,10 @@
   function isProblemSignal(text) {
     const n = normalize(text);
     return /\b(finde|sehe|erkenne|entdecke)\b.*\b(nicht|nirgends)\b/.test(n)
-      || /\bwo\b.*\b(finde|ist|sind|finde ich|muss ich)\b/.test(n)
       || /\bwo (ist|sind)\b/.test(n)
+      || /\bwo\b.*\b(finde|ist|sind|muss)\b/.test(n)
       || /\b(wo muss ich|was muss ich)\b.*\b(klicken|drucken|druecken|tippen|hingehen)\b/.test(n)
-      || /\b(bei mir heisst|bei mir heißt)\b.*\b(anders|nicht so)\b/.test(n)
+      || /\bbei mir heisst\b.*\b(anders|nicht so)\b/.test(n)
       || /\b(andere seite|anderer reiter|falsche seite|falscher reiter)\b/.test(n)
       || /\b(komme nicht weiter|ich brauche hilfe|finde das nicht|finde es nicht)\b/.test(n);
   }
@@ -99,17 +99,17 @@
     if (/\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(n)) return 'vitalwerte';
     if (/\b(visite|visiten|sprechstunde)\b/.test(n)) return 'visiten-oeffnen';
     if (/\bmedikation\b/.test(n)) return 'medikation-ansehen';
-    if (/\bformular|formulare|protokoll)\b/.test(n)) return 'formulare-anlegen';
+    if (/\b(formular|formulare|protokoll)\b/.test(n)) return 'formulare-anlegen';
     if (/\b(anwesenheit|abwesenheit)\b/.test(n)) return 'anwesenheit';
-    if (/\bubergabe|uebergabe|was war los\b/.test(n)) return 'uebergabeformular';
+    if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabeformular';
     if (/\bnotfallblatt\b/.test(n)) return 'notfallblatt';
-    if (/\bdurchfuhrungsnachweis|durchfuehrungsnachweis\b/.test(n)) return 'durchfuehrungsnachweis-oeffnen';
-    if (/\bbericht|berichte\b/.test(n)) return 'bericht-neu';
+    if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(n)) return 'durchfuehrungsnachweis-oeffnen';
+    if (/\b(bericht|berichte)\b/.test(n)) return 'bericht-neu';
     return explicit || '';
   }
 
-  function options(kind) {
-    return (HELP_OPTIONS[kind] || []).map(([value, label, description]) => ({ value, label, description }));
+  function optionSet(kind) {
+    return (OPTION_SETS[kind] || []).map(([value, label, description]) => ({ value, label, description }));
   }
 
   function guideMeta(slug, parsed = {}) {
@@ -138,24 +138,28 @@
       guideTitle: meta.title,
       guideStep: step,
       guideStepCount: meta.count,
-      source: HELP_SOURCE,
+      source: SOURCE,
       helpMode,
       ...(helpMode ? {
         helpTitle: config.helpTitle || 'Was siehst du gerade?',
-        helpOptions: config.helpOptions || options('generic'),
+        helpOptions: config.helpOptions || optionSet('generic'),
       } : {}),
     };
   }
 
-  function response(payload) {
+  function syntheticResponse(payload) {
     syncHelpUi(payload);
     return new Response(JSON.stringify(payload), {
       status: 200,
-      headers: { 'Content-Type': 'application/json; charset=utf-8', 'X-DokoHilf-Detail-Help': 'v27' },
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+        'X-DokoHilf-Detail-Help': 'v27',
+      },
     });
   }
 
-  function startSession(parsed, slug, userText) {
+  function startSession(parsed, slug) {
     const meta = guideMeta(slug, parsed);
     const suppliedStep = Number(parsed.guideStep);
     session.active = true;
@@ -166,11 +170,12 @@
 
     if (meta.family === 'vitalwerte' || meta.family === 'vitalwerte-batch' || slug === 'vitalwerte') {
       session.stage = 'orientation';
+      session.guideStep = 1;
       return payloadFor(parsed, slug,
         'Okay – wir suchen jetzt **nur die richtige Stelle**. Ich markiere noch keinen Schritt als erledigt.\n\nSchau ganz oben in Vivendi in die grüne Reiterleiste und öffne **Doku-Erweitert**. In diesem Reiter liegen **Vitalwerte** und **Vitalwerte Sammelerf.** als zwei getrennte Einträge.\n\nWas siehst du gerade?', {
-          guideStep: Math.min(session.guideStep, 1),
+          guideStep: 1,
           helpTitle: 'Wo bist du gerade?',
-          helpOptions: options('orientation'),
+          helpOptions: optionSet('orientation'),
         });
     }
 
@@ -181,7 +186,7 @@
     return payloadFor(parsed, slug,
       `Okay – wir bleiben bei diesem Schritt und tun **nicht** so, als wäre er erledigt.\n\n${entryText}${instructionText}\n\nWas genau ist das Problem?`, {
         helpTitle: 'Was trifft bei dir zu?',
-        helpOptions: options('generic'),
+        helpOptions: optionSet('generic'),
       });
   }
 
@@ -192,7 +197,7 @@
       'Gut. Bleib in **Doku-Erweitert**. Suche dort in der Symbolleiste nach **Vitalwerte**. **Vitalwerte Sammelerf.** ist ein eigener, getrennter Eintrag für mehrere Werte. Für einen einzelnen Vitalwert brauchst du **Vitalwerte**.\n\nSiehst du den Eintrag **Vitalwerte**?', {
         guideStep: session.guideStep,
         helpTitle: 'Was ist in Doku-Erweitert sichtbar?',
-        helpOptions: options('vitalTarget'),
+        helpOptions: optionSet('vitalTarget'),
       });
   }
 
@@ -204,20 +209,20 @@
     return payloadFor(parsed, session.guideSlug,
       `Dann gehen wir **nicht weiter**. Wenn **${target}** an der bestätigten Stelle wirklich fehlt, habe ich dafür keinen bestätigten Alternativ-Klickweg.${entry}\n\nBitte nichts raten oder irgendeinen ähnlich klingenden Menüpunkt ausprobieren. Wenn der Eintrag weiter fehlt, ist hier menschliche Unterstützung der sichere nächste Schritt.`, {
         helpTitle: 'Wie möchtest du weiter vorgehen?',
-        helpOptions: options('missing'),
+        helpOptions: optionSet('missing'),
       });
   }
 
   function orientToEntry(parsed) {
     const meta = guideMeta(session.guideSlug, parsed);
-    session.stage = meta.family?.startsWith('vitalwerte') || session.guideSlug === 'vitalwerte' ? 'orientation' : 'generic';
+    session.stage = meta.family.startsWith('vitalwerte') || session.guideSlug === 'vitalwerte' ? 'orientation' : 'generic';
     const entry = meta.entry || 'den zuletzt bestätigten Einstieg';
     return payloadFor(parsed, session.guideSlug,
       `Okay. Orientiere dich zuerst nur am bestätigten Einstieg **${entry}**. Öffne beziehungsweise suche genau diese Bezeichnung und bleib dort.\n\nWenn du **${entry}** gefunden hast, sag mir, was du dort siehst. Ich führe dich dann erst zum nächsten bestätigten Klick weiter.`, {
         helpTitle: 'Hast du den bestätigten Einstieg gefunden?',
-        helpOptions: meta.family?.startsWith('vitalwerte') || session.guideSlug === 'vitalwerte'
-          ? options('orientation')
-          : options('generic'),
+        helpOptions: meta.family.startsWith('vitalwerte') || session.guideSlug === 'vitalwerte'
+          ? optionSet('orientation')
+          : optionSet('generic'),
       });
   }
 
@@ -226,13 +231,12 @@
     session.stage = null;
     session.pendingOption = null;
     const step = Math.max(2, session.guideStep);
-    const payload = payloadFor(parsed, session.guideSlug,
+    session.guideStep = step;
+    return payloadFor(parsed, session.guideSlug,
       'Perfekt. **Vitalwerte** ist gefunden. Öffne den Bereich jetzt. Sobald die Vitalwerte-Ansicht offen ist, kannst du mit **Weiter** fortfahren. Erst dann geht DokoHilf zum nächsten Schritt.', {
         guideStep: step,
         helpMode: false,
       });
-    session.guideStep = step;
-    return payload;
   }
 
   function handleOption(parsed, value) {
@@ -242,9 +246,9 @@
     if (value === 'batch-seen') {
       session.stage = 'vital-target';
       return payloadFor(parsed, session.guideSlug,
-        'Das hilft bei der Orientierung: **Vitalwerte Sammelerf.** ist tatsächlich ein eigener Eintrag. Für die normale Einzel-Erfassung suchst du zusätzlich nach **Vitalwerte**. Wenn **Vitalwerte** daneben beziehungsweise in derselben geöffneten Doku-Erweitert-Symbolleiste nicht vorhanden ist, gehe nicht auf Verdacht weiter.', {
+        'Das hilft bei der Orientierung: **Vitalwerte Sammelerf.** ist tatsächlich ein eigener Eintrag. Für die normale Einzel-Erfassung suchst du zusätzlich nach **Vitalwerte**. Wenn **Vitalwerte** in der geöffneten Doku-Erweitert-Symbolleiste nicht vorhanden ist, gehe nicht auf Verdacht weiter.', {
           helpTitle: 'Siehst du zusätzlich „Vitalwerte“?',
-          helpOptions: options('vitalTarget'),
+          helpOptions: optionSet('vitalTarget'),
         });
     }
     if (value === 'target-missing') return safeMissing(parsed, meta.target || 'Vitalwerte');
@@ -255,7 +259,7 @@
       return payloadFor(parsed, session.guideSlug,
         `Dann rate ich die Bezeichnung nicht. Der bestätigte Name an dieser Stelle ist **${meta.target || meta.entry || 'die Bezeichnung aus dem aktuellen Schritt'}**.\n\nWenn bei dir etwas anders heißt, schreib mir **nur die sichtbare Menübezeichnung** – keine Namen, Berichte oder Falldaten. Ist diese Variante noch nicht bestätigt, sage ich dir das ausdrücklich, statt einen neuen Klickweg zu erfinden.`, {
           helpTitle: 'Was möchtest du tun?',
-          helpOptions: options('missing'),
+          helpOptions: optionSet('missing'),
         });
     }
     if (value === 'human-help') {
@@ -272,13 +276,13 @@
   function inferOptionFromText(text) {
     const n = normalize(text);
     if (/\b(doku erweitert|doku-erweitert)\b.*\b(offen|geoffnet|bin drin|sehe ich)\b/.test(n) || /^(doku erweitert|doku-erweitert)$/.test(n)) return 'area-open';
-    if (/\bvitalwerte\b.*\b(sehe|gefunden|da|sichtbar)\b/.test(n) || /\bgefunden\b/.test(n) && session.stage === 'vital-target') return 'target-found';
+    if (/\bvitalwerte\b.*\b(sehe|gefunden|da|sichtbar)\b/.test(n) || (/\bgefunden\b/.test(n) && session.stage === 'vital-target')) return 'target-found';
     if (/\b(sammelerf|sammelerfassung)\b/.test(n) && /\b(nur|sehe|sichtbar)\b/.test(n)) return 'batch-seen';
     if (/\b(vitalwerte|menupunkt|eintrag)\b.*\b(fehlt|nicht da|nicht sichtbar|sehe.*nicht|finde.*nicht)\b/.test(n)) return 'target-missing';
     if (/\bdoku erweitert\b.*\b(fehlt|nicht da|nicht sichtbar|sehe.*nicht|finde.*nicht)\b/.test(n)) return 'entry-missing';
     if (/\b(andere seite|anderer reiter|in doku|falsche seite|falscher reiter)\b/.test(n)) return 'other-page';
     if (/\b(weiss nicht|weis nicht|keine ahnung wo|wo bin ich|verlaufen)\b/.test(n)) return 'lost';
-    if (/\b(heisst anders|heißt anders|andere bezeichnung)\b/.test(n)) return 'renamed';
+    if (/\b(heisst anders|andere bezeichnung)\b/.test(n)) return 'renamed';
     if (/\b(menschliche hilfe|kollege|kollegin|ansprechperson)\b/.test(n)) return 'human-help';
     return '';
   }
@@ -289,10 +293,8 @@
     if (option) return handleOption(parsed, option);
 
     const n = normalize(userText);
-    if (/^(abbrechen|stop|stopp|hauptmenu|hauptmenü|neuer ablauf)$/.test(n)) {
-      session.active = false;
-      session.stage = null;
-      clearHelpUi();
+    if (/^(abbrechen|stop|stopp|hauptmenu|neuer ablauf)$/.test(n)) {
+      clearSession();
       return null;
     }
 
@@ -303,20 +305,32 @@
       return payloadFor(parsed, session.guideSlug,
         `Diese abweichende Bezeichnung ist für DokoHilf noch nicht als sicherer Klickweg bestätigt. Ich ändere den Ablauf deshalb nicht. Nutze den bestätigten Einstieg **${meta.entry || 'aus dem aktuellen Schritt'}** oder hole kurz menschliche Unterstützung.`, {
           helpTitle: 'Sicher weitergehen',
-          helpOptions: options('missing'),
+          helpOptions: optionSet('missing'),
         });
     }
 
     return payloadFor(parsed, session.guideSlug,
       'Ich möchte dich hier nicht versehentlich weiterführen. Sag mir bitte zuerst, **was du auf dem Bildschirm siehst**. Wähle eine der Möglichkeiten unten oder beschreibe nur den sichtbaren Reiter beziehungsweise Menüpunkt.', {
         helpTitle: session.stage === 'vital-target' ? 'Was ist in Doku-Erweitert sichtbar?' : 'Was trifft bei dir zu?',
-        helpOptions: session.stage === 'vital-target' ? options('vitalTarget') : (session.stage === 'orientation' ? options('orientation') : options('generic')),
+        helpOptions: session.stage === 'vital-target'
+          ? optionSet('vitalTarget')
+          : (session.stage === 'orientation' ? optionSet('orientation') : optionSet('generic')),
       });
   }
 
   function parseRequestBody(body) {
     if (typeof body !== 'string') return null;
     try { return JSON.parse(body); } catch { return null; }
+  }
+
+  function clearSession() {
+    session.active = false;
+    session.guideSlug = null;
+    session.guideStep = 1;
+    session.guideStepCount = 1;
+    session.stage = null;
+    session.pendingOption = null;
+    clearHelpUi();
   }
 
   function installFetchHelp() {
@@ -330,12 +344,12 @@
 
       if (session.active) {
         const handled = handleSession(parsed, userText);
-        if (handled) return response(handled);
+        if (handled) return syntheticResponse(handled);
       }
 
       if (isProblemSignal(userText)) {
         const slug = inferGuideSlug(userText, parsed.guideSlug);
-        if (slug && GUIDE_META[slug]) return response(startSession(parsed, slug, userText));
+        if (slug && GUIDE_META[slug]) return syntheticResponse(startSession(parsed, slug));
       }
 
       const networkResponse = await previousFetch(input, init);
@@ -419,9 +433,9 @@
       button.className = 'detail-help-option';
       button.dataset.detailHelpValue = value;
       button.dataset.detailHelpLabel = label;
-      const span = document.createElement('span');
-      span.textContent = label;
-      button.append(span);
+      const labelNode = document.createElement('span');
+      labelNode.textContent = label;
+      button.append(labelNode);
       const description = String(option?.description || '').trim();
       if (description) {
         const small = document.createElement('small');
@@ -436,14 +450,17 @@
   function syncHelpUi(payload) {
     if (typeof document === 'undefined') return;
     installStyles();
+    if (payload?.helpMode !== true) {
+      clearHelpUi();
+      return;
+    }
     const shell = document.getElementById('appShell');
-    if (payload?.helpMode !== true) return clearHelpUi();
     if (shell) shell.dataset.detailHelp = 'true';
-    const chat = ensureChatPanel();
-    const voice = ensureVoicePanel();
-    fillPanel(chat, payload);
-    fillPanel(voice, payload);
-    if (shell?.dataset.mode !== 'voice') chat?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const chatPanel = ensureChatPanel();
+    const voicePanel = ensureVoicePanel();
+    fillPanel(chatPanel, payload);
+    fillPanel(voicePanel, payload);
+    if (shell?.dataset.mode !== 'voice') chatPanel?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function clearHelpUi() {
@@ -473,12 +490,20 @@
     });
 
     document.addEventListener('click', event => {
-      if (!event.target.closest('#resetButton, #homeButton, [data-select-mode]')) return;
-      session.active = false;
-      session.stage = null;
-      session.pendingOption = null;
-      clearHelpUi();
+      if (event.target.closest('#resetButton, #homeButton, [data-select-mode]')) clearSession();
     });
+  }
+
+  function wrapResetConversation() {
+    const api = window.DokoHilf;
+    if (!api || typeof api.resetConversation !== 'function' || api.resetConversation.__dokohilfDetailHelpWrapped) return;
+    const nativeReset = api.resetConversation.bind(api);
+    const wrapped = (...args) => {
+      clearSession();
+      return nativeReset(...args);
+    };
+    wrapped.__dokohilfDetailHelpWrapped = true;
+    api.resetConversation = wrapped;
   }
 
   if (typeof window !== 'undefined' && typeof document !== 'undefined') {
@@ -488,6 +513,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       ensureChatPanel();
       ensureVoicePanel();
+      wrapResetConversation();
     }, { once: true });
   }
 
@@ -496,12 +522,7 @@
     isProblemSignal,
     inferGuideSlug,
     getState: () => ({ ...session }),
-    clear: () => {
-      session.active = false;
-      session.stage = null;
-      session.pendingOption = null;
-      clearHelpUi();
-    },
+    clear: clearSession,
   };
   window.__DOKOHILF_DETAIL_HELP_V27__ = true;
 })();
