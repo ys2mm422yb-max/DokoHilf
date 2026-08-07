@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const BUILD_ID = '20260807-28';
-const REVISION = '20260807-local-natural-voice-v28-2';
+const REVISION = '20260807-static-supertonic-guides-v28-3';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');
@@ -48,8 +48,7 @@ if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceInd
 await writeFile(htmlPath, html);
 
 let worker = await readFile(workerPath, 'utf8');
-worker = worker
-  .replace(/const HOTFIX_REVISION = '[^']+';/, `const HOTFIX_REVISION = '${REVISION}';`);
+worker = worker.replace(/const HOTFIX_REVISION = '[^']+';/, `const HOTFIX_REVISION = '${REVISION}';`);
 
 const helpAssetLine = `  './assets/detail-help-v27.js?v=${BUILD_ID}',`;
 if (!worker.includes(helpAssetLine)) {
@@ -76,4 +75,4 @@ if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(help
 }
 await writeFile(workerPath, worker);
 
-console.log(`DokoHilf detail help + local voice release applied: ${REVISION}`);
+console.log(`DokoHilf detail help + static Supertonic release applied: ${REVISION}`);
