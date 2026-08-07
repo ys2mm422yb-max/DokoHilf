@@ -1,0 +1,99 @@
+name: Validate local voice v28 iOS Android
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dokohilf-local-voice-v28-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  local-voice-v28:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout exact repository head
+        uses: actions/checkout@v4
+
+      - name: Validate local voice contracts
+        run: |
+          set -euo pipefail
+          test -s assets/local-voice-v28.js
+          test -s assets/local-voice-gate-v28.js
+          test -s assets/vendor/supertonic-web-v28.mjs
+          test -s scripts/apply-local-voice-v28.mjs
+          test -s scripts/local-voice-render-v28.mjs
+          test -s tests/local-voice-v28.test.mjs
+          node --check assets/local-voice-v28.js
+          node --check assets/local-voice-gate-v28.js
+          node --check assets/vendor/supertonic-web-v28.mjs
+          node --check scripts/apply-local-voice-v28.mjs
+          node --check scripts/local-voice-render-v28.mjs
+          node --test tests/local-voice-v28.test.mjs
+
+      - name: Verify upstream model metadata without downloading weights
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 2 --connect-timeout 10 --max-time 30 \
+            https://huggingface.co/Supertone/supertonic-3/resolve/main/onnx/tts.json \
+            -o /tmp/supertonic-tts.json
+          curl -fsSL --retry 2 --connect-timeout 10 --max-time 30 \
+            https://huggingface.co/Supertone/supertonic-3/resolve/main/voice_styles/F1.json \
+            -o /tmp/supertonic-f1.json
+          grep -q '"tts_version"' /tmp/supertonic-tts.json
+          grep -q '"style_ttl"' /tmp/supertonic-f1.json
+
+      - name: Build exact v28 releasable site
+        run: |
+          set -euo pipefail
+          bash scripts/build-static-site-v27.sh _local_voice_site
+          grep -q 'KI · v28' _local_voice_site/index.html
+          grep -q 'local-voice-v28.js?v=20260807-28' _local_voice_site/index.html
+          grep -q 'local-voice-gate-v28.js?v=20260807-28' _local_voice_site/index.html
+          grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ === true' _local_voice_site/assets/app.js
+          ! grep -q 'voice-diagnostics.js' _local_voice_site/index.html
+          ! grep -q 'dokohilf-guide-audio?manifest=' _local_voice_site/service-worker.js
+
+      - name: Render local voice on iOS and Android
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/local-voice-v28/ios artifacts/local-voice-v28/android
+          npm install --no-save --package-lock=false playwright@1.54.2
+          npx playwright install --with-deps chromium
+          python3 -m http.server 4173 --directory _local_voice_site >artifacts/local-voice-v28-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+
+          DOKOHILF_MOBILE_PROFILE=ios \
+          DOKOHILF_VIEWPORT_WIDTH=393 \
+          DOKOHILF_VIEWPORT_HEIGHT=852 \
+          DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
+          DOKOHILF_RENDER_OUTPUT=artifacts/local-voice-v28/ios \
+          node scripts/local-voice-render-v28.mjs
+
+          DOKOHILF_MOBILE_PROFILE=android \
+          DOKOHILF_VIEWPORT_WIDTH=412 \
+          DOKOHILF_VIEWPORT_HEIGHT=915 \
+          DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
+          DOKOHILF_RENDER_OUTPUT=artifacts/local-voice-v28/android \
+          node scripts/local-voice-render-v28.mjs
+
+      - name: Upload v28 voice evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dokohilf-local-voice-v28-${{ github.run_number }}
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 30
