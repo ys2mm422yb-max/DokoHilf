@@ -57,7 +57,7 @@ grep -q "detail-help-polish-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "detail-help-render-sync-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "\"buildId\": \"$BUILD_ID\"" "$SITE_DIR/version.json"
 grep -q "BUILD_ID = '$BUILD_ID'" "$SITE_DIR/service-worker.js"
-grep -q "HOTFIX_REVISION = '20260807-local-natural-voice-v28-2'" "$SITE_DIR/service-worker.js"
+grep -q "HOTFIX_REVISION = '20260807-voice-guides-report-v28-3'" "$SITE_DIR/service-worker.js"
 grep -q "APPROVED_AUDIO_CACHE = 'dokohilf-approved-guide-audio-v28-1'" "$SITE_DIR/service-worker.js"
 grep -q "local-voice-v28.js?v=$BUILD_ID" "$SITE_DIR/service-worker.js"
 grep -q "vendor/supertonic-web-v28.mjs?v=$BUILD_ID" "$SITE_DIR/service-worker.js"
@@ -72,6 +72,8 @@ grep -q 'static-approved-guide-v28' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q 'dokohilf-guide-audio?manifest=1' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q 'IOS_LOCAL_TIMEOUT_MS = 20000' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q 'payload.spokenText' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q 'Sonderfall · nur bei 2 Kategorien' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_LOCAL_VOICE_ONLY_V28__' "$SITE_DIR/assets/ux-v27.js"
 grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ === true' "$SITE_DIR/assets/app.js"
 grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ !== true' "$SITE_DIR/assets/experience-v27.js"
@@ -98,4 +100,4 @@ if find "$SITE_DIR" -type f -iname '*.wav' | grep -q .; then
   exit 1
 fi
 
-echo "DokoHilf $BUILD_ID mit freigegebenen statischen Audios zuerst, lokaler Supertonic-Stimme für freie Antworten, ohne Systemstimme, iOS-/Android-QA, Detailhilfe und direkten Anleitungen gebaut."
+echo "DokoHilf $BUILD_ID mit v28-3 PWA-Refresh, freigegebenen statischen Audios zuerst, Router-spokenText, lokaler Supertonic-Stimme für freie Antworten, ohne Systemstimme, iOS-/Android-QA und Bericht-Sonderfall gebaut."

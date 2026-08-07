@@ -1,5 +1,5 @@
 const BUILD_ID = '20260807-28';
-const HOTFIX_REVISION = '20260807-local-natural-voice-v28-2';
+const HOTFIX_REVISION = '20260807-voice-guides-report-v28-3';
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}`;
 const LOCAL_VOICE_MODEL_CACHE = 'dokohilf-local-voice-model-v28-1';
 const APPROVED_AUDIO_CACHE = 'dokohilf-approved-guide-audio-v28-1';
