@@ -74,11 +74,11 @@ test('voice starts quickly, uses static audio first and keeps idle microphone co
   assert.match(diagnostics, /dokohilf-guide-audio/);
   assert.match(diagnostics, /manifest=1&build=20260806-27/);
   assert.match(diagnostics, /fetchCachedGuideAudio/);
-  assert.match(ux, /HARD_FALLBACK_MS = 1200/);
+  assert.match(ux, /HARD_FALLBACK_MS = 180/);
   assert.match(ux, /dokohilf_immediate_voice_fallback/);
   assert.match(ux, /installSpeechSynthesisWatchdog/);
   assert.match(uxCss, /data-voice-state="listening"/);
-  assert.match(uxCss, /width:96px/);
+  assert.match(uxCss, /width:92px!important/);
 });
 
 test('cloud voice uses raw Gemini Interactions REST audio, Gacrux and transient memory', () => {
