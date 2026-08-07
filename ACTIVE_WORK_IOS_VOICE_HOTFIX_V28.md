@@ -9,7 +9,7 @@
 
 Auf einem echten iPhone wurde v28 nach der Veröffentlichung erfolgreich geladen. Die App zeigte im fokussierten Sprachmodus jedoch dauerhaft „Lokale Stimme erzeugt Antwort …“, ohne hörbare Begrüßung.
 
-Der Nutzer-Screenshot bleibt ausschließlich im Chat. Er wird weder in GitHub noch in Supabase, Testartefakte oder die App übernommen.
+Öffentlich dokumentiert werden ausschließlich das reproduzierte Produktverhalten, technische Ursachen und anonymisierte Ergebnisse.
 
 ## Ursache
 
@@ -50,8 +50,8 @@ Damit kann die reale iPhone-Begrüßung ohne Supertonic-Initialisierung sofort d
 
 Unverändert:
 
-- keine Nutzerbilder/Screenshots außerhalb des Chats,
-- keine echten Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten,
+- dauerhaft keine realen Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten,
+- ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Projektinhalte,
 - keine erfundenen Vivendi-Klickwege,
 - `CONFIRMED_WORKFLOWS.md` bleibt fachliche Quelle,
 - generierte freie Supertonic-Audios werden nicht dauerhaft gespeichert,
