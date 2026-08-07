@@ -10,12 +10,18 @@ const [html, guides, css, worker, confirmed] = await Promise.all([
   readFile('CONFIRMED_WORKFLOWS.md', 'utf8'),
 ]);
 
-test('alle sechs häufigen Abläufe öffnen direkte Anleitungen statt Chat-Prompts', () => {
-  const directButtons = [...html.matchAll(/data-direct-guide="([^"]+)"/g)].map(match => match[1]);
-  assert.deepEqual(directButtons, ['bericht', 'visite', 'vitalwerte', 'anwesenheit', 'medikation', 'formular']);
-  assert.match(html, /Häufige Abläufe · direkt öffnen/);
-  assert.doesNotMatch(html, /data-prompt="Ich möchte einen Bericht schreiben"/);
-  assert.doesNotMatch(html, /data-prompt="Wie lege ich eine Visite an\?"[^>]*>Visite anlegen/);
+test('häufige Abläufe werden nach dem alten Build-27-Pass als sieben Direktanleitungen übernommen', () => {
+  const staticButtons = [...html.matchAll(/data-direct-guide="([^"]+)"/g)].map(match => match[1]);
+  assert.deepEqual(staticButtons, ['bericht', 'visite', 'vitalwerte', 'anwesenheit', 'medikation', 'formular']);
+  assert.match(guides, /function ensureDirectWorkflowButtons\(\)/);
+  assert.match(guides, /data-direct-guide="bericht"/);
+  assert.match(guides, /data-direct-guide="visite"/);
+  assert.match(guides, /data-direct-guide="vitalwerte"/);
+  assert.match(guides, /data-direct-guide="anwesenheit"/);
+  assert.match(guides, /data-direct-guide="medikation"/);
+  assert.match(guides, /data-direct-guide="formular"/);
+  assert.match(guides, /data-direct-guide="uebergabe"/);
+  assert.match(guides, /Häufige Abläufe · direkt öffnen/);
   assert.match(html, /direct-guides-v27\.js\?v=20260806-27/);
 });
 
@@ -40,6 +46,15 @@ test('Vitalwerte verzweigen nur in die zwei bestätigten Varianten', () => {
   assert.match(confirmed, /## Mehrere Vitalwerte erfassen/);
 });
 
+test('Übergabe ist als vollständige bestätigte Direktanleitung enthalten', () => {
+  assert.match(confirmed, /## Übergabe anzeigen/);
+  assert.match(guides, /title: 'Übergabe anzeigen'/);
+  assert.match(guides, /Oben den Reiter „Analyse“ öffnen/);
+  assert.match(guides, /Dort „Was war los\?“ wählen/);
+  assert.match(guides, /Oben links „Alle anzeigen“ anklicken/);
+  assert.match(guides, /Danach „Alles ausklappen“ wählen/);
+});
+
 test('sicherheitskritische Direktanleitungen behalten ihre harten Regeln', () => {
   assert.match(guides, /„Bis“ leer lassen und niemals schätzen/);
   assert.match(guides, /Medikamentenübersicht ausschließlich ansehen/);
@@ -58,9 +73,10 @@ test('direkte Anleitung hat eigenen Modus und versteckt Chat sowie Composer', ()
   assert.match(css, /\.direct-guide-choices/);
 });
 
-test('Schreibmodus ist als kompakter eigenständiger Chat gestaltet', () => {
+test('Schreibmodus bleibt trotz älterem Experience-Pass als kompakter eigenständiger Chat gestaltet', () => {
   assert.match(html, /class="chat-eyebrow">DokoHilf Chat/);
-  assert.match(html, /<h1>Schreib deine Frage\.<\/h1>/);
+  assert.match(guides, /function ensureCompactChatCopy\(\)/);
+  assert.match(guides, /heading\.textContent = 'Schreib deine Frage\.'/);
   assert.match(css, /Der Chat erhält eine klare eigene Gesprächsfläche/);
   assert.match(css, /\.chat-eyebrow/);
   assert.match(css, /chat-head h1\{margin:0!important;font-size:clamp\(30px,6vw,40px\)/);
