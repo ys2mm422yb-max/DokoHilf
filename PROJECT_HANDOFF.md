@@ -64,7 +64,7 @@ Detailhilfe bei Aussagen wie `Ich finde das nicht` hält den aktuellen Guide-Sch
 
 `CONFIRMED_WORKFLOWS.md` ist die verbindliche Fachquelle.
 
-## 6. Bericht – neu bestätigter Sonderfall
+## 6. Bericht – bestätigter Sonderfall
 
 Für **Bericht anlegen** gilt verbindlich:
 
@@ -74,13 +74,13 @@ Für **Bericht anlegen** gilt verbindlich:
 - bei allen anderen Berichtskategorien Schritte 6–9 überspringen und direkt mit Datum/Uhrzeit bei Schritt 10 fortfahren
 - das kleine rote X entfernt nur die Protokollverknüpfung, nicht den Bericht
 
-Diese Logik ist im laufenden PR #82 Gegenstand von Fach-, UI- und Cross-Platform-QA.
+Die fachliche Grundlogik wurde in PR #82 gemergt. Ihre Darstellung und der neue einheitliche Voice-Pfad werden im laufenden PR #85 erneut auf iOS und Android geprüft.
 
 ## 7. Voice v28 – veröffentlichter Stand und laufende Korrektur
 
-Der veröffentlichte v28-Stand nutzt bereits Supertonic 3 als kostenlose lokale Sprachengine. Ein realer iPhone-Praxistest zeigte jedoch, dass lokale WASM-Inferenz für Folgeantworten auf dem Gerät nicht zuverlässig genug ist.
+Der veröffentlichte v28-Stand nutzt Supertonic 3 als kostenlose lokale Sprachengine. Ein realer iPhone-Praxistest zeigte jedoch, dass lokale WASM-Inferenz für Folgeantworten auf dem Gerät nicht zuverlässig genug ist.
 
-### Laufender PR #82
+### Laufender PR #85
 
 Branch: `fix/voice-guides-report-conditions-v28-20260807`
 
@@ -96,7 +96,7 @@ Ziel des laufenden Blocks:
 
 Der alte automatische statische Cloud-Sprachaufbau ist serverseitig über `dokohilf_internal_build_control.enabled=false` deaktiviert. Ein vorhandener Cron kann technisch weiter auslösen, darf bei deaktiviertem Build-Schalter aber keine neue Sprachgenerierung starten. Vor späteren Aussagen hierzu immer live prüfen.
 
-**Wichtig:** PR #82 ist erst veröffentlicht, wenn sein aktueller exakter Head vollständig grün ist, manuell gemergt wurde und `gh-pages` verifiziert ist.
+**Wichtig:** PR #85 ist erst veröffentlicht, wenn sein aktueller exakter Head vollständig grün ist, manuell gemergt wurde und `gh-pages` verifiziert ist.
 
 ## 8. Verbindliche Fachquelle
 
