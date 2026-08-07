@@ -26,6 +26,7 @@ test -s "$SITE_DIR/icon-192-v3.png"
 test -s "$SITE_DIR/icon-512-v3.png"
 test -s "$SITE_DIR/icon-maskable-512-v3.png"
 test -s "$SITE_DIR/assets/guide-audio-catalog.json"
+test -s "$SITE_DIR/assets/voice-extra-catalog-v28.json"
 test -s "$SITE_DIR/assets/premium-ui-v27.css"
 test -s "$SITE_DIR/assets/ux-v27.css"
 test -s "$SITE_DIR/assets/voice-stage-balance-v27.css"
@@ -103,14 +104,22 @@ fi
 if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
   audio_dir="$SITE_DIR/assets/audio/guides"
   test -s "$audio_dir/build-summary.json"
+  expected_count="$(python -c "import json; print(len(json.load(open('$SITE_DIR/assets/guide-audio-catalog.json', encoding='utf-8'))['entries']))")"
   wav_count="$(find "$audio_dir" -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')"
-  if [[ "$wav_count" != "93" ]]; then
-    echo "Es werden exakt 93 statische Supertonic-Guideaudios erwartet, gefunden: $wav_count" >&2
+  if [[ "$expected_count" -lt 93 ]]; then
+    echo "Der statische Sprachkatalog darf die 93 bestätigten Guide-Schritte nicht unterschreiten: $expected_count" >&2
+    exit 1
+  fi
+  if [[ "$wav_count" != "$expected_count" ]]; then
+    echo "Statischer Supertonic-Sprachbestand unvollständig: erwartet $expected_count, gefunden $wav_count" >&2
     exit 1
   fi
   grep -q '"engine": "Supertonic 3"' "$audio_dir/build-summary.json"
   grep -q '"voice": "F1"' "$audio_dir/build-summary.json"
-  grep -q '"count": 93' "$audio_dir/build-summary.json"
+  grep -q '"baseGuideCount": 93' "$audio_dir/build-summary.json"
+  grep -q '"voice": "Supertonic-F1"' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q 'Okay. Schau oben in die grüne Reiterleiste' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q 'Die Medikation darf hier nur angesehen werden' "$SITE_DIR/assets/guide-audio-catalog.json"
 fi
 
-echo "DokoHilf $BUILD_ID mit v28-4, statischer kostenloser Supertonic-F1-Stimme für bestätigte Guides, Router-spokenText, lokaler Supertonic-F1-Notinferenz ohne Systemstimme, iOS-/Android-QA und Bericht-Sonderfall gebaut."
+echo "DokoHilf $BUILD_ID mit v28-4, vollständigem statischem kostenlosen Supertonic-F1-Sprachbestand für bestätigte Guides und feste Hilfedialoge, Router-spokenText, lokaler Supertonic-F1-Notinferenz ohne Systemstimme, iOS-/Android-QA und Bericht-Sonderfall gebaut."
