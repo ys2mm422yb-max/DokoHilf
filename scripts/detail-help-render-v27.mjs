@@ -54,6 +54,43 @@ page.on('pageerror', error => pageErrors.push(error.message));
 
 await page.addInitScript(() => {
   try { localStorage.setItem('dokohilf-privacy-ack-v1', 'yes'); } catch {}
+
+  class FakeUtterance {
+    constructor(text) {
+      this.text = String(text || '');
+      this.lang = '';
+      this.rate = 1;
+      this.pitch = 1;
+      this.voice = null;
+      this.onstart = null;
+      this.onend = null;
+      this.onerror = null;
+    }
+  }
+
+  const calls = [];
+  const synth = {
+    paused: false,
+    speaking: false,
+    pending: false,
+    getVoices: () => [{ name: 'DokoHilf Test Deutsch', voiceURI: 'test-de', lang: 'de-DE', localService: true }],
+    cancel() { this.speaking = false; },
+    pause() { this.paused = true; },
+    resume() { this.paused = false; },
+    speak(utterance) {
+      calls.push(String(utterance?.text || ''));
+      this.speaking = true;
+      queueMicrotask(() => utterance?.onstart?.());
+      setTimeout(() => {
+        this.speaking = false;
+        utterance?.onend?.();
+      }, 25);
+    },
+  };
+
+  Object.defineProperty(window, 'SpeechSynthesisUtterance', { configurable: true, value: FakeUtterance });
+  Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: synth });
+  window.__DOKOHILF_TEST_SPEECH_CALLS__ = calls;
 });
 
 await page.route(/\/functions\/v1\/dokohilf-guide-audio(?:\?.*)?$/, async route => {
@@ -76,6 +113,7 @@ await page.route(/\/functions\/v1\/dokohilf-guide-audio(?:\?.*)?$/, async route 
 });
 
 await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => {
+  await new Promise(resolve => setTimeout(resolve, 450));
   await route.fulfill({
     status: 200,
     contentType: 'audio/wav',
@@ -104,30 +142,30 @@ try {
   await page.getByRole('button', { name: 'Senden' }).click();
   const chatHelp = page.locator('#detailHelpOptionsV27');
   await chatHelp.waitFor({ state: 'visible' });
-  await page.waitForFunction(() => [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('nur die richtige Stelle'));
+  await page.waitForFunction(() => [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('Schau oben in die grüne Reiterleiste'));
 
   const firstReply = await page.locator('.message.assistant .bubble p').last().innerText();
-  assert(firstReply.includes('nur die richtige Stelle'), 'Detailhilfe startet nicht als Orientierungsmodus.');
+  assert(firstReply.includes('Schau oben in die grüne Reiterleiste'), 'Detailhilfe startet nicht mit der kurzen Orientierung.');
   assert(firstReply.includes('Doku-Erweitert'), 'Detaillierte Vitalwerte-Orientierung nennt Doku-Erweitert nicht.');
+  assert(!/erledigt|tun nicht so|markiere/i.test(firstReply), 'Interne Guide-Zustandsformulierungen werden dem Nutzer noch angezeigt.');
   assert(await chatHelp.locator('[data-detail-help-value]').count() === 4, 'Orientierungsfrage bietet nicht vier strukturierte Antworten.');
   assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 1 von 2'), 'Detailhilfe hält Vitalwerte nicht bei Schritt 1 von 2.');
   const commandDisplay = await page.locator('#commandRow').evaluate(node => getComputedStyle(node).display);
   assert(commandDisplay === 'none', 'Weiter ist während der Detailhilfe noch sichtbar.');
 
-  await page.getByRole('button', { name: 'Doku-Erweitert ist offen' }).click();
+  await page.getByRole('button', { name: 'Doku-Erweitert offen' }).click();
   await page.waitForFunction(() => document.querySelector('#guideProgressStep')?.textContent?.includes('Schritt 2 von 2'));
-  await page.waitForFunction(() => [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('Siehst du den Eintrag'));
+  await page.waitForFunction(() => [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('Siehst du Vitalwerte'));
   const secondReply = await page.locator('.message.assistant .bubble p').last().innerText();
   assert(secondReply.includes('Vitalwerte Sammelerf.'), 'Zweiter Orientierungsschritt erklärt den getrennten Sammel-Eintrag nicht.');
-  assert(secondReply.includes('Siehst du den Eintrag'), 'Zweiter Orientierungsschritt stellt keine echte Rückfrage.');
+  assert(secondReply.length < 180, 'Zweiter Orientierungsschritt ist wieder unnötig lang.');
 
-  await page.getByRole('button', { name: '„Vitalwerte“ fehlt' }).click();
-  await page.waitForFunction(() => [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('keinen bestätigten Alternativ-Klickweg'));
+  await page.getByRole('button', { name: 'Vitalwerte fehlt' }).click();
+  await page.waitForFunction(() => [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('Prüfe den Einstieg noch einmal'));
   const missingReply = await page.locator('.message.assistant .bubble p').last().innerText();
-  assert(missingReply.includes('keinen bestätigten Alternativ-Klickweg'), 'Fehlender Menüpunkt stoppt nicht an der bestätigten Fachgrenze.');
-  assert(missingReply.includes('Bitte nichts raten'), 'Sicherheitsgrenze gegen erfundene Klickwege fehlt.');
+  assert(missingReply.includes('Prüfe den Einstieg noch einmal'), 'Fehlender Menüpunkt bietet keinen klaren nächsten sicheren Schritt.');
+  assert(!missingReply.includes('bestätigten Alternativ-Klickweg'), 'Interne Fachgrenzen-Sprache wird weiterhin wortwörtlich angezeigt.');
   assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 2 von 2'), 'Fehlersuche hat den aktuellen Guide-Schritt unzulässig verändert.');
-  assert(!(await page.locator('body').innerText()).includes('Der Ablauf ist erledigt'), 'Detailhilfe markiert den Ablauf fälschlich als erledigt.');
 
   const dimensions = await page.evaluate(() => ({
     width: document.documentElement.scrollWidth,
@@ -140,11 +178,48 @@ try {
   await page.locator('#startScreen').waitFor({ state: 'visible' });
   await page.locator('[data-select-mode="voice"]').click();
   await page.locator('.voice-focus-stage').waitFor({ state: 'visible' });
+  await page.waitForTimeout(250);
+  const speechCallsBefore = await page.evaluate(() => window.__DOKOHILF_TEST_SPEECH_CALLS__?.length || 0);
+
   await page.evaluate(() => window.DokoHilf?.sendMessage?.('Ich finde die Vitalwerte nicht wo sind die?', { fromVoice: true }));
   const voiceHelp = page.locator('#voiceDetailHelpOptionsV27');
   await voiceHelp.waitFor({ state: 'visible' });
+  await page.waitForFunction(() => document.querySelector('#voiceFocusText')?.textContent?.includes('Schau oben in die grüne Reiterleiste'));
+  await page.waitForFunction(before => (window.__DOKOHILF_TEST_SPEECH_CALLS__?.length || 0) > before, speechCallsBefore);
+
+  const voiceText = await page.locator('#voiceFocusText').innerText();
+  assert(voiceText.includes('Schau oben in die grüne Reiterleiste'), 'Voice-Modus zeigt nicht die kurze Detailfrage.');
+  assert(!/erledigt|tun nicht so|markiere/i.test(voiceText), 'Voice-Modus zeigt weiterhin interne Zustandsformulierungen.');
   assert(await voiceHelp.locator('[data-detail-help-value]').count() === 4, 'Voice-Modus verwendet nicht dieselben strukturierten Detailfragen.');
   assert(await page.locator('#appShell').getAttribute('data-detail-help') === 'true', 'Voice-Modus setzt den Detailhilfe-Zustand nicht.');
+
+  const speechCalls = await page.evaluate(() => [...(window.__DOKOHILF_TEST_SPEECH_CALLS__ || [])]);
+  assert(speechCalls.slice(speechCallsBefore).some(text => text.includes('Schau oben in die grüne Reiterleiste')), 'Folgeantwort wurde nicht über die sofortige Gerätestimme gesprochen.');
+
+  const geometry = await page.evaluate(() => {
+    const rect = selector => document.querySelector(selector)?.getBoundingClientRect();
+    const optionRects = [...document.querySelectorAll('#voiceDetailHelpOptionsV27 [data-detail-help-value]')].map(node => node.getBoundingClientRect());
+    const actions = document.querySelector('#voiceFocusActions');
+    return {
+      instruction: rect('.voice-focus-instruction'),
+      panel: rect('#voiceDetailHelpOptionsV27'),
+      orb: rect('.voice-focus-stage .voice-orb'),
+      actionsDisplay: actions ? getComputedStyle(actions).display : 'missing',
+      optionRects: optionRects.map(item => ({ x: item.x, y: item.y, width: item.width, height: item.height })),
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth,
+    };
+  });
+
+  assert(geometry.actionsDisplay === 'none', 'Voice-Weiter/Nochmal/Hilfe-Aktionen konkurrieren noch mit der Detailfrage.');
+  assert(geometry.orb?.width <= 110, `Mikrofon bleibt in Detailhilfe zu groß: ${geometry.orb?.width}`);
+  assert(geometry.instruction && geometry.panel && geometry.instruction.bottom <= geometry.panel.top + 1, 'Frage und Auswahlkarten überlappen sich.');
+  assert(geometry.panel && geometry.orb && geometry.panel.bottom <= geometry.orb.top + 1, 'Auswahlkarten und Mikrofon überlappen sich.');
+  assert(geometry.optionRects.length === 4, 'Vier Detailoptionen fehlen im Voice-Layout.');
+  assert(Math.abs(geometry.optionRects[0].y - geometry.optionRects[1].y) < 2, 'Voice-Optionen sind nicht kompakt zweispaltig angeordnet.');
+  assert(geometry.optionRects[2].y > geometry.optionRects[0].y, 'Zweite Optionszeile fehlt.');
+  assert(geometry.scrollWidth <= geometry.viewportWidth + 1, 'Voice-Detailhilfe erzeugt horizontalen Overflow.');
+
   await page.screenshot({ path: `${OUTPUT_DIR}/detail-help-voice-${PROFILE}.png`, fullPage: false });
 
   assert(unexpectedRouterRequests === 0, `Detailhilfe hat ${unexpectedRouterRequests} unnötige Router-Anfragen ausgelöst.`);
@@ -155,6 +230,8 @@ try {
     profile: PROFILE,
     viewport: { width: WIDTH, height: HEIGHT },
     routerRequests: unexpectedRouterRequests,
+    speechCalls,
+    geometry,
     consoleErrors,
     pageErrors,
   }, null, 2));
