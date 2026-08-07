@@ -82,7 +82,7 @@ jobs:
           grep -q 'STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT' scripts/build-supertonic-guide-audio-v28.py
           grep -q 'Okay. Schau oben in die grüne Reiterleiste' assets/voice-extra-catalog-v28.json
           grep -q 'git push --force origin HEAD:gh-pages' .github/workflows/pages.yml
-          if grep -q 'actions/deploy-pages' .github/workflows/pages.yml; then
+          if grep -q '[a]ctions/deploy-pages' .github/workflows/pages.yml; then
             echo "Pages wird über den geschützten gh-pages-Branch veröffentlicht; ein zusätzlicher API-Deployjob ist unzulässig." >&2
             exit 1
           fi
