@@ -123,13 +123,13 @@
         </div>
 
         <div class="examples" aria-label="Häufige Abläufe">
-          <span>Häufige Abläufe</span>
-          <button type="button" data-prompt="Ich möchte einen Bericht schreiben">Bericht anlegen</button>
-          <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite anlegen</button>
-          <button type="button" data-prompt="Ich möchte Vitalwerte eingeben">Vitalwerte erfassen</button>
-          <button type="button" data-prompt="Wie erfasse ich eine An- oder Abwesenheit?">An-/Abwesenheit</button>
-          <button type="button" data-prompt="Ich möchte die Medikation ansehen">Medikation ansehen</button>
-          <button type="button" data-prompt="Wie lege ich ein Formular an?">Formular erstellen</button>
+          <span>Häufige Abläufe · direkt öffnen</span>
+          <button type="button" data-direct-guide="bericht">Bericht anlegen</button>
+          <button type="button" data-direct-guide="visite">Visite anlegen</button>
+          <button type="button" data-direct-guide="vitalwerte">Vitalwerte erfassen</button>
+          <button type="button" data-direct-guide="anwesenheit">An-/Abwesenheit</button>
+          <button type="button" data-direct-guide="medikation">Medikation ansehen</button>
+          <button type="button" data-direct-guide="formular">Formular erstellen</button>
         </div>
 
         <div class="safety-note" role="note">
@@ -160,9 +160,10 @@
         </section>
 
         <section class="chat-head" id="chatHead" hidden>
-          <h1>Was möchtest du machen?</h1>
-          <p>Schreib so, wie du es einer Kollegin sagen würdest. DokoHilf merkt sich dein Ziel.</p>
-          <div class="quick-prompts">
+          <span class="chat-eyebrow">DokoHilf Chat</span>
+          <h1>Schreib deine Frage.</h1>
+          <p>Beschreibe kurz dein Ziel. DokoHilf führt dich nur durch bestätigte Abläufe.</p>
+          <div class="quick-prompts" aria-label="Schnelle Fragen">
             <button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe</button>
             <button type="button" data-prompt="Ich habe mich in einem Bericht verschrieben">Bericht korrigieren</button>
             <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite</button>
@@ -208,6 +209,7 @@
   <script src="assets/voice-focus-mode.js?v=20260806-27"></script>
   <script src="assets/experience-v27.js?v=20260806-27"></script>
   <script src="assets/ux-v27.js?v=20260806-27"></script>
+  <script src="assets/direct-guides-v27.js?v=20260806-27"></script>
   <script src="assets/app.js?v=20260806-27" defer></script>
   <script>
     document.getElementById('buildPill')?.addEventListener('click', () => {
