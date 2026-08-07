@@ -77,7 +77,7 @@ PR #86 ersetzt `dokohilf-tts`, `dokohilf-guide-audio-build` und die alte Gacrux-
 
 Das ist keine später aufzuweichende Planung, sondern eine dauerhafte Produktgrenze.
 
-Der nie produktiv genutzte Redaktions-Login wird deshalb ebenfalls entfernt. Der öffentliche Build enthält weder `editor.html` noch Editor-JavaScript/CSS. Die JWT-geschützte Edge Function `dokohilf-editor` ist nur noch ein `410 Gone`-Ruhestandsendpunkt; leere Rollen-/Auditstrukturen und ungenutzte Auth-Verweise werden per abgesicherter Migration entfernt. Allgemeine Guide-Inhalte und ihr unpersönlicher technischer Versionsverlauf bleiben erhalten.
+Der nie produktiv genutzte Redaktions-Login ist deshalb ebenfalls entfernt. Der öffentliche Build enthält weder `editor.html` noch Editor-JavaScript/CSS. Die JWT-geschützte Edge Function `dokohilf-editor` ist nur noch ein `410 Gone`-Ruhestandsendpunkt; leere Rollen-/Auditstrukturen und ungenutzte Auth-Verweise sind entfernt. Allgemeine Guide-Inhalte und ihr unpersönlicher technischer Versionsverlauf bleiben erhalten.
 
 ## Finaler QA-Nachweis
 
@@ -109,6 +109,6 @@ Live-Supabase nach Merge:
 - Build-Schalter `false`
 - Cron `dokohilf-static-guide-audio-v27` entfernt
 - Supabase Auth: 0 Nutzer
-- Security-Advisories: 0 Hinweise; Performance-Advisories: 6 reine Infohinweise zu bislang ungenutzten Indizes
+- Security-Advisories: 0 Hinweise; Performance-Advisories: 1 reiner Infohinweis zum bislang ungenutzten Guide-Versionsindex
 
 Der Pages-Workflow veröffentlicht dasselbe exakt geprüfte `_site` ausschließlich über den dafür zugelassenen `gh-pages`-Branch; der redundante, durch die Environment-Regeln verbotene API-Deployjob wurde entfernt. Nächster Schritt ist der reale iPhone-Test mit Begrüßung plus mehreren bestätigten Guide-Schritten.

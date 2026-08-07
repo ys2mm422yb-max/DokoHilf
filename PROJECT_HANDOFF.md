@@ -126,7 +126,7 @@ Der bisherige automatische serverseitige Sprachaufbau ist kein Fallback mehr und
 
 Damit enthält der aktive und der serverseitige Sprachpfad keinen Gemini-/Gacrux-Provideraufruf mehr. Reguläre Audios entstehen ausschließlich kostenlos im geprüften GitHub-Releasebuild mit Supertonic F1; der lokale technische Notweg nutzt dieselbe Stimme.
 
-Live verifiziert: `dokohilf-tts` v22, `dokohilf-guide-audio-build` v4 und `dokohilf-guide-audio` v2 sind aktiv, JWT-geschützt und enthalten nur Ruhestandscode; der Cron ist nicht mehr vorhanden, der Build-Schalter ist `false`, Supabase Auth enthält 0 Nutzer, der Security-Advisor meldet 0 Hinweise und der Performance-Advisor 6 reine Infohinweise zu bislang ungenutzten Indizes.
+Live verifiziert: `dokohilf-tts` v22, `dokohilf-guide-audio-build` v4 und `dokohilf-guide-audio` v2 sind aktiv, JWT-geschützt und enthalten nur Ruhestandscode; der Cron ist nicht mehr vorhanden, der Build-Schalter ist `false`, Supabase Auth enthält 0 Nutzer, der Security-Advisor meldet 0 Hinweise und der Performance-Advisor 1 reinen Infohinweis zum bislang ungenutzten Guide-Versionsindex.
 
 ## 9. Verbindliche Fachquelle
 
@@ -161,7 +161,7 @@ Vor veränderlichen Aussagen immer live prüfen. Zuletzt bekannte technische Ker
 
 Supabase ist technische Infrastruktur, **keine DokoHilf-Nutzerverwaltung**. Keine App-Konten, Anmeldung, Rollenprofile, Bewohnerprofile oder Mitarbeiterprofile in DokoHilf einführen.
 
-Der frühere, nie produktiv verwendete Redaktions-Login ist vollständig stillgelegt: keine veröffentlichte Editor-Seite, keine App-Rollen oder Kontentabellen, keine Auth-Verweise in den Guide-Tabellen und nur ein JWT-geschützter `410 Gone`-Ruhestandsendpunkt. Die 25 allgemeinen Guide-Inhalte und 38 technischen Versionseinträge bleiben ohne Personenbezug erhalten. Supabase Auth bleibt leer.
+Der frühere, nie produktiv verwendete Redaktions-Login ist vollständig stillgelegt: keine veröffentlichte Editor-Seite, keine App-Rollen oder Kontentabellen, keine Auth-Verweise in den Guide-Tabellen und `dokohilf-editor` v3 nur als JWT-geschützter `410 Gone`-Ruhestandsendpunkt. Ein interner `BEFORE INSERT`-Trigger blockiert jede Kontoerstellung; zwei restriktive RLS-Policies verweigern `anon` und `authenticated` jeden Zugriff auf Guides und Versionen. Die 25 allgemeinen Guide-Inhalte und 38 technischen Versionseinträge bleiben ohne Personenbezug erhalten. Supabase Auth bleibt bei 0 Nutzern.
 
 ## 11. Dauerhafte Datenschutz- und Sicherheitsgrenzen
 

@@ -3,6 +3,8 @@
 **Stand:** 7. August 2026
 
 **Branch:** `fix/remove-editor-accounts-v28-20260807`
+**Pull Request:** `#88`
+**Status:** technisch live verifiziert; Merge und Pages-Veröffentlichung nur nach vollständig grünem exakten Head
 
 ## Verbindliches Ziel
 
@@ -46,3 +48,14 @@ Die 38 Guide-Versionen sind keine Konten-, Personen- oder Falldaten und bleiben 
 8. Security Advisor und Performance Advisor werden nach der Migration geprüft
 
 Live-Zustände, PR-Head, Merge und Veröffentlichung werden nach Ausführung zusätzlich in der PR-Beschreibung und in `PROJECT_HANDOFF.md` festgehalten.
+
+## Live-Nachweis
+
+- `auth.users`: 0; ein synthetischer Insert wurde vom permanenten Trigger blockiert und die Zeilenzahl blieb 0
+- Rollen- und Audit-Tabellen: entfernt
+- Auth-Verweisspalten in Guides und Versionen: entfernt
+- allgemeine Inhalte unverändert: 25 Guides und 38 technische Versionen
+- `dokohilf-editor` v3: `verify_jwt = true`, nur `410 Gone`, kein Datenzugriff
+- zwei explizite restriktive RLS-Deny-Policies für `anon` und `authenticated`
+- Security Advisor: 0 Hinweise
+- Performance Advisor: 1 reiner Infohinweis zum bislang ungenutzten Guide-Versionsindex
