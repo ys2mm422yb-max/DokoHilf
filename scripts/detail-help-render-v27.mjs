@@ -12,6 +12,27 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function silentWav(durationMs = 250) {
+  const sampleRate = 8000;
+  const samples = Math.max(1, Math.floor(sampleRate * durationMs / 1000));
+  const dataSize = samples * 2;
+  const buffer = Buffer.alloc(44 + dataSize);
+  buffer.write('RIFF', 0);
+  buffer.writeUInt32LE(36 + dataSize, 4);
+  buffer.write('WAVE', 8);
+  buffer.write('fmt ', 12);
+  buffer.writeUInt32LE(16, 16);
+  buffer.writeUInt16LE(1, 20);
+  buffer.writeUInt16LE(1, 22);
+  buffer.writeUInt32LE(sampleRate, 24);
+  buffer.writeUInt32LE(sampleRate * 2, 28);
+  buffer.writeUInt16LE(2, 32);
+  buffer.writeUInt16LE(16, 34);
+  buffer.write('data', 36);
+  buffer.writeUInt32LE(dataSize, 40);
+  return buffer;
+}
+
 await mkdir(OUTPUT_DIR, { recursive: true });
 
 const browser = await chromium.launch({ headless: true });
@@ -20,6 +41,7 @@ const context = await browser.newContext({
   deviceScaleFactor: SCALE,
   isMobile: true,
   hasTouch: true,
+  serviceWorkers: 'block',
   userAgent: PROFILE === 'android'
     ? 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 Chrome/138 Mobile Safari/537.36'
     : 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1',
@@ -34,12 +56,31 @@ await page.addInitScript(() => {
   try { localStorage.setItem('dokohilf-privacy-ack-v1', 'yes'); } catch {}
 });
 
+await page.route(/\/functions\/v1\/dokohilf-guide-audio(?:\?.*)?$/, async route => {
+  const url = new URL(route.request().url());
+  if (url.searchParams.has('manifest')) {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ buildId: '20260806-27', voice: 'Gacrux', entries: [], complete: false }),
+    });
+    return;
+  }
+  await route.fulfill({
+    status: 200,
+    contentType: 'audio/wav',
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    body: silentWav(),
+  });
+});
+
 await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => {
   await route.fulfill({
-    status: 503,
-    contentType: 'application/json',
-    headers: { 'Access-Control-Allow-Origin': '*' },
-    body: JSON.stringify({ error: 'tts_mock_disabled' }),
+    status: 200,
+    contentType: 'audio/wav',
+    headers: { 'Access-Control-Allow-Origin': '*', 'X-DokoHilf-Voice': 'Gacrux' },
+    body: silentWav(),
   });
 });
 
