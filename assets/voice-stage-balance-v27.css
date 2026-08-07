@@ -21,7 +21,7 @@
   flex-direction:column!important;
   align-items:center!important;
   justify-content:flex-start!important;
-  gap:14px!important;
+  gap:16px!important;
   min-height:0!important;
   padding-top:2px!important;
   overflow:hidden!important;
@@ -149,7 +149,7 @@
   }
 
   .app-shell[data-mode="voice"] .voice-focus-main{
-    gap:13px!important;
+    gap:18px!important;
     padding-top:0!important;
   }
 
@@ -190,7 +190,7 @@
 
 @media(max-height:760px){
   .app-shell[data-mode="voice"] .voice-focus-main{
-    gap:9px!important;
+    gap:12px!important;
   }
 
   .app-shell[data-mode="voice"] .voice-focus-instruction{
