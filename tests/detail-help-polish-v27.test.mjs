@@ -2,9 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const source = await readFile(new URL('../assets/detail-help-polish-v27.js', import.meta.url), 'utf8');
-const apply = await readFile(new URL('../scripts/apply-detail-help-v27.mjs', import.meta.url), 'utf8');
-const build = await readFile(new URL('../scripts/build-static-site-v27.sh', import.meta.url), 'utf8');
+const [source, syncSource, apply, build] = await Promise.all([
+  readFile(new URL('../assets/detail-help-polish-v27.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/detail-help-render-sync-v27.js', import.meta.url), 'utf8'),
+  readFile(new URL('../scripts/apply-detail-help-v27.mjs', import.meta.url), 'utf8'),
+  readFile(new URL('../scripts/build-static-site-v27.sh', import.meta.url), 'utf8'),
+]);
 
 test('Folgeantworten fallen schnell und ohne AbortError auf die Gerätestimme zurück', () => {
   assert.match(source, /const DEVICE_FALLBACK_MS = 160;/);
@@ -22,6 +25,14 @@ test('Detailhilfe zeigt kurze nutzernahe Texte statt interner Zustandsformulieru
   assert.doesNotMatch(source, /Ich markiere noch keinen Schritt als erledigt/);
 });
 
+test('Bereits gerenderte Detailhilfe-Buttons werden wirklich auf kurze Labels synchronisiert', () => {
+  assert.match(syncSource, /'area-open': 'Doku-Erweitert offen'/);
+  assert.match(syncSource, /'other-page': 'Anderer Reiter \/ andere Seite'/);
+  assert.match(syncSource, /button\.querySelector\('small'\)\?\.remove\(\)/);
+  assert.match(syncSource, /MutationObserver/);
+  assert.match(syncSource, /__DOKOHILF_DETAIL_HELP_RENDER_SYNC_V27__/);
+});
+
 test('Voice-Detailhilfe ist kompakt und blendet konkurrierende Aktionen aus', () => {
   assert.match(source, /grid-template-columns:1fr 1fr!important/);
   assert.match(source, /\.voice-orb\{width:96px!important;height:96px!important/);
@@ -30,10 +41,12 @@ test('Voice-Detailhilfe ist kompakt und blendet konkurrierende Aktionen aus', ()
   assert.match(source, /\.pause-button\{display:none!important\}/);
 });
 
-test('Release lädt den Polish nach Experience und cached ihn in derselben PWA-Revision', () => {
-  assert.match(apply, /experienceIndex < polishIndex/);
+test('Release lädt Polish und Render-Sync nach Experience und cached beide in derselben PWA-Revision', () => {
+  assert.match(apply, /experienceIndex < polishIndex && polishIndex < syncIndex/);
   assert.match(apply, /20260807-voice-followup-detail-polish-1/);
   assert.match(apply, /detail-help-polish-v27\.js/);
+  assert.match(apply, /detail-help-render-sync-v27\.js/);
   assert.match(build, /detail-help-polish-v27\.js/);
+  assert.match(build, /detail-help-render-sync-v27\.js/);
   assert.match(build, /20260807-voice-followup-detail-polish-1/);
 });
