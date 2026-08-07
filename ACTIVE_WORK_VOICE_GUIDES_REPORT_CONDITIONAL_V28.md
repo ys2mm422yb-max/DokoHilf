@@ -14,7 +14,7 @@ DokoHilf bleibt dauerhaft eine **reine erklärende Bedienhilfe**:
 - keine Bewohner-/Mitarbeiterprofile
 - keine Fallakten oder personenbezogenen Eingabemasken
 - keine Eingabe oder Speicherung von Bewohner-, Mitarbeiter- oder sonstigen Personendaten
-- automatisierte Tests ausschließlich mit synthetischen UI-Zuständen, neutralen Platzhaltern und erfundenen Werten
+- automatisierte Tests ausschließlich mit synthetischen UI-Zuständen, neutralen Platzhaltern und erfundenen technischen Werten; keine reale Person und kein realer Fall werden nachgebildet
 
 Technische GitHub-/Supabase-Administrationskonten sind Infrastruktur und keine App-Benutzerkonten.
 
@@ -40,8 +40,8 @@ Deshalb wird die Rechenarbeit für **bestätigte allgemeine Guide-Sätze** aus d
 
 ## Neue kostenlose Voice-Architektur
 
-1. Der bestehende 93-Satz-Guide-Katalog bleibt die Quelle für bestätigte allgemeine Sprachanweisungen.
-2. Der öffentliche GitHub-Actions-Releasejob erzeugt diese 93 Sätze mit **Supertonic 3 / Stimme F1 / Deutsch** als statische WAV-Dateien.
+1. Der bestehende 93-Satz-Guide-Katalog bleibt die Quelle für bestätigte allgemeine Sprachanweisungen; 18 feste Dialogsätze ergänzen Begrüßung, Detailhilfe und Abschluss.
+2. Der öffentliche GitHub-Actions-Releasejob erzeugt alle **111 Sätze** (93 + 18) mit **Supertonic 3 / Stimme F1 / Deutsch** als statische WAV-Dateien.
 3. Die veröffentlichte PWA lädt den lokalen Katalog und spielt ein passendes statisches Supertonic-Audio ab.
 4. Begrüßung und bestätigte Folgeanweisungen benötigen dadurch keine lokale iPhone-WASM-Inferenz.
 5. Router-`spokenText` wird für die Sprachausgabe berücksichtigt, damit kurze bestätigte Guide-Sätze zuverlässig getroffen werden.
@@ -58,15 +58,11 @@ Kernkomponenten:
 - `service-worker.js`
 - mobile Voice-/Detailhilfe-/Bericht-QA
 
-## Cloud-Sprachaufbau deaktiviert
+## Cloud-Sprachaufbau dauerhaft stillgelegt
 
 Der vorherige automatische serverseitige statische Sprachaufbau darf für den neuen kostenlosen Releasepfad nicht weitergenerieren.
 
-Live im festen Supabase-Projekt gesetzt und verifiziert:
-
-`public.dokohilf_internal_build_control.enabled = false`
-
-Der vorhandene Cron kann technisch weiterhin ausgelöst werden, wird aber durch diesen Build-Schalter vor einer neuen Sprachgenerierung gestoppt. Der direkte Zugriff auf `cron.job` war über die verfügbare Datenbankrolle nicht erlaubt; deshalb wird **nicht** behauptet, der Cron selbst sei gelöscht oder deaktiviert.
+PR #86 ersetzt `dokohilf-tts` und `dokohilf-guide-audio-build` durch nicht-generierende `410 Gone`-Ruhestandsendpunkte, aktiviert für beide `verify_jwt = true`, hält `public.dokohilf_internal_build_control.enabled = false` und entfernt den Cron `dokohilf-static-guide-audio-v27` per Migration. Damit kann weder der Browser noch der alte Serverpfad kostenpflichtiges Cloud-TTS erzeugen.
 
 ## Öffentliche Produktgrenze
 
@@ -83,7 +79,7 @@ Das ist keine später aufzuweichende Planung, sondern eine dauerhafte Produktgre
 
 Mindestens:
 
-- kompletter GitHub-Actions-Build erzeugt exakt 93 statische Supertonic-F1-WAVs
+- kompletter GitHub-Actions-Build erzeugt exakt 111 statische Supertonic-F1-WAVs (93 Guide-Sätze + 18 feste Dialogsätze)
 - kein Cloud-TTS-Aufruf im aktiven Voice-Releasepfad
 - Begrüßung und bestätigte Folgeanweisung bleiben ohne lokale iPhone-Inferenz
 - lokaler Notweg verwendet ebenfalls Supertonic F1 und bleibt zeitlich begrenzt
@@ -95,4 +91,4 @@ Mindestens:
 - kompletter Deploy-/Release-Nachweis grün
 - exakter PR-Head geprüft und nur manuell gemergt
 
-Nach Merge `main`, `gh-pages`, statische Audiozusammenfassung und Supabase-Build-Schalter live prüfen. Danach real auf dem iPhone mindestens Begrüßung plus mehrere bestätigte Guide-Schritte testen.
+Nach Merge `main`, `gh-pages`, statische Audiozusammenfassung, Supabase-Ruhestandsendpunkte und entfernten Cron live prüfen. Danach real auf dem iPhone mindestens Begrüßung plus mehrere bestätigte Guide-Schritte testen.

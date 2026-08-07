@@ -23,7 +23,6 @@
     /\s*In Übungen nur Fantasiedaten verwenden\.?/gi,
     /\s*In Übungen nur Fantasiewerte verwenden\.?/gi,
     /\s*Im öffentlichen Test ausschließlich Fantasiedaten verwenden\.?/gi,
-    /\s*Im öffentlichen Test nur vollständig erfundene Personen verwenden\.?/gi,
     /\s*Verwende in Übungen ausschließlich Fantasiedaten\.?/gi,
     /\s*Verwende dabei nur Fantasiedaten\.?/gi,
     /\s*In Übungen ausschließlich mit Fantasiedaten arbeiten\.?/gi,

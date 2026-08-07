@@ -48,25 +48,12 @@ test('approved guide audio uses the fixed private Supabase manifest and cache', 
   assert.match(experience, /prebuilt-approved-guide/);
 });
 
-test('server parses raw Gemini Interactions REST audio and keeps Gacrux', () => {
-  assert.match(server, /PRIMARY_MODEL = 'gemini-3\.1-flash-tts-preview'/);
-  assert.match(server, /FALLBACK_MODEL = 'gemini-2\.5-flash-preview-tts'/);
-  assert.match(server, /VOICE_NAME = 'Gacrux'/);
-  assert.match(server, /VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio'/);
-  assert.match(server, /INTERACTIONS_API_REVISION = '2026-05-20'/);
-  assert.match(server, /INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'/);
-  assert.match(server, /v1beta\/interactions/);
-  assert.match(server, /response_format: \{ type: 'audio' \}/);
-  assert.match(server, /speech_config: \[\{ voice: VOICE_NAME \}\]/);
-  assert.match(server, /root\.steps/);
-  assert.match(server, /step\.content/);
-  assert.match(server, /extractInteractionAudio/);
-  assert.match(server, /X-DokoHilf-TTS-Parser/);
-  assert.match(server, /responseStatusForError/);
-  assert.match(server, /status === 429/);
-  assert.match(server, /pendingAudio/);
-  assert.match(server, /CACHE_TTL_MS = 2 \* 60 \* 60_000/);
-  assert.match(server, /TRANSKRIPT:/);
+test('serverseitige Cloud-Stimme ist dauerhaft stillgelegt und erzeugt kein Audio mehr', () => {
+  assert.match(server, /cloud_tts_retired_v28/);
+  assert.match(server, /status: 410/);
+  assert.match(server, /retired-cloud-tts-v28/);
+  assert.match(server, /Supertonic-F1/);
+  assert.doesNotMatch(server, /Gacrux|Gemini|generativelanguage|GEMINI_API_KEY|fetch\(/i);
 });
 
 test('normal guides no longer repeat the training-data sentence', () => {

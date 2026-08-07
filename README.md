@@ -2,7 +2,7 @@
 
 DokoHilf ist eine unabhängige interne Schritt-für-Schritt-Hilfe für Dokumentationsabläufe.
 
-DokoHilf ist ausschließlich eine **erklärende Bedienhilfe**. Die App hat keine Endnutzerkonten, keine Personenprofile und keine Fallakten. Personenbezogene Informationen werden nicht in DokoHilf eingegeben oder gespeichert.
+DokoHilf ist ausschließlich eine **erklärende Bedienhilfe**. Die App hat keine Endnutzerkonten, keine Personenprofile und keine Fallakten. Solche Funktionen werden auch später nicht eingeplant. Personenbezogene Informationen werden nicht in DokoHilf eingegeben oder gespeichert; Tests bilden weder reale Personen noch reale Fälle nach.
 
 ## Start für jeden neuen Chat
 

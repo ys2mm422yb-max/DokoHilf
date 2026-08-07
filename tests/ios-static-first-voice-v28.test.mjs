@@ -15,12 +15,12 @@ test('iPhone Voice-Einstieg armt nur und startet das große Modell nicht', () =>
   assert.doesNotMatch(runtime, /if \(voiceEntry\) armAndPrepare\(\)/);
 });
 
-test('freigegebenes Audio wird zwingend vor Supertonic geprüft', () => {
-  const staticIndex = gate.indexOf('loadApprovedStaticVoice(text)');
+test('statisches Supertonic-Audio wird zwingend vor lokaler Supertonic-Inferenz geprüft', () => {
+  const staticIndex = gate.indexOf('loadStaticSupertonicVoice(text)');
   const localIndex = gate.indexOf('localFallback(text)');
   assert(staticIndex >= 0 && localIndex > staticIndex);
-  assert.match(gate, /static-approved-guide-v28/);
-  assert.match(gate, /prebuilt-approved-guide/);
+  assert.match(gate, /static-supertonic-guide-v28/);
+  assert.match(gate, /STATIC_VOICE = 'Supertonic-F1'/);
 });
 
 test('lokale iOS-Folgeantwort hat schnellere Inferenz und eine harte Zeitgrenze', () => {
@@ -29,12 +29,12 @@ test('lokale iOS-Folgeantwort hat schnellere Inferenz und eine harte Zeitgrenze'
   assert.match(gate, /local_voice_timeout/);
 });
 
-test('Systemstimme bleibt gesperrt und freigegebener Cache überlebt normalen PWA-Aktivierer', () => {
+test('Systemstimme bleibt gesperrt und statischer Supertonic-Cache überlebt normalen PWA-Aktivierer', () => {
   assert.match(gate, /blockSystemSpeech/);
   assert.match(gate, /__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__/);
-  assert.match(worker, /APPROVED_AUDIO_CACHE = 'dokohilf-approved-guide-audio-v28-1'/);
-  assert.match(worker, /key !== APPROVED_AUDIO_CACHE/);
-  assert.match(worker, /20260807-local-natural-voice-v28-2/);
+  assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v28-1'/);
+  assert.match(worker, /key !== STATIC_AUDIO_CACHE/);
+  assert.match(worker, /20260807-static-supertonic-guides-v28-4/);
 });
 
 test('Hotfix bleibt für iOS und Android mit neutraler öffentlicher Dokumentation abgesichert', () => {
@@ -42,5 +42,5 @@ test('Hotfix bleibt für iOS und Android mit neutraler öffentlicher Dokumentati
   assert.match(hotfixDoc, /Android 412×915/);
   assert.match(hotfixDoc, /ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Projektinhalte/);
   assert.doesNotMatch(hotfixDoc, /Nutzerbild|Screenshot.*Chat|Bilder.*Chat|Vivendi-Bilder/i);
-  assert.match(hotfixDoc, /9 statische Gacrux-Audios/);
+  assert.match(hotfixDoc, /Status:\*\* abgeschlossen, gemergt und veröffentlicht/);
 });

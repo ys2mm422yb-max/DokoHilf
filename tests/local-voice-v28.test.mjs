@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [runtime, gate, helper, ux, detail, applyLocal, applyDetail, build, builder, extras, version, index, worker] = await Promise.all([
+const [runtime, gate, helper, ux, detail, applyLocal, applyDetail, build, builder, sourceCatalogText, extrasText, version, index, worker] = await Promise.all([
   readFile(new URL('../assets/local-voice-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/local-voice-gate-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/vendor/supertonic-web-v28.mjs', import.meta.url), 'utf8'),
@@ -12,11 +12,15 @@ const [runtime, gate, helper, ux, detail, applyLocal, applyDetail, build, builde
   readFile(new URL('../scripts/apply-detail-help-v27.mjs', import.meta.url), 'utf8'),
   readFile(new URL('../scripts/build-static-site-v27.sh', import.meta.url), 'utf8'),
   readFile(new URL('../scripts/build-supertonic-guide-audio-v28.py', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/guide-audio-catalog.json', import.meta.url), 'utf8'),
   readFile(new URL('../assets/voice-extra-catalog-v28.json', import.meta.url), 'utf8'),
   readFile(new URL('../version.json', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
 ]);
+
+const sourceCatalog = JSON.parse(sourceCatalogText);
+const extraCatalog = JSON.parse(extrasText);
 
 test('v28 nutzt dieselbe kostenlose Supertonic-F1-Stimme statisch für Guides und lokal nur bei Bedarf', () => {
   assert.match(runtime, /Supertone\/supertonic-3\/resolve\/main/);
@@ -39,13 +43,23 @@ test('GitHub-Build erzeugt alle bestätigten statischen Sprachsätze ohne TTS-AP
   assert.match(builder, /voice_name=args\.voice/);
   assert.match(builder, /--extra-catalog/);
   assert.match(builder, /merged_entries/);
+  assert.match(builder, /BASE_GUIDE_COUNT = 93/);
+  assert.match(builder, /EXTRA_SPEECH_COUNT = 18/);
+  assert.match(builder, /STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT \+ EXTRA_SPEECH_COUNT/);
+  assert.match(builder, /--validate-only/);
   assert.match(builder, /supertonic_text/);
   assert.match(builder, /'„': ''/);
   assert.match(build, /DOKOHILF_REQUIRE_STATIC_SUPERTONIC/);
   assert.match(build, /Statischer Supertonic-Sprachbestand unvollständig/);
-  assert.match(extras, /Okay\. Schau oben in die grüne Reiterleiste/);
-  assert.match(extras, /Die Medikation darf hier nur angesehen werden/);
-  assert.match(extras, /Der Ablauf ist erledigt/);
+  assert.equal(sourceCatalog.entries.length, 93);
+  assert.equal(extraCatalog.entries.length, 18);
+  assert.equal(sourceCatalog.entries.length + extraCatalog.entries.length, 111);
+  const normalized = [...sourceCatalog.entries, ...extraCatalog.entries]
+    .map(entry => String(entry.text || '').toLocaleLowerCase('de-DE').replace(/\s+/g, ' ').trim());
+  assert.equal(new Set(normalized).size, 111);
+  assert.match(extrasText, /Okay\. Schau oben in die grüne Reiterleiste/);
+  assert.match(extrasText, /Die Medikation darf hier nur angesehen werden/);
+  assert.match(extrasText, /Der Ablauf ist erledigt/);
 });
 
 test('iOS nutzt WASM mit schnellerer lokaler Notinferenz, Android kann WebGPU bevorzugen', () => {

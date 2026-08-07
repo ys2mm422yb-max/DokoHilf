@@ -4,14 +4,15 @@ import { readFile } from 'node:fs/promises';
 
 const root = new URL('../', import.meta.url);
 const catalog = JSON.parse(await readFile(new URL('assets/guide-audio-catalog.json', root), 'utf8'));
+const extraCatalog = JSON.parse(await readFile(new URL('assets/voice-extra-catalog-v28.json', root), 'utf8'));
 const experience = await readFile(new URL('assets/experience-v27.js', root), 'utf8');
 const diagnostics = await readFile(new URL('assets/voice-diagnostics.js', root), 'utf8');
 const tts = await readFile(new URL('supabase/functions/dokohilf-tts/index.ts', root), 'utf8');
 const builder = await readFile(new URL('supabase/functions/dokohilf-guide-audio-build/index.ts', root), 'utf8');
 const policy = await readFile(new URL('PREBUILT_AUDIO.md', root), 'utf8');
 const rules = await readFile(new URL('PROJECT_RULES.md', root), 'utf8');
-const acceleratedBuilder = await readFile(new URL('supabase/migrations/20260807093000_accelerate_static_guide_audio_builder.sql', root), 'utf8');
-const resumedBuilder = await readFile(new URL('supabase/migrations/20260807095000_resume_static_guide_audio_builder.sql', root), 'utf8');
+const config = await readFile(new URL('supabase/config.toml', root), 'utf8');
+const retirement = await readFile(new URL('supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql', root), 'utf8');
 
 function normalizeKey(value) {
   return String(value || '')
@@ -25,11 +26,14 @@ function normalizeKey(value) {
     .trim();
 }
 
-test('source catalog covers greeting and all 92 unique approved guide steps', () => {
+test('source catalogs cover exactly 93 guide sentences and 18 fixed dialog sentences', () => {
   assert.equal(catalog.schemaVersion, 1);
   assert.equal(catalog.entries.length, 93);
+  assert.equal(extraCatalog.entries.length, 18);
   assert.equal(new Set(catalog.entries.map(entry => entry.file)).size, 93);
   assert.equal(new Set(catalog.entries.map(entry => normalizeKey(entry.text))).size, 93);
+  const allTexts = [...catalog.entries, ...extraCatalog.entries].map(entry => normalizeKey(entry.text));
+  assert.equal(new Set(allTexts).size, 111);
 });
 
 test('legacy compatibility browser code still points only at the fixed private audio endpoint', () => {
@@ -51,19 +55,21 @@ test('legacy experience layer retains its old approved-audio compatibility path'
   assert.match(experience, /fastRace\(loadNaturalVoice/);
 });
 
-test('legacy TTS source keeps auditable raw-audio validation', () => {
-  assert.match(tts, /VOICE_NAME = 'Gacrux'/);
-  assert.match(tts, /INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'/);
-  assert.match(tts, /extractInteractionAudio/);
-  assert.match(tts, /root\.steps/);
-  assert.match(tts, /step\.content/);
-  assert.match(tts, /X-DokoHilf-TTS-Parser/);
-  assert.match(tts, /Content-Type': 'audio\/wav'/);
+test('alte serverseitige TTS- und Builder-Endpunkte sind nicht-generierende Ruhestandsendpunkte', () => {
+  assert.match(tts, /cloud_tts_retired_v28/);
+  assert.match(tts, /status: 410/);
+  assert.match(builder, /legacy_cloud_audio_builder_retired_v28/);
+  assert.match(builder, /status: 410/);
+  assert.doesNotMatch(tts, /Gacrux|Gemini|generativelanguage|GEMINI_API_KEY|fetch\(/i);
+  assert.doesNotMatch(builder, /x-dokohilf-build-token|dokohilf-tts|fetch\(/i);
 });
 
 test('static audio exception is narrow and excludes every user-content source', () => {
   assert.match(policy, /23 freigegebene Guides/);
   assert.match(policy, /92 eindeutige Schritttexte/);
+  assert.match(policy, /93 bestätigte Guide-Sätze/);
+  assert.match(policy, /18 feste Dialogsätze/);
+  assert.match(policy, /111 statische WAV-Dateien/);
   assert.match(policy, /Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe/);
   assert.match(policy, /nicht dauerhaft gespeichert/);
   assert.match(rules, /Allgemeine, fachlich freigegebene Guide-Anweisungen dürfen als statische Audiodateien/);
@@ -71,26 +77,17 @@ test('static audio exception is narrow and excludes every user-content source', 
   assert.match(rules, /keine Benutzerkonten, keine Bewohner-\/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken/);
 });
 
-test('legacy cloud builder source remains internally authenticated and bounded', () => {
-  assert.match(acceleratedBuilder, /cron\.unschedule\('dokohilf-static-guide-audio-v27'\)/);
-  assert.match(acceleratedBuilder, /'\* \* \* \* \*'/);
-  assert.match(acceleratedBuilder, /dokohilf_build_next_static_guide_audio\(\)/);
-  assert.doesNotMatch(acceleratedBuilder, /Nutzerstimme|Diktat|Gespräch|personal|name|diagnos|medikament|vitalwert/i);
-  assert.match(resumedBuilder, /cron\.unschedule\(jobid\)/);
-  assert.match(resumedBuilder, /'\* \* \* \* \*'/);
-  assert.match(resumedBuilder, /count\(\*\).*20260806-27/);
-  assert.doesNotMatch(resumedBuilder, /[a-f0-9]{64}/i);
+test('legacy cloud builder is disabled, JWT-geschützt and its cron is removed', () => {
+  assert.match(config, /\[functions\.dokohilf-tts\][\s\S]*verify_jwt = true/);
+  assert.match(config, /\[functions\.dokohilf-guide-audio-build\][\s\S]*verify_jwt = true/);
+  assert.match(retirement, /enabled = false/);
+  assert.match(retirement, /cron\.unschedule\(jobid\)/);
+  assert.match(retirement, /dokohilf-static-guide-audio-v27/);
 });
 
-test('only the authenticated internal legacy builder may bypass user-content privacy heuristics', () => {
-  assert.match(builder, /'x-dokohilf-build-token': control\.data\.build_token/);
-  assert.match(tts, /async function isTrustedStaticAudioBuilder/);
-  assert.match(tts, /\^\[a-f0-9\]\{64\}\$/i);
-  assert.match(tts, /SUPABASE_SERVICE_ROLE_KEY/);
-  assert.match(tts, /dokohilf_internal_build_control/);
-  assert.match(tts, /constantTimeEqual\(suppliedToken, row\.build_token\)/);
-  assert.match(tts, /!trustedStaticBuilder && isRateLimited\(req\)/);
-  assert.match(tts, /!trustedStaticBuilder && containsDirectPersonalData\(text\)/);
-  assert.doesNotMatch(builder, /build_token\s*=\s*['"][a-f0-9]{32,}['"]/i);
-  assert.doesNotMatch(tts, /build_token\s*=\s*['"][a-f0-9]{32,}['"]/i);
+test('retired cloud functions contain no provider, token or personal-data processing path', () => {
+  for (const source of [tts, builder]) {
+    assert.doesNotMatch(source, /GEMINI_API_KEY|SUPABASE_SERVICE_ROLE_KEY|build_token|fetch\(/i);
+    assert.doesNotMatch(source, /name|diagnos|medikament|vitalwert/i);
+  }
 });

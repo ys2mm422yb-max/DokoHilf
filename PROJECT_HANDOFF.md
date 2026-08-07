@@ -104,7 +104,7 @@ Ziel-PWA-Revision:
 Zielarchitektur:
 
 1. **Supertonic F1** ist die einzige reguläre DokoHilf-Stimme.
-2. Die 93 bestätigten allgemeinen Guide-Sätze werden im öffentlichen GitHub-Actions-Build mit Supertonic 3 / F1 / Deutsch als statische WAV-Dateien erzeugt.
+2. Der öffentliche GitHub-Actions-Build erzeugt 93 bestätigte allgemeine Guide-Sätze plus 18 feste Dialogsätze mit Supertonic 3 / F1 / Deutsch als statische WAV-Dateien.
 3. iPhone und Android spielen diese bestätigten Guide-Audios nur ab; dafür ist keine lokale Geräte-Inferenz nötig.
 4. Router-`spokenText` wird berücksichtigt, damit kurze bestätigte Anweisungen zuverlässig den passenden statischen Satz treffen.
 5. Der aktive Browser-Sprachpfad ruft keine Cloud-TTS-API auf.
@@ -112,19 +112,19 @@ Zielarchitektur:
 7. Nur ein noch nicht vorbereiteter freier Satz darf als technischer Notweg lokal mit derselben Supertonic-F1-Stimme erzeugt werden; auf iOS bleibt die harte Zeitgrenze bestehen.
 8. Generierte freie Audios werden nicht dauerhaft gespeichert.
 
-Der öffentliche Pages-Build muss exakt 93 statische Supertonic-F1-WAVs erzeugen und den ausgelieferten Katalog als `Supertonic-F1` kennzeichnen.
+Der öffentliche Pages-Build muss exakt **111 statische Supertonic-F1-WAVs** erzeugen (93 Guide-Sätze + 18 feste Dialogsätze) und den ausgelieferten Katalog als `Supertonic-F1` kennzeichnen.
 
-## 8. Kostenkontrolle / alter Cloud-Sprachaufbau
+## 8. Kostenkontrolle / stillgelegter Cloud-Sprachaufbau
 
-Der bisherige automatische serverseitige statische Sprachaufbau darf für den neuen kostenlosen Releasepfad nicht weitergenerieren.
+Der bisherige automatische serverseitige Sprachaufbau ist kein Fallback mehr und darf kein Audio mehr erzeugen:
 
-Live im festen Supabase-Projekt gesetzt und verifiziert:
+- `dokohilf-tts` ist ein nicht-generierender Ruhestandsendpunkt (`410 Gone`).
+- `dokohilf-guide-audio-build` ist ein nicht-generierender Ruhestandsendpunkt (`410 Gone`).
+- Beide Funktionen verlangen zusätzlich ein gültiges JWT (`verify_jwt = true`).
+- `public.dokohilf_internal_build_control.enabled` bleibt `false`.
+- Die Migration `20260807214545_retire_legacy_cloud_voice.sql` entfernt den Cron `dokohilf-static-guide-audio-v27`.
 
-`public.dokohilf_internal_build_control.enabled = false`
-
-Der vorhandene Cron kann technisch weiterhin ausgelöst werden, wird durch diesen Build-Schalter aber vor einer neuen TTS-Erzeugung gestoppt. Der direkte Zugriff auf `cron.job` war über die verfügbare Datenbankrolle nicht erlaubt; deshalb wird nicht behauptet, der Cron selbst sei gelöscht oder deaktiviert.
-
-Serverseitige ältere TTS-/Audiofunktionen können als technische Altkomponenten noch vorhanden sein, sind aber nicht Ziel des neuen PR-#86-Voice-Releasepfads.
+Damit enthält der aktive und der serverseitige Sprachpfad keinen Gemini-/Gacrux-Provideraufruf mehr. Reguläre Audios entstehen ausschließlich kostenlos im geprüften GitHub-Releasebuild mit Supertonic F1; der lokale technische Notweg nutzt dieselbe Stimme.
 
 ## 9. Verbindliche Fachquelle
 
@@ -149,9 +149,9 @@ Nie fehlende Feldnamen, alternative Menüs oder Klickwege ergänzen, nur weil si
 Vor veränderlichen Aussagen immer live prüfen. Zuletzt bekannte technische Kernkomponenten:
 
 - `dokohilf-ai-router`
-- `dokohilf-tts` als ältere serverseitige technische Komponente
+- `dokohilf-tts` als stillgelegter, nicht-generierender Ruhestandsendpunkt
 - `dokohilf-guide-audio`
-- `dokohilf-guide-audio-build`
+- `dokohilf-guide-audio-build` als stillgelegter, nicht-generierender Ruhestandsendpunkt
 - `public.dokohilf_guides`
 - `public.dokohilf_topics`
 - `public.dokohilf_static_guide_audio`
@@ -177,11 +177,11 @@ Supabase ist technische Infrastruktur, **keine DokoHilf-Endnutzerverwaltung**. K
 Für PR #86:
 
 1. alle bestehenden v28-3-Verträge auf die neue v28-4-Revision konsistent halten,
-2. GitHub-Actions-Releasejob tatsächlich 93 Supertonic-F1-Audios erzeugen lassen,
+2. GitHub-Actions-Releasejob tatsächlich 93 Guide-Sätze plus 18 feste Dialogsätze, insgesamt exakt 111 Supertonic-F1-Audios, erzeugen lassen,
 3. iOS `393×852` und Android `412×915` für Voice, Detailhilfe und Bericht-Sonderfall prüfen,
 4. 0 Systemstimmenaufrufe und 0 Cloud-TTS-Aufrufe im aktiven Voice-Pfad nachweisen,
 5. nur vollständig grünen exakten Head manuell mergen,
-6. danach `main`, `gh-pages`, ausgelieferte PWA-Revision, statische Audiozusammenfassung und Supabase-Build-Schalter live prüfen,
+6. danach `main`, `gh-pages`, ausgelieferte PWA-Revision, statische Audiozusammenfassung sowie die stillgelegten Supabase-Funktionen und den entfernten Cron live prüfen,
 7. anschließend real auf dem iPhone Begrüßung plus mehrere bestätigte Folgeanweisungen testen.
 
 ## 13. Pflicht für jeden neuen Chat

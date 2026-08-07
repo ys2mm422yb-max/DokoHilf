@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -42,8 +42,10 @@ jobs:
             supabase/functions/dokohilf-tts/index.ts \
             supabase/functions/dokohilf-guide-audio/index.ts \
             supabase/functions/dokohilf-guide-audio-build/index.ts \
+            supabase/config.toml \
             supabase/migrations/20260806194500_create_static_guide_audio_registry.sql \
-            supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql; do
+            supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql \
+            supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql; do
             test -s "$file"
           done
 
@@ -66,9 +68,10 @@ jobs:
           grep -q '412 × 915' ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md
           grep -q 'conversational-guide-router-v9' supabase/functions/dokohilf-ai-router/index.ts
           grep -q 'medication-view-only-safety-v9' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'constantTimeEqual' supabase/functions/dokohilf-guide-audio-build/index.ts
-          grep -q 'x-dokohilf-build-token' supabase/functions/dokohilf-guide-audio-build/index.ts
-          grep -q 'dokohilf_internal_build_control' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q 'cloud_tts_retired_v28' supabase/functions/dokohilf-tts/index.ts
+          grep -q 'legacy_cloud_audio_builder_retired_v28' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q 'verify_jwt = true' supabase/config.toml
+          grep -q "cron.unschedule(jobid)" supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql
           grep -q 'Dauerhaftes absolutes Echtdatenverbot' PROJECT_RULES.md
           grep -q 'Eine spätere Freigabe darf dieses Verbot' PROJECT_RULES.md
           grep -q 'Öffentliche Dokumentation enthält keine Angaben zu Herkunft' CONFIRMED_WORKFLOWS.md
@@ -76,7 +79,7 @@ jobs:
           grep -q '__DOKOHILF_STATIC_SUPERTONIC_V28__' assets/local-voice-gate-v28.js
           grep -q 'TTS(auto_download=True)' scripts/build-supertonic-guide-audio-v28.py
           grep -q "lang='de'" scripts/build-supertonic-guide-audio-v28.py
-          grep -q 'static speech catalog unexpectedly small' scripts/build-supertonic-guide-audio-v28.py
+          grep -q 'STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT' scripts/build-supertonic-guide-audio-v28.py
           grep -q 'Okay. Schau oben in die grüne Reiterleiste' assets/voice-extra-catalog-v28.json
 
           node --check assets/update-manager.js
@@ -97,6 +100,7 @@ jobs:
           node --check scripts/live-routing-stable.mjs
           node --check scripts/live-vitalwerte-routing-smoke.mjs
           python3 -m py_compile scripts/build-supertonic-guide-audio-v28.py
+          python3 scripts/build-supertonic-guide-audio-v28.py --validate-only
 
           grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' assets/app.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' assets/voice-focus-mode.js && exit 1 || true
@@ -193,10 +197,12 @@ jobs:
             --speed 1.05
           expected="$(python -c "import json; print(len(json.load(open('assets/guide-audio-catalog.json', encoding='utf-8'))['entries']))")"
           actual="$(find assets/audio/guides -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')"
-          test "$expected" -ge 93
-          test "$actual" = "$expected"
+          test "$expected" = 111
+          test "$actual" = 111
           grep -q '"voice": "Supertonic-F1"' assets/guide-audio-catalog.json
           grep -q '"baseGuideCount": 93' assets/guide-audio-catalog.json
+          grep -q '"extraSpeechCount": 18' assets/guide-audio-catalog.json
+          grep -q '"staticSpeechCount": 111' assets/guide-audio-catalog.json
 
       - name: Build exact releasable static site
         env:
@@ -222,6 +228,21 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
+
+      - name: Publish the same exact site to gh-pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd _site
+          git init --initial-branch=gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m "Publish DokoHilf ${GITHUB_SHA}"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin HEAD:gh-pages
 
   deploy:
     if: github.event_name != 'pull_request'

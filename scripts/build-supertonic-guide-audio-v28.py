@@ -4,7 +4,9 @@ import json
 import re
 from pathlib import Path
 
-from supertonic import TTS
+BASE_GUIDE_COUNT = 93
+EXTRA_SPEECH_COUNT = 18
+STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT
 
 
 def clean_catalog_text(value: str) -> str:
@@ -14,7 +16,6 @@ def clean_catalog_text(value: str) -> str:
         r'\s*In Übungen nur Fantasiedaten verwenden\.?',
         r'\s*In Übungen nur Fantasiewerte verwenden\.?',
         r'\s*Im öffentlichen Test ausschließlich Fantasiedaten verwenden\.?',
-        r'\s*Im öffentlichen Test nur vollständig erfundene Personen verwenden\.?',
         r'\s*Verwende in Übungen ausschließlich Fantasiedaten\.?',
         r'\s*Verwende dabei nur Fantasiedaten\.?',
     ]
@@ -69,19 +70,34 @@ def main() -> None:
     parser.add_argument('--steps', type=int, default=8)
     parser.add_argument('--speed', type=float, default=1.05)
     parser.add_argument('--limit', type=int, default=0)
+    parser.add_argument('--validate-only', action='store_true')
     args = parser.parse_args()
 
     catalog_path = Path(args.catalog)
     base_catalog = json.loads(catalog_path.read_text(encoding='utf-8'))
     extra_catalog = json.loads(Path(args.extra_catalog).read_text(encoding='utf-8'))
+    base_entries = base_catalog.get('entries') or []
+    extra_entries = extra_catalog.get('entries') or []
+    if len(base_entries) != BASE_GUIDE_COUNT:
+        raise SystemExit(f'expected {BASE_GUIDE_COUNT} base guide sentences, found {len(base_entries)}')
+    if len(extra_entries) != EXTRA_SPEECH_COUNT:
+        raise SystemExit(f'expected {EXTRA_SPEECH_COUNT} fixed dialog sentences, found {len(extra_entries)}')
     entries = merged_entries(base_catalog, extra_catalog)
-    if len(entries) < 93:
-        raise SystemExit(f'static speech catalog unexpectedly small: {len(entries)}')
+    if len(entries) != STATIC_SPEECH_COUNT:
+        raise SystemExit(f'expected {STATIC_SPEECH_COUNT} unique static speech sentences, found {len(entries)}')
+    if args.validate_only:
+        print(
+            f'Validated {BASE_GUIDE_COUNT} base guide sentences + '
+            f'{EXTRA_SPEECH_COUNT} fixed dialog sentences = {STATIC_SPEECH_COUNT} static sentences'
+        )
+        return
     if args.limit > 0:
         entries = entries[:args.limit]
 
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
+
+    from supertonic import TTS
 
     tts = TTS(auto_download=True)
     style = tts.get_voice_style(voice_name=args.voice)
@@ -124,7 +140,8 @@ def main() -> None:
         **base_catalog,
         'voice': f'Supertonic-{args.voice}',
         'generatedWith': 'Supertonic 3 static GitHub build',
-        'baseGuideCount': len(base_catalog.get('entries') or []),
+        'baseGuideCount': BASE_GUIDE_COUNT,
+        'extraSpeechCount': EXTRA_SPEECH_COUNT,
         'staticSpeechCount': len(published_entries),
         'entries': published_entries,
     }
@@ -137,7 +154,9 @@ def main() -> None:
             'language': 'de',
             'steps': args.steps,
             'speed': args.speed,
-            'baseGuideCount': len(base_catalog.get('entries') or []),
+            'baseGuideCount': BASE_GUIDE_COUNT,
+            'extraSpeechCount': EXTRA_SPEECH_COUNT,
+            'staticSpeechCount': len(generated),
             'count': len(generated),
             'entries': generated,
         }, ensure_ascii=False, indent=2),

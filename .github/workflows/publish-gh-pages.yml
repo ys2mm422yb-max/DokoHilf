@@ -1,8 +1,6 @@
 name: Publish DokoHilf to gh-pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -15,18 +13,39 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
 
-      - name: Validate available private Gacrux guide audio
+      - name: Set up Python for free static voice build
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cache Supertonic model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/supertonic3
+          key: dokohilf-supertonic3-model-v1
+
+      - name: Generate all 111 confirmed static speech sentences
         run: |
           set -euo pipefail
-          node --check scripts/live-static-guide-audio-smoke.mjs
-          node scripts/live-static-guide-audio-smoke.mjs
+          python -m pip install --disable-pip-version-check 'supertonic==1.3.1'
+          rm -rf assets/audio/guides
+          python scripts/build-supertonic-guide-audio-v28.py \
+            --catalog assets/guide-audio-catalog.json \
+            --extra-catalog assets/voice-extra-catalog-v28.json \
+            --output-root assets/audio/guides \
+            --voice F1 \
+            --steps 8 \
+            --speed 1.05
+          test "$(find assets/audio/guides -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')" = 111
 
       - name: Build exact static Pages directory
+        env:
+          DOKOHILF_REQUIRE_STATIC_SUPERTONIC: '1'
         run: |
           set -euo pipefail
           bash -n scripts/build-static-site-v27.sh

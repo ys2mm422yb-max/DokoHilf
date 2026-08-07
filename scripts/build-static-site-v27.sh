@@ -106,8 +106,8 @@ if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
   test -s "$audio_dir/build-summary.json"
   expected_count="$(python -c "import json; print(len(json.load(open('$SITE_DIR/assets/guide-audio-catalog.json', encoding='utf-8'))['entries']))")"
   wav_count="$(find "$audio_dir" -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')"
-  if [[ "$expected_count" -lt 93 ]]; then
-    echo "Der statische Sprachkatalog darf die 93 bestätigten Guide-Schritte nicht unterschreiten: $expected_count" >&2
+  if [[ "$expected_count" != 111 ]]; then
+    echo "Der statische Sprachkatalog muss exakt 93 Guide-Sätze und 18 feste Dialogsätze enthalten: $expected_count" >&2
     exit 1
   fi
   if [[ "$wav_count" != "$expected_count" ]]; then
@@ -117,9 +117,19 @@ if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
   grep -q '"engine": "Supertonic 3"' "$audio_dir/build-summary.json"
   grep -q '"voice": "F1"' "$audio_dir/build-summary.json"
   grep -q '"baseGuideCount": 93' "$audio_dir/build-summary.json"
+  grep -q '"extraSpeechCount": 18' "$audio_dir/build-summary.json"
+  grep -q '"staticSpeechCount": 111' "$audio_dir/build-summary.json"
+  grep -q '"count": 111' "$audio_dir/build-summary.json"
   grep -q '"voice": "Supertonic-F1"' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q '"baseGuideCount": 93' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q '"extraSpeechCount": 18' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q '"staticSpeechCount": 111' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Okay. Schau oben in die grüne Reiterleiste' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Die Medikation darf hier nur angesehen werden' "$SITE_DIR/assets/guide-audio-catalog.json"
 fi
 
-echo "DokoHilf $BUILD_ID mit v28-4, vollständigem statischem kostenlosen Supertonic-F1-Sprachbestand für bestätigte Guides und feste Hilfedialoge, Router-spokenText, lokaler Supertonic-F1-Notinferenz ohne Systemstimme, iOS-/Android-QA und Bericht-Sonderfall gebaut."
+if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
+  echo "DokoHilf $BUILD_ID mit v28-4, exakt 93 statischen Guide-Sätzen plus 18 festen Dialogsätzen (111 Supertonic-F1-WAVs), Router-spokenText, lokaler Supertonic-F1-Notinferenz ohne Systemstimme, iOS-/Android-QA und Bericht-Sonderfall gebaut."
+else
+  echo "DokoHilf $BUILD_ID als lokale QA-Site gebaut; der vollständige Releasebuild verlangt separat exakt 111 Supertonic-F1-WAVs."
+fi

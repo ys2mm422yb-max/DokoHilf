@@ -1,78 +1,57 @@
-# DokoHilf – vorproduzierte Guide-Sprachausgaben
+# DokoHilf – statische Supertonic-Sprachausgabe
 
-**Stand:** 6. August 2026  
-**Ziel-Build:** `20260806-27`
+**Stand:** 7. August 2026
+**Ziel-Build:** `20260807-28` / PWA-Revision `20260807-static-supertonic-guides-v28-4`
 
 ## Zweck
 
-Bekannte, freigegebene Guide-Schritte sollen nicht bei jeder Nutzung erneut an einen externen TTS-Dienst gesendet werden. Sie werden mit der freigegebenen Stimme **Gacrux** erzeugt, in einem privaten Supabase-Storage-Bucket gespeichert und ausschließlich über den kontrollierten Edge-Endpunkt `dokohilf-guide-audio` ausgeliefert.
+Bestätigte DokoHilf-Anweisungen werden im geprüften GitHub-Releasebuild einmalig mit der kostenlosen Sprachengine **Supertonic 3**, Stimme **F1**, Deutsch erzeugt. Die veröffentlichte PWA spielt diese statischen WAV-Dateien ab und ruft dafür weder im Browser noch über Supabase eine Cloud-TTS-API auf.
 
-Vorhandene statische Dateien starten schneller und bleiben nach dem Gerätecache auch bei einem vorübergehenden Providerausfall verfügbar. Fehlt ein statischer Eintrag, nutzt DokoHilf TTS v20 und nach rund 1,9 Sekunden die lokale Sofortstimme.
-
-## Datenbasis
+## Vollständiger statischer Bestand
 
 - 23 freigegebene Guides
 - 108 Guide-Schritte
-- 92 eindeutige Schritttexte
-- zusätzlich eine allgemeine Begrüßung
-- Quelle ausschließlich `public.dokohilf_guides` mit Status `approved`
-- keine Checks, Nutzerantworten, Bewohnerdaten oder Gesprächsinhalte in den Audiodateien
+- 92 eindeutige Schritttexte plus eine allgemeine Begrüßung
+- damit 93 bestätigte Guide-Sätze aus `assets/guide-audio-catalog.json`
+- zusätzlich 18 feste Dialogsätze aus `assets/voice-extra-catalog-v28.json`
+- insgesamt exakt **111 statische WAV-Dateien**
 
-## Repositoryquellen
+Der Build bricht ab, wenn die Quellen nicht exakt 93 + 18 eindeutige Sätze enthalten, wenn nicht exakt 111 WAV-Dateien erzeugt wurden oder wenn Katalog und Build-Zusammenfassung nicht `Supertonic-F1` ausweisen.
 
-- `assets/guide-audio-catalog.json`: vollständiger überprüfbarer Textkatalog
-- `assets/experience-v27.js`: bevorzugt statische Audios vor Live-TTS
-- `assets/voice-diagnostics.js`: leitet den bisherigen Manifestaufruf auf den privaten Endpunkt und cached Manifest sowie WAVs auf dem Gerät
-- `service-worker.js`: cached freigegebene Audios für wiederholte und Offline-Nutzung
-- `supabase/functions/dokohilf-guide-audio/index.ts`: Manifest- und WAV-Auslieferung
-- `supabase/functions/dokohilf-guide-audio-build/index.ts`: token-geschützte, fortsetzbare Erzeugung
-- `scripts/live-static-guide-audio-smoke.mjs`: Live-Prüfung von Manifest, RIFF/WAVE, Größe und SHA-256
+## Aktiver Sprachpfad
 
-## Supabase-Speicher
+1. Ein passender bestätigter Satz wird aus dem veröffentlichten Supertonic-F1-Katalog abgespielt.
+2. Nur für einen noch nicht vorbereiteten freien Satz darf ein zeitlich begrenzter technischer Notweg lokal im Browser dieselbe Supertonic-F1-Stimme erzeugen.
+3. Das lokal erzeugte Audio bleibt flüchtig und wird nicht dauerhaft gespeichert.
+4. Eine System-/Gerätestimme und Cloud-TTS sind keine regulären Fallbacks.
 
-- privater Bucket: `dokohilf-guide-audio`
-- Registry: `public.dokohilf_static_guide_audio`
-- interner Builderzustand: `public.dokohilf_internal_build_control`
-- Manifestformat: Schema 2
-- jeder Eintrag enthält Index, Textschlüssel, Text, Endpunkt, Größe, SHA-256, Stimme, Modell, API-Weg, Parser, Stil und Erstellzeit
+Repositoryquellen:
 
-Der öffentliche GitHub-Pages-Build enthält keine WAV-Binärdateien und kein lokales Audio-Manifest.
+- `assets/guide-audio-catalog.json`: 93 bestätigte Guide-Sätze
+- `assets/voice-extra-catalog-v28.json`: 18 feste Dialogsätze
+- `scripts/build-supertonic-guide-audio-v28.py`: eindeutige Validierung und statische Erzeugung
+- `assets/local-voice-gate-v28.js`: statischer Supertonic-Pfad und lokaler Notweg
+- `.github/workflows/pages.yml`: vollständiger Releasebuild und Veröffentlichung desselben `_site`-Artefakts
+- `scripts/build-static-site-v27.sh`: strenger 111-Dateien-Vertrag
 
-## Sicherheitsgrenze
+## Stillgelegter alter Cloud-Aufbau
 
-Die Ausnahme von der sonstigen Regel „Audio nur flüchtig“ gilt ausschließlich für statische, allgemeine und fachlich freigegebene Bedienanweisungen.
+Der frühere Gacrux-/Gemini-Aufbau ist vollständig aus dem erzeugenden Pfad entfernt:
 
-**Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe werden nicht dauerhaft gespeichert.** Dasselbe gilt für Namen, Fallinhalte, Gesundheitsdaten, Checks und individuelle Eingaben.
+- `dokohilf-tts` antwortet nur noch als nicht-generierender Ruhestandsendpunkt mit `410 Gone`.
+- `dokohilf-guide-audio-build` antwortet nur noch als nicht-generierender Ruhestandsendpunkt mit `410 Gone`.
+- Für beide Funktionen ist `verify_jwt = true` gesetzt.
+- Der interne Build-Schalter bleibt deaktiviert.
+- Der frühere Cron `dokohilf-static-guide-audio-v27` wird per Migration entfernt.
 
-Nicht dauerhaft gespeichert werden:
+Historische private Dateien oder Registryzeilen sind kein aktiver Audio-, Browser- oder Erzeugungspfad und werden von v28-4 nicht geladen.
 
-- Nutzerstimmen
-- Diktate
-- freie Antworten
-- Gesprächsverläufe
-- Namen
-- Fallinhalte
-- Gesundheitsdaten
-- Checks und individuelle Eingaben
+## Datenschutz- und Produktgrenze
 
-Die Builder-Funktion verlangt ein zufälliges internes Token. Dieses Token wird in einer nicht öffentlich lesbaren Supabase-Tabelle erzeugt und liegt niemals in GitHub oder im Browser. Ein Aufruf ohne Token wurde mit HTTP 403 geprüft.
+Die statischen Audios enthalten nur allgemeine, selbst formulierte und freigegebene Bedienanweisungen. **Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe**, Namen, Bewohner-, Mitarbeiter-, Gesundheits- und Falldaten sind ausgeschlossen und werden nicht dauerhaft gespeichert.
 
-## Kontrollierter Teilrollout
-
-Google begrenzt neue TTS-Erzeugungen aktuell zeitweise mit HTTP 429. Deshalb:
-
-- wird nur der jeweils nächste fehlende Index versucht
-- werden fertige Dateien nicht erneut erzeugt
-- läuft der Versuch höchstens stündlich
-- stoppt sich der Builder bei 93/93 selbst
-- blockiert der Teilbestand die sichtbare Build-27-Oberfläche nicht
-
-Der normale Build-27-Test verlangt mindestens einen vollständig geprüften Eintrag. Der vollständige Audioabschluss wird separat streng geprüft:
-
-```bash
-DOKOHILF_REQUIRE_COMPLETE_AUDIO=1 node scripts/live-static-guide-audio-smoke.mjs
-```
+DokoHilf ist nur eine erklärende Bedienhilfe. Es gibt keine Endnutzerkonten, Personenprofile, Fallakten oder personenbezogenen Eingabemasken; solche Funktionen werden auch später nicht eingeplant. Tests verwenden ausschließlich synthetische UI-Zustände, neutrale Platzhalter und erfundene technische Werte und bilden keine reale Person oder realen Fall nach.
 
 ## Aktualisierung
 
-Ändert sich ein freigegebener Guide-Schritt, muss der Katalog neu aus dem freigegebenen Datenbestand erstellt werden. Der betroffene Registryeintrag und die zugehörige Storage-Datei müssen ersetzt und anschließend Manifest-, Größen-, Hash- und WAV-Prüfungen erneut ausgeführt werden. Alte Audiodateien dürfen nicht still weiterverwendet werden.
+Ändert sich ein bestätigter Satz, wird der vollständige statische Bestand im nächsten Releasebuild neu erzeugt. Veröffentlicht wird nur, wenn Quellkataloge, 111 WAV-Dateien, Build-Zusammenfassung, mobile QA und der exakt geprüfte Git-Head übereinstimmen.
