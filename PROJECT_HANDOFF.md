@@ -4,7 +4,7 @@
 **Stand:** 7. August 2026  
 **Veröffentlichter Build:** `20260807-28`  
 **Sichtbare Version:** `v28`  
-**Aktuell veröffentlichte PWA-Revision vor PR #86:** `20260807-voice-guides-report-v28-3`  
+**Aktuell veröffentlichte PWA-Revision:** `20260807-static-supertonic-guides-v28-4`
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
 > Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle vorhandenen `ACTIVE_WORK_*.md`. Danach werden GitHub, Actions, `main`, `gh-pages` und bei Bedarf Supabase live geprüft. Veränderliche Zustände werden niemals nur aus dieser Datei abgeleitet.
@@ -75,9 +75,9 @@ Für **Bericht anlegen** gilt verbindlich:
 - bei allen anderen Berichtskategorien Schritte 6–9 überspringen und direkt mit Datum/Uhrzeit bei Schritt 10 fortfahren
 - das kleine rote X entfernt nur die Protokollverknüpfung, nicht den Bericht
 
-Die fachliche Grundlogik wurde in PR #82 gemergt und in PR #83 als PWA-v28-3 veröffentlicht. Die Darstellung bleibt in PR #86 Bestandteil der iOS-/Android-Regressionstests.
+Die fachliche Grundlogik wurde in PR #82 gemergt und in PR #83 als PWA-v28-3 veröffentlicht. Die Darstellung blieb auch beim v28-4-Release Bestandteil der iOS-/Android-Regressionstests.
 
-## 7. Voice v28 – veröffentlichter Stand und laufender PR #86
+## 7. Voice v28 – veröffentlicht mit PR #86
 
 ### Bisheriger Verlauf
 
@@ -87,21 +87,19 @@ PR #80 führte deshalb vorhandene statische Audios vor lokaler Inferenz ein. PR 
 
 Ein weiterer realer iPhone-Test zeigte: Der erste vorhandene Satz kann hörbar sein, aber ein späterer bestätigter Guide-Satz fällt bei fehlendem statischem Audio erneut in lokale Supertonic-WASM-Inferenz und kann stumm bleiben.
 
-### Aktueller Folgeblock PR #86
+### Abgeschlossener Folgeblock PR #86
 
 Branch:
 
 `fix/static-supertonic-accountfree-v28-20260807`
 
-PR:
+PR #86 wurde manuell mit dem vollständig grünen exakten Head `6061f4d532ec4eddadd84bf6e658735ba35571ba` gemergt. Merge-Commit auf `main`: `7eed2aec275464e90436c3686aae30671f3803e3`. Der Implementierungsbranch bleibt bewusst bestehen.
 
-`#86` – **offen; nicht mergen, bevor der aktuelle exakte Head vollständig grün ist.**
-
-Ziel-PWA-Revision:
+PWA-Revision:
 
 `20260807-static-supertonic-guides-v28-4`
 
-Zielarchitektur:
+Veröffentlichte Architektur:
 
 1. **Supertonic F1** ist die einzige reguläre DokoHilf-Stimme.
 2. Der öffentliche GitHub-Actions-Build erzeugt 93 bestätigte allgemeine Guide-Sätze plus 18 feste Dialogsätze mit Supertonic 3 / F1 / Deutsch als statische WAV-Dateien.
@@ -126,6 +124,8 @@ Der bisherige automatische serverseitige Sprachaufbau ist kein Fallback mehr und
 - Die Migration `20260807214545_retire_legacy_cloud_voice.sql` entfernt den Cron `dokohilf-static-guide-audio-v27`.
 
 Damit enthält der aktive und der serverseitige Sprachpfad keinen Gemini-/Gacrux-Provideraufruf mehr. Reguläre Audios entstehen ausschließlich kostenlos im geprüften GitHub-Releasebuild mit Supertonic F1; der lokale technische Notweg nutzt dieselbe Stimme.
+
+Live verifiziert: `dokohilf-tts` v22, `dokohilf-guide-audio-build` v4 und `dokohilf-guide-audio` v2 sind aktiv, JWT-geschützt und enthalten nur Ruhestandscode; der Cron ist nicht mehr vorhanden, der Build-Schalter ist `false`, Supabase Auth enthält 0 Nutzer, der Security-Advisor meldet 0 Hinweise und der Performance-Advisor 6 reine Infohinweise zu bislang ungenutzten Indizes.
 
 ## 9. Verbindliche Fachquelle
 
@@ -175,15 +175,13 @@ Supabase ist technische Infrastruktur, **keine DokoHilf-Endnutzerverwaltung**. K
 
 ## 12. Nächster ausführbarer Schritt
 
-Für PR #86:
+Der technische v28-4-Release ist abgeschlossen. Als nächstes real auf dem iPhone:
 
-1. alle bestehenden v28-3-Verträge auf die neue v28-4-Revision konsistent halten,
-2. GitHub-Actions-Releasejob tatsächlich 93 Guide-Sätze plus 18 feste Dialogsätze, insgesamt exakt 111 Supertonic-F1-Audios, erzeugen lassen,
-3. iOS `393×852` und Android `412×915` für Voice, Detailhilfe und Bericht-Sonderfall prüfen,
-4. 0 Systemstimmenaufrufe und 0 Cloud-TTS-Aufrufe im aktiven Voice-Pfad nachweisen,
-5. nur vollständig grünen exakten Head manuell mergen,
-6. danach `main`, `gh-pages`, ausgelieferte PWA-Revision, statische Audiozusammenfassung sowie die stillgelegten Supabase-Funktionen und den entfernten Cron live prüfen,
-7. anschließend real auf dem iPhone Begrüßung plus mehrere bestätigte Folgeanweisungen testen.
+1. DokoHilf vollständig schließen und neu öffnen,
+2. `KI · v28` und die aktuelle PWA-Revision prüfen,
+3. Begrüßung sowie mehrere bestätigte Folgeanweisungen anhören,
+4. bestätigen, dass durchgehend dieselbe Supertonic-F1-Stimme hörbar ist,
+5. bei einem neuen Fehler den exakten Satz und den sichtbaren Status dokumentieren, aber keinen Cloud- oder Systemstimmen-Rollback einführen.
 
 ## 13. Pflicht für jeden neuen Chat
 

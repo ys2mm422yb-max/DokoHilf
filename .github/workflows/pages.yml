@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: dokohilf-pages-${{ github.event.pull_request.number || github.ref }}
@@ -83,6 +81,11 @@ jobs:
           grep -q "lang='de'" scripts/build-supertonic-guide-audio-v28.py
           grep -q 'STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT' scripts/build-supertonic-guide-audio-v28.py
           grep -q 'Okay. Schau oben in die grüne Reiterleiste' assets/voice-extra-catalog-v28.json
+          grep -q 'git push --force origin HEAD:gh-pages' .github/workflows/pages.yml
+          if grep -q '[a]ctions/deploy-pages' .github/workflows/pages.yml; then
+            echo "Pages wird über den geschützten gh-pages-Branch veröffentlicht; ein zusätzlicher API-Deployjob ist unzulässig." >&2
+            exit 1
+          fi
 
           node --check assets/update-manager.js
           node --check assets/mobile-audio-fix.js
@@ -225,12 +228,6 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Upload Pages artifact
-        if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: _site
-
       - name: Publish the same exact site to gh-pages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
@@ -245,19 +242,3 @@ jobs:
           git commit -m "Publish DokoHilf ${GITHUB_SHA}"
           git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push --force origin HEAD:gh-pages
-
-  deploy:
-    if: github.event_name != 'pull_request'
-    needs: validate
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
