@@ -31,12 +31,12 @@ jobs:
 
           for file in \
             README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md \
-            FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md \
-            assets/guide-audio-catalog.json \
+            FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md ACTIVE_WORK_DIRECT_GUIDES_CHAT.md \
+            assets/guide-audio-catalog.json assets/direct-guides-v27.js \
             scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh \
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
             scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-static-guide-audio-smoke.mjs scripts/live-screenshot-smoke.mjs \
-            tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs \
+            tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs tests/direct-guides-v27.test.mjs \
             supabase/functions/dokohilf-ai-router/index.ts \
             supabase/functions/dokohilf-tts/index.ts \
             supabase/functions/dokohilf-guide-audio/index.ts \
@@ -57,6 +57,8 @@ jobs:
           grep -q '__DOKOHILF_IDEMPOTENT_SYNC_V27__' assets/ux-v27.js
           grep -q "PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1'" assets/ux-v27.js
           test "$(grep -o 'localStorage\.[a-zA-Z]*' assets/ux-v27.js | sort -u | tr '\n' ' ')" = "localStorage.getItem localStorage.setItem "
+          grep -q '__DOKOHILF_DIRECT_GUIDES_V27__' assets/direct-guides-v27.js
+          grep -q "dataset.mode = 'direct-guide'" assets/direct-guides-v27.js
           grep -q 'command-message-hidden' assets/ux-v27.css
           grep -q 'data-voice-state="listening"' assets/ux-v27.css
           grep -q -- '--v27-bg:#020c12' assets/premium-ui-v27.css
@@ -89,6 +91,7 @@ jobs:
           node --check assets/voice-focus-mode.js
           node --check assets/experience-v27.js
           node --check assets/ux-v27.js
+          node --check assets/direct-guides-v27.js
           node --check assets/app.js
           node --check assets/editor.js
           node --check service-worker.js
@@ -102,6 +105,7 @@ jobs:
           grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' assets/app.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' assets/voice-focus-mode.js && exit 1 || true
           grep -q 'localStorage\|indexedDB' assets/experience-v27.js && exit 1 || true
+          grep -q 'localStorage\|indexedDB' assets/direct-guides-v27.js && exit 1 || true
           grep -q 'indexedDB' assets/ux-v27.js && exit 1 || true
           grep -q '\.jpe\?g\|\.png\|IMG_' CONFIRMED_WORKFLOWS.md && exit 1 || true
 
@@ -129,7 +133,8 @@ jobs:
             tests/voice-layout-v26.test.mjs \
             tests/dark-premium-v27.test.mjs \
             tests/fast-voice-v27.test.mjs \
-            tests/prebuilt-guide-audio.test.mjs
+            tests/prebuilt-guide-audio.test.mjs \
+            tests/direct-guides-v27.test.mjs
 
       - name: Build isolated UI test surface
         run: |
