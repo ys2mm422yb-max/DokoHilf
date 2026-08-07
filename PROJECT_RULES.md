@@ -1,7 +1,7 @@
 # DokoHilf – verbindliche Projektregeln
 
 **Status:** Verbindlich  
-**Stand:** 6. August 2026
+**Stand:** 7. August 2026
 
 > Diese Datei ist vor jeder Arbeit an DokoHilf vollständig zu lesen. Bei rechtlicher, datenschutzrechtlicher oder technischer Unsicherheit gilt: stoppen, nichts veröffentlichen, keine Daten importieren und keine Echtdaten verwenden.
 
@@ -163,3 +163,13 @@ Dann darf nur eine sichere, datenfreie Alternative vorbereitet werden.
 ## 14. Hinweis
 
 Diese Regeln sind ein technisches und organisatorisches Schutzkonzept, keine anwaltliche Rechtsberatung und keine betriebliche Datenschutzfreigabe.
+
+## 15. Dauerhafte GitHub-Dokumentationspflicht
+
+- GitHub ist das dauerhafte Arbeitsgedächtnis für DokoHilf. Ein neuer Chat muss den Projektstand aus dem Repository nachvollziehen und fortsetzen können, ohne alte Chats rekonstruieren zu müssen.
+- Nach jedem relevanten Arbeitsblock werden mindestens dokumentiert: Nutzerentscheidung, fachlicher Stand, betroffene Komponenten/Dateien, tatsächliche Tests und Ergebnisse, Fehler/Blocker, aktueller Branch/PR/Exact Head, Veröffentlichungsstand sowie der nächste ausführbare Schritt.
+- Bestätigte lokale Klickwege werden sofort anonymisiert in `CONFIRMED_WORKFLOWS.md` gepflegt.
+- Der aktuelle Gesamtstand und alle Übergaben werden in `PROJECT_HANDOFF.md` gepflegt.
+- Laufende größere Aufgaben erhalten bei Bedarf eine eigene `ACTIVE_WORK_*.md`, die im Handoff verlinkt wird.
+- PR-Beschreibungen und relevante Statusdokumente müssen bei Head- oder Scope-Wechseln aktualisiert werden; veraltete Aussagen dürfen nicht als aktueller Stand stehen bleiben.
+- Bild- und Echtdatenregeln bleiben vorrangig: Screenshots selbst werden trotz Dokumentationspflicht niemals nach GitHub übernommen. Dokumentiert werden ausschließlich anonymisierte, selbst formulierte Erkenntnisse.
