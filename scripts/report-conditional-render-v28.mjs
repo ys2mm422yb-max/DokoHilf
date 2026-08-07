@@ -7,64 +7,47 @@ const HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE === 'andr
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/report-conditional-v28/${PROFILE}`;
 
-function assert(condition, message) {
-  if (!condition) throw new Error(message);
-}
+function assert(condition, message) { if (!condition) throw new Error(message); }
 
 await mkdir(OUTPUT_DIR, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
-  viewport: { width: WIDTH, height: HEIGHT },
-  deviceScaleFactor: 2,
-  isMobile: true,
-  hasTouch: true,
-  serviceWorkers: 'block',
+  viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: 'block',
   userAgent: PROFILE === 'android'
     ? 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 Chrome/139 Mobile Safari/537.36'
     : 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1',
 });
 const page = await context.newPage();
-const consoleErrors = [];
-const pageErrors = [];
+const consoleErrors = []; const pageErrors = [];
 page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 page.on('pageerror', error => pageErrors.push(error.message));
-
-await page.addInitScript(() => {
-  try { localStorage.setItem('dokohilf-privacy-ack-v1', 'yes'); } catch {}
-});
+await page.addInitScript(() => { try { localStorage.setItem('dokohilf-privacy-ack-v1', 'yes'); } catch {} });
 
 const spokenReply = 'Öffne „Doku-Erweitert“ und wähle „Visiten“. Bist du dort?';
 const spokenText = 'Öffne „Doku-Erweitert“ und wähle „Visiten“.';
-const audioUrl = 'https://example.invalid/dokohilf-approved-033.wav';
-let localVoiceRequests = 0;
+let rawTtsRequests = 0;
+let staticAudioRequests = 0;
 
 await page.route('**/functions/v1/dokohilf-ai-router', async route => {
-  await route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify({ reply: spokenReply, spokenText, guideSlug: 'visite', guideStep: 1, guideStepCount: 2 }),
-  });
+  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ reply: spokenReply, spokenText, guideSlug: 'visite', guideStep: 1, guideStepCount: 2 }) });
 });
 await page.route('**/functions/v1/dokohilf-ai', async route => {
+  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ reply: spokenReply, spokenText, guideSlug: 'visite', guideStep: 1, guideStepCount: 2 }) });
+});
+await page.route('**/assets/guide-audio-catalog.json*', async route => {
   await route.fulfill({
     status: 200,
     contentType: 'application/json',
-    body: JSON.stringify({ reply: spokenReply, spokenText, guideSlug: 'visite', guideStep: 1, guideStepCount: 2 }),
+    body: JSON.stringify({ schemaVersion: 1, voice: 'Supertonic-F1', entries: [{ file: 'assets/audio/guides/033.wav', text: spokenText }] }),
   });
 });
-await page.route('**/functions/v1/dokohilf-guide-audio?manifest=1*', async route => {
-  await route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify({ voice: 'Gacrux', entries: [{ index: 33, text: spokenText, file: audioUrl }] }),
-  });
-});
-await page.route(audioUrl, async route => {
-  await route.fulfill({ status: 200, contentType: 'audio/wav', body: Buffer.alloc(64) });
+await page.route('**/assets/audio/guides/033.wav', async route => {
+  staticAudioRequests += 1;
+  await route.fulfill({ status: 200, contentType: 'audio/wav', body: Buffer.alloc(128) });
 });
 await page.route('**/functions/v1/dokohilf-tts', async route => {
-  localVoiceRequests += 1;
-  await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'unexpected raw cloud tts' }) });
+  rawTtsRequests += 1;
+  await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'raw_tts_must_not_reach_network' }) });
 });
 
 try {
@@ -95,9 +78,7 @@ try {
     steps: [...document.querySelectorAll('.direct-guide-step.report-protocol-step')].map(node => node.getBoundingClientRect().toJSON()),
   }));
   assert(geometry.scrollWidth <= geometry.viewportWidth + 1, `Horizontaler Overflow: ${geometry.scrollWidth} > ${geometry.viewportWidth}`);
-  for (const rect of [geometry.condition, ...geometry.steps]) {
-    assert(rect && rect.left >= -1 && rect.right <= geometry.viewportWidth + 1, 'Sonderfall-Element ragt horizontal aus dem Viewport.');
-  }
+  for (const rect of [geometry.condition, ...geometry.steps]) assert(rect && rect.left >= -1 && rect.right <= geometry.viewportWidth + 1, 'Sonderfall-Element ragt horizontal aus dem Viewport.');
 
   await page.evaluate(async ({ reply }) => {
     await fetch('https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router', {
@@ -116,24 +97,15 @@ try {
 
   const voiceResult = await page.evaluate(() => window.__REPORT_VOICE_RESULT__);
   assert(voiceResult?.ok === true, 'Gemappter spokenText liefert kein statisches Audio.');
-  assert(voiceResult?.voice === 'Gacrux', `Falsche Stimme: ${voiceResult?.voice}`);
-  assert(voiceResult?.mode === 'static-approved-guide-v28', `Falscher Voice-Modus: ${voiceResult?.mode}`);
+  assert(voiceResult?.voice === 'Supertonic-F1', `Falsche Stimme: ${voiceResult?.voice}`);
+  assert(voiceResult?.mode === 'static-supertonic-guide-v28', `Falscher Voice-Modus: ${voiceResult?.mode}`);
   assert(voiceResult?.state?.lastSpokenMapping === spokenText, 'Router-spokenText wurde nicht als Audioquelle übernommen.');
-  assert(localVoiceRequests === 0, `Raw Cloud-TTS wurde ${localVoiceRequests}x erreicht.`);
+  assert(staticAudioRequests === 1, `Statisches Supertonic-Audio wurde ${staticAudioRequests}x geladen.`);
+  assert(rawTtsRequests === 0, `TTS-Netzwerkpfad wurde ${rawTtsRequests}x erreicht.`);
 
   assert(consoleErrors.length === 0, `Console-Fehler: ${consoleErrors.join(' | ')}`);
   assert(pageErrors.length === 0, `Page-Fehler: ${pageErrors.join(' | ')}`);
-
-  await writeFile(`${OUTPUT_DIR}/summary.json`, JSON.stringify({
-    profile: PROFILE,
-    viewport: { width: WIDTH, height: HEIGHT },
-    conditionText,
-    conditionalStepNumbers: numbers,
-    geometry,
-    voiceResult,
-    consoleErrors,
-    pageErrors,
-  }, null, 2));
+  await writeFile(`${OUTPUT_DIR}/summary.json`, JSON.stringify({ profile: PROFILE, viewport: { width: WIDTH, height: HEIGHT }, conditionText, conditionalStepNumbers: numbers, geometry, voiceResult, staticAudioRequests, rawTtsRequests, consoleErrors, pageErrors }, null, 2));
 } finally {
   await context.close();
   await browser.close();
