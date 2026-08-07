@@ -1,4 +1,5 @@
 const BUILD_ID = '20260806-27';
+const HOTFIX_REVISION = '20260807-fluid-voice-layout-1';
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}`;
 const AUDIO_CACHE_NAME = `dokohilf-approved-guide-audio-${BUILD_ID}`;
 const AUDIO_MANIFEST = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-guide-audio?manifest=1&build=20260806-27';
@@ -75,13 +76,13 @@ self.addEventListener('activate', event => {
     await cacheApprovedGuideAudio().catch(() => ({ cached: 0, total: 0, complete: false }));
     await self.clients.claim();
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    for (const client of clients) client.postMessage({ type: 'DOKOHILF_UPDATED', buildId: BUILD_ID, hardRefresh: true });
+    for (const client of clients) client.postMessage({ type: 'DOKOHILF_UPDATED', buildId: BUILD_ID, hotfixRevision: HOTFIX_REVISION, hardRefresh: true });
   })());
 });
 
 self.addEventListener('message', event => {
   if (event.data?.type === 'SKIP_WAITING') return void self.skipWaiting();
-  if (event.data?.type === 'GET_BUILD_ID') event.ports?.[0]?.postMessage({ buildId: BUILD_ID });
+  if (event.data?.type === 'GET_BUILD_ID') event.ports?.[0]?.postMessage({ buildId: BUILD_ID, hotfixRevision: HOTFIX_REVISION });
   if (event.data?.type === 'CACHE_APPROVED_GUIDE_AUDIO') {
     event.waitUntil(cacheApprovedGuideAudio().then(result => event.ports?.[0]?.postMessage(result)));
   }
@@ -89,7 +90,7 @@ self.addEventListener('message', event => {
     event.waitUntil((async () => {
       const keys = await caches.keys();
       await Promise.all(keys.filter(key => key.startsWith('dokohilf-')).map(key => caches.delete(key)));
-      event.ports?.[0]?.postMessage({ cleared: true, buildId: BUILD_ID });
+      event.ports?.[0]?.postMessage({ cleared: true, buildId: BUILD_ID, hotfixRevision: HOTFIX_REVISION });
     })());
   }
 });
