@@ -1,8 +1,10 @@
 # ACTIVE WORK – kostenlose Voice-Guides und Bericht-Sonderfall v28
 
 **Stand:** 7. August 2026  
-**Status:** neuer Folgeblock in Umsetzung; Merge erst nach vollständig grünem exakten Head  
+**Status:** abgeschlossen, vollständig geprüft, manuell gemergt und veröffentlicht
 **Branch:** `fix/static-supertonic-accountfree-v28-20260807`  
+**Finaler PR-Head:** `6061f4d532ec4eddadd84bf6e658735ba35571ba`
+**Merge-Commit:** `7eed2aec275464e90436c3686aae30671f3803e3`
 **Build:** `20260807-28` / sichtbare Version `v28`  
 **Ziel-PWA-Revision:** `20260807-static-supertonic-guides-v28-4`
 
@@ -75,9 +77,9 @@ PR #86 ersetzt `dokohilf-tts`, `dokohilf-guide-audio-build` und die alte Gacrux-
 
 Das ist keine später aufzuweichende Planung, sondern eine dauerhafte Produktgrenze.
 
-## Pflicht-QA vor Merge
+## Finaler QA-Nachweis
 
-Mindestens:
+Auf dem exakten PR-Head grün:
 
 - kompletter GitHub-Actions-Build erzeugt exakt 111 statische Supertonic-F1-WAVs (93 Guide-Sätze + 18 feste Dialogsätze)
 - kein Cloud-TTS-Aufruf im aktiven Voice-Releasepfad
@@ -91,4 +93,20 @@ Mindestens:
 - kompletter Deploy-/Release-Nachweis grün
 - exakter PR-Head geprüft und nur manuell gemergt
 
-Nach Merge `main`, `gh-pages`, statische Audiozusammenfassung, Supabase-Ruhestandsendpunkte und entfernten Cron live prüfen. Danach real auf dem iPhone mindestens Begrüßung plus mehrere bestätigte Guide-Schritte testen.
+GitHub-Runs auf Head `6061f4d`:
+
+- Deploy DokoHilf #383 – success
+- Validate dark iPhone UI v27 #123 – success
+- Validate detailed help iOS Android #94 – success
+- Validate local voice v28 iOS Android #71 – success
+- Validate report conditional iOS Android #24 – success
+
+Live-Supabase nach Merge:
+
+- `dokohilf-tts` v22, `dokohilf-guide-audio-build` v4 und `dokohilf-guide-audio` v2: `verify_jwt = true`, nur `410 Gone`-Ruhestandscode, kein Provider-/Storagezugriff
+- Build-Schalter `false`
+- Cron `dokohilf-static-guide-audio-v27` entfernt
+- Supabase Auth: 0 Nutzer
+- Security-/Performance-Advisories: 0 Hinweise
+
+Der Pages-Workflow veröffentlicht dasselbe exakt geprüfte `_site` ausschließlich über den dafür zugelassenen `gh-pages`-Branch; der redundante, durch die Environment-Regeln verbotene API-Deployjob wurde entfernt. Nächster Schritt ist der reale iPhone-Test mit Begrüßung plus mehreren bestätigten Guide-Schritten.

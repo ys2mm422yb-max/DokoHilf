@@ -1,7 +1,7 @@
 # Audio-Erzeugungsstatus
 
 **Stand:** 7. August 2026
-**Status:** PR #86 in Prüfung; der bisherige Gacrux-Aufbau ist ersetzt
+**Status:** PR #86 gemergt und v28-4 veröffentlicht; der bisherige Gacrux-Aufbau ist vollständig stillgelegt
 **Ziel:** exakt 111 kostenlose Supertonic-F1-WAV-Dateien
 
 ## Aktueller Vertrag
