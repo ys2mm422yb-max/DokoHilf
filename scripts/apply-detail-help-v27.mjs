@@ -1,8 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const BUILD_ID = '20260806-27';
-const REVISION = '20260807-voice-followup-detail-polish-1';
+const BUILD_ID = '20260807-28';
+const REVISION = '20260807-local-natural-voice-v28-1';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');
@@ -34,23 +34,22 @@ if (!html.includes(syncScriptTag.trim())) throw new Error('Detailhilfe-Render-Sy
 const clarificationIndex = html.indexOf(`assets/clarification-ui.js?v=${BUILD_ID}`);
 const helpIndex = html.indexOf(`assets/detail-help-v27.js?v=${BUILD_ID}`);
 const progressIndex = html.indexOf(`assets/guide-progress.js?v=${BUILD_ID}`);
+const localVoiceIndex = html.indexOf(`assets/local-voice-v28.js?v=${BUILD_ID}`);
 const experienceIndex = html.indexOf(`assets/experience-v27.js?v=${BUILD_ID}`);
 const polishIndex = html.indexOf(`assets/detail-help-polish-v27.js?v=${BUILD_ID}`);
 const syncIndex = html.indexOf(`assets/detail-help-render-sync-v27.js?v=${BUILD_ID}`);
+const gateIndex = html.indexOf(`assets/local-voice-gate-v28.js?v=${BUILD_ID}`);
 if (!(clarificationIndex >= 0 && clarificationIndex < helpIndex && helpIndex < progressIndex)) {
   throw new Error('Detailhilfe muss nach Clarification und vor Guide-Progress geladen werden.');
 }
-if (!(experienceIndex >= 0 && experienceIndex < polishIndex && polishIndex < syncIndex)) {
-  throw new Error('Detailhilfe-Polish und Render-Sync müssen nach Experience in dieser Reihenfolge geladen werden.');
+if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < gateIndex)) {
+  throw new Error('Lokale Stimme, Experience, Detailhilfe-Polish, Render-Sync und finaler Voice-Gate sind falsch sortiert.');
 }
 await writeFile(htmlPath, html);
 
 let worker = await readFile(workerPath, 'utf8');
 worker = worker
-  .replace("const HOTFIX_REVISION = '20260807-pwa-icons-cross-platform-1';", `const HOTFIX_REVISION = '${REVISION}';`)
-  .replace("const HOTFIX_REVISION = '20260807-direct-guides-cross-platform-1';", `const HOTFIX_REVISION = '${REVISION}';`)
-  .replace("const HOTFIX_REVISION = '20260807-detail-help-cross-platform-1';", `const HOTFIX_REVISION = '${REVISION}';`)
-  .replace("const HOTFIX_REVISION = '20260807-voice-followup-detail-polish-1';", `const HOTFIX_REVISION = '${REVISION}';`);
+  .replace(/const HOTFIX_REVISION = '[^']+';/, `const HOTFIX_REVISION = '${REVISION}';`);
 
 const helpAssetLine = `  './assets/detail-help-v27.js?v=${BUILD_ID}',`;
 if (!worker.includes(helpAssetLine)) {
@@ -77,4 +76,4 @@ if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(help
 }
 await writeFile(workerPath, worker);
 
-console.log(`DokoHilf detail help + voice polish applied: ${REVISION}`);
+console.log(`DokoHilf detail help + local voice release applied: ${REVISION}`);

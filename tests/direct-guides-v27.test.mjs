@@ -19,7 +19,7 @@ test('häufige Abläufe werden als sieben robuste Direktanleitungen übernommen'
   assert.match(guides, /new MutationObserver/);
   assert.match(guides, /requestAnimationFrame\(syncPresentation\)/);
   assert.match(guides, /\['uebergabe', 'Übergabe anzeigen'\]/);
-  assert.match(html, /direct-guides-v27\.js\?v=20260806-27/);
+  assert.match(html, /direct-guides-v27\.js\?v=20260807-28/);
 });
 
 test('direkte Bericht- und Visitenanleitungen entsprechen der bestätigten Fachquelle', () => {
@@ -87,8 +87,8 @@ test('iOS und Android sind für diese mobile Änderung gleichberechtigte Freigab
   assert.match(css, /env\(safe-area-inset-right\)/);
 });
 
-test('PWA cached die Direkt-Guide-Logik und trägt die aktuelle Revision', () => {
-  assert.match(worker, /HOTFIX_REVISION = '20260807-direct-guides-cross-platform-1'/);
-  assert.match(worker, /direct-guides-v27\.js\?v=20260806-27/);
-  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260806-27/);
+test('PWA cached die Direkt-Guide-Logik innerhalb der aktuellen v28-Revision', () => {
+  assert.match(worker, /HOTFIX_REVISION = '20260807-local-natural-voice-v28-1'/);
+  assert.match(worker, /direct-guides-v27\.js\?v=20260807-28/);
+  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260807-28/);
 });

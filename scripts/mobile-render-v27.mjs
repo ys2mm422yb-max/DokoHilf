@@ -2,15 +2,16 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
-const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || 'artifacts/mobile-v27';
+const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || 'artifacts/mobile-v28';
 const USE_MOCK_SERVICES = process.env.DOKOHILF_UI_MOCK === '1';
 const PROFILE = process.env.DOKOHILF_MOBILE_PROFILE || 'ios';
 const VIEWPORT_WIDTH = Number(process.env.DOKOHILF_VIEWPORT_WIDTH || 393);
 const VIEWPORT_HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || 852);
 const DEVICE_SCALE_FACTOR = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
+const BUILD_ID = '20260807-28';
 const USER_AGENT = PROFILE === 'android'
   ? 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'
-  : 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1';
+  : 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1';
 
 function silentWav() {
   const samples = 2400;
@@ -43,6 +44,9 @@ const context = await browser.newContext({
   locale: 'de-DE',
   reducedMotion: 'reduce',
   userAgent: USER_AGENT,
+  // Diese Prüfung misst UI/Interaktion. Service-Worker-Transitions werden separat getestet;
+  // ein erster clients.claim()-Wechsel darf keine laufende Geometriemessung zerstören.
+  serviceWorkers: 'block',
 });
 const page = await context.newPage();
 const consoleErrors = [];
@@ -53,6 +57,28 @@ page.on('console', message => {
 page.on('pageerror', error => pageErrors.push(error.message));
 
 if (USE_MOCK_SERVICES) {
+  await page.addInitScript(({ profile }) => {
+    window.__DOKOHILF_LOCAL_VOICE_TEST_ADAPTER__ = {
+      async prepare() {
+        return {
+          backend: profile === 'android' ? 'webgpu-ui-test' : 'wasm-ui-test',
+          async synthesize() {
+            const sampleRate = 8000;
+            const samples = 640;
+            const dataSize = samples * 2;
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+            const ascii = (offset, value) => [...value].forEach((char, index) => view.setUint8(offset + index, char.charCodeAt(0)));
+            ascii(0, 'RIFF'); view.setUint32(4, 36 + dataSize, true); ascii(8, 'WAVE'); ascii(12, 'fmt '); view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true); view.setUint16(22, 1, true); view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true); view.setUint16(34, 16, true); ascii(36, 'data'); view.setUint32(40, dataSize, true);
+            return { wav: buffer, latencyMs: 1 };
+          },
+        };
+      },
+    };
+  }, { profile: PROFILE });
+
   const reply = 'Öffne beim gewünschten Bewohner den Bereich „Berichte“.';
   await page.route(/\/functions\/v1\/dokohilf-ai(?:-router)?(?:\?.*)?$/, async route => {
     await route.fulfill({
@@ -78,35 +104,18 @@ if (USE_MOCK_SERVICES) {
         status: 200,
         contentType: 'application/json; charset=utf-8',
         headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({
-          schemaVersion: 1,
-          buildId: '20260806-27',
-          voice: 'Gacrux',
-          source: 'ui-render-mock',
-          entryCount: 0,
-          entries: [],
-        }),
+        body: JSON.stringify({ schemaVersion: 1, buildId: BUILD_ID, voice: 'legacy-disabled-v28', source: 'ui-render-mock', entryCount: 0, entries: [] }),
       });
       return;
     }
     await route.fulfill({ status: 200, contentType: 'audio/wav', headers: { 'Access-Control-Allow-Origin': '*' }, body: silentWav() });
   });
   await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => {
-    const wav = silentWav();
     await route.fulfill({
-      status: 200,
-      contentType: 'audio/wav',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'X-DokoHilf-Voice': 'Gacrux',
-        'X-DokoHilf-TTS-Model': 'ui-render-mock',
-        'X-DokoHilf-TTS-API': 'ui-render-mock',
-        'X-DokoHilf-Voice-Mode': 'ui-render-mock',
-        'X-DokoHilf-Voice-Style': 'ui-render-mock',
-        'X-DokoHilf-TTS-Latency': '0',
-        'X-DokoHilf-TTS-Cache': 'hit',
-      },
-      body: wav,
+      status: 500,
+      contentType: 'application/json; charset=utf-8',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: 'cloud_tts_must_not_be_used_by_v28_ui' }),
     });
   });
 }
@@ -120,10 +129,11 @@ async function stableReload() {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       await page.reload({ waitUntil: 'domcontentloaded', timeout: 30_000 });
+      await page.locator('#startTitle').waitFor({ state: 'visible', timeout: 8_000 });
       return;
     } catch (error) {
       lastError = error;
-      if (!/ERR_ABORTED|frame was detached/i.test(String(error?.message || error))) throw error;
+      if (!/ERR_ABORTED|frame was detached|Execution context was destroyed|navigation/i.test(String(error?.message || error))) throw error;
       await page.waitForTimeout(200);
       if (await page.locator('#startTitle').isVisible().catch(() => false)) return;
     }
@@ -136,7 +146,6 @@ async function openDeterministicFirstStart() {
   await page.locator('#startTitle').waitFor({ state: 'visible' });
   await page.evaluate(() => localStorage.removeItem('dokohilf-privacy-ack-v1'));
   await stableReload();
-  await page.locator('#startTitle').waitFor({ state: 'visible' });
   const ackButton = page.locator('[data-privacy-ack]');
   await ackButton.waitFor({ state: 'visible', timeout: 8_000 });
   return ackButton;
@@ -162,7 +171,6 @@ try {
   await privacyDialog.waitFor({ state: 'detached' });
 
   await stableReload();
-  await page.locator('#startTitle').waitFor({ state: 'visible' });
   assert(await page.locator('#privacyAckV27').count() === 0, 'Datenschutzbestätigung erscheint nach Bestätigung erneut.');
   assert(await page.evaluate(() => localStorage.getItem('dokohilf-privacy-ack-v1') === 'yes'), 'Das einzige unpersönliche Datenschutz-Flag wurde nicht gespeichert.');
 
@@ -175,8 +183,8 @@ try {
     bodyColor: getComputedStyle(document.body).color,
   }));
   assert(identity.title.includes('DokoHilf'), 'Falsche Seitenidentität.');
-  assert(identity.build === '20260806-27', `Falscher Build: ${identity.build}`);
-  assert(identity.version === 'KI · v27', `Falscher sichtbarer Marker: ${identity.version}`);
+  assert(identity.build === BUILD_ID, `Falscher Build: ${identity.build}`);
+  assert(identity.version === 'KI · v28', `Falscher sichtbarer Marker: ${identity.version}`);
   assert(/rgb\((?:0|1|2|3|4|5|6|7|8|9|1\d|2\d),\s*(?:0|1|2|3|4|5|6|7|8|9|1\d|2\d),\s*(?:0|1|2|3|4|5|6|7|8|9|1\d|2\d)\)/.test(identity.htmlBackground), `Grundfläche ist nicht dunkel: ${identity.htmlBackground}`);
   assert(identity.bodyBackground !== 'none', 'Dunkle Hintergrundgestaltung fehlt.');
 
@@ -190,7 +198,6 @@ try {
   assert(await page.getByRole('button', { name: 'Übergabe anzeigen' }).isVisible(), 'Direkte Übergabe-Anleitung fehlt.');
   await page.screenshot({ path: `${OUTPUT_DIR}/01-start-dark-${PROFILE}.png`, fullPage: true });
 
-  // Häufige Abläufe öffnen die vollständige Anleitung direkt – ohne KI-Roundtrip und ohne Chat dazwischen.
   await page.getByRole('button', { name: 'Bericht anlegen' }).click();
   const directGuide = page.locator('#directGuideView');
   await directGuide.waitFor({ state: 'visible' });
@@ -222,20 +229,18 @@ try {
   await page.locator('[data-direct-guide-close]').first().click();
   await page.locator('#startScreen').waitFor({ state: 'visible' });
 
-  // Der Schreibmodus bleibt als eigener kompakter Chat erreichbar.
   await page.locator('[data-select-mode="chat"]').click();
   await page.locator('#workspace').waitFor({ state: 'visible' });
   await page.locator('.chat-head').waitFor({ state: 'visible' });
   const chatEyebrow = page.locator('.chat-eyebrow');
   assert((await chatEyebrow.textContent())?.trim() === 'DokoHilf Chat', 'Kompakte Chat-Kennung fehlt.');
-  assert((await page.locator('.chat-head h1').textContent())?.trim() === 'Schreib deine Frage.', 'Alte Build-27-Schicht überschreibt den kompakten Chatkopf.');
+  assert((await page.locator('.chat-head h1').textContent())?.trim() === 'Schreib deine Frage.', 'Eine ältere Schicht überschreibt den kompakten Chatkopf.');
   const chatLayout = await layoutState();
   assert(chatLayout.documentWidth <= chatLayout.viewportWidth + 1, `Chat hat auf ${PROFILE} horizontalen Überlauf.`);
   const chatHeadBox = await page.locator('.chat-head').boundingBox();
   assert(chatHeadBox && chatHeadBox.height <= 190, `Chat-Kopf ist auf ${PROFILE} zu hoch: ${chatHeadBox?.height}`);
   await page.screenshot({ path: `${OUTPUT_DIR}/03-chat-clean-${PROFILE}.png`, fullPage: true });
 
-  // Bestehender schrittweiser Chat und die Sprachbühne bleiben Regressionstests.
   await page.getByRole('button', { name: 'Visite', exact: true }).click();
   await page.locator('.message.assistant .bubble').last().waitFor({ state: 'visible', timeout: 20_000 });
   await page.waitForTimeout(350);
@@ -321,7 +326,7 @@ try {
     pageErrors,
   };
   await writeFile(`${OUTPUT_DIR}/report.json`, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  console.log(`DokoHilf mobile Renderprüfung ${PROFILE} bestanden.`);
+  console.log(`DokoHilf mobile Renderprüfung ${PROFILE} für v28 bestanden.`);
 } catch (error) {
   await page.screenshot({ path: `${OUTPUT_DIR}/failure-${PROFILE}.png`, fullPage: true }).catch(() => {});
   await writeFile(`${OUTPUT_DIR}/report.json`, `${JSON.stringify({ passed: false, profile: PROFILE, error: error.message, consoleErrors, pageErrors }, null, 2)}\n`, 'utf8');
