@@ -46,7 +46,7 @@ test('Chat und Voice verwenden dieselbe Hilfelogik und dieselben Auswahlwerte', 
   assert.match(help, /data-detail-help-value/);
   assert.match(help, /fromVoice: document\.getElementById\('appShell'\)\?\.dataset\.mode === 'voice'/);
   assert.match(help, /session\.pendingOption/);
-  assert.match(polish, /DEVICE_FALLBACK_MS = 160/);
+  assert.match(polish, /&& !localVoiceV28\(\)/);
 });
 
 test('Hilfemodus hält Weiter verborgen, bis der Zielpunkt wirklich gefunden wurde', () => {
@@ -66,15 +66,14 @@ test('Detailhilfe bleibt flüchtig und speichert keine Gesprächsdaten', () => {
   assert.match(help, /const session = \{/);
 });
 
-test('Release-Build aktiviert, poliert und cached die Detailhilfe mit neuer PWA-Revision', () => {
+test('v28 Release aktiviert Detailhilfe innerhalb der lokalen Voice-Revision', () => {
   assert.match(buildScript, /apply-detail-help-v27\.mjs/);
   assert.match(buildScript, /assets\/detail-help-v27\.js/);
   assert.match(buildScript, /assets\/detail-help-polish-v27\.js/);
-  assert.match(buildScript, /20260807-voice-followup-detail-polish-1/);
+  assert.match(buildScript, /20260807-local-natural-voice-v28-1/);
   assert.match(applyScript, /detail-help-v27\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyScript, /detail-help-polish-v27\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyScript, /HOTFIX_REVISION = '\$\{REVISION\}'/);
-  assert.match(applyScript, /clarification-ui marker/);
   assert.match(applyScript, /clarificationIndex < helpIndex && helpIndex < progressIndex/);
-  assert.match(applyScript, /experienceIndex < polishIndex/);
+  assert.match(applyScript, /localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < gateIndex/);
 });
