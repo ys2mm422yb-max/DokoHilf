@@ -21,6 +21,12 @@ test('lange Anweisungen bleiben lesbar und überdecken die Animation nicht', () 
   assert.match(legacyCss, /overflow-wrap:anywhere/);
   assert.match(legacyCss, /z-index:4/);
   assert.match(legacyCss, /voice-focus-stage \.voice-orb[\s\S]*clamp/);
+  assert.match(currentUxCss, /voice-focus-main\{gap:38px!important\}/);
+});
+
+test('iPhone Safe-Area trennt Kopfzeile, Versionsstatus und Sprachfläche', () => {
+  assert.match(currentUxCss, /data-mode="voice"\] \.build-status\{display:none!important\}/);
+  assert.match(currentUxCss, /voice-focus-stage\{inset:calc\(max\(8px,env\(safe-area-inset-top\)\) \+ 86px\) 0 0!important\}/);
 });
 
 test('kleine und niedrige iPhones behalten die verdichtete Darstellung', () => {
@@ -32,6 +38,7 @@ test('kleine und niedrige iPhones behalten die verdichtete Darstellung', () => {
   assert.match(currentUxCss, /data-voice-state="listening"/);
   assert.match(currentUxCss, /width:96px/);
   assert.match(currentUxCss, /@media\(max-height:720px\)/);
+  assert.match(currentUxCss, /voice-focus-main\{gap:22px!important\}/);
 });
 
 test('Ladehinweis bleibt ohne buggy animierte Punkte', () => {
