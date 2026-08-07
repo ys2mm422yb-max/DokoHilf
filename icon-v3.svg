@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DokoHilf App-Icon">
+  <defs>
+    <linearGradient id="bg" x1="70" y1="35" x2="445" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0a2027"/>
+      <stop offset="0.52" stop-color="#031018"/>
+      <stop offset="1" stop-color="#020a10"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="138" y1="139" x2="382" y2="385" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72f2ad"/>
+      <stop offset="0.55" stop-color="#25d28a"/>
+      <stop offset="1" stop-color="#55a7ff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="45%">
+      <stop offset="0" stop-color="#1fd18a" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#1fd18a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="236" r="172" fill="url(#glow)"/>
+  <path d="M148 139h216c31 0 56 25 56 56v119c0 31-25 56-56 56h-93l-61 52v-52h-62c-31 0-56-25-56-56V195c0-31 25-56 56-56Z"
+        fill="#071820" fill-opacity=".72" stroke="url(#accent)" stroke-width="9" stroke-linejoin="round"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="224" y="193" width="64" height="107" rx="32" stroke="#f5fbf8" stroke-width="12"/>
+    <path d="M194 265v14c0 35 28 63 62 63s62-28 62-63v-14" stroke="url(#accent)" stroke-width="13"/>
+    <path d="M256 342v38M223 380h66" stroke="#f5fbf8" stroke-width="12"/>
+    <path d="M173 242v42M151 252v22" stroke="#55a7ff" stroke-width="8"/>
+    <path d="M339 242v42M361 252v22" stroke="#72f2ad" stroke-width="8"/>
+  </g>
+  <circle cx="256" cy="256" r="203" fill="none" stroke="#72f2ad" stroke-opacity=".045" stroke-width="2"/>
+</svg>
