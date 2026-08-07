@@ -55,7 +55,8 @@ Dieser Bestand ist veränderlich und muss bei zukünftiger Audioarbeit erneut li
 
 Verbindlich:
 
-- dauerhaft keine realen Bewohner-, Gesundheits-, Mitarbeiter-, Fall- oder Zugangsdaten,
+- dauerhaft keine realen Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten,
+- das Echtdatenverbot umfasst darüber hinaus sämtliche realen Fall-, Termin-, Bericht-, Medikations- und sonstigen produktiven Inhalte,
 - das Echtdatenverbot ist auch durch spätere organisatorische Freigaben nicht aufhebbar,
 - ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Projektinhalte,
 - vollständig synthetische Testdaten,
