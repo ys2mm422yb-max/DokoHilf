@@ -33,6 +33,8 @@ test -s "$SITE_DIR/assets/voice-diagnostics.js"
 test -s "$SITE_DIR/assets/ux-v27.js"
 test -s "$SITE_DIR/assets/direct-guides-v27.js"
 test -s "$SITE_DIR/assets/detail-help-v27.js"
+test -s "$SITE_DIR/assets/detail-help-polish-v27.js"
+test -s "$SITE_DIR/assets/detail-help-render-sync-v27.js"
 test -s "$SITE_DIR/assets/guide-audio-catalog.json"
 
 grep -q "dokohilf-build\" content=\"$BUILD_ID" "$SITE_DIR/index.html"
@@ -52,13 +54,17 @@ grep -q "voice-stage-balance-v27.css?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "direct-guides-chat-v27.css?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "direct-guides-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "detail-help-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
+grep -q "detail-help-polish-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
+grep -q "detail-help-render-sync-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "\"buildId\": \"$BUILD_ID\"" "$SITE_DIR/version.json"
 grep -q "BUILD_ID = '$BUILD_ID'" "$SITE_DIR/service-worker.js"
-grep -q "HOTFIX_REVISION = '20260807-detail-help-cross-platform-1'" "$SITE_DIR/service-worker.js"
+grep -q "HOTFIX_REVISION = '20260807-voice-followup-detail-polish-1'" "$SITE_DIR/service-worker.js"
 grep -q 'voice-stage-balance-v27.css?v=20260806-27' "$SITE_DIR/service-worker.js"
 grep -q 'direct-guides-chat-v27.css?v=20260806-27' "$SITE_DIR/service-worker.js"
 grep -q 'direct-guides-v27.js?v=20260806-27' "$SITE_DIR/service-worker.js"
 grep -q 'detail-help-v27.js?v=20260806-27' "$SITE_DIR/service-worker.js"
+grep -q 'detail-help-polish-v27.js?v=20260806-27' "$SITE_DIR/service-worker.js"
+grep -q 'detail-help-render-sync-v27.js?v=20260806-27' "$SITE_DIR/service-worker.js"
 grep -q './icon-touch-180-v3.png' "$SITE_DIR/service-worker.js"
 grep -q './icon-192-v3.png' "$SITE_DIR/service-worker.js"
 grep -q './icon-512-v3.png' "$SITE_DIR/service-worker.js"
@@ -69,6 +75,8 @@ grep -q '__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__' "$SITE_DIR/assets/experience-v27.
 grep -q '__DOKOHILF_REMOTE_GUIDE_AUDIO_V27__' "$SITE_DIR/assets/voice-diagnostics.js"
 grep -q '__DOKOHILF_DIRECT_GUIDES_V27__' "$SITE_DIR/assets/direct-guides-v27.js"
 grep -q '__DOKOHILF_DETAIL_HELP_V27__' "$SITE_DIR/assets/detail-help-v27.js"
+grep -q '__DOKOHILF_DETAIL_HELP_POLISH_V27__' "$SITE_DIR/assets/detail-help-polish-v27.js"
+grep -q '__DOKOHILF_DETAIL_HELP_RENDER_SYNC_V27__' "$SITE_DIR/assets/detail-help-render-sync-v27.js"
 
 unexpected_raster="$(find "$SITE_DIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) \
   | grep -Ev '/(icon-touch-180-v3|icon-192-v3|icon-512-v3|icon-maskable-512-v3)\.png$' || true)"
@@ -83,4 +91,4 @@ if find "$SITE_DIR" -type f -iname '*.wav' | grep -q .; then
   exit 1
 fi
 
-echo "DokoHilf $BUILD_ID mit kontrollierter Detailhilfe, privaten Gacrux-Guide-Audios, iOS-/Android-PWA-Icons, balancierter Sprachbühne und direkten mobilen Anleitungen gebaut."
+echo "DokoHilf $BUILD_ID mit kompakter Detailhilfe, sofortigem Voice-Fallback, privaten Gacrux-Guide-Audios, iOS-/Android-PWA-Icons, balancierter Sprachbühne und direkten mobilen Anleitungen gebaut."
