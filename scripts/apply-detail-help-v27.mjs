@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const BUILD_ID = '20260807-28';
-const REVISION = '20260807-local-natural-voice-v28-2';
+const REVISION = '20260807-voice-guides-report-v28-3';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');
