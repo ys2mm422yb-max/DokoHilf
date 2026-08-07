@@ -3,7 +3,8 @@
 **Stand:** 7. August 2026  
 **Status:** Umsetzung und Validierung laufen  
 **Ausgangsbuild:** `20260806-27`  
-**Branch:** `fix/fluid-voice-mobile-layout-20260807`
+**Branch:** `fix/fluid-voice-mobile-layout-20260807`  
+**Pull Request:** `#67`
 
 ## Nutzer-Retest
 
@@ -61,7 +62,7 @@ Das ist wichtig, weil Build-ID und Asset-URLs weiterhin `20260806-27` heißen. D
 
 ## Tests
 
-`tests/voice-layout-v26.test.mjs` wurde auf die neue tatsächliche Vertragslage aktualisiert:
+Die Vertragsprüfungen wurden auf die neue tatsächliche Zielsetzung umgestellt:
 
 - keine sichtbaren Workspace-Reste neben der Voice-Bühne
 - Flex-Stapelung und getrennte Bereiche
@@ -71,10 +72,27 @@ Das ist wichtig, weil Build-ID und Asset-URLs weiterhin `20260806-27` heißen. D
 - früher iOS-Resume-Watchdog
 - Service-Worker-Hotfixrevision
 
+### Erster PR-#67-Lauf
+
+`Deploy DokoHilf` Run #261 startete automatisch. Bereits erfolgreich waren:
+
+- Syntax- und Quellverträge
+- 165/165 Routingfälle
+- 3/3 Gesprächssequenzen
+- 12/12 bestätigte Workflow-Marker
+- 119 von 122 deterministischen Tests
+
+Drei Tests scheiterten ausschließlich an veralteten Erwartungen aus PR #64:
+
+- `tests/dark-premium-v27.test.mjs` erwartete noch `HARD_FALLBACK_MS = 1200`
+- `tests/fast-voice-v27.test.mjs` erwartete ebenfalls noch 1200 ms
+- derselbe Test erwartete noch den alten iOS-Watchdog `120/320/700/1100 ms`
+
+Die Produktlogik selbst war an dieser Stelle nicht der Fehler. Die drei veralteten Verträge wurden auf den neuen 180-ms-Fallback und `60/140/280/520 ms` aktualisiert. Zusätzlich wurde die erwartete kompakte mobile Mikrofonbreite auf den tatsächlich neuen Wert 92 px angepasst. Ein neuer vollständiger Lauf muss nun den aktuellen exakten Head prüfen.
+
 ## Noch erforderlich
 
-- PR öffnen
-- vollständige GitHub-Actions-Prüfung auf dem exakten Head
+- vollständige GitHub-Actions-Prüfung auf dem aktuellen exakten PR-#67-Head
 - Fehler ausschließlich auf dem Branch beheben
 - erst bei vollständig grünem exakten Head mergen
 - danach `main`, `gh-pages`, festen Hauptlink und tatsächliche ausgelieferte Dateien prüfen
@@ -85,6 +103,6 @@ Das ist wichtig, weil Build-ID und Asset-URLs weiterhin `20260806-27` heißen. D
 Nach diesem Stabilitätsfix bleibt die bereits bestätigte Produktarbeit offen:
 
 - Detailhilfe hinter `Ich brauche Hilfe / Ich finde das nicht`
-- häufige Abläufe sollen perspektivisch direkt eine vollständige Schritt-für-Schritt-Anleitung öffnen, statt zuerst einen normalen Chat zu erzeugen
+- häufige Abläufe sollen direkt eine vollständige Schritt-für-Schritt-Anleitung öffnen, statt zuerst einen normalen Chat zu erzeugen
 
 Diese beiden Punkte werden getrennt von diesem akuten Sprach-/Layout-Hotfix umgesetzt, damit die dringende iPhone-Sprachkorrektur klein und sicher validierbar bleibt.
