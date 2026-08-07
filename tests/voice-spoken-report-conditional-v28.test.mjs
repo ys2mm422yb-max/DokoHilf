@@ -12,13 +12,16 @@ test('Voice verwendet den vom Router vorgesehenen spokenText statt des langen si
   assert.match(gate, /payload\.spokenText/);
   assert.match(gate, /spokenByReply\.set/);
   assert.match(gate, /mappedSpokenText\(requestedText\)/);
-  assert.match(gate, /replaceTtsBody\(init, text\)/);
+  assert.match(gate, /lastSpokenMapping = mapped/);
 });
 
-test('kurze bestätigte Gacrux-Sätze dürfen als Teil eines längeren Voice-Texts sicher getroffen werden', () => {
+test('bestätigte Supertonic-Sätze werden vor lokaler Inferenz statisch getroffen', () => {
   assert.match(gate, /approvedText\.length < 16/);
   assert.match(gate, /key\.includes\(approvedText\)/);
-  assert.ok(gate.indexOf('loadApprovedStaticVoice(text)') < gate.indexOf('localFallback(text)'));
+  assert.match(gate, /STATIC_VOICE = 'Supertonic-F1'/);
+  assert.match(gate, /static-supertonic-guide-v28/);
+  assert.ok(gate.indexOf('loadStaticSupertonicVoice(text)') < gate.indexOf('localFallback(text)'));
+  assert.doesNotMatch(gate, /Gacrux|dokohilf-guide-audio\?manifest=1/);
 });
 
 test('Bericht zeigt Schritte 6 bis 9 als klaren Sonderfall für genau zwei Kategorien', () => {
