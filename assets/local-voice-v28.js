@@ -18,6 +18,7 @@
   let engineState = 'idle';
   let backend = 'pending';
   let lastError = '';
+  let armed = false;
 
   window.__DOKOHILF_LOCAL_VOICE_V28__ = true;
 
@@ -142,6 +143,7 @@
   }
 
   async function prepare() {
+    if (!armed) throw new Error('local_voice_not_armed');
     if (enginePromise) return enginePromise;
     const testAdapter = window.__DOKOHILF_LOCAL_VOICE_TEST_ADAPTER__;
     enginePromise = testAdapter?.prepare
@@ -201,6 +203,7 @@
     if (isTtsRequest(input, init)) {
       const text = extractText(init);
       if (!text) return errorResponse(new Error('empty_local_voice_text'));
+      if (!armed) return errorResponse(new Error('local_voice_not_armed'));
       try {
         updateVoiceStatus(engineState === 'ready' ? 'Stimme wird erzeugt …' : 'Stimme wird eingerichtet …');
         return audioResponse(await synthesize(text));
@@ -212,14 +215,20 @@
     return previousFetch(input, init);
   };
 
+  function armAndPrepare() {
+    armed = true;
+    return prepare();
+  }
+
   document.addEventListener('click', event => {
     const voiceEntry = event.target.closest?.('[data-select-mode="voice"], [data-switch-mode="voice"], #voiceButton, #pauseVoiceButton');
-    if (voiceEntry) prepare().catch(() => {});
+    if (voiceEntry) armAndPrepare().catch(() => {});
   }, { capture: true });
 
   window.DokoHilfLocalVoiceV28 = {
+    armAndPrepare,
     prepare,
     synthesize,
-    getState: () => ({ buildId: BUILD_ID, state: engineState, backend, lastError, model: 'Supertonic 3', voice: 'F1', language: LANGUAGE }),
+    getState: () => ({ buildId: BUILD_ID, state: engineState, backend, lastError, armed, model: 'Supertonic 3', voice: 'F1', language: LANGUAGE }),
   };
 })();
