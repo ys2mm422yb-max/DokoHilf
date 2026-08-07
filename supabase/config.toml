@@ -5,3 +5,6 @@ verify_jwt = true
 
 [functions.dokohilf-guide-audio-build]
 verify_jwt = true
+
+[functions.dokohilf-guide-audio]
+verify_jwt = true

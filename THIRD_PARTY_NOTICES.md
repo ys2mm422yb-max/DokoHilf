@@ -27,4 +27,4 @@ DokoHilf verwendet auf Android nach Möglichkeit den WebGPU-Ausführungspfad und
 
 ## Keine Sprach-API als v28-Ausgabepfad
 
-Die bisherige serverseitige Gemini/Gacrux-TTS-Funktion bleibt ausschließlich als technischer Rollback-Bestand erhalten. Der veröffentlichte v28-Browserpfad darf sie nicht für Sprachausgabe aufrufen. Ebenso darf v28 keine System-/Gerätestimme als hörbaren Fallback verwenden.
+Die frühere serverseitige Gemini-/Gacrux-Erzeugung ist kein Rollback- oder Fallbackpfad mehr. `dokohilf-tts`, `dokohilf-guide-audio-build` und die alte Gacrux-Auslieferung `dokohilf-guide-audio` sind nicht-generierende Ruhestandsendpunkte mit `410 Gone`; der frühere Erzeugungs-Cron wird entfernt. Der v28-Browserpfad verwendet ausschließlich statische Supertonic-F1-Audios und dieselbe Supertonic-F1-Stimme für die zeitlich begrenzte lokale Notinferenz. Eine System-/Gerätestimme wird nicht hörbar verwendet.

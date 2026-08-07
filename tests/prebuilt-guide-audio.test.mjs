@@ -9,7 +9,11 @@ const experience = await readFile(new URL('assets/experience-v27.js', root), 'ut
 const diagnostics = await readFile(new URL('assets/voice-diagnostics.js', root), 'utf8');
 const tts = await readFile(new URL('supabase/functions/dokohilf-tts/index.ts', root), 'utf8');
 const builder = await readFile(new URL('supabase/functions/dokohilf-guide-audio-build/index.ts', root), 'utf8');
+const legacyAudio = await readFile(new URL('supabase/functions/dokohilf-guide-audio/index.ts', root), 'utf8');
 const policy = await readFile(new URL('PREBUILT_AUDIO.md', root), 'utf8');
+const audioStatus = await readFile(new URL('AUDIO_GENERATION_STATUS.md', root), 'utf8');
+const providerStatus = await readFile(new URL('AUDIO_PROVIDER_BLOCKER.md', root), 'utf8');
+const thirdParty = await readFile(new URL('THIRD_PARTY_NOTICES.md', root), 'utf8');
 const rules = await readFile(new URL('PROJECT_RULES.md', root), 'utf8');
 const config = await readFile(new URL('supabase/config.toml', root), 'utf8');
 const retirement = await readFile(new URL('supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql', root), 'utf8');
@@ -55,13 +59,23 @@ test('legacy experience layer retains its old approved-audio compatibility path'
   assert.match(experience, /fastRace\(loadNaturalVoice/);
 });
 
-test('alte serverseitige TTS- und Builder-Endpunkte sind nicht-generierende Ruhestandsendpunkte', () => {
+test('alte serverseitige TTS-, Builder- und Gacrux-Auslieferungsendpunkte sind Ruhestandsendpunkte', () => {
   assert.match(tts, /cloud_tts_retired_v28/);
   assert.match(tts, /status: 410/);
   assert.match(builder, /legacy_cloud_audio_builder_retired_v28/);
   assert.match(builder, /status: 410/);
+  assert.match(legacyAudio, /legacy_gacrux_audio_delivery_retired_v28/);
+  assert.match(legacyAudio, /status: 410/);
   assert.doesNotMatch(tts, /Gacrux|Gemini|generativelanguage|GEMINI_API_KEY|fetch\(/i);
   assert.doesNotMatch(builder, /x-dokohilf-build-token|dokohilf-tts|fetch\(/i);
+  assert.doesNotMatch(legacyAudio, /SUPABASE_SERVICE_ROLE_KEY|createClient|storage|fetch\(/i);
+});
+
+test('öffentliche Voice-Dokumentation führt keinen Cloud- oder Gacrux-Rollback mehr', () => {
+  assert.match(audioStatus, /exakt 111 kostenlose Supertonic-F1-WAV-Dateien/);
+  assert.match(providerStatus, /keinen Gacrux-, Gemini-TTS- oder Systemstimmen-Rollbackpfad/);
+  assert.match(thirdParty, /kein Rollback- oder Fallbackpfad mehr/);
+  assert.doesNotMatch(thirdParty, /Rollback-Bestand erhalten/);
 });
 
 test('static audio exception is narrow and excludes every user-content source', () => {
@@ -80,13 +94,14 @@ test('static audio exception is narrow and excludes every user-content source', 
 test('legacy cloud builder is disabled, JWT-geschützt and its cron is removed', () => {
   assert.match(config, /\[functions\.dokohilf-tts\][\s\S]*verify_jwt = true/);
   assert.match(config, /\[functions\.dokohilf-guide-audio-build\][\s\S]*verify_jwt = true/);
+  assert.match(config, /\[functions\.dokohilf-guide-audio\][\s\S]*verify_jwt = true/);
   assert.match(retirement, /enabled = false/);
   assert.match(retirement, /cron\.unschedule\(jobid\)/);
   assert.match(retirement, /dokohilf-static-guide-audio-v27/);
 });
 
 test('retired cloud functions contain no provider, token or personal-data processing path', () => {
-  for (const source of [tts, builder]) {
+  for (const source of [tts, builder, legacyAudio]) {
     assert.doesNotMatch(source, /GEMINI_API_KEY|SUPABASE_SERVICE_ROLE_KEY|build_token|fetch\(/i);
     assert.doesNotMatch(source, /name|diagnos|medikament|vitalwert/i);
   }

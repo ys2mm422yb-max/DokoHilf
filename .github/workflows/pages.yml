@@ -70,6 +70,8 @@ jobs:
           grep -q 'medication-view-only-safety-v9' supabase/functions/dokohilf-ai-router/index.ts
           grep -q 'cloud_tts_retired_v28' supabase/functions/dokohilf-tts/index.ts
           grep -q 'legacy_cloud_audio_builder_retired_v28' supabase/functions/dokohilf-guide-audio-build/index.ts
+          grep -q 'legacy_gacrux_audio_delivery_retired_v28' supabase/functions/dokohilf-guide-audio/index.ts
+          grep -q '\[functions.dokohilf-guide-audio\]' supabase/config.toml
           grep -q 'verify_jwt = true' supabase/config.toml
           grep -q "cron.unschedule(jobid)" supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql
           grep -q 'Dauerhaftes absolutes Echtdatenverbot' PROJECT_RULES.md

@@ -40,11 +40,12 @@ Der frühere Gacrux-/Gemini-Aufbau ist vollständig aus dem erzeugenden Pfad ent
 
 - `dokohilf-tts` antwortet nur noch als nicht-generierender Ruhestandsendpunkt mit `410 Gone`.
 - `dokohilf-guide-audio-build` antwortet nur noch als nicht-generierender Ruhestandsendpunkt mit `410 Gone`.
-- Für beide Funktionen ist `verify_jwt = true` gesetzt.
+- `dokohilf-guide-audio` liefert die alten Gacrux-Dateien nicht mehr aus und antwortet ebenfalls nur noch mit `410 Gone`.
+- Für alle drei Funktionen ist `verify_jwt = true` gesetzt.
 - Der interne Build-Schalter bleibt deaktiviert.
 - Der frühere Cron `dokohilf-static-guide-audio-v27` wird per Migration entfernt.
 
-Historische private Dateien oder Registryzeilen sind kein aktiver Audio-, Browser- oder Erzeugungspfad und werden von v28-4 nicht geladen.
+Historische private Dateien oder Registryzeilen sind kein aktiver Audio-, Browser-, Auslieferungs- oder Erzeugungspfad und werden von v28-4 nicht geladen.
 
 ## Datenschutz- und Produktgrenze
 

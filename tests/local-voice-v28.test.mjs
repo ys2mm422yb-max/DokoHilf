@@ -2,9 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [runtime, gate, helper, ux, detail, applyLocal, applyDetail, build, builder, sourceCatalogText, extrasText, version, index, worker] = await Promise.all([
+const [runtime, gate, experience, helper, ux, detail, applyLocal, applyDetail, build, builder, sourceCatalogText, extrasText, version, index, worker] = await Promise.all([
   readFile(new URL('../assets/local-voice-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/local-voice-gate-v28.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/experience-v27.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/vendor/supertonic-web-v28.mjs', import.meta.url), 'utf8'),
   readFile(new URL('../assets/ux-v27.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/detail-help-polish-v27.js', import.meta.url), 'utf8'),
@@ -116,6 +117,11 @@ test('Systemstimme bleibt blockiert und der bestehende lokale Guard bleibt aktiv
 test('v28 lädt keine alte Voice-Diagnostik oder Cloud-TTS-Sprachquelle im Browser', () => {
   assert.match(applyLocal, /replace\(`  <script src="assets\/voice-diagnostics\.js/);
   assert.match(applyLocal, /if \(window\.__DOKOHILF_LOCAL_VOICE_V28__ !== true\) loadPrebuiltManifest/);
+  assert.match(experience, /if \(window\.__DOKOHILF_LOCAL_VOICE_V28__ === true\) return previousFetch\(input, init\);/);
+  assert.ok(
+    experience.indexOf('window.__DOKOHILF_LOCAL_VOICE_V28__ === true') < experience.indexOf("url.includes(TTS_MARKER)"),
+    'Die historische v27-Sprachschicht muss vor jedem alten TTS-Pfad aussteigen.',
+  );
   assert.doesNotMatch(worker, /dokohilf-guide-audio\?manifest=/);
   assert.doesNotMatch(gate, /APPROVED_AUDIO_ENDPOINT|Gacrux/);
 });

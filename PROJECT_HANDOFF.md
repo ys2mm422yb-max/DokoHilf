@@ -120,7 +120,8 @@ Der bisherige automatische serverseitige Sprachaufbau ist kein Fallback mehr und
 
 - `dokohilf-tts` ist ein nicht-generierender Ruhestandsendpunkt (`410 Gone`).
 - `dokohilf-guide-audio-build` ist ein nicht-generierender Ruhestandsendpunkt (`410 Gone`).
-- Beide Funktionen verlangen zusätzlich ein gültiges JWT (`verify_jwt = true`).
+- `dokohilf-guide-audio` liefert auch die alten Gacrux-Dateien nicht mehr aus und ist ebenfalls ein nicht-generierender Ruhestandsendpunkt (`410 Gone`).
+- Alle drei Funktionen verlangen zusätzlich ein gültiges JWT (`verify_jwt = true`).
 - `public.dokohilf_internal_build_control.enabled` bleibt `false`.
 - Die Migration `20260807214545_retire_legacy_cloud_voice.sql` entfernt den Cron `dokohilf-static-guide-audio-v27`.
 
@@ -150,7 +151,7 @@ Vor veränderlichen Aussagen immer live prüfen. Zuletzt bekannte technische Ker
 
 - `dokohilf-ai-router`
 - `dokohilf-tts` als stillgelegter, nicht-generierender Ruhestandsendpunkt
-- `dokohilf-guide-audio`
+- `dokohilf-guide-audio` als stillgelegter alter Gacrux-Auslieferungsendpunkt
 - `dokohilf-guide-audio-build` als stillgelegter, nicht-generierender Ruhestandsendpunkt
 - `public.dokohilf_guides`
 - `public.dokohilf_topics`

@@ -62,7 +62,7 @@ Kernkomponenten:
 
 Der vorherige automatische serverseitige statische Sprachaufbau darf für den neuen kostenlosen Releasepfad nicht weitergenerieren.
 
-PR #86 ersetzt `dokohilf-tts` und `dokohilf-guide-audio-build` durch nicht-generierende `410 Gone`-Ruhestandsendpunkte, aktiviert für beide `verify_jwt = true`, hält `public.dokohilf_internal_build_control.enabled = false` und entfernt den Cron `dokohilf-static-guide-audio-v27` per Migration. Damit kann weder der Browser noch der alte Serverpfad kostenpflichtiges Cloud-TTS erzeugen.
+PR #86 ersetzt `dokohilf-tts`, `dokohilf-guide-audio-build` und die alte Gacrux-Auslieferung `dokohilf-guide-audio` durch nicht-generierende `410 Gone`-Ruhestandsendpunkte, aktiviert für alle drei `verify_jwt = true`, hält `public.dokohilf_internal_build_control.enabled = false` und entfernt den Cron `dokohilf-static-guide-audio-v27` per Migration. Damit kann weder der Browser noch der alte Serverpfad kostenpflichtiges Cloud-TTS erzeugen oder alte Gacrux-Audios ausliefern.
 
 ## Öffentliche Produktgrenze
 
