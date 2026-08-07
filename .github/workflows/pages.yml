@@ -35,8 +35,9 @@ jobs:
             assets/guide-audio-catalog.json assets/direct-guides-v27.js assets/direct-guides-chat-v27.css \
             scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh \
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
-            scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-static-guide-audio-smoke.mjs scripts/live-screenshot-smoke.mjs \
+            scripts/live-routing-stable.mjs scripts/live-tts-smoke.mjs scripts/live-static-guide-audio-smoke.mjs scripts/live-vitalwerte-routing-smoke.mjs \
             tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs tests/direct-guides-v27.test.mjs \
+            tests/public-documentation-boundary.test.mjs \
             supabase/functions/dokohilf-ai-router/index.ts \
             supabase/functions/dokohilf-tts/index.ts \
             supabase/functions/dokohilf-guide-audio/index.ts \
@@ -83,7 +84,9 @@ jobs:
           grep -q 'x-dokohilf-build-token' supabase/functions/dokohilf-guide-audio-build/index.ts
           grep -q 'dokohilf_internal_build_control' supabase/functions/dokohilf-guide-audio-build/index.ts
           grep -q "'0 \* \* \* \*'" supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql
-          grep -q 'Bilder bleiben ausschließlich im Chat' CONFIRMED_WORKFLOWS.md
+          grep -q 'Dauerhaftes absolutes Echtdatenverbot' PROJECT_RULES.md
+          grep -q 'Eine spätere Freigabe darf dieses Verbot' PROJECT_RULES.md
+          grep -q 'Öffentliche Dokumentation enthält keine Angaben zu Herkunft' CONFIRMED_WORKFLOWS.md
 
           node --check assets/update-manager.js
           node --check assets/mobile-audio-fix.js
@@ -104,7 +107,7 @@ jobs:
           node --check scripts/live-routing-stable.mjs
           node --check scripts/live-tts-smoke.mjs
           node --check scripts/live-static-guide-audio-smoke.mjs
-          node --check scripts/live-screenshot-smoke.mjs
+          node --check scripts/live-vitalwerte-routing-smoke.mjs
 
           grep -q 'localStorage\|indexedDB\|dokohilf-ai-history' assets/app.js && exit 1 || true
           grep -q 'localStorage\|indexedDB\|sessionStorage' assets/voice-focus-mode.js && exit 1 || true
@@ -129,6 +132,7 @@ jobs:
             tests/behavior-regression.test.mjs \
             tests/mobile-layout-contract.test.mjs \
             tests/privacy-contract.test.mjs \
+            tests/public-documentation-boundary.test.mjs \
             tests/editor-security.test.mjs \
             tests/vitalwerte-intent.test.mjs \
             tests/live-build-recovery.test.mjs \
@@ -182,7 +186,7 @@ jobs:
       - name: Check active DokoHilf router
         run: |
           node scripts/live-routing-stable.mjs
-          node scripts/live-screenshot-smoke.mjs
+          node scripts/live-vitalwerte-routing-smoke.mjs
 
       - name: Check active dynamic voice fallback
         run: node scripts/live-tts-smoke.mjs
