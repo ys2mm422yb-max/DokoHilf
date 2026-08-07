@@ -111,6 +111,16 @@
         'Das geöffnete Formular nach der bei euch gültigen fachlichen Vorgabe bearbeiten. Nicht bestätigte Formularfelder werden von DokoHilf nicht erfunden.',
       ],
     },
+    uebergabe: {
+      title: 'Übergabe anzeigen',
+      subtitle: 'Relevante Einträge für die Übergabe öffnen',
+      steps: [
+        'Oben den Reiter „Analyse“ öffnen.',
+        'Dort „Was war los?“ wählen.',
+        'Oben links „Alle anzeigen“ anklicken.',
+        'Danach „Alles ausklappen“ wählen, damit die Einträge vollständig sichtbar sind.',
+      ],
+    },
   });
 
   const state = { open: false, key: null };
@@ -120,6 +130,29 @@
     return String(value).replace(/[&<>"']/g, character => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
     }[character]));
+  }
+
+  function ensureDirectWorkflowButtons() {
+    const examples = document.querySelector('.examples');
+    if (!examples) return;
+    examples.dataset.v27Ready = 'direct-guides';
+    examples.innerHTML = `
+      <span>Häufige Abläufe · direkt öffnen</span>
+      <button type="button" data-direct-guide="bericht">Bericht anlegen</button>
+      <button type="button" data-direct-guide="visite">Visite anlegen</button>
+      <button type="button" data-direct-guide="vitalwerte">Vitalwerte erfassen</button>
+      <button type="button" data-direct-guide="anwesenheit">An-/Abwesenheit</button>
+      <button type="button" data-direct-guide="medikation">Medikation ansehen</button>
+      <button type="button" data-direct-guide="formular">Formular anlegen</button>
+      <button type="button" data-direct-guide="uebergabe">Übergabe anzeigen</button>
+    `;
+  }
+
+  function ensureCompactChatCopy() {
+    const heading = document.querySelector('.chat-head h1');
+    const copy = document.querySelector('.chat-head p');
+    if (heading) heading.textContent = 'Schreib deine Frage.';
+    if (copy) copy.textContent = 'Beschreibe kurz dein Ziel. DokoHilf führt dich nur durch bestätigte Abläufe.';
   }
 
   function ensureView() {
@@ -177,6 +210,8 @@
     if (elements.legal) elements.legal.hidden = false;
     elements.home.hidden = true;
     elements.reset.hidden = true;
+    ensureDirectWorkflowButtons();
+    ensureCompactChatCopy();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -191,8 +226,9 @@
 
   function renderGuide(key) {
     const guide = GUIDES[key];
+    if (!guide) return;
     const target = openFrame();
-    if (!guide || !target) return;
+    if (!target) return;
     state.key = key;
     target.innerHTML = `
       <div class="direct-guide-head">
@@ -211,7 +247,6 @@
         <button type="button" data-direct-guide-close>Zurück zum Hauptmenü</button>
       </div>
     `;
-    target.querySelector('h1')?.focus?.();
   }
 
   function renderVitalChoice() {
@@ -266,6 +301,9 @@
     }
     if (state.open && event.target.closest('#homeButton')) closeGuide();
   });
+
+  ensureDirectWorkflowButtons();
+  ensureCompactChatCopy();
 
   window.DokoHilfDirectGuidesV27 = {
     openGuide,
