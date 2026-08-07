@@ -19,9 +19,11 @@ test -s "$SITE_DIR/service-worker.js"
 test -s "$SITE_DIR/assets/premium-ui-v27.css"
 test -s "$SITE_DIR/assets/ux-v27.css"
 test -s "$SITE_DIR/assets/voice-stage-balance-v27.css"
+test -s "$SITE_DIR/assets/direct-guides-chat-v27.css"
 test -s "$SITE_DIR/assets/experience-v27.js"
 test -s "$SITE_DIR/assets/voice-diagnostics.js"
 test -s "$SITE_DIR/assets/ux-v27.js"
+test -s "$SITE_DIR/assets/direct-guides-v27.js"
 test -s "$SITE_DIR/assets/guide-audio-catalog.json"
 
 grep -q "dokohilf-build\" content=\"$BUILD_ID" "$SITE_DIR/index.html"
@@ -32,14 +34,19 @@ grep -q "voice-diagnostics.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "ux-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "ux-v27.css?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "voice-stage-balance-v27.css?v=$BUILD_ID" "$SITE_DIR/index.html"
+grep -q "direct-guides-chat-v27.css?v=$BUILD_ID" "$SITE_DIR/index.html"
+grep -q "direct-guides-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "\"buildId\": \"$BUILD_ID\"" "$SITE_DIR/version.json"
 grep -q "BUILD_ID = '$BUILD_ID'" "$SITE_DIR/service-worker.js"
-grep -q "HOTFIX_REVISION = '20260807-voice-stage-balance-3'" "$SITE_DIR/service-worker.js"
+grep -q "HOTFIX_REVISION = '20260807-direct-guides-cross-platform-1'" "$SITE_DIR/service-worker.js"
 grep -q 'voice-stage-balance-v27.css?v=20260806-27' "$SITE_DIR/service-worker.js"
+grep -q 'direct-guides-chat-v27.css?v=20260806-27' "$SITE_DIR/service-worker.js"
+grep -q 'direct-guides-v27.js?v=20260806-27' "$SITE_DIR/service-worker.js"
 grep -q 'dokohilf-guide-audio?manifest=1&build=20260806-27' "$SITE_DIR/service-worker.js"
 grep -q 'cacheApprovedGuideAudio' "$SITE_DIR/service-worker.js"
 grep -q '__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__' "$SITE_DIR/assets/experience-v27.js"
 grep -q '__DOKOHILF_REMOTE_GUIDE_AUDIO_V27__' "$SITE_DIR/assets/voice-diagnostics.js"
+grep -q '__DOKOHILF_DIRECT_GUIDES_V27__' "$SITE_DIR/assets/direct-guides-v27.js"
 
 if find "$SITE_DIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) | grep -q .; then
   echo "Nicht freigegebene Rasterbilder im öffentlichen Build gefunden." >&2
@@ -51,4 +58,4 @@ if find "$SITE_DIR" -type f -iname '*.wav' | grep -q .; then
   exit 1
 fi
 
-echo "DokoHilf $BUILD_ID mit privatem, cachebarem Gacrux-Guide-Audioendpunkt und balancierter iPhone-Sprachbühne gebaut."
+echo "DokoHilf $BUILD_ID mit privaten Gacrux-Guide-Audios, balancierter Sprachbühne und direkten mobilen Anleitungen gebaut."
