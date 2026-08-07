@@ -7,7 +7,7 @@ const currentCss = await readFile(new URL('../assets/premium-ui-v27.css', import
 const currentUxCss = await readFile(new URL('../assets/ux-v27.css', import.meta.url), 'utf8');
 const balanceCss = await readFile(new URL('../assets/voice-stage-balance-v27.css', import.meta.url), 'utf8');
 const directCss = await readFile(new URL('../assets/direct-guides-chat-v27.css', import.meta.url), 'utf8');
-const experience = await readFile(new URL('../assets/experience-v27.js', import.meta.url), 'utf8');
+const localVoice = await readFile(new URL('../assets/local-voice-v28.js', import.meta.url), 'utf8');
 const ux = await readFile(new URL('../assets/ux-v27.js', import.meta.url), 'utf8');
 const worker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
@@ -54,30 +54,30 @@ test('kleine und niedrige Mobilgeräte behalten die verdichtete Sprachanzeige', 
   assert.match(balanceCss, /width:118px!important/);
 });
 
-test('Sprachantwort fällt nach höchstens 180 ms auf die sofortige Gerätestimme zurück', () => {
-  assert.match(ux, /HARD_FALLBACK_MS = 180/);
-  assert.match(ux, /dokohilf_immediate_voice_fallback/);
-  assert.match(ux, /\[60, 140, 280, 520\]/);
-  assert.match(ux, /Antwort startet/);
-  assert.match(ux, /Sofortstimme/);
-  assert.match(experience, /loadPrebuiltVoice/);
+test('v28 deaktiviert den alten 180-ms-Gerätestimmenpfad und nutzt lokale Ausgabe', () => {
+  assert.match(ux, /if \(localVoiceV28\(\)\) return previousFetch\(input, init\);/);
+  assert.match(ux, /if \(localVoiceV28\(\)\) return;/);
+  assert.match(ux, /__DOKOHILF_LOCAL_VOICE_ONLY_V28__/);
+  assert.match(localVoice, /local-on-device-v28/);
+  assert.match(localVoice, /const MODEL_CACHE = 'dokohilf-local-voice-model-v28-1'/);
 });
 
-test('Service Worker erzwingt Direkt-Guide-Revision ohne die Voice-Balance zu verlieren', () => {
-  assert.match(worker, /HOTFIX_REVISION = '20260807-direct-guides-cross-platform-1'/);
-  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260806-27/);
-  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260806-27/);
+test('Service Worker erzwingt die v28-Voice-Revision ohne die Voice-Balance zu verlieren', () => {
+  assert.match(worker, /HOTFIX_REVISION = '20260807-local-natural-voice-v28-1'/);
+  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260807-28/);
+  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260807-28/);
+  assert.match(worker, /local-voice-v28\.js\?v=20260807-28/);
   assert.match(worker, /hotfixRevision: HOTFIX_REVISION/);
 });
 
-test('Build 27 lädt Voice-Balance und danach die getrennte Direkt-Guide-Schicht', () => {
-  assert.match(html, /premium-ui-v26\.css\?v=20260806-27/);
-  assert.match(html, /premium-ui-v27\.css\?v=20260806-27/);
-  assert.match(html, /ux-v27\.css\?v=20260806-27[\s\S]*voice-stage-balance-v27\.css\?v=20260806-27[\s\S]*direct-guides-chat-v27\.css\?v=20260806-27/);
-  assert.match(html, /experience-v27\.js\?v=20260806-27/);
-  assert.match(worker, /premium-ui-v26\.css\?v=20260806-27/);
-  assert.match(worker, /premium-ui-v27\.css\?v=20260806-27/);
-  assert.match(worker, /ux-v27\.css\?v=20260806-27/);
-  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260806-27/);
-  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260806-27/);
+test('Build 28 lädt Voice-Balance, Direkt-Guide-Schicht und lokale Voice in konsistenter Revision', () => {
+  assert.match(html, /premium-ui-v26\.css\?v=20260807-28/);
+  assert.match(html, /premium-ui-v27\.css\?v=20260807-28/);
+  assert.match(html, /ux-v27\.css\?v=20260807-28[\s\S]*voice-stage-balance-v27\.css\?v=20260807-28[\s\S]*direct-guides-chat-v27\.css\?v=20260807-28/);
+  assert.match(html, /local-voice-v28\.js\?v=20260807-28/);
+  assert.match(worker, /premium-ui-v26\.css\?v=20260807-28/);
+  assert.match(worker, /premium-ui-v27\.css\?v=20260807-28/);
+  assert.match(worker, /ux-v27\.css\?v=20260807-28/);
+  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260807-28/);
+  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260807-28/);
 });
