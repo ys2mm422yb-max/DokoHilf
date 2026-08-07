@@ -1,64 +1,99 @@
-# ACTIVE WORK – Voice-Guide-Folgeaudio und Bericht-Sonderfall v28
+# ACTIVE WORK – kostenlose Voice-Guides und Bericht-Sonderfall v28
 
 **Stand:** 7. August 2026  
 **Status:** Umsetzung im PR; Merge erst nach vollständig grünem exakten Head  
 **Branch:** `fix/voice-guides-report-conditions-v28-20260807`  
+**PR:** `#82`  
 **Build:** `20260807-28` / sichtbare Version `v28`
+
+## Verbindliche Nutzerentscheidungen
+
+DokoHilf bleibt dauerhaft eine **reine erklärende Bedienhilfe**:
+
+- keine DokoHilf-Endnutzerkonten
+- keine Bewohner-/Mitarbeiterprofile
+- keine Fallakten oder personenbezogenen Eingabemasken
+- keine Eingabe oder Speicherung von Bewohner-, Mitarbeiter- oder sonstigen Personendaten
+- automatisierte Tests ausschließlich mit synthetischen UI-Zuständen, neutralen Platzhaltern und erfundenen Werten
+
+Technische GitHub-/Supabase-Administrationskonten sind Infrastruktur und keine App-Benutzerkonten.
+
+Für die Stimme gilt: **keine kostenpflichtige TTS-API und kein Wechsel auf eine System-/Gerätestimme.** Die reguläre DokoHilf-Stimme soll einheitlich Supertonic F1 sein.
 
 ## Reproduzierte Produktprobleme
 
-- Auf einem realen iPhone wird im Voice-Guide der erste vorhandene natürliche Satz hörbar abgespielt; bei späteren Guide-Anweisungen kann die Ausgabe stumm bleiben und die lokale Engine hängen.
-- Die komplette Anleitung `Bericht anlegen` stellte die Protokollschritte 6–9 nicht deutlich genug als bedingten Sonderfall dar.
-- Fachlich bestätigt ist jetzt zusätzlich die konkrete Zuordnung beim Bericht:
-  - `Kontakt – alles außer Arzt` → `Fallgespräch`
-  - `Sturzereignis` → `Sturzprotokoll`
-  - bei allen anderen Berichtskategorien Schritte 6–9 überspringen und mit Schritt 10 fortfahren.
+- Auf einem realen iPhone wird eine vorbereitete Anweisung hörbar abgespielt; spätere Guide-Anweisungen können bei lokaler Supertonic-WASM-Inferenz stumm bleiben beziehungsweise hängen.
+- Die vollständige Anleitung `Bericht anlegen` stellte die Protokollschritte 6–9 nicht deutlich genug als bedingten Sonderfall dar.
 
-Öffentlich dokumentiert werden ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Produkt- und Fachergebnisse.
+Fachlich bestätigt:
 
-## Voice-Ursache
+- `Kontakt – alles außer Arzt` → `Fallgespräch`
+- `Sturzereignis` → `Sturzprotokoll`
+- bei allen anderen Berichtskategorien Schritte 6–9 überspringen und direkt mit Schritt 10 fortfahren
 
-Der aktive Router liefert für Guide-Antworten neben dem sichtbaren `reply` bereits einen eigenen kurzen `spokenText`. Das Frontend sprach bislang den langen sichtbaren `reply`. Dadurch verfehlte der statische Audioabgleich viele bestätigte Guide-Sätze und fiel unnötig auf lokale Supertonic-Inferenz zurück.
+## Neue kostenlose Voice-Architektur
 
-## Voice-Änderung
+Der reine On-Device-Supertonic-Ansatz ist auf realem iOS für normale Guide-Schritte nicht zuverlässig genug. Deshalb wird die Rechenarbeit für **bestätigte allgemeine Guide-Sätze** aus dem iPhone herausgenommen:
 
-`assets/local-voice-gate-v28.js` merkt sich bei Routerantworten die Zuordnung `reply → spokenText`. Kommt danach die TTS-Anfrage des bestehenden Frontends, wird ausschließlich für die Audioausgabe der zugehörige `spokenText` verwendet. Der sichtbare Chattext bleibt unverändert.
+1. Der bestehende 93-Satz-Guide-Katalog bleibt die Quelle für bestätigte allgemeine Sprachanweisungen.
+2. Der öffentliche GitHub-Actions-Releasejob erzeugt diese 93 Sätze mit **Supertonic 3 / Stimme F1 / Deutsch** als statische WAV-Dateien.
+3. Die veröffentlichte PWA lädt den lokalen Katalog und spielt ein passendes statisches Supertonic-Audio ab.
+4. Begrüßung und bestätigte Folgeanweisungen benötigen dadurch keine lokale iPhone-WASM-Inferenz.
+5. Router-`spokenText` wird für die Sprachausgabe weiter berücksichtigt, damit kurze bestätigte Guide-Sätze zuverlässig getroffen werden.
+6. Nur ein noch nicht vorbereiteter freier Satz darf als technischer Notweg lokal mit derselben Supertonic-F1-Stimme erzeugt werden; auf iOS gilt weiterhin eine harte Zeitgrenze.
+7. System-/Gerätestimme bleibt blockiert.
+8. Der aktive Browser-Sprachpfad ruft keine Cloud-TTS-API auf.
 
-Zusätzlich darf ein bestätigter statischer Satz ab 16 normalisierten Zeichen als enthaltene, eindeutig längere Teilanweisung getroffen werden. Statisches freigegebenes Audio wird weiterhin vor lokaler Inferenz geprüft. Die System-/Gerätestimme bleibt blockiert.
+Neue/angepasste Kernkomponenten:
 
-## Statischer Gacrux-Bestand
+- `scripts/build-supertonic-guide-audio-v28.py`
+- `assets/local-voice-gate-v28.js`
+- `.github/workflows/pages.yml`
+- `scripts/build-static-site-v27.sh`
+- `service-worker.js`
+- mobile Voice-/Detailhilfe-/Bericht-QA
 
-Zum Zeitpunkt dieser Umsetzung sind für Build `20260806-27` 9 von 93 Katalogeinträgen vorhanden: Indizes 0–7 und 33.
+## Cloud-Sprachaufbau deaktiviert
 
-Der vorhandene serverseitige Builder wurde ausschließlich über seine bestehende kostenlose TTS-Konfiguration erneut für Index 8 angestoßen. Der Dienst antwortete mit HTTP 429 / aktuellem Kontingentlimit; der Bestand blieb 9. Es wurde keine kostenpflichtige Stufe aktiviert und nach dem 429 kein weiterer Batch gestartet.
+Der vorherige automatische serverseitige statische Sprachaufbau darf für den neuen kostenlosen Releasepfad nicht weitergenerieren.
 
-Der vorhandene Katalog enthält 93 freigegebene allgemeine Guide-Sätze. Er kann später in kleinen Paketen weitergebaut werden, sobald das kostenlose Kontingent wieder verfügbar ist.
+Live im festen Supabase-Projekt gesetzt und verifiziert:
+
+`public.dokohilf_internal_build_control.enabled = false`
+
+Der vorhandene Cron kann technisch weiterhin ausgelöst werden, wird aber durch diesen Build-Schalter vor einer neuen Sprachgenerierung gestoppt. Der direkte Zugriff auf `cron.job` war über die verfügbare Datenbankrolle nicht erlaubt; deshalb wird **nicht** behauptet, der Cron selbst sei gelöscht oder deaktiviert.
 
 ## Bericht-Sonderfall
 
-Die verbindliche Fachquelle und der aktive Supabase-Guide `bericht-neu` wurden synchronisiert. `bericht-neu` steht jetzt auf Version 7.
+Die verbindliche Fachquelle und der aktive Supabase-Guide `bericht-neu` wurden auf die bestätigte Logik synchronisiert.
 
-In der vollständigen Direktanleitung werden Schritte 6–9 visuell als Sonderblock markiert. Der Block nennt beide konkreten Zuordnungen und weist ausdrücklich darauf hin, bei jeder anderen Kategorie direkt mit Schritt 10 fortzufahren.
+In der vollständigen Direktanleitung werden Schritte 6–9 visuell als eigener Sonderblock markiert. Der Block nennt beide Zuordnungen und weist ausdrücklich darauf hin, bei jeder anderen Kategorie direkt mit Schritt 10 fortzufahren.
 
-## Datenschutz- und Projektgrenzen
+## Öffentliche Produktgrenze
 
-- dauerhaft keine Echtdaten
-- vollständig synthetische Tests
-- keine externen Ausgangsmaterialien in Repository oder App
-- keine Systemstimme als hörbarer v28-Fallback
-- keine kostenpflichtige TTS-Stufe aktivieren
-- keine unbestätigten Klickwege erfinden
-- iOS und Android bleiben gleichberechtigte Pflicht-QA
+Öffentliche Projekttexte dürfen klar sagen, dass DokoHilf:
+
+- ausschließlich erklärt,
+- keine Endnutzerkonten besitzt,
+- keine Personenprofile oder Fallakten führt,
+- keine personenbezogenen Bewohner-/Mitarbeiterdaten entgegennimmt.
+
+Das ist keine Einschränkung, die später „weggeplant“ werden soll, sondern eine dauerhafte Produktgrenze.
 
 ## Pflicht-QA vor Merge
 
 Mindestens:
 
-- bestehende v28-Voice-Verträge grün
-- neuer Vertrag `voice-spoken-report-conditional-v28.test.mjs` grün
-- iOS 393×852 und Android 412×915 ohne Overflow/Überlagerung
+- kompletter GitHub-Actions-Build erzeugt exakt 93 statische Supertonic-F1-WAVs
+- kein Cloud-TTS-Aufruf im aktiven Voice-Releasepfad
+- Begrüßung und bestätigte Folgeanweisung bleiben ohne lokale iPhone-Inferenz
+- lokaler Notweg verwendet ebenfalls Supertonic F1 und bleibt zeitlich begrenzt
+- keine Systemstimme
+- Bericht-Sonderfall: genau Schritte 6–9, beide Protokollnamen, sichtbare Überspringregel
+- iOS `393×852` und Android `412×915` ohne Overflow/Überlagerung
 - Detailhilfe-QA grün
+- Datenschutz-/Produktgrenzen-Verträge grün
 - kompletter Deploy-/Release-Nachweis grün
 - exakter PR-Head geprüft und nur manuell gemergt
 
-Nach Merge `main` und `gh-pages` live prüfen. Danach real auf dem iPhone testen: Visite starten, ersten Satz hören, bestätigen/weitergehen und mindestens einen weiteren Guide-Schritt auf hörbare Ausgabe prüfen.
+Nach Merge `main`, `gh-pages`, statische Audiozusammenfassung und Supabase-Build-Schalter live prüfen. Danach real auf dem iPhone mindestens Begrüßung plus mehrere bestätigte Guide-Schritte testen.
