@@ -10,11 +10,17 @@ const workerPath = resolve(root, 'service-worker.js');
 let html = await readFile(htmlPath, 'utf8');
 const scriptTag = `  <script src="assets/detail-help-v27.js?v=${BUILD_ID}"></script>`;
 if (!html.includes('assets/detail-help-v27.js')) {
-  const marker = `  <script src="assets/conversation-intelligence.js?v=${BUILD_ID}"></script>`;
-  if (!html.includes(marker)) throw new Error('conversation-intelligence marker fehlt in index.html');
+  const marker = `  <script src="assets/clarification-ui.js?v=${BUILD_ID}"></script>`;
+  if (!html.includes(marker)) throw new Error('clarification-ui marker fehlt in index.html');
   html = html.replace(marker, `${marker}\n${scriptTag}`);
 }
 if (!html.includes(scriptTag.trim())) throw new Error('Detailhilfe konnte nicht in index.html aktiviert werden.');
+const clarificationIndex = html.indexOf(`assets/clarification-ui.js?v=${BUILD_ID}`);
+const helpIndex = html.indexOf(`assets/detail-help-v27.js?v=${BUILD_ID}`);
+const progressIndex = html.indexOf(`assets/guide-progress.js?v=${BUILD_ID}`);
+if (!(clarificationIndex >= 0 && clarificationIndex < helpIndex && helpIndex < progressIndex)) {
+  throw new Error('Detailhilfe muss nach Clarification und vor Guide-Progress geladen werden.');
+}
 await writeFile(htmlPath, html);
 
 let worker = await readFile(workerPath, 'utf8');
@@ -24,8 +30,8 @@ worker = worker
 
 const assetLine = `  './assets/detail-help-v27.js?v=${BUILD_ID}',`;
 if (!worker.includes(assetLine)) {
-  const marker = `  './assets/conversation-intelligence.js?v=${BUILD_ID}',`;
-  if (!worker.includes(marker)) throw new Error('conversation-intelligence marker fehlt im Service Worker');
+  const marker = `  './assets/clarification-ui.js?v=${BUILD_ID}',`;
+  if (!worker.includes(marker)) throw new Error('clarification-ui marker fehlt im Service Worker');
   worker = worker.replace(marker, `${marker}\n${assetLine}`);
 }
 if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(assetLine)) {
