@@ -81,12 +81,7 @@ if (USE_MOCK_SERVICES) {
       });
       return;
     }
-    await route.fulfill({
-      status: 200,
-      contentType: 'audio/wav',
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      body: silentWav(),
-    });
+    await route.fulfill({ status: 200, contentType: 'audio/wav', headers: { 'Access-Control-Allow-Origin': '*' }, body: silentWav() });
   });
   await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => {
     const wav = silentWav();
@@ -181,37 +176,64 @@ try {
   assert(await page.locator('[data-select-mode="voice"]').isVisible(), 'Sprechen-Karte fehlt.');
   assert(await page.locator('[data-select-mode="chat"]').isVisible(), 'Schreiben-Karte fehlt.');
   assert(await page.getByRole('button', { name: 'Bericht anlegen' }).isVisible(), 'Häufiger Ablauf Bericht fehlt.');
+  assert(await page.locator('[data-direct-guide]').count() === 6, 'Häufige Abläufe sind nicht vollständig als direkte Anleitungen verdrahtet.');
   await page.screenshot({ path: `${OUTPUT_DIR}/01-start-dark-iphone.png`, fullPage: true });
 
+  // Häufige Abläufe öffnen die vollständige Anleitung direkt – ohne Chat dazwischen.
   await page.getByRole('button', { name: 'Bericht anlegen' }).click();
+  const directGuide = page.locator('#directGuideView');
+  await directGuide.waitFor({ state: 'visible' });
+  assert(await page.locator('#workspace').isHidden(), 'Direkte Anleitung öffnet zusätzlich den Chat-Arbeitsbereich.');
+  assert((await layoutState()).mode === 'direct-guide', 'Direkte Anleitung setzt keinen eigenen UI-Modus.');
+  assert(await directGuide.locator('.direct-guide-step').count() === 12, 'Bericht-Anleitung ist nicht vollständig mit 12 bestätigten Schritten sichtbar.');
+  assert((await directGuide.innerText()).includes('Komplette Anleitung'), 'Direkte Anleitung ist nicht eindeutig als komplette Anleitung gekennzeichnet.');
+  const guideLayout = await layoutState();
+  assert(guideLayout.documentWidth <= guideLayout.viewportWidth + 1, 'Direkte Anleitung hat horizontalen Überlauf.');
+  await page.screenshot({ path: `${OUTPUT_DIR}/02-direct-guide-iphone.png`, fullPage: true });
+
+  await page.locator('[data-direct-guide-close]').first().click();
+  await page.locator('#startScreen').waitFor({ state: 'visible' });
+  await page.getByRole('button', { name: 'Vitalwerte erfassen' }).click();
+  await directGuide.waitFor({ state: 'visible' });
+  assert(await directGuide.locator('[data-direct-guide-variant]').count() === 2, 'Vitalwerte bietet nicht beide bestätigten Varianten an.');
+  await directGuide.locator('[data-direct-guide-variant="vitalSammel"]').click();
+  assert(await directGuide.locator('.direct-guide-step').count() === 6, 'Sammelerfassung zeigt nicht die vollständigen sechs bestätigten Schritte.');
+  await page.locator('[data-direct-guide-close]').first().click();
+  await page.locator('#startScreen').waitFor({ state: 'visible' });
+
+  // Schreiben ist jetzt eine kompakte eigene Gesprächsansicht.
+  await page.locator('[data-select-mode="chat"]').click();
   await page.locator('#workspace').waitFor({ state: 'visible' });
+  await page.locator('.chat-head').waitFor({ state: 'visible' });
+  assert((await page.locator('.chat-eyebrow').innerText()).trim() === 'DokoHilf Chat', 'Kompakte Chat-Kennung fehlt.');
+  assert(await page.locator('.message.assistant .bubble').first().isVisible(), 'Begrüßung im Chat fehlt.');
+  const chatLayout = await layoutState();
+  assert(chatLayout.documentWidth <= chatLayout.viewportWidth + 1, 'Chat hat horizontalen Überlauf.');
+  const chatHeadBox = await page.locator('.chat-head').boundingBox();
+  assert(chatHeadBox && chatHeadBox.height <= 190, `Chat-Kopf ist auf dem iPhone noch zu hoch: ${chatHeadBox?.height}`);
+  await page.screenshot({ path: `${OUTPUT_DIR}/03-chat-clean-iphone.png`, fullPage: true });
+
+  // Bestehender Schritt-für-Schritt-Chat bleibt über die Chat-Schnellfragen intakt.
+  await page.getByRole('button', { name: 'Visite', exact: true }).click();
   await page.locator('.message.assistant .bubble').last().waitFor({ state: 'visible', timeout: 20_000 });
   await page.waitForTimeout(350);
-
   const progress = page.locator('.guide-progress').first();
   await progress.waitFor({ state: 'visible', timeout: 15_000 });
   const progressBox = await progress.boundingBox();
   assert(progressBox && progressBox.height <= 92, `Ablaufsteuerung ist zu hoch: ${progressBox?.height}`);
   assert(await page.locator('.guide-progress-menu summary').isVisible(), 'Drei-Punkte-Menü fehlt.');
-
   const visibleCommands = await page.locator('#commandRow button').evaluateAll(buttons => buttons.filter(button => getComputedStyle(button).display !== 'none' && !button.hidden).map(button => button.textContent?.trim()));
   assert(visibleCommands.length === 2, `Erwartet zwei sichtbare Aktionen, gefunden: ${visibleCommands.join(', ')}`);
   assert(visibleCommands.includes('Weiter'), 'Aktion Weiter fehlt.');
   assert(visibleCommands.some(label => /Hilfe/i.test(label || '')), 'Hilfe-Aktion fehlt.');
-
   const visibleText = await page.locator('body').innerText();
   assert(!/In Übungen nur Fantasie|Im öffentlichen Test nur Fantasie/i.test(visibleText), 'Wiederholter Fantasiedaten-Hinweis ist im Guide sichtbar.');
-  const chatLayout = await layoutState();
-  assert(chatLayout.documentWidth <= chatLayout.viewportWidth + 1, 'Chat hat horizontalen Überlauf.');
-  await page.screenshot({ path: `${OUTPUT_DIR}/02-chat-compact-iphone.png`, fullPage: true });
 
   await page.locator('.guide-progress-menu summary').click();
   assert(await page.getByRole('button', { name: /Neu starten/i }).isVisible(), 'Neu starten fehlt im Menü.');
   assert(await page.getByRole('button', { name: /Anderer Ablauf/i }).isVisible(), 'Anderer Ablauf fehlt im Menü.');
 
-  await page.evaluate(() => {
-    document.getElementById('homeButton')?.click();
-  });
+  await page.evaluate(() => document.getElementById('homeButton')?.click());
   await page.locator('#startScreen').waitFor({ state: 'visible' });
   await page.getByRole('button', { name: /Sprechen/i }).first().click();
   const voiceStage = page.locator('.voice-focus-stage');
@@ -228,7 +250,7 @@ try {
   await shell.evaluate(element => { element.dataset.voiceState = 'idle'; });
   const idleBox = await page.locator('.voice-focus-stage .voice-orb').boundingBox();
   assert(idleBox && idleBox.width <= 112, `Mikrofon ist im Leerlauf zu groß: ${idleBox?.width}`);
-  await page.screenshot({ path: `${OUTPUT_DIR}/03-voice-idle-iphone.png`, fullPage: false });
+  await page.screenshot({ path: `${OUTPUT_DIR}/04-voice-idle-iphone.png`, fullPage: false });
 
   await shell.evaluate(element => { element.dataset.voiceState = 'listening'; });
   await page.waitForTimeout(300);
@@ -236,7 +258,7 @@ try {
   assert(listeningBox && idleBox && listeningBox.width >= idleBox.width + 35, `Mikrofon wird beim Zuhören nicht deutlich größer: idle ${idleBox?.width}, listening ${listeningBox?.width}`);
   const voiceLayout = await layoutState();
   assert(voiceLayout.documentWidth <= voiceLayout.viewportWidth + 1, 'Sprachmodus hat horizontalen Überlauf.');
-  await page.screenshot({ path: `${OUTPUT_DIR}/04-voice-listening-iphone.png`, fullPage: false });
+  await page.screenshot({ path: `${OUTPUT_DIR}/05-voice-listening-iphone.png`, fullPage: false });
 
   assert(consoleErrors.length === 0, `Console-Fehler: ${consoleErrors.join(' | ')}`);
   assert(pageErrors.length === 0, `Page-Fehler: ${pageErrors.join(' | ')}`);
@@ -248,6 +270,9 @@ try {
     mockServices: USE_MOCK_SERVICES,
     identity,
     privacyAcknowledgementStored: true,
+    directGuideStepCount: 12,
+    vitalVariantCount: 2,
+    chatHeadHeight: chatHeadBox?.height,
     visibleCommands,
     progressHeight: progressBox?.height,
     topbarBottom: topbarBox ? topbarBox.y + topbarBox.height : null,
