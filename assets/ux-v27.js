@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
-  const HARD_FALLBACK_MS = 1200;
+  const HARD_FALLBACK_MS = 180;
   const PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1';
   const previousFetch = window.fetch.bind(window);
   const commands = new Set(['weiter', 'nochmal', 'zurück', 'zuruck', 'ich finde das nicht', 'ich brauche hilfe']);
@@ -114,7 +114,7 @@
         try { synth.resume(); } catch { /* iOS kann resume während eines Zustandswechsels ablehnen. */ }
       };
       resumeIfNeeded();
-      [120, 320, 700, 1100].forEach(delay => window.setTimeout(resumeIfNeeded, delay));
+      [60, 140, 280, 520].forEach(delay => window.setTimeout(resumeIfNeeded, delay));
     };
 
     window.__DOKOHILF_SPEECH_RESUME_WATCHDOG_V27__ = true;
@@ -166,8 +166,8 @@
     let changed = false;
     const current = normalize(status.textContent);
     if (shell.dataset.voiceState === 'thinking' || current.includes('stimme wird vorbereitet') || current.includes('stimme ladt')) {
-      changed = setTextIfChanged(status, 'Stimme startet …') || changed;
-      changed = setTextIfChanged(hint, 'Gacrux startet sofort, wenn sie bereit ist. Dauert es länger, übernimmt automatisch die Sofortstimme.') || changed;
+      changed = setTextIfChanged(status, 'Antwort startet …') || changed;
+      changed = setTextIfChanged(hint, 'Ist Gacrux schon fertig, hörst du sie direkt. Sonst spricht sofort die Sofortstimme.') || changed;
     }
     if (badge && /geratestimme|ersatz/.test(normalize(badge.textContent))) {
       changed = setTextIfChanged(badge, 'Sofortstimme') || changed;
@@ -220,4 +220,5 @@
   window.__DOKOHILF_UX_CLEANUP_V27__ = true;
   window.__DOKOHILF_PRIVACY_ACK_V27__ = true;
   window.__DOKOHILF_IDEMPOTENT_SYNC_V27__ = true;
+  window.__DOKOHILF_FLUID_VOICE_180MS_V27__ = true;
 })();

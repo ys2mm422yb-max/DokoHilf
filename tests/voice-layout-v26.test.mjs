@@ -6,6 +6,7 @@ const legacyCss = await readFile(new URL('../assets/premium-ui-v26.css', import.
 const currentCss = await readFile(new URL('../assets/premium-ui-v27.css', import.meta.url), 'utf8');
 const currentUxCss = await readFile(new URL('../assets/ux-v27.css', import.meta.url), 'utf8');
 const experience = await readFile(new URL('../assets/experience-v27.js', import.meta.url), 'utf8');
+const ux = await readFile(new URL('../assets/ux-v27.js', import.meta.url), 'utf8');
 const worker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 
@@ -16,35 +17,45 @@ test('bewährte Trennung von Anweisung und Mikrofon bleibt erhalten', () => {
   assert.match(legacyCss, /#voiceFocusConsoleSlot[\s\S]*min-height:0/);
 });
 
-test('lange Anweisungen bleiben lesbar und überdecken die Animation nicht', () => {
-  assert.match(legacyCss, /voice-focus-instruction[\s\S]*overflow:auto/);
-  assert.match(legacyCss, /overflow-wrap:anywhere/);
-  assert.match(legacyCss, /z-index:4/);
-  assert.match(legacyCss, /voice-focus-stage \.voice-orb[\s\S]*clamp/);
-  assert.match(currentUxCss, /voice-focus-main\{gap:38px!important\}/);
+test('aktuelle Sprachfläche nutzt eine robuste Flex-Stapelung ohne überlagerte Altansicht', () => {
+  assert.match(currentUxCss, /workspace> :not\(\.voice-focus-stage\)\{display:none!important\}/);
+  assert.match(currentUxCss, /voice-focus-inner\{[\s\S]*display:flex!important[\s\S]*flex-direction:column!important/);
+  assert.match(currentUxCss, /voice-focus-main\{[\s\S]*flex:1 1 auto!important[\s\S]*overflow:hidden!important/);
+  assert.match(currentUxCss, /#voiceFocusConsoleSlot\{[\s\S]*flex:1 1 auto!important[\s\S]*place-items:center!important/);
+  assert.match(currentUxCss, /voice-focus-instruction\{[\s\S]*overflow:auto!important/);
 });
 
 test('iPhone Safe-Area trennt Kopfzeile, Versionsstatus und Sprachfläche', () => {
   assert.match(currentUxCss, /data-mode="voice"\] \.build-status\{display:none!important\}/);
-  assert.match(currentUxCss, /voice-focus-stage\{inset:calc\(max\(8px,env\(safe-area-inset-top\)\) \+ 86px\) 0 0!important\}/);
+  assert.match(currentUxCss, /voice-focus-stage\{inset:calc\(max\(8px,env\(safe-area-inset-top\)\) \+ 86px\) 0 0!important/);
+  assert.match(currentUxCss, /build-status\[data-state="current"\]\{display:none!important\}/);
 });
 
 test('kleine und niedrige iPhones behalten die verdichtete Darstellung', () => {
   assert.match(legacyCss, /@media\(max-width:680px\)/);
   assert.match(legacyCss, /@media\(max-height:760px\)/);
   assert.match(legacyCss, /@media\(max-height:650px\)/);
-  assert.match(legacyCss, /width:104px/);
   assert.match(currentCss, /voice-focus-stage/);
-  assert.match(currentUxCss, /data-voice-state="listening"/);
-  assert.match(currentUxCss, /width:96px/);
+  assert.match(currentUxCss, /@media\(max-width:680px\)/);
+  assert.match(currentUxCss, /width:92px!important/);
+  assert.match(currentUxCss, /width:154px!important/);
   assert.match(currentUxCss, /@media\(max-height:720px\)/);
-  assert.match(currentUxCss, /voice-focus-main\{gap:22px!important\}/);
+  assert.match(currentUxCss, /width:78px!important/);
+  assert.match(currentUxCss, /width:126px!important/);
 });
 
-test('Ladehinweis bleibt ohne buggy animierte Punkte', () => {
-  assert.match(legacyCss, /voice-copy strong:after\{content:none/);
-  assert.match(experience, /Stimme startet/);
-  assert.match(experience, /Bekannte Schritte starten direkt/);
+test('Sprachantwort fällt nach höchstens 180 ms auf die sofortige Gerätestimme zurück', () => {
+  assert.match(ux, /HARD_FALLBACK_MS = 180/);
+  assert.match(ux, /dokohilf_immediate_voice_fallback/);
+  assert.match(ux, /\[60, 140, 280, 520\]/);
+  assert.match(ux, /Antwort startet/);
+  assert.match(ux, /Sofortstimme/);
+  assert.match(experience, /loadPrebuiltVoice/);
+});
+
+test('Service Worker erzwingt die Auslieferung des Sprach- und Layout-Hotfixes', () => {
+  assert.match(worker, /HOTFIX_REVISION = '20260807-fluid-voice-layout-1'/);
+  assert.match(worker, /hotfixRevision: HOTFIX_REVISION/);
 });
 
 test('Build 27 lädt die bewährte v26-Basisschicht und die neue v27-Erfahrung gemeinsam', () => {
