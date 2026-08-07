@@ -106,12 +106,15 @@ test('v28 build ID, load order and PWA voice caches are explicit', () => {
   const app = index.indexOf('app.js?v=20260807-28');
   assert(local >= 0 && local < experience && experience < uxIndex && uxIndex < gateIndex && gateIndex < app);
   assert.match(worker, /const BUILD_ID = '20260807-28';/);
+  assert.match(worker, /HOTFIX_REVISION = '20260807-voice-guides-report-v28-3'/);
   assert.match(worker, /LOCAL_VOICE_MODEL_CACHE/);
   assert.match(worker, /APPROVED_AUDIO_CACHE/);
-  assert.match(applyDetail, /20260807-local-natural-voice-v28-2/);
+  assert.match(applyDetail, /20260807-voice-guides-report-v28-3/);
   assert.match(build, /local-voice-v28\.js/);
   assert.match(build, /local-voice-gate-v28\.js/);
   assert.match(build, /static-approved-guide-v28/);
+  assert.match(build, /payload\.spokenText/);
+  assert.match(build, /Sonderfall · nur bei 2 Kategorien/);
 });
 
 test('model weights and generated speech files are not redistributed inside the public bundle', () => {
