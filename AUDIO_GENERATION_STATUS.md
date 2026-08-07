@@ -1,58 +1,35 @@
 # Audio-Erzeugungsstatus
 
-**Stand:** 6. August 2026  
-**Ziel:** 93 allgemeine, freigegebene Gacrux-WAV-Dateien  
-**Zuletzt verifiziert:** 1/93
+**Stand:** 7. August 2026
+**Status:** PR #86 in Prüfung; der bisherige Gacrux-Aufbau ist ersetzt
+**Ziel:** exakt 111 kostenlose Supertonic-F1-WAV-Dateien
 
-Der Wert ist veränderlich und muss vor jeder Aussage live über den Manifestendpunkt oder `public.dokohilf_static_guide_audio` geprüft werden.
+## Aktueller Vertrag
 
-## Aktuelle Architektur
+- 93 bestätigte allgemeine Guide-Sätze aus `assets/guide-audio-catalog.json`
+- 18 feste Dialogsätze aus `assets/voice-extra-catalog-v28.json`
+- insgesamt exakt 111 eindeutige Sätze
+- Erzeugung ausschließlich im geprüften GitHub-Releasebuild mit Supertonic 3, Stimme F1, Deutsch
+- Veröffentlichung nur bei exakt 111 gültigen WAV-Dateien und übereinstimmender Build-Zusammenfassung
+- statische Wiedergabe zuerst; lokale Supertonic-F1-Inferenz nur für einen noch nicht vorbereiteten freien Satz
+- keine System-/Gerätestimme und keine Cloud-TTS-API als Sprachpfad
 
-- privater Supabase-Bucket `dokohilf-guide-audio`
-- Registry `public.dokohilf_static_guide_audio`
-- Manifest-/WAV-Endpunkt `dokohilf-guide-audio`
-- token-geschützter Builder `dokohilf-guide-audio-build` v2
-- interner Zustand `public.dokohilf_internal_build_control`
-- stündlicher Cronjob `dokohilf-static-guide-audio-v27`
-- keine WAV-Binärdateien im öffentlichen GitHub- oder Pages-Build
+Die 111 WAV-Dateien werden nicht in den Quellbranch committed. Der Releasejob erzeugt sie reproduzierbar und veröffentlicht sie zusammen mit dem dazugehörigen Katalog im exakt geprüften Pages-Artefakt.
 
-## Qualitätsbedingung jedes vorhandenen Eintrags
+## Stillgelegter Altbestand
 
-- gültiger RIFF-/WAVE-Header
-- Dateigröße größer als 44 Bytes
-- übereinstimmender SHA-256
-- Stimme Gacrux
-- Modellnachweis
-- API-Weg
-- Parser `raw-steps-content-v1`
-- Stilnachweis
-- ausschließlich allgemeiner freigegebener Guide-Text
+Die frühere private Gacrux-Registry und vorhandene alte Audiodateien sind nur historischer Bestand. v28-4 lädt sie nicht. Die früheren TTS-, Builder- und Gacrux-Auslieferungsfunktionen antworten ausschließlich mit `410 Gone`, verlangen ein gültiges JWT und enthalten weder Provider- noch Storagezugriff. Der interne Build-Schalter bleibt `false`; der Cron `dokohilf-static-guide-audio-v27` wird entfernt.
 
-## Build-27-Bedingung
+Der frühere Stand `1/93`, `7/93` oder `9/93` ist für den aktuellen Sprachpfad ohne Bedeutung und darf nicht mehr als Ausbauziel verwendet werden.
 
-Für die sichtbare Dark-UI-Veröffentlichung reicht ein korrekt geprüfter Teilbestand, weil fehlende statische Schritte automatisch TTS v20 und danach die lokale Sofortstimme verwenden.
+## Prüfung
 
-Prüfung:
+Quellkataloge ohne Modelldownload prüfen:
 
 ```bash
-node scripts/live-static-guide-audio-smoke.mjs
+python3 scripts/build-supertonic-guide-audio-v28.py --validate-only
 ```
 
-## Vollständiger Audioabschluss
+Der vollständige GitHub-Releasejob erzeugt anschließend alle 111 Dateien und baut daraus die veröffentlichbare Site mit `DOKOHILF_REQUIRE_STATIC_SUPERTONIC=1`.
 
-Der Audioausbau gilt erst als abgeschlossen, wenn:
-
-- Manifest `complete: true` meldet
-- exakt 93 eindeutige Einträge vorhanden sind
-- alle Einträge gültige Größen und SHA-256 besitzen
-- repräsentative WAV-Abrufe erfolgreich sind
-- der Builder deaktiviert ist
-- der Cronjob entfernt wurde
-
-Strenge Prüfung:
-
-```bash
-DOKOHILF_REQUIRE_COMPLETE_AUDIO=1 node scripts/live-static-guide-audio-smoke.mjs
-```
-
-Die vollständige 93er-Bibliothek ist ein eigener Abschlusszustand und kein Blocker mehr für die bereits funktionsfähige Build-27-Oberfläche.
+Die verbindliche Architektur und Datenschutzgrenze stehen in `PREBUILT_AUDIO.md`, `PROJECT_RULES.md` und `PROJECT_HANDOFF.md`.

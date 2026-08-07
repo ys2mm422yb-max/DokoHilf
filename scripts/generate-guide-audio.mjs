@@ -21,7 +21,6 @@ function stripExerciseNotice(value) {
     .replace(/\s*In Übungen nur Fantasiedaten verwenden\.?/gi, '')
     .replace(/\s*In Übungen nur Fantasiewerte verwenden\.?/gi, '')
     .replace(/\s*Im öffentlichen Test ausschließlich Fantasiedaten verwenden\.?/gi, '')
-    .replace(/\s*Im öffentlichen Test nur vollständig erfundene Personen verwenden\.?/gi, '')
     .replace(/\s*Verwende in Übungen ausschließlich Fantasiedaten\.?/gi, '')
     .replace(/\s*Verwende dabei nur Fantasiedaten\.?/gi, '')
     .replace(/\s+([,.!?])/g, '$1')

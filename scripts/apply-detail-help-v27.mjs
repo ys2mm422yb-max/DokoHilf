@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const BUILD_ID = '20260807-28';
-const REVISION = '20260807-voice-guides-report-v28-3';
+const REVISION = '20260807-static-supertonic-guides-v28-4';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');
@@ -39,17 +39,12 @@ const experienceIndex = html.indexOf(`assets/experience-v27.js?v=${BUILD_ID}`);
 const polishIndex = html.indexOf(`assets/detail-help-polish-v27.js?v=${BUILD_ID}`);
 const syncIndex = html.indexOf(`assets/detail-help-render-sync-v27.js?v=${BUILD_ID}`);
 const gateIndex = html.indexOf(`assets/local-voice-gate-v28.js?v=${BUILD_ID}`);
-if (!(clarificationIndex >= 0 && clarificationIndex < helpIndex && helpIndex < progressIndex)) {
-  throw new Error('Detailhilfe muss nach Clarification und vor Guide-Progress geladen werden.');
-}
-if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < gateIndex)) {
-  throw new Error('Lokale Stimme, Experience, Detailhilfe-Polish, Render-Sync und finaler Voice-Gate sind falsch sortiert.');
-}
+if (!(clarificationIndex >= 0 && clarificationIndex < helpIndex && helpIndex < progressIndex)) throw new Error('Detailhilfe muss nach Clarification und vor Guide-Progress geladen werden.');
+if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < gateIndex)) throw new Error('Lokale Stimme, Experience, Detailhilfe-Polish, Render-Sync und finaler Voice-Gate sind falsch sortiert.');
 await writeFile(htmlPath, html);
 
 let worker = await readFile(workerPath, 'utf8');
-worker = worker
-  .replace(/const HOTFIX_REVISION = '[^']+';/, `const HOTFIX_REVISION = '${REVISION}';`);
+worker = worker.replace(/const HOTFIX_REVISION = '[^']+';/, `const HOTFIX_REVISION = '${REVISION}';`);
 
 const helpAssetLine = `  './assets/detail-help-v27.js?v=${BUILD_ID}',`;
 if (!worker.includes(helpAssetLine)) {
@@ -57,23 +52,18 @@ if (!worker.includes(helpAssetLine)) {
   if (!worker.includes(marker)) throw new Error('clarification-ui marker fehlt im Service Worker');
   worker = worker.replace(marker, `${marker}\n${helpAssetLine}`);
 }
-
 const polishAssetLine = `  './assets/detail-help-polish-v27.js?v=${BUILD_ID}',`;
 if (!worker.includes(polishAssetLine)) {
   const marker = `  './assets/experience-v27.js?v=${BUILD_ID}',`;
   if (!worker.includes(marker)) throw new Error('experience-v27 marker fehlt im Service Worker');
   worker = worker.replace(marker, `${marker}\n${polishAssetLine}`);
 }
-
 const syncAssetLine = `  './assets/detail-help-render-sync-v27.js?v=${BUILD_ID}',`;
 if (!worker.includes(syncAssetLine)) {
   if (!worker.includes(polishAssetLine)) throw new Error('Polish asset marker fehlt im Service Worker');
   worker = worker.replace(polishAssetLine, `${polishAssetLine}\n${syncAssetLine}`);
 }
-
-if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(helpAssetLine) || !worker.includes(polishAssetLine) || !worker.includes(syncAssetLine)) {
-  throw new Error('Detailhilfe, Voice-Polish und Render-Sync konnten nicht in den Service Worker aufgenommen werden.');
-}
+if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(helpAssetLine) || !worker.includes(polishAssetLine) || !worker.includes(syncAssetLine)) throw new Error('Detailhilfe, Voice-Polish und Render-Sync konnten nicht in den Service Worker aufgenommen werden.');
 await writeFile(workerPath, worker);
 
-console.log(`DokoHilf detail help + local voice release applied: ${REVISION}`);
+console.log(`DokoHilf detail help + static Supertonic release applied: ${REVISION}`);

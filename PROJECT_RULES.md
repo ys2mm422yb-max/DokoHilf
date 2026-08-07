@@ -9,7 +9,7 @@
 
 - Ausschließliches GitHub-Repository: `ys2mm422yb-max/DokoHilf`.
 - Ausschließliches Supabase-Projekt: Projekt-ID `efifbuqctylsujiauabg`, Region Frankfurt (`eu-central-1`).
-- `DungeonVeil`, `Runeborn`, `dungeon` und jedes andere GitHub- oder Supabase-Projekt dürfen nicht geöffnet, verändert, verbunden oder als Vorlage beziehungsweise Deployment-Ziel benutzt werden.
+- Andere GitHub- oder Supabase-Projekte dürfen nicht geöffnet, verändert, verbunden oder als Deployment-Ziel benutzt werden.
 - Vor jeder Schreibaktion müssen Owner, Repository, Branch und Supabase-Projekt-ID geprüft werden.
 - Keine projektübergreifenden Secrets, Umgebungsvariablen, Datenbanken, Buckets oder Deployments.
 - Kein Auto-Merge und kein automatisches Löschen von Branches.
@@ -25,13 +25,15 @@
 
 ## 3. Zweck und technische Grenzen
 
-- DokoHilf ist eine unabhängige interne Bedienungs- und Lernhilfe.
+- DokoHilf ist ausschließlich eine **erklärende Schritt-für-Schritt-Bedienhilfe**.
+- DokoHilf besitzt **keine Benutzerkonten, keine Bewohner-/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken**. Solche Funktionen sind nicht Teil des Produkts und werden nicht vorsorglich eingeplant.
+- In DokoHilf werden keine Bewohner-, Mitarbeiter- oder sonstigen Personendaten eingegeben. Die Anwendung erklärt nur, welche Schritte der Nutzer in der davon getrennten Dokumentationssoftware ausführen soll.
 - Keine Verbindung zu produktiven Dokumentationsdatenbanken.
 - Kein Scraping, Reverse Engineering, automatisiertes Auslesen oder Nutzen nicht dokumentierter Schnittstellen.
 - Keine Speicherung von Zugangsdaten der eingesetzten Fremdsoftware.
 - Keine medizinischen, pflegerischen oder betreuerischen Entscheidungen durch die Anwendung.
 - Bedienantworten stammen nur aus redaktionell gepflegten und freigegebenen Anleitungen.
-- Gemini darf Nutzerabsichten und freie Antworten interpretieren, aber niemals interne Klickwege erfinden.
+- Gemini darf Nutzerabsichten und freie Fragen interpretieren, aber niemals interne Klickwege erfinden.
 
 ## 4. Urheber-, Marken- und Lizenzschutz
 
@@ -46,7 +48,7 @@
 
 Repository, Pull Requests, Issues, Actions-Artefakte, Supabase und die App dürfen keine personenbezogenen, gesundheitsbezogenen, produktiven, internen oder fremden geschützten Inhalte enthalten.
 
-Für automatisierte Tests und Renderprüfungen werden ausschließlich vollständig synthetische Oberflächen, Texte und Fantasiedaten verwendet.
+Für automatisierte Tests und Renderprüfungen werden ausschließlich vollständig synthetische Oberflächen, neutrale Platzhalter und erfundene Testwerte verwendet. Diese Tests bilden keine reale Person und keinen realen Fall nach.
 
 Öffentliche Projektdokumentation beschreibt ausschließlich Regeln, Ergebnisse, technische Entscheidungen und anonymisierte Fachinhalte. Herkunft, Prüfmaterialien oder interne Ausgangsmaterialien werden nicht öffentlich dokumentiert.
 
@@ -57,13 +59,13 @@ Diese Regel gilt **dauerhaft, ohne Ausnahme und unabhängig von späteren betrie
 - keine Bewohner-, Klienten-, Patienten- oder Angehörigendaten;
 - keine Gesundheitsdaten;
 - keine echten Berichte, Übergaben, Medikamentenpläne, Vitalwerte oder Termine;
-- keine realen Mitarbeiterdaten oder realen Mitarbeiterkonten;
+- keine realen Mitarbeiterdaten;
 - keine Exporte oder Kopien aus produktiven Dokumentationssystemen;
 - keine Echtdaten in Logs, Fehlermeldungen, Issues, Commits, Pull Requests, Actions-Artefakten, Supabase oder der App.
 
-Testkonten und Testdaten müssen vollständig synthetisch sein und dürfen keiner realen Person nachgebildet werden.
+DokoHilf führt grundsätzlich keine Endnutzerkonten oder Personenprofile. Automatisierte Tests verwenden nur synthetische UI-Zustände, neutrale Platzhalter und erfundene Werte.
 
-Eine spätere Freigabe darf dieses Verbot **nicht** aufheben oder abschwächen. Soll DokoHilf jemals in einem realen betrieblichen Kontext eingesetzt werden, bleibt die Anwendung trotzdem strikt von Echtdaten getrennt.
+Eine spätere Freigabe darf dieses Verbot **nicht** aufheben oder abschwächen. Soll DokoHilf jemals in einem realen betrieblichen Kontext eingesetzt werden, bleibt die Anwendung trotzdem strikt von Echtdaten getrennt und weiterhin reine Erklärungshilfe.
 
 ## 7. Datenschutz, lokale Speicherung und Audio
 
@@ -71,19 +73,18 @@ Eine spätere Freigabe darf dieses Verbot **nicht** aufheben oder abschwächen. 
 - Keine Werbung, Nutzertracking, Analyse-SDKs, Social-Media-Pixel oder unnötigen Cookies.
 - Gesprächsverläufe, Nutzerstimmen, Diktate, freie Sprachantworten und personenbezogene Audioinhalte werden nicht dauerhaft im Browser, Repository oder in Supabase gespeichert.
 - Flüchtige Caches für dynamische Sprachantworten dürfen ausschließlich im Arbeitsspeicher existieren und müssen mit dem Prozess enden.
-- Als eng begrenzte Ausnahme dürfen **allgemeine, fachlich freigegebene Guide-Anweisungen** einmal mit einer natürlichen Stimme erzeugt und als statische Audiodateien technisch bereitgestellt und im PWA-Cache gespeichert werden.
-- Diese statischen Dateien dürfen ausschließlich aus freigegebenen Guide-Texten entstehen. Nutzerantworten, Checks, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten sind als Audioquelle ausgeschlossen.
-- Jede statische Guide-Audiodatei benötigt einen dokumentierten Textschlüssel, gültigen Dateinachweis, Dateigröße und SHA-256 im Manifest. Ändert sich der freigegebene Text, muss die Datei neu erzeugt werden.
+- Allgemeine, fachlich freigegebene Guide-Anweisungen dürfen als statische Audiodateien technisch bereitgestellt und im PWA-Cache gespeichert werden, wenn sie ausschließlich aus den freigegebenen, selbst formulierten Guide-Texten entstehen.
+- Nutzerantworten, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten sind als statische Audioquelle ausgeschlossen.
+- Statische Guide-Audios müssen eindeutig dem freigegebenen Text zugeordnet sein. Ändert sich der Text, muss das Audio neu erzeugt werden.
+- Die Sprachausgabe soll ohne kostenpflichtige TTS-API auskommen. Bestätigte Guide-Sätze werden mit der kostenlosen lokalen/offenen Sprachengine **Supertonic 3** als statische Audios erzeugt; eine System-/Gerätestimme ist kein regulärer Fallback.
 - Lokal dauerhaft gespeichert werden darf genau ein unpersönliches Ja/Nein-Merkmal: `dokohilf-privacy-ack-v1=yes`. Es zeigt ausschließlich an, dass der zentrale Datenschutz-Hinweis bereits bestätigt wurde. Keine Zeit, Identität, Gerätekennung oder weitere Nutzungsinformation speichern.
-- Vor Produktivstart müssen Verantwortlicher, Rechtsgrundlage, Datenschutzhinweis, Löschkonzept, Berechtigungskonzept und Auftragsverarbeitungsverträge geklärt sein.
-- Eine EU-Region ersetzt keine vollständige DSGVO-Prüfung.
 
 ## 8. Supabase-Sicherheit
 
+- Supabase dient ausschließlich als technische Inhalts-, Router- und Entwicklungsinfrastruktur für DokoHilf, nicht als Endnutzerverwaltung.
+- DokoHilf-Endnutzerkonten, Selbstregistrierung, Rollenprofile, Bewohnerprofile und Mitarbeiterprofile sind nicht Teil des Produkts und dürfen nicht eingeführt werden.
 - Jede exponierte Tabelle erhält Row Level Security, soweit sie nicht ausschließlich serverseitig mit Service Role genutzt wird.
-- `anon` erhält keinen unkontrollierten Zugriff auf interne Inhalte.
-- Öffentliche Selbstregistrierung bleibt deaktiviert; Nutzer werden kontrolliert eingeladen oder freigeschaltet.
-- Rollen niemals aus nutzerveränderbarem `user_metadata` ableiten.
+- `anon` erhält keinen unkontrollierten Zugriff auf interne technische Inhalte.
 - `service_role`, Secret Keys, Datenbankpasswörter und privilegierte Schlüssel niemals im Browser, Repository, Issue oder öffentlich sichtbaren Projekttext speichern.
 - Im Frontend nur Publishable Key und nur zusammen mit geprüften RLS-Regeln.
 - Jede Migration enthält erforderliche Grants, RLS und Policies.
@@ -110,20 +111,18 @@ Eine spätere Freigabe darf dieses Verbot **nicht** aufheben oder abschwächen. 
 - Nicht bestätigte Formularfelder oder interne Abläufe werden nicht erfunden.
 - `CONFIRMED_WORKFLOWS.md` ist die verbindliche Fachquelle für bestätigte lokale Klickwege.
 
-## 11. Erforderliche Freigaben vor echtem Einsatz
+## 11. Organisatorische Voraussetzungen vor betrieblichem Einsatz
 
 - Einrichtungsleitung beziehungsweise Arbeitgeber;
 - IT;
 - Datenschutzbeauftragte Stelle;
 - Prüfung der Lizenz- und Nutzungsrechte;
-- Berechtigungs- und Offboarding-Prozess;
 - Datenschutzhinweis für Mitarbeitende;
-- Backup-, Lösch-, Update- und Sicherheitskonzept;
-- Notfall- und Abschaltprozess.
+- Update-, Sicherheits- und Abschaltkonzept für die technische Infrastruktur.
 
 Diese organisatorischen Freigaben erlauben **niemals** die Verarbeitung von Echtdaten in DokoHilf; das absolute Echtdatenverbot aus Abschnitt 6 bleibt unverändert bestehen.
 
-Private Konten dürfen nicht ohne ausdrückliche betriebliche Entscheidung dauerhaft die alleinige Produktiv-Infrastruktur der Einrichtung bleiben.
+GitHub-/Supabase-Administrationskonten sind ausschließlich technische Infrastrukturkonten. Sie sind keine DokoHilf-Endnutzerkonten und begründen keine Benutzerverwaltung in der App.
 
 ## 12. Freigabecheck für jede Anleitung
 
@@ -134,11 +133,10 @@ Eine Anleitung darf erst veröffentlicht werden, wenn alle Punkte erfüllt sind:
 - keine echten Personen-, Gesundheits-, Mitarbeiter- oder Falldaten;
 - keine fremden geschützten Inhalte;
 - kein Eindruck eines offiziellen Herstellerprodukts;
-- fachlich durch den Nutzer oder eine zuständige Rolle bestätigt;
-- Prüfdatum und verantwortliche Rolle hinterlegt;
+- fachlich bestätigt;
 - alte oder falsche Versionen gesperrt;
 - nur freigegebene Klickwege werden ausgegeben;
-- statische Guide-Audios stimmen exakt mit dem freigegebenen Text und Manifest überein;
+- statische Guide-Audios stimmen mit dem freigegebenen Text überein;
 - keine internen Inhalte im öffentlichen Repository oder Frontend-Bundle.
 
 Bei einem Nein: keine Veröffentlichung.

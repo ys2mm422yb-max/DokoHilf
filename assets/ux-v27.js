@@ -31,7 +31,7 @@
       .replace(/\s*(?:In Übungen|Bei Übungen)\s+(?:bitte\s+)?(?:ausschließlich|nur)\s+Fantasiedaten\s+verwenden\.?/gi, '')
       .replace(/\s*(?:In Übungen|Bei Übungen)\s+(?:bitte\s+)?(?:ausschließlich|nur)\s+Fantasiewerte\s+verwenden\.?/gi, '')
       .replace(/\s*Verwende\s+in\s+Übungen\s+(?:ausschließlich|nur)\s+Fantasiedaten\.?/gi, '')
-      .replace(/\s*Im öffentlichen Test\s+(?:bitte\s+)?(?:ausschließlich|nur)\s+(?:vollständig erfundene Personen|Fantasiedaten)\s+verwenden\.?/gi, '')
+      .replace(/\s*Im öffentlichen Test\s+(?:bitte\s+)?(?:ausschließlich|nur)\s+Fantasiedaten\s+verwenden\.?/gi, '')
       .replace(/\s{2,}/g, ' ')
       .trim();
   }

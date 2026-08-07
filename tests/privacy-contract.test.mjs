@@ -21,12 +21,14 @@ function looksSensitive(value) {
   ].some(pattern => pattern.test(text));
 }
 
-test('öffentliche Verarbeitungskette blockiert Echtdaten vor KI und Sprachausgabe', () => {
+test('öffentliche Verarbeitungskette blockiert Echtdaten vor KI; Cloud-Sprachausgabe ist vollständig stillgelegt', () => {
   assert.match(app, /clientPrivacyGuard/);
   assert.match(app, /BLOCK_MESSAGE/);
   assert.match(router, /containsSensitiveData/);
   assert.match(router, /Die Anfrage wurde nicht weiterverarbeitet/);
-  assert.match(tts, /containsDirectPersonalData/);
+  assert.match(tts, /cloud_tts_retired_v28/);
+  assert.match(tts, /status: 410/);
+  assert.doesNotMatch(tts, /GEMINI_API_KEY|generativelanguage\.googleapis\.com|fetch\(/);
   assert.match(aiCore, /DATENSCHUTZ UND SICHERHEIT/);
   assert.match(aiCore, /Bitte niemals um echte Bewohner-/);
 });

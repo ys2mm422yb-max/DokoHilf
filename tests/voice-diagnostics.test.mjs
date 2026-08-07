@@ -43,21 +43,12 @@ test('Diagnose speichert keine Gesprächsinhalte dauerhaft', () => {
   assert.doesNotMatch(diagnostics, /console\.(log|info|warn|error)/);
 });
 
-test('Cloud-TTS nutzt Gemini Interactions, Gacrux und den Roh-REST-Audioparser', () => {
-  assert.match(tts, /PRIMARY_MODEL = 'gemini-3\.1-flash-tts-preview'/);
-  assert.match(tts, /FALLBACK_MODEL = 'gemini-2\.5-flash-preview-tts'/);
-  assert.match(tts, /VOICE_NAME = 'Gacrux'/);
-  assert.match(tts, /VOICE_STYLE = 'natural-spoken-german-colleague-v10-rest-audio'/);
-  assert.match(tts, /PRIMARY_TIMEOUT_MS = 8_000/);
-  assert.match(tts, /FALLBACK_TIMEOUT_MS = 6_000/);
-  assert.match(tts, /INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'/);
-  assert.match(tts, /root\.steps/);
-  assert.match(tts, /step\.content/);
-  assert.match(tts, /audioCache/);
-  assert.match(tts, /X-DokoHilf-TTS-Cache/);
-  assert.match(tts, /X-DokoHilf-TTS-Parser/);
-  assert.match(tts, /erfahrene Kollegin/);
-  assert.match(tts, /TRANSKRIPT:/);
+test('Cloud-TTS ist ein nicht-generierender Ruhestandsendpunkt', () => {
+  assert.match(tts, /cloud_tts_retired_v28/);
+  assert.match(tts, /status: 410/);
+  assert.match(tts, /retired-cloud-tts-v28/);
+  assert.match(tts, /Supertonic-F1/);
+  assert.doesNotMatch(tts, /Gacrux|Gemini|generativelanguage|GEMINI_API_KEY|fetch\(/i);
 });
 
 test('Client kürzt nur die Sprachausgabe und lädt den nächsten Guide-Schritt vor', () => {

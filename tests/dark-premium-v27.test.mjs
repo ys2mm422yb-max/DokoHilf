@@ -52,11 +52,10 @@ test('published v28 voice is local-only while the old cloud/device paths remain 
   assert.doesNotMatch(serviceWorker, /dokohilf-guide-audio\?manifest=/);
 });
 
-test('server cloud voice remains available only as rollback infrastructure', () => {
-  assert.match(tts, /VOICE_NAME = 'Gacrux'/); assert.match(tts, /PRIMARY_MODEL = 'gemini-3\.1-flash-tts-preview'/);
-  assert.match(tts, /FALLBACK_MODEL = 'gemini-2\.5-flash-preview-tts'/); assert.match(tts, /INTERACTIONS_API_REVISION = '2026-05-20'/);
-  assert.match(tts, /INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'/); assert.match(tts, /v1beta\/interactions/);
-  assert.match(tts, /response_format: \{ type: 'audio' \}/); assert.match(tts, /X-DokoHilf-TTS-API/); assert.match(tts, /pendingAudio/);
+test('server cloud voice is a permanent non-generating retirement endpoint', () => {
+  assert.match(tts, /cloud_tts_retired_v28/); assert.match(tts, /status: 410/);
+  assert.match(tts, /retired-cloud-tts-v28/);
+  assert.doesNotMatch(tts, /Gacrux|gemini|generativelanguage|GEMINI_API_KEY|fetch\(/i);
 });
 
 test('central privacy acknowledgement replaces repeated exercise notices without weakening filter', () => {

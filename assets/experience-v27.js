@@ -23,7 +23,6 @@
     /\s*In Übungen nur Fantasiedaten verwenden\.?/gi,
     /\s*In Übungen nur Fantasiewerte verwenden\.?/gi,
     /\s*Im öffentlichen Test ausschließlich Fantasiedaten verwenden\.?/gi,
-    /\s*Im öffentlichen Test nur vollständig erfundene Personen verwenden\.?/gi,
     /\s*Verwende in Übungen ausschließlich Fantasiedaten\.?/gi,
     /\s*Verwende dabei nur Fantasiedaten\.?/gi,
     /\s*In Übungen ausschließlich mit Fantasiedaten arbeiten\.?/gi,
@@ -202,6 +201,11 @@
   window.fetch = async (input, init = {}) => {
     const url = typeof input === 'string' ? input : input?.url;
     const method = String(init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
+
+    // v28 owns the complete speech path. Keep this historical v27 wrapper inert so
+    // it cannot reintroduce Gacrux, Cloud-TTS or a second voice if requests pass
+    // through it underneath the v28 gate.
+    if (window.__DOKOHILF_LOCAL_VOICE_V28__ === true) return previousFetch(input, init);
 
     if (typeof url === 'string' && url.includes(TTS_MARKER) && method === 'POST') {
       const text = extractText(init);
