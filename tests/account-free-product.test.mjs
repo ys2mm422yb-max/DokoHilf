@@ -13,6 +13,7 @@ const [
   config,
   migration,
   denyPolicies,
+  functionRelocation,
   historicalRbac,
   historicalHardening,
   historicalIndexes,
@@ -28,6 +29,7 @@ const [
   read('supabase/config.toml'),
   readFile(new URL('../supabase/migrations/20260807230003_remove_app_account_infrastructure.sql', import.meta.url), 'utf8'),
   read('supabase/migrations/20260807232000_deny_all_app_guide_access.sql'),
+  read('supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql'),
   read('supabase/migrations/20260805224500_dokohilf_editor_rbac.sql'),
   read('supabase/migrations/20260805230000_dokohilf_editor_security_hardening.sql'),
   read('supabase/migrations/20260805231500_dokohilf_editor_performance_indexes.sql'),
@@ -132,6 +134,16 @@ test('Guide-Tabellen besitzen ausdrückliche RLS-Sperren für jede App-Rolle', (
   assert.equal((denyPolicies.match(/with check \(false\)/g) || []).length, 2);
 });
 
+test('bereits migrierte Projekte verschieben Triggerfunktionen personenfrei ins interne Schema', () => {
+  assert.match(functionRelocation, /lock table auth\.users in share row exclusive mode/);
+  assert.match(functionRelocation, /dokohilf_internal\.block_auth_user_insert/);
+  assert.match(functionRelocation, /dokohilf_internal\.archive_guide_version/);
+  assert.match(functionRelocation, /security invoker/);
+  assert.doesNotMatch(functionRelocation, /security definer/i);
+  assert.match(functionRelocation, /drop function if exists public\.dokohilf_block_auth_user_insert/);
+  assert.match(functionRelocation, /drop function if exists public\.dokohilf_archive_guide_version/);
+});
+
 test('Guide-Archivierung bleibt technisch erhalten und vollständig personenfrei', () => {
   const archiveFunction = migration.slice(migration.indexOf(
     'create or replace function dokohilf_internal.archive_guide_version()',
@@ -152,6 +164,7 @@ test('CI verankert Ruhestandsfunktion, Migration und Konto-frei-Test', () => {
   assert.match(workflow, /supabase\/functions\/dokohilf-editor\/index\.ts/);
   assert.match(workflow, /supabase\/migrations\/20260807230003_remove_app_account_infrastructure\.sql/);
   assert.match(workflow, /supabase\/migrations\/20260807232000_deny_all_app_guide_access\.sql/);
+  assert.match(workflow, /supabase\/migrations\/20260807232412_relocate_accountless_trigger_functions\.sql/);
   assert.match(workflow, /tests\/account-free-product\.test\.mjs/);
   assert.match(workflow, /dokohilf_block_all_user_creation/);
 });

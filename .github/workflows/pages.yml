@@ -47,7 +47,8 @@ jobs:
             supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql \
             supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql \
             supabase/migrations/20260807230003_remove_app_account_infrastructure.sql \
-            supabase/migrations/20260807232000_deny_all_app_guide_access.sql; do
+            supabase/migrations/20260807232000_deny_all_app_guide_access.sql \
+            supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql; do
             test -s "$file"
           done
 
@@ -100,10 +101,16 @@ jobs:
           grep -q 'before insert on auth.users' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql
           grep -q 'dokohilf_guides_deny_all_app_access' supabase/migrations/20260807232000_deny_all_app_guide_access.sql
           grep -q 'dokohilf_guide_versions_deny_all_app_access' supabase/migrations/20260807232000_deny_all_app_guide_access.sql
+          grep -q 'dokohilf_internal.block_auth_user_insert' supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql
+          grep -q 'dokohilf_internal.archive_guide_version' supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql
           grep -q '\[functions.dokohilf-editor\]' supabase/config.toml
           grep -q 'enable_signup = false' supabase/config.toml
           if grep -qi 'security definer' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql; then
             echo "Der Konto-Rückbau darf keine privilegierte SECURITY-DEFINER-Funktion einführen." >&2
+            exit 1
+          fi
+          if grep -qi 'security definer' supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql; then
+            echo "Auch die Live-Angleichung muss ohne SECURITY DEFINER auskommen." >&2
             exit 1
           fi
 
