@@ -1,12 +1,13 @@
 const BUILD_ID = '20260807-28';
-const HOTFIX_REVISION = '20260807-voice-guides-report-v28-3';
+const HOTFIX_REVISION = '20260807-static-supertonic-guides-v28-4';
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}`;
 const LOCAL_VOICE_MODEL_CACHE = 'dokohilf-local-voice-model-v28-1';
-const APPROVED_AUDIO_CACHE = 'dokohilf-approved-guide-audio-v28-1';
+const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v28-1';
 const CORE_FILES = [
   './',
   './index.html',
   './version.json',
+  './assets/guide-audio-catalog.json?v=20260807-28',
   './assets/styles.css?v=20260807-28',
   './assets/premium-ui-v25.css?v=20260807-28',
   './assets/premium-ui-v26.css?v=20260807-28',
@@ -44,7 +45,7 @@ self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     await Promise.all(keys
-      .filter(key => key.startsWith('dokohilf-') && key !== CACHE_NAME && key !== LOCAL_VOICE_MODEL_CACHE && key !== APPROVED_AUDIO_CACHE)
+      .filter(key => key.startsWith('dokohilf-') && key !== CACHE_NAME && key !== LOCAL_VOICE_MODEL_CACHE && key !== STATIC_AUDIO_CACHE)
       .map(key => caches.delete(key)));
     if (self.registration.navigationPreload) await self.registration.navigationPreload.enable().catch(() => {});
     await self.clients.claim();
@@ -82,13 +83,15 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
-
   if (url.origin !== self.location.origin) return;
   if (url.pathname.endsWith('/version.json') || url.pathname.endsWith('/service-worker.js')) {
     event.respondWith(fetch(request, { cache: 'no-store' }));
     return;
   }
-
+  if (url.pathname.includes('/assets/audio/guides/')) {
+    event.respondWith(fetch(request, { cache: 'force-cache' }).catch(() => caches.match(request)));
+    return;
+  }
   event.respondWith((async () => {
     if (request.mode === 'navigate') {
       try {
