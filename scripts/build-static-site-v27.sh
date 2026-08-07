@@ -3,13 +3,13 @@ set -euo pipefail
 
 BUILD_ID="20260807-28"
 SITE_DIR="${1:-_site}"
+REQUIRE_STATIC_SUPERTONIC="${DOKOHILF_REQUIRE_STATIC_SUPERTONIC:-0}"
 
 rm -rf "$SITE_DIR"
 mkdir -p "$SITE_DIR/assets"
 
 cp index.html editor.html manifest.webmanifest icon.svg icon-v3.svg service-worker.js version.json "$SITE_DIR/"
 cp -R assets/. "$SITE_DIR/assets/"
-rm -rf "$SITE_DIR/assets/audio"
 rm -f "$SITE_DIR/assets/guide-audio-manifest.json"
 node scripts/generate-pwa-icons-v27.mjs "$SITE_DIR"
 node scripts/apply-pwa-icons-v27.mjs "$SITE_DIR"
@@ -25,6 +25,7 @@ test -s "$SITE_DIR/icon-touch-180-v3.png"
 test -s "$SITE_DIR/icon-192-v3.png"
 test -s "$SITE_DIR/icon-512-v3.png"
 test -s "$SITE_DIR/icon-maskable-512-v3.png"
+test -s "$SITE_DIR/assets/guide-audio-catalog.json"
 test -s "$SITE_DIR/assets/premium-ui-v27.css"
 test -s "$SITE_DIR/assets/ux-v27.css"
 test -s "$SITE_DIR/assets/voice-stage-balance-v27.css"
@@ -57,8 +58,9 @@ grep -q "detail-help-polish-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "detail-help-render-sync-v27.js?v=$BUILD_ID" "$SITE_DIR/index.html"
 grep -q "\"buildId\": \"$BUILD_ID\"" "$SITE_DIR/version.json"
 grep -q "BUILD_ID = '$BUILD_ID'" "$SITE_DIR/service-worker.js"
-grep -q "HOTFIX_REVISION = '20260807-voice-guides-report-v28-3'" "$SITE_DIR/service-worker.js"
-grep -q "APPROVED_AUDIO_CACHE = 'dokohilf-approved-guide-audio-v28-1'" "$SITE_DIR/service-worker.js"
+grep -q "HOTFIX_REVISION = '20260807-static-supertonic-guides-v28-4'" "$SITE_DIR/service-worker.js"
+grep -q "STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v28-1'" "$SITE_DIR/service-worker.js"
+grep -q "guide-audio-catalog.json?v=$BUILD_ID" "$SITE_DIR/service-worker.js"
 grep -q "local-voice-v28.js?v=$BUILD_ID" "$SITE_DIR/service-worker.js"
 grep -q "vendor/supertonic-web-v28.mjs?v=$BUILD_ID" "$SITE_DIR/service-worker.js"
 grep -q "local-voice-gate-v28.js?v=$BUILD_ID" "$SITE_DIR/service-worker.js"
@@ -67,13 +69,16 @@ grep -q '__DOKOHILF_LOCAL_VOICE_V28__' "$SITE_DIR/assets/local-voice-v28.js"
 grep -q 'if (voiceEntry) arm();' "$SITE_DIR/assets/local-voice-v28.js"
 grep -q 'const IOS_TOTAL_STEPS = 2;' "$SITE_DIR/assets/local-voice-v28.js"
 grep -q '__DOKOHILF_LOCAL_VOICE_GATE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
-grep -q '__DOKOHILF_STATIC_FIRST_VOICE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
-grep -q 'static-approved-guide-v28' "$SITE_DIR/assets/local-voice-gate-v28.js"
-grep -q 'dokohilf-guide-audio?manifest=1' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q '__DOKOHILF_STATIC_SUPERTONIC_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q 'static-supertonic-guide-v28' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q "STATIC_AUDIO_MANIFEST = './assets/guide-audio-catalog.json?v=$BUILD_ID'" "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q "STATIC_VOICE = 'Supertonic-F1'" "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q 'IOS_LOCAL_TIMEOUT_MS = 20000' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q 'payload.spokenText' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q 'Sonderfall · nur bei 2 Kategorien' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q 'Sturzprotokoll' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q 'Schritte 6–9 überspringen' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_LOCAL_VOICE_ONLY_V28__' "$SITE_DIR/assets/ux-v27.js"
 grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ === true' "$SITE_DIR/assets/app.js"
 grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ !== true' "$SITE_DIR/assets/experience-v27.js"
@@ -83,7 +88,7 @@ grep -q '__DOKOHILF_DETAIL_HELP_POLISH_V27__' "$SITE_DIR/assets/detail-help-poli
 grep -q '__DOKOHILF_DETAIL_HELP_RENDER_SYNC_V27__' "$SITE_DIR/assets/detail-help-render-sync-v27.js"
 
 if grep -q 'voice-diagnostics.js' "$SITE_DIR/index.html"; then
-  echo "v28 darf die alte Gacrux-/Gerätestimmen-Diagnostik nicht laden." >&2
+  echo "v28 darf die alte Cloud-/Gerätestimmen-Diagnostik nicht laden." >&2
   exit 1
 fi
 
@@ -95,9 +100,17 @@ if [[ -n "$unexpected_raster" ]]; then
   exit 1
 fi
 
-if find "$SITE_DIR" -type f -iname '*.wav' | grep -q .; then
-  echo "Generierte Sprachdateien dürfen nicht im öffentlichen Pages-Build liegen." >&2
-  exit 1
+if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
+  audio_dir="$SITE_DIR/assets/audio/guides"
+  test -s "$audio_dir/build-summary.json"
+  wav_count="$(find "$audio_dir" -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')"
+  if [[ "$wav_count" != "93" ]]; then
+    echo "Es werden exakt 93 statische Supertonic-Guideaudios erwartet, gefunden: $wav_count" >&2
+    exit 1
+  fi
+  grep -q '"engine": "Supertonic 3"' "$audio_dir/build-summary.json"
+  grep -q '"voice": "F1"' "$audio_dir/build-summary.json"
+  grep -q '"count": 93' "$audio_dir/build-summary.json"
 fi
 
-echo "DokoHilf $BUILD_ID mit v28-3 PWA-Refresh, freigegebenen statischen Audios zuerst, Router-spokenText, lokaler Supertonic-Stimme für freie Antworten, ohne Systemstimme, iOS-/Android-QA und Bericht-Sonderfall gebaut."
+echo "DokoHilf $BUILD_ID mit v28-4, statischer kostenloser Supertonic-F1-Stimme für bestätigte Guides, Router-spokenText, lokaler Supertonic-F1-Notinferenz ohne Systemstimme, iOS-/Android-QA und Bericht-Sonderfall gebaut."
