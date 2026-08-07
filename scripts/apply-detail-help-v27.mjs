@@ -24,16 +24,24 @@ if (!html.includes('assets/detail-help-polish-v27.js')) {
 }
 if (!html.includes(polishScriptTag.trim())) throw new Error('Detailhilfe-Polish konnte nicht in index.html aktiviert werden.');
 
+const syncScriptTag = `  <script src="assets/detail-help-render-sync-v27.js?v=${BUILD_ID}"></script>`;
+if (!html.includes('assets/detail-help-render-sync-v27.js')) {
+  if (!html.includes(polishScriptTag)) throw new Error('Polish marker fehlt in index.html');
+  html = html.replace(polishScriptTag, `${polishScriptTag}\n${syncScriptTag}`);
+}
+if (!html.includes(syncScriptTag.trim())) throw new Error('Detailhilfe-Render-Sync konnte nicht in index.html aktiviert werden.');
+
 const clarificationIndex = html.indexOf(`assets/clarification-ui.js?v=${BUILD_ID}`);
 const helpIndex = html.indexOf(`assets/detail-help-v27.js?v=${BUILD_ID}`);
 const progressIndex = html.indexOf(`assets/guide-progress.js?v=${BUILD_ID}`);
 const experienceIndex = html.indexOf(`assets/experience-v27.js?v=${BUILD_ID}`);
 const polishIndex = html.indexOf(`assets/detail-help-polish-v27.js?v=${BUILD_ID}`);
+const syncIndex = html.indexOf(`assets/detail-help-render-sync-v27.js?v=${BUILD_ID}`);
 if (!(clarificationIndex >= 0 && clarificationIndex < helpIndex && helpIndex < progressIndex)) {
   throw new Error('Detailhilfe muss nach Clarification und vor Guide-Progress geladen werden.');
 }
-if (!(experienceIndex >= 0 && experienceIndex < polishIndex)) {
-  throw new Error('Detailhilfe-Polish muss nach Experience geladen werden, damit der finale Voice-Fetchweg abgesichert ist.');
+if (!(experienceIndex >= 0 && experienceIndex < polishIndex && polishIndex < syncIndex)) {
+  throw new Error('Detailhilfe-Polish und Render-Sync müssen nach Experience in dieser Reihenfolge geladen werden.');
 }
 await writeFile(htmlPath, html);
 
@@ -58,8 +66,14 @@ if (!worker.includes(polishAssetLine)) {
   worker = worker.replace(marker, `${marker}\n${polishAssetLine}`);
 }
 
-if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(helpAssetLine) || !worker.includes(polishAssetLine)) {
-  throw new Error('Detailhilfe und Voice-Polish konnten nicht in den Service Worker aufgenommen werden.');
+const syncAssetLine = `  './assets/detail-help-render-sync-v27.js?v=${BUILD_ID}',`;
+if (!worker.includes(syncAssetLine)) {
+  if (!worker.includes(polishAssetLine)) throw new Error('Polish asset marker fehlt im Service Worker');
+  worker = worker.replace(polishAssetLine, `${polishAssetLine}\n${syncAssetLine}`);
+}
+
+if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(helpAssetLine) || !worker.includes(polishAssetLine) || !worker.includes(syncAssetLine)) {
+  throw new Error('Detailhilfe, Voice-Polish und Render-Sync konnten nicht in den Service Worker aufgenommen werden.');
 }
 await writeFile(workerPath, worker);
 
