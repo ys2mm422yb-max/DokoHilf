@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const BUILD_ID = '20260806-27';
+  const BUILD_ID = '20260807-28';
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
   const AI_MARKER = '/functions/v1/dokohilf-ai';
   const DEVICE_FALLBACK_MS = 160;
@@ -9,6 +9,10 @@
 
   function shell() {
     return document.getElementById('appShell');
+  }
+
+  function localVoiceV28() {
+    return window.__DOKOHILF_LOCAL_VOICE_V28__ === true;
   }
 
   function isVoiceMode() {
@@ -138,7 +142,7 @@
   }
 
   window.fetch = async (input, init = {}) => {
-    if (isTtsRequest(input, init) && isVoiceMode()) {
+    if (isTtsRequest(input, init) && isVoiceMode() && !localVoiceV28()) {
       return raceVoiceTts(input, init);
     }
 
@@ -189,6 +193,11 @@
   }
 
   function installMarker() {
+    if (localVoiceV28()) {
+      shell()?.removeAttribute('data-voice-followup-fallback-ms');
+      shell()?.setAttribute('data-local-voice-only', 'true');
+      return;
+    }
     shell()?.setAttribute('data-voice-followup-fallback-ms', String(DEVICE_FALLBACK_MS));
   }
 
@@ -204,7 +213,8 @@
 
   window.DokoHilfDetailHelpPolishV27 = {
     simplifyDetailPayload,
-    deviceFallbackMs: DEVICE_FALLBACK_MS,
+    deviceFallbackMs: localVoiceV28() ? null : DEVICE_FALLBACK_MS,
+    localVoiceOnly: localVoiceV28(),
     buildId: BUILD_ID,
   };
   window.__DOKOHILF_DETAIL_HELP_POLISH_V27__ = true;
