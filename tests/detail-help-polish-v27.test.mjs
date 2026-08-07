@@ -9,12 +9,13 @@ const [source, syncSource, apply, build] = await Promise.all([
   readFile(new URL('../scripts/build-static-site-v27.sh', import.meta.url), 'utf8'),
 ]);
 
-test('Folgeantworten fallen schnell und ohne AbortError auf die Gerätestimme zurück', () => {
+test('legacy device fallback stays available only outside the v28 local voice path', () => {
   assert.match(source, /const DEVICE_FALLBACK_MS = 160;/);
   assert.match(source, /deviceFallbackResponse\(\)/);
-  assert.match(source, /status: 503/);
   assert.match(source, /Promise\.race\(\[cloud, fallback\]\)/);
-  assert.doesNotMatch(source, /controller\.abort\(\)/);
+  assert.match(source, /&& !localVoiceV28\(\)/);
+  assert.match(source, /deviceFallbackMs: localVoiceV28\(\) \? null : DEVICE_FALLBACK_MS/);
+  assert.match(source, /data-local-voice-only/);
 });
 
 test('Detailhilfe zeigt kurze nutzernahe Texte statt interner Zustandsformulierungen', () => {
@@ -43,12 +44,12 @@ test('Voice-Detailhilfe ist kompakt und blendet konkurrierende Aktionen aus', ()
   assert.match(source, /\.pause-button\{display:none!important\}/);
 });
 
-test('Release lädt Polish und Render-Sync nach Experience und cached beide in derselben PWA-Revision', () => {
-  assert.match(apply, /experienceIndex < polishIndex && polishIndex < syncIndex/);
-  assert.match(apply, /20260807-voice-followup-detail-polish-1/);
+test('Release keeps detail help around the v28 local voice load order', () => {
+  assert.match(apply, /localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < gateIndex/);
+  assert.match(apply, /20260807-local-natural-voice-v28-1/);
   assert.match(apply, /detail-help-polish-v27\.js/);
   assert.match(apply, /detail-help-render-sync-v27\.js/);
   assert.match(build, /detail-help-polish-v27\.js/);
   assert.match(build, /detail-help-render-sync-v27\.js/);
-  assert.match(build, /20260807-voice-followup-detail-polish-1/);
+  assert.match(build, /20260807-local-natural-voice-v28-1/);
 });
