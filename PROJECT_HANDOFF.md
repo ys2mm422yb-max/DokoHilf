@@ -125,7 +125,7 @@ Der bisherige automatische serverseitige Sprachaufbau ist kein Fallback mehr und
 
 Damit enthält der aktive und der serverseitige Sprachpfad keinen Gemini-/Gacrux-Provideraufruf mehr. Reguläre Audios entstehen ausschließlich kostenlos im geprüften GitHub-Releasebuild mit Supertonic F1; der lokale technische Notweg nutzt dieselbe Stimme.
 
-Live verifiziert: `dokohilf-tts` v22, `dokohilf-guide-audio-build` v4 und `dokohilf-guide-audio` v2 sind aktiv, JWT-geschützt und enthalten nur Ruhestandscode; der Cron ist nicht mehr vorhanden, der Build-Schalter ist `false`, Supabase Auth enthält 0 Nutzer und Security-/Performance-Advisories melden 0 Hinweise.
+Live verifiziert: `dokohilf-tts` v22, `dokohilf-guide-audio-build` v4 und `dokohilf-guide-audio` v2 sind aktiv, JWT-geschützt und enthalten nur Ruhestandscode; der Cron ist nicht mehr vorhanden, der Build-Schalter ist `false`, Supabase Auth enthält 0 Nutzer, der Security-Advisor meldet 0 Hinweise und der Performance-Advisor 6 reine Infohinweise zu bislang ungenutzten Indizes.
 
 ## 9. Verbindliche Fachquelle
 

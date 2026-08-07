@@ -107,6 +107,6 @@ Live-Supabase nach Merge:
 - Build-Schalter `false`
 - Cron `dokohilf-static-guide-audio-v27` entfernt
 - Supabase Auth: 0 Nutzer
-- Security-/Performance-Advisories: 0 Hinweise
+- Security-Advisories: 0 Hinweise; Performance-Advisories: 6 reine Infohinweise zu bislang ungenutzten Indizes
 
 Der Pages-Workflow veröffentlicht dasselbe exakt geprüfte `_site` ausschließlich über den dafür zugelassenen `gh-pages`-Branch; der redundante, durch die Environment-Regeln verbotene API-Deployjob wurde entfernt. Nächster Schritt ist der reale iPhone-Test mit Begrüßung plus mehreren bestätigten Guide-Schritten.
