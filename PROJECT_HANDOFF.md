@@ -3,8 +3,8 @@
 **Status:** Verbindliche Arbeitsquelle  
 **Stand:** 7. August 2026  
 **Veröffentlichter Build:** `20260806-27`  
-**Aktueller Produktstand:** Build 27 live; Sprachstart und iPhone-Sprachlayout nachgebessert; statische Gacrux-Bibliothek baut sich kontrolliert weiter auf  
-**Nächster Produktblock:** Detailhilfe bei „Ich brauche Hilfe / Ich finde das nicht“
+**Aktueller Produktstand:** Build 27 live; PR #67 mit 180-ms-Sofortfallback und überlappungsfreiem iPhone-Sprachlayout veröffentlicht; statische Gacrux-Bibliothek baut sich kontrolliert weiter auf  
+**Nächste Produktblöcke:** Detailhilfe bei „Ich brauche Hilfe / Ich finde das nicht“, häufige Abläufe direkt als vollständige Anleitung, Chatdesign weiter verdichten
 
 > Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle vorhandenen `ACTIVE_WORK_*.md`. Danach werden der tatsächliche GitHub-, Actions-, Pages- und Supabase-Stand live geprüft. GitHub ist das dauerhafte Arbeitsgedächtnis; alte Chats sind keine notwendige Voraussetzung zur Fortsetzung.
 
@@ -57,20 +57,16 @@ Basis-Release:
 - final geprüfter Feature-Head: `0ca4cd911297b22702f38b82b8caafeab9975a4e`
 - `version.json`: Build `20260806-27`, Release `dark-premium-fast-voice`
 
-Nachgelagerter App-Icon-Block:
+App-Icon:
 
-- PR #62 veröffentlichte das dunkle, zum Build-27-Design passende App-/Homescreen-Icon.
+- PR #62 veröffentlichte das dunkle zum Build-27-Design passende App-/Homescreen-Icon.
 - Merge-Commit: `10fedecd38d25fb2eb29d2061383cce8d26a5a39`
 - Details: `ACTIVE_WORK_APP_ICON.md`
 
-Nachgelagerter Sprach-/Layout-Fix:
+Historischer erster Sprach-/Layout-Fix:
 
-- PR #64 **„Beschleunige Sprachstart und korrigiere iPhone-Überlappungen“**
-- finaler exakter Head: `6ddc93f7f1e22258132b741b80866c9615a2ea91`
-- Merge-Commit: `d3f8d16956defeefa7d9a4d5cbbd76c63d03db9a`
-- exakter Head vollständig grün
-- `gh-pages/assets/ux-v27.js` live mit `HARD_FALLBACK_MS = 1200`
-- `gh-pages/assets/ux-v27.css` live mit Safe-Area-Sprachlayout und im Sprachmodus ausgeblendetem Versionsstatus
+- PR #64: Client-Fallback zunächst auf 1,2 Sekunden reduziert und erste Safe-Area-Korrektur veröffentlicht.
+- Dieser 1,2-Sekunden-Stand ist **nicht mehr der aktuelle Clientvertrag**; PR #67 ersetzt ihn.
 
 Serverseitiger statischer Gacrux-Fix:
 
@@ -78,25 +74,38 @@ Serverseitiger statischer Gacrux-Fix:
 - finaler exakter Head: `affff5b53b0ae1a5f0b97688b5a6b49d78bd94a1`
 - Merge-Commit: `6afc9267756b5fa1617b8b067f246598a44bd90a`
 - `Deploy DokoHilf` Run #256 vollständig erfolgreich
-- Details und Live-Nachweise: `ACTIVE_WORK_VOICE_RELIABILITY.md`
+
+Aktueller Sprach-/iPhone-Hotfix:
+
+- PR #67 **„Mache Sprachantwort sofort und beseitige iPhone-Überlagerungen“**
+- finaler exakter Head: `f19290cb75fe0a11d918f9dec2a9eeab3641d187`
+- Merge-Commit: `98a8718027bfc520a9ccba03db3b38152b852c2b`
+- `Deploy DokoHilf` Run #264: success
+- `Validate dark iPhone UI v27` Run #28: success
+- `main` und `gh-pages` live mit `HARD_FALLBACK_MS = 180`
+- `gh-pages` live mit neuer Flex-/Safe-Area-Sprachgeometrie
+- `gh-pages/service-worker.js` live mit `HOTFIX_REVISION = '20260807-fluid-voice-layout-1'`
+- Details: `ACTIVE_WORK_FLUID_VOICE_RETEST.md` und `ACTIVE_WORK_VOICE_RELIABILITY.md`
 
 ## 5. Build-27-Frontendarchitektur
 
 - statische PWA auf GitHub Pages
 - `index.html`
 - `assets/app.js` – Kernlogik
-- `assets/guide-progress.js` – Gesprächszustand
+- `assets/guide-progress.js` – Guidezustand
 - `assets/clarification-ui.js` – strukturierte Auswahl
-- `assets/voice-focus-mode.js` – Sprachfokus
+- `assets/voice-focus-mode.js` – fokussierte Sprachbühne
 - `assets/mobile-audio-fix.js` – Audio-Entsperrung
 - `assets/update-manager.js` – Updates
 - `assets/premium-ui-v27.css` – Dark-Design
-- `assets/ux-v27.css`, `assets/ux-v27.js` – kompakte Bedienung, iPhone-Sprachlayout, 1,2-s-Sprachfallback und Erststart-Datenschutz
+- `assets/ux-v27.css` – kompakte Bedienung, Chat-Aufräumstufe, überlappungsfreie iPhone-Sprachgeometrie
+- `assets/ux-v27.js` – Erststart-Datenschutz, UI-Synchronisierung, **180-ms-Sofortfallback** und iOS-Speech-Watchdog
 - `assets/experience-v27.js` – statische und dynamische Sprachausgabe
 - `assets/voice-diagnostics.js` – privater Audiokatalog und Gerätecache
 - `assets/guide-audio-catalog.json` – 93 allgemeine statische Audio-Texte
+- `service-worker.js` – Build-27-PWA plus aktuelle Hotfixrevision `20260807-fluid-voice-layout-1`
 - `scripts/build-static-site-v27.sh` – exakter Pages-Build
-- `scripts/mobile-render-v27.mjs` – mobiler Rendernachweis inklusive realer Geometrieprüfung von Kopfzeile und Sprachfläche
+- `scripts/mobile-render-v27.mjs` – mobiler Rendernachweis inklusive realer Geometrieprüfung
 
 ## 6. Aktueller Supabase-Stand
 
@@ -111,10 +120,10 @@ Zuletzt live bestätigt:
 - `public.dokohilf_topics`
 - `public.dokohilf_static_guide_audio`
 - `public.dokohilf_internal_build_control`
-- privater Bucket `dokohilf-guide-audio`
+- Audio liegt in einem **privaten Supabase-Bucket** `dokohilf-guide-audio`
 - alte Diagnose-, Export-, Batch-, Store- und Snapshot-Endpunkte neutralisiert auf HTTP 410
 
-Freigegebene statische Guide-Audios liegen im privaten Bucket und werden nur über den kontrollierten Guide-Audio-Endpunkt ausgeliefert.
+Freigegebene statische Guide-Audios liegen im privaten Supabase-Bucket und werden nur über den kontrollierten Guide-Audio-Endpunkt ausgeliefert.
 
 ## 7. Sprache und Audio – aktueller Stand
 
@@ -131,14 +140,16 @@ Natürliche Stimme: **Gacrux**.
 - der interne statische Builder erhält nur nach serverseitiger Tokenprüfung einen engen Sonderpfad für bereits fachlich freigegebene allgemeine Guide-Texte
 - Tokenprüfung erfolgt serverseitig gegen `dokohilf_internal_build_control`; kein Tokenwert liegt im Repository oder Browser
 
-Client-Reihenfolge:
+### Verbindliche Client-Reihenfolge seit PR #67
 
 1. vorhandenes statisches freigegebenes Gacrux-Audio
-2. dynamisches Gacrux-TTS
-3. nach **1,2 Sekunden** lokale Sofortstimme
-4. iOS-Resume-Watchdog verhindert einen stumm pausierten `speechSynthesis`-Fallback
+2. dynamisches Gacrux nur, wenn es praktisch sofort innerhalb des **180-ms-Fensters** verfügbar ist
+3. danach lokale Sofortstimme
+4. iOS-Resume-Watchdog nach 60/140/280/520 ms verhindert einen stumm pausierten `speechSynthesis`-Fallback
 
-Der Live-Provider kann weiterhin zeitweise 429 liefern oder 6–13 Sekunden benötigen. Diese Providerlatenz blockiert den Nutzer aber nicht mehr so lange, weil der Client früh auf die Sofortstimme wechselt.
+Der Live-Provider kann weiterhin zeitweise 429 liefern oder 6–13 Sekunden benötigen. Diese Providerlatenz blockiert den Nutzer jetzt nicht mehr fühlbar, weil der Client spätestens nach 180 ms auf die lokale Sofortstimme fällt.
+
+Die Begrüßung und bereits vorbereitete Guide-Schritte können weiterhin direkt mit Gacrux starten. Dass eine Begrüßung sofort spricht, während eine freie Antwort vorher länger brauchte, war deshalb technisch plausibel und wurde im Nutzer-Retest bestätigt.
 
 ## 8. Statische Gacrux-Bibliothek
 
@@ -156,17 +167,16 @@ Sicherheitsgrenze:
 Aktiver Builder:
 
 - `dokohilf-guide-audio-build` v3
-- genau ein Eintrag pro Minute
+- höchstens ein Eintrag pro Minute
 - Cron: `dokohilf-static-guide-audio-v27`
 - Schedule zuletzt live bestätigt: `* * * * *`
 - der Builder deaktiviert seine Steuerung und entfernt den Cronjob selbst bei 93/93
 
-Live-Nachweis nach PR #65:
+Letzter während des PR-#67-Abschlusses live abgefragter Bestand:
 
-- zuvor durch Privacy-Heuristik blockierter allgemeiner Index 4 erfolgreich erstellt
-- HTTP 200, Registry-Zuwachs von 4 auf 5
-- der vom Nutzer aktuell verwendete Visiten-Schritt Katalogindex 33 wurde zusätzlich erfolgreich statisch erzeugt
-- letzter Abschlussstand: **7/93**, Indizes `0,1,2,3,4,5,33`
+- **7/93**
+- Indizes `0,1,2,3,4,5,33`
+- Index 33: `Öffne „Doku-Erweitert“ und wähle „Visiten“.`
 
 Diese Bestandszahl ist absichtlich veränderlich. Jeder neue Chat muss sie bei Audioarbeit live aus Supabase prüfen.
 
@@ -205,24 +215,47 @@ Anonymisiert erneut bestätigt:
 
 Die vollständigen anonymisierten Schritte stehen in `CONFIRMED_WORKFLOWS.md`.
 
-## 11. Aktiver nächster Produktblock: Detailhilfe
+## 11. Nächste bestätigte Produktblöcke
+
+### A. Detailhilfe
 
 Datei: `ACTIVE_WORK_DETAIL_HELP.md`
 
-Nutzerwunsch: Wenn jemand einen Schritt oder Menüpunkt nicht findet, soll DokoHilf detailliert und dialogisch nachfragen können, statt nur einen Standardhilfetext zu zeigen.
+Wenn jemand einen Schritt oder Menüpunkt nicht findet, soll DokoHilf detailliert und dialogisch nachfragen statt nur einen Standardhilfetext zu zeigen.
 
-Verbindliche Richtung:
+Verbindlich:
 
-- bestehender aktueller Guide-Schritt bleibt aktiv
-- `Ich brauche Hilfe` und freie Aussagen wie `Ich finde das nicht` öffnen eine Hilfeschleife
-- zuerst sichtbaren Zustand klären: Menüpunkt fehlt, anderer Name, andere Seite/Reiter, Orientierung verloren
-- nur bestätigte lokale Bezeichnungen und bestätigte sichere Rückwege verwenden
+- aktueller Guide-Schritt bleibt aktiv
+- `Ich brauche Hilfe` und Aussagen wie `Ich finde das nicht` öffnen eine Hilfeschleife
+- sichtbaren Zustand klären: Menüpunkt fehlt, anderer Name, andere Seite/Reiter, Orientierung verloren
+- nur bestätigte lokale Bezeichnungen und sichere Rückwege verwenden
 - niemals neue Klickwege erfinden
-- wenn keine bestätigte Lösung existiert, das transparent sagen und zum letzten sicheren Schritt beziehungsweise zu menschlicher Hilfe führen
-- Sprach- und Schreibmodus verwenden dieselbe fachliche Hilfelogik
-- Hilfe darf einen Schritt nicht automatisch als erledigt markieren
+- wenn keine bestätigte Lösung existiert, transparent bleiben und zum letzten sicheren Schritt beziehungsweise zu menschlicher Hilfe führen
+- Sprach- und Schreibmodus verwenden dieselbe Fachlogik
+- Hilfe markiert einen Schritt nicht automatisch als erledigt
 
-**Umsetzung ist noch nicht erfolgt.** Der nächste Entwickler soll diesen Block aus `ACTIVE_WORK_DETAIL_HELP.md` aufnehmen, implementieren, testen, dokumentieren und erst nach vollständiger Prüfung veröffentlichen.
+**Noch nicht implementiert.**
+
+### B. Häufige Abläufe direkt als vollständige Anleitung
+
+Vom Nutzer am 7. August 2026 ausdrücklich gewünscht:
+
+- ein Tipp auf einen Eintrag unter `Häufige Abläufe` soll **nicht zuerst einen normalen Chat öffnen**
+- stattdessen soll direkt die vollständige Schritt-für-Schritt-Anleitung für den ausgewählten bestätigten Guide erscheinen
+- Inhalt darf ausschließlich aus `CONFIRMED_WORKFLOWS.md` beziehungsweise aktuell freigegebenen Supabase-Guides stammen
+- keine verkürzten oder erfundenen Zwischenschritte
+
+**Noch nicht implementiert.**
+
+### C. Chatdesign weiter verbessern
+
+Vom Nutzer ebenfalls ausdrücklich gewünscht. PR #67 enthält bereits eine erste Aufräumstufe:
+
+- klarere Gesprächsfläche
+- kompaktere mobile Schnellaktionen
+- kein redundanter aktueller Versionsstatus in der Mitte
+
+Der größere visuelle Umbau des Schreibmodus bleibt offen und soll getrennt getestet werden.
 
 ## 12. Pflicht für jeden neuen Chat
 
