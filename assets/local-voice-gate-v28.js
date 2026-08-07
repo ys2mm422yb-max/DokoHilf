@@ -4,7 +4,7 @@
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
   const APPROVED_AUDIO_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-guide-audio';
   const APPROVED_AUDIO_BUILD = '20260806-27';
-  const APPROVED_AUDIO_MANIFEST = `${APPROVED_AUDIO_ENDPOINT}?manifest=1&build=${APPROVED_AUDIO_BUILD}`;
+  const APPROVED_AUDIO_MANIFEST = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-guide-audio?manifest=1&build=20260806-27';
   const APPROVED_AUDIO_CACHE = 'dokohilf-approved-guide-audio-v28-1';
   const MANIFEST_TIMEOUT_MS = 2500;
   const AUDIO_TIMEOUT_MS = 6500;
@@ -251,6 +251,8 @@
   blockSystemSpeech();
   window.DokoHilfStaticFirstVoiceV28 = {
     manifestUrl: APPROVED_AUDIO_MANIFEST,
+    endpoint: APPROVED_AUDIO_ENDPOINT,
+    buildId: APPROVED_AUDIO_BUILD,
     cacheName: APPROVED_AUDIO_CACHE,
     getState: () => ({ approvedEntries: approvedByText.size, lastStaticHit, lastStaticError, localTimeouts }),
   };
