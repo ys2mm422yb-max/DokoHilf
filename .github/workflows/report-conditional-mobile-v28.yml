@@ -1,0 +1,67 @@
+name: Validate report conditional iOS Android
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  report-conditional:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact repository head
+        uses: actions/checkout@v4
+
+      - name: Validate contracts and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check assets/local-voice-gate-v28.js
+          node --check scripts/report-conditional-render-v28.mjs
+          node --test tests/voice-spoken-report-conditional-v28.test.mjs tests/local-voice-v28.test.mjs
+
+      - name: Build exact releasable site
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/build-static-site-v27.sh _report_site
+          test -s _report_site/assets/local-voice-gate-v28.js
+          grep -q 'KI · v28' _report_site/index.html
+
+      - name: Render and verify iOS and Android
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save --package-lock=false playwright@1.54.2
+          npx playwright install --with-deps chromium
+          python3 -m http.server 4173 --directory _report_site > /tmp/dokohilf-report-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+
+          DOKOHILF_MOBILE_PROFILE=ios \
+          DOKOHILF_VIEWPORT_WIDTH=393 \
+          DOKOHILF_VIEWPORT_HEIGHT=852 \
+          DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
+          DOKOHILF_RENDER_OUTPUT=artifacts/report-conditional-v28/ios \
+          node scripts/report-conditional-render-v28.mjs
+
+          DOKOHILF_MOBILE_PROFILE=android \
+          DOKOHILF_VIEWPORT_WIDTH=412 \
+          DOKOHILF_VIEWPORT_HEIGHT=915 \
+          DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
+          DOKOHILF_RENDER_OUTPUT=artifacts/report-conditional-v28/android \
+          node scripts/report-conditional-render-v28.mjs
+
+      - name: Upload synthetic render evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-conditional-${{ github.run_number }}
+          path: artifacts/report-conditional-v28/
+          retention-days: 14
