@@ -128,6 +128,17 @@ async function stableReload() {
   throw lastError || new Error('Stabile Neuladung fehlgeschlagen.');
 }
 
+async function openDeterministicFirstStart() {
+  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+  await page.locator('#startTitle').waitFor({ state: 'visible' });
+  await page.evaluate(() => localStorage.removeItem('dokohilf-privacy-ack-v1'));
+  await stableReload();
+  await page.locator('#startTitle').waitFor({ state: 'visible' });
+  const ackButton = page.locator('[data-privacy-ack]');
+  await ackButton.waitFor({ state: 'visible', timeout: 8_000 });
+  return ackButton;
+}
+
 async function layoutState() {
   return page.evaluate(() => ({
     viewportWidth: window.innerWidth,
@@ -139,14 +150,11 @@ async function layoutState() {
 }
 
 try {
-  await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30_000 });
-  await page.locator('#startTitle').waitFor({ state: 'visible' });
-
+  const privacyButton = await openDeterministicFirstStart();
   const privacyDialog = page.locator('#privacyAckV27');
-  await privacyDialog.waitFor({ state: 'visible', timeout: 5_000 });
-  assert(await page.getByRole('button', { name: 'Verstanden' }).isVisible(), 'Erststart-Datenschutzbestätigung fehlt.');
+  assert(await privacyDialog.isVisible(), 'Erststart-Datenschutzbestätigung fehlt.');
   await page.screenshot({ path: `${OUTPUT_DIR}/00-privacy-first-start.png`, fullPage: false });
-  await page.getByRole('button', { name: 'Verstanden' }).click();
+  await privacyButton.click();
   await privacyDialog.waitFor({ state: 'detached' });
 
   await stableReload();
