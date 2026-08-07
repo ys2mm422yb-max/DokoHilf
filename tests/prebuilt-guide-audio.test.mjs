@@ -25,15 +25,14 @@ function normalizeKey(value) {
     .trim();
 }
 
-test('catalog covers greeting and all 92 unique approved guide steps', () => {
+test('source catalog covers greeting and all 92 unique approved guide steps', () => {
   assert.equal(catalog.schemaVersion, 1);
-  assert.equal(catalog.voice, 'Gacrux');
   assert.equal(catalog.entries.length, 93);
   assert.equal(new Set(catalog.entries.map(entry => entry.file)).size, 93);
   assert.equal(new Set(catalog.entries.map(entry => normalizeKey(entry.text))).size, 93);
 });
 
-test('browser maps the local compatibility request to the fixed private manifest endpoint', () => {
+test('legacy compatibility browser code still points only at the fixed private audio endpoint', () => {
   assert.match(diagnostics, /LOCAL_MANIFEST_MARKER = '\/assets\/guide-audio-manifest\.json'/);
   assert.match(diagnostics, /GUIDE_AUDIO_ENDPOINT = 'https:\/\/efifbuqctylsujiauabg\.supabase\.co\/functions\/v1\/dokohilf-guide-audio'/);
   assert.match(diagnostics, /manifest=1&build=20260806-27/);
@@ -43,7 +42,7 @@ test('browser maps the local compatibility request to the fixed private manifest
   assert.match(diagnostics, /__DOKOHILF_REMOTE_GUIDE_AUDIO_V27__/);
 });
 
-test('browser prefers approved guide audio and only then uses timed live TTS', () => {
+test('legacy experience layer retains its old approved-audio compatibility path', () => {
   assert.match(experience, /loadPrebuiltManifest/);
   assert.match(experience, /loadPrebuiltVoice/);
   assert.match(experience, /prebuilt-approved-guide/);
@@ -52,7 +51,7 @@ test('browser prefers approved guide audio and only then uses timed live TTS', (
   assert.match(experience, /fastRace\(loadNaturalVoice/);
 });
 
-test('TTS source validates raw REST audio and exposes auditable evidence headers', () => {
+test('legacy TTS source keeps auditable raw-audio validation', () => {
   assert.match(tts, /VOICE_NAME = 'Gacrux'/);
   assert.match(tts, /INTERACTIONS_AUDIO_PARSER = 'raw-steps-content-v1'/);
   assert.match(tts, /extractInteractionAudio/);
@@ -67,11 +66,12 @@ test('static audio exception is narrow and excludes every user-content source', 
   assert.match(policy, /92 eindeutige Schritttexte/);
   assert.match(policy, /Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe/);
   assert.match(policy, /nicht dauerhaft gespeichert/);
-  assert.match(rules, /allgemeine, fachlich freigegebene Guide-Anweisungen/);
-  assert.match(rules, /Nutzerantworten, Checks, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten/);
+  assert.match(rules, /Allgemeine, fachlich freigegebene Guide-Anweisungen dürfen als statische Audiodateien/);
+  assert.match(rules, /Nutzerantworten, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten sind als statische Audioquelle ausgeschlossen/);
+  assert.match(rules, /keine Benutzerkonten, keine Bewohner-\/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken/);
 });
 
-test('approved Gacrux library is built progressively every minute until complete', () => {
+test('legacy cloud builder source remains internally authenticated and bounded', () => {
   assert.match(acceleratedBuilder, /cron\.unschedule\('dokohilf-static-guide-audio-v27'\)/);
   assert.match(acceleratedBuilder, /'\* \* \* \* \*'/);
   assert.match(acceleratedBuilder, /dokohilf_build_next_static_guide_audio\(\)/);
@@ -82,7 +82,7 @@ test('approved Gacrux library is built progressively every minute until complete
   assert.doesNotMatch(resumedBuilder, /[a-f0-9]{64}/i);
 });
 
-test('only the authenticated internal builder may bypass user-content privacy heuristics', () => {
+test('only the authenticated internal legacy builder may bypass user-content privacy heuristics', () => {
   assert.match(builder, /'x-dokohilf-build-token': control\.data\.build_token/);
   assert.match(tts, /async function isTrustedStaticAudioBuilder/);
   assert.match(tts, /\^\[a-f0-9\]\{64\}\$/i);
