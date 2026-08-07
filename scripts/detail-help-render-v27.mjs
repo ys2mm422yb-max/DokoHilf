@@ -63,6 +63,7 @@ try {
   await page.getByRole('button', { name: 'Senden' }).click();
   const chatHelp = page.locator('#detailHelpOptionsV27');
   await chatHelp.waitFor({ state: 'visible' });
+  await page.waitForFunction(() => [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('nur die richtige Stelle'));
 
   const firstReply = await page.locator('.message.assistant .bubble p').last().innerText();
   assert(firstReply.includes('nur die richtige Stelle'), 'Detailhilfe startet nicht als Orientierungsmodus.');
@@ -74,7 +75,7 @@ try {
 
   await page.getByRole('button', { name: 'Doku-Erweitert ist offen' }).click();
   await page.waitForFunction(() => document.querySelector('#guideProgressStep')?.textContent?.includes('Schritt 2 von 2'));
-  await page.waitForFunction(() => document.querySelector('.message.assistant:last-of-type .bubble p')?.textContent?.includes('Siehst du den Eintrag') || [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('Siehst du den Eintrag'));
+  await page.waitForFunction(() => [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('Siehst du den Eintrag'));
   const secondReply = await page.locator('.message.assistant .bubble p').last().innerText();
   assert(secondReply.includes('Vitalwerte Sammelerf.'), 'Zweiter Orientierungsschritt erklärt den getrennten Sammel-Eintrag nicht.');
   assert(secondReply.includes('Siehst du den Eintrag'), 'Zweiter Orientierungsschritt stellt keine echte Rückfrage.');
