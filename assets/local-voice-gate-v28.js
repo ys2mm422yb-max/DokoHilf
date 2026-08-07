@@ -2,6 +2,7 @@
   'use strict';
 
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
+  const AI_MARKERS = ['/functions/v1/dokohilf-ai-router', '/functions/v1/dokohilf-ai'];
   const APPROVED_AUDIO_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-guide-audio';
   const APPROVED_AUDIO_BUILD = '20260806-27';
   const APPROVED_AUDIO_MANIFEST = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-guide-audio?manifest=1&build=20260806-27';
@@ -14,14 +15,30 @@
 
   let manifestPromise = null;
   let approvedByText = new Map();
+  let spokenByReply = new Map();
   let lastStaticHit = '';
   let lastStaticError = '';
+  let lastSpokenMapping = '';
   let localTimeouts = 0;
 
+  function requestUrl(input) {
+    return typeof input === 'string' ? input : input?.url;
+  }
+
+  function requestMethod(input, init = {}) {
+    return String(init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
+  }
+
   function isTtsRequest(input, init = {}) {
-    const url = typeof input === 'string' ? input : input?.url;
-    const method = String(init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
-    return typeof url === 'string' && url.includes(TTS_MARKER) && method === 'POST';
+    const url = requestUrl(input);
+    return typeof url === 'string' && url.includes(TTS_MARKER) && requestMethod(input, init) === 'POST';
+  }
+
+  function isAiRequest(input, init = {}) {
+    const url = requestUrl(input);
+    return typeof url === 'string'
+      && AI_MARKERS.some(marker => url.includes(marker))
+      && requestMethod(input, init) === 'POST';
   }
 
   function extractText(init) {
@@ -45,6 +62,31 @@
       .replace(/[^a-z0-9äöü\s./-]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
+  }
+
+  function rememberSpokenPayload(payload) {
+    if (!payload || typeof payload.reply !== 'string' || typeof payload.spokenText !== 'string') return;
+    const replyKey = normalizeAudioKey(payload.reply);
+    const spoken = String(payload.spokenText || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+    if (!replyKey || !spoken) return;
+    spokenByReply.set(replyKey, spoken);
+    if (spokenByReply.size > 24) spokenByReply.delete(spokenByReply.keys().next().value);
+  }
+
+  function mappedSpokenText(text) {
+    const mapped = spokenByReply.get(normalizeAudioKey(text));
+    if (!mapped) return text;
+    lastSpokenMapping = mapped;
+    return mapped;
+  }
+
+  function replaceTtsBody(init, text) {
+    try {
+      const body = JSON.parse(String(init?.body || '{}'));
+      return { ...init, body: JSON.stringify({ ...body, text }) };
+    } catch {
+      return init;
+    }
   }
 
   function isIOS() {
@@ -134,7 +176,7 @@
     let candidate = null;
     let candidateLength = 0;
     for (const [approvedText, entry] of manifest.entries()) {
-      if (approvedText.length < 32 || !key.includes(approvedText)) continue;
+      if (approvedText.length < 16 || !key.includes(approvedText)) continue;
       if (approvedText.length > candidateLength) {
         candidate = entry;
         candidateLength = approvedText.length;
@@ -217,9 +259,17 @@
   }
 
   window.fetch = async (input, init = {}) => {
+    if (isAiRequest(input, init)) {
+      const response = await previousFetch(input, init);
+      try { rememberSpokenPayload(await response.clone().json()); } catch { /* not a guide payload */ }
+      return response;
+    }
+
     if (!isTtsRequest(input, init)) return previousFetch(input, init);
-    const text = extractText(init);
-    if (!text) return localError(new Error('empty_local_voice_text'));
+    const requestedText = extractText(init);
+    if (!requestedText) return localError(new Error('empty_local_voice_text'));
+    const text = mappedSpokenText(requestedText);
+    const voiceInit = text === requestedText ? init : replaceTtsBody(init, text);
 
     try {
       const approved = await loadApprovedStaticVoice(text);
@@ -236,6 +286,56 @@
     }
   };
 
+  function ensureReportConditionStyle() {
+    if (document.getElementById('reportProtocolConditionStyleV28')) return;
+    const style = document.createElement('style');
+    style.id = 'reportProtocolConditionStyleV28';
+    style.textContent = `
+      .report-protocol-condition{margin:3px 0 0;padding:13px 14px;border:1px solid rgba(241,204,106,.34);border-radius:17px;background:rgba(86,63,11,.28)}
+      .report-protocol-condition strong{display:block;color:#ffe59a;font-size:12px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+      .report-protocol-condition p{margin:6px 0 0;color:#f1e5bd;font-size:14px;line-height:1.45}
+      .direct-guide-step.report-protocol-step{border-color:rgba(241,204,106,.28)!important;background:linear-gradient(145deg,rgba(54,43,14,.82),rgba(18,25,27,.94))!important}
+      .direct-guide-step.report-protocol-step .direct-guide-number{border-color:rgba(241,204,106,.34)!important;background:linear-gradient(145deg,#80631f,#58440f)!important;color:#fff2ba!important}
+      @media(max-width:680px){.report-protocol-condition{padding:12px}.report-protocol-condition p{font-size:13px}}
+    `;
+    document.head.append(style);
+  }
+
+  function polishReportGuide() {
+    const view = document.getElementById('directGuideView');
+    if (!view || view.hidden || view.querySelector('.report-protocol-condition')) return;
+    const title = view.querySelector('.direct-guide-heading h1')?.textContent?.trim();
+    if (title !== 'Bericht anlegen') return;
+    const steps = [...view.querySelectorAll('.direct-guide-step')];
+    if (steps.length < 12) return;
+
+    const texts = [
+      'Nur bei diesen zwei Kategorien: „Kontakt – alles außer Arzt“ → Fallgespräch; „Sturzereignis“ → Sturzprotokoll. Bei allen anderen Kategorien direkt mit Schritt 10 weitermachen.',
+      'Nur in diesem Sonderfall: Wird das automatisch verknüpfte Protokoll benötigt, bleibt es verknüpft.',
+      'Nur in diesem Sonderfall: Wird das Protokoll nicht benötigt, den Protokollnamen anklicken und danach oben rechts das kleine rote X wählen.',
+      'Das rote X entfernt nur die Protokollverknüpfung, nicht den Bericht.',
+    ];
+
+    steps.slice(5, 9).forEach((step, index) => {
+      step.classList.add('report-protocol-step');
+      const paragraph = step.querySelector('p');
+      if (paragraph && paragraph.textContent !== texts[index]) paragraph.textContent = texts[index];
+    });
+
+    const header = document.createElement('li');
+    header.className = 'report-protocol-condition';
+    header.innerHTML = '<strong>Sonderfall · nur bei 2 Kategorien</strong><p>Kontakt – alles außer Arzt: <b>Fallgespräch</b> · Sturzereignis: <b>Sturzprotokoll</b>. Andere Kategorie gewählt? Dann die Schritte 6–9 überspringen und direkt bei Schritt 10 weitermachen.</p>';
+    steps[5].before(header);
+  }
+
+  function installReportGuidePolish() {
+    ensureReportConditionStyle();
+    const run = () => requestAnimationFrame(polishReportGuide);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true });
+    else run();
+    new MutationObserver(run).observe(document.documentElement, { childList: true, subtree: true });
+  }
+
   function blockSystemSpeech() {
     const synth = window.speechSynthesis;
     if (!synth || typeof synth.speak !== 'function' || window.__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__) return;
@@ -249,12 +349,13 @@
   }
 
   blockSystemSpeech();
+  installReportGuidePolish();
   window.DokoHilfStaticFirstVoiceV28 = {
     manifestUrl: APPROVED_AUDIO_MANIFEST,
     endpoint: APPROVED_AUDIO_ENDPOINT,
     buildId: APPROVED_AUDIO_BUILD,
     cacheName: APPROVED_AUDIO_CACHE,
-    getState: () => ({ approvedEntries: approvedByText.size, lastStaticHit, lastStaticError, localTimeouts }),
+    getState: () => ({ approvedEntries: approvedByText.size, lastStaticHit, lastStaticError, lastSpokenMapping, spokenMappings: spokenByReply.size, localTimeouts }),
   };
   window.__DOKOHILF_STATIC_FIRST_VOICE_V28__ = true;
   window.__DOKOHILF_LOCAL_VOICE_GATE_V28__ = true;
