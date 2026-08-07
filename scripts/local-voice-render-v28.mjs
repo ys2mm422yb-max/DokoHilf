@@ -7,7 +7,7 @@ const HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE === 'andr
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/local-voice-v28/${PROFILE}`;
 const GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
-const DOKU_ENTRY = 'Öffne Doku-Erweitert.';
+const DETAIL_ORIENTATION = 'Okay. Schau oben in die grüne Reiterleiste. Siehst du Doku-Erweitert?';
 
 function assert(condition, message) { if (!condition) throw new Error(message); }
 function silentWav() {
@@ -67,7 +67,7 @@ await page.route('**/assets/guide-audio-catalog.json*', async route => {
   await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
     schemaVersion: 1, voice: 'Supertonic-F1', entries: [
       { file: 'assets/audio/guides/000.wav', text: GREETING },
-      { file: 'assets/audio/guides/029.wav', text: DOKU_ENTRY },
+      { file: 'assets/audio/guides/093.wav', text: DETAIL_ORIENTATION },
     ],
   }) });
 });
@@ -92,10 +92,10 @@ try {
   assert(beforeState?.state === 'idle', `Großes Modell wurde beim Einstieg trotzdem vorbereitet: ${beforeState?.state}`);
 
   await page.evaluate(() => window.DokoHilf?.sendMessage?.('Ich finde die Vitalwerte nicht wo sind die?', { fromVoice: true }));
-  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('029.wav'));
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('093.wav'));
   await page.waitForTimeout(100);
   synthCalls = await page.evaluate(() => [...window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__]);
-  assert(synthCalls.length === 0, 'Bestätigte Folgeanweisung darf nicht in lokale iPhone-Inferenz fallen.');
+  assert(synthCalls.length === 0, 'Bestätigte Detailhilfe darf nicht in lokale iPhone-Inferenz fallen.');
 
   const uniqueFreeText = 'Dies ist ein absichtlich nicht vorbereiteter freier Testsatz für die lokale Notinferenz.';
   await page.evaluate(async text => {
