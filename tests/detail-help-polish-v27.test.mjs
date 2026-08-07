@@ -44,12 +44,12 @@ test('Voice-Detailhilfe ist kompakt und blendet konkurrierende Aktionen aus', ()
   assert.match(source, /\.pause-button\{display:none!important\}/);
 });
 
-test('Release keeps detail help around the v28-2 static-first voice load order', () => {
+test('Release keeps detail help around the v28-3 static-first voice load order', () => {
   assert.match(apply, /localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < gateIndex/);
-  assert.match(apply, /20260807-local-natural-voice-v28-2/);
+  assert.match(apply, /20260807-voice-guides-report-v28-3/);
   assert.match(apply, /detail-help-polish-v27\.js/);
   assert.match(apply, /detail-help-render-sync-v27\.js/);
   assert.match(build, /detail-help-polish-v27\.js/);
   assert.match(build, /detail-help-render-sync-v27\.js/);
-  assert.match(build, /20260807-local-natural-voice-v28-2/);
+  assert.match(build, /20260807-voice-guides-report-v28-3/);
 });
