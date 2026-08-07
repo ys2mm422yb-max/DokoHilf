@@ -1,108 +1,107 @@
-# Aktiver Arbeitsstand – erneuter iPhone-Sprachtest und flüssige Sofortantwort
+# Arbeitsstand – erneuter iPhone-Sprachtest und flüssige Sofortantwort
 
 **Stand:** 7. August 2026  
-**Status:** Umsetzung und Validierung laufen  
-**Ausgangsbuild:** `20260806-27`  
-**Branch:** `fix/fluid-voice-mobile-layout-20260807`  
-**Pull Request:** `#67`
+**Status:** Abgeschlossen, vollständig geprüft, gemergt und auf `gh-pages` veröffentlicht  
+**Build:** `20260806-27`  
+**Produkt-Branch:** `fix/fluid-voice-mobile-layout-20260807`  
+**Pull Request:** `#67`  
+**Finaler exakter Head:** `f19290cb75fe0a11d918f9dec2a9eeab3641d187`  
+**Merge-Commit:** `98a8718027bfc520a9ccba03db3b38152b852c2b`
 
 ## Nutzer-Retest
 
-Der Nutzer hat den veröffentlichten Stand nach PR #64/#65 erneut auf einem iPhone getestet und zwei Probleme bestätigt:
+Der Nutzer hatte den veröffentlichten Stand nach PR #64/#65 erneut auf einem iPhone getestet und zwei reale Probleme bestätigt:
 
-1. In der fokussierten Sprachansicht überschneiden beziehungsweise überlagern sich Darstellungen noch teilweise.
-2. Die Begrüßung startet schnell, aber nach einer gesprochenen Frage dauert der Start der Antwort weiterhin zu lange.
+1. In der fokussierten Sprachansicht überschnitten beziehungsweise überlagerten sich Darstellungen noch teilweise.
+2. Die Begrüßung startete schnell, aber nach einer gesprochenen Frage dauerte der Start der Antwort weiterhin zu lange.
 
-Das neue Nutzerbild bleibt ausschließlich im Chat. Es wird weder ins Repository noch nach Supabase oder in Testartefakte übernommen.
+Das Nutzerbild blieb ausschließlich im Chat. Es wurde weder ins Repository noch nach Supabase oder in Testartefakte übernommen.
 
-## Technische Einordnung
+## Ursache
 
-Die Begrüßung ist bereits als vorbereitetes beziehungsweise gecachtes Audio verfügbar und startet deshalb schnell. Für Antworten nach Nutzereingaben kann weiterhin dynamisches Gacrux-TTS benötigt werden. Der bisherige Client-Fallback von 1,2 Sekunden ist für einen echten Sprachdialog weiterhin zu langsam und kann zusammen mit iOS-`speechSynthesis` wie ein Hängen wirken.
+- Die Begrüßung beziehungsweise vorbereitete Guide-Audios können sofort aus vorhandenem Audio starten.
+- Für andere Antworten konnte dynamisches Gacrux-TTS nötig sein.
+- Der Provider zeigte real mehrere Sekunden Latenz und HTTP 429.
+- Der bisherige 1,2-Sekunden-Fallback war für einen echten Sprachdialog noch fühlbar zu langsam.
+- Die Voice-Oberfläche kombinierte mehrere ältere Grid-/Sticky-Regeln, wodurch die mobile Geometrie trotz des ersten Fixes nicht robust genug war.
 
-Der bekannte Provider bleibt außerdem grundsätzlich variabel und kann mehrere Sekunden benötigen oder HTTP 429 liefern. Deshalb darf dynamisches Cloud-TTS nicht mehr fühlbar vor der lokalen Antwort stehen.
-
-## Umgesetzter Hotfix auf dem Branch
+## Veröffentlichter Fix
 
 ### Sprache
 
-`assets/ux-v27.js`
+`assets/ux-v27.js`:
 
-- harter TTS-Fallback von 1200 ms auf **180 ms** reduziert
-- langsame TTS-Anfrage wird weiterhin über `AbortController` beendet
-- bereits fertiges/gecachtes Gacrux-Audio kann weiterhin zuerst gewinnen
-- wenn Gacrux nicht praktisch sofort verfügbar ist, übernimmt die lokale Sofortstimme
-- iOS-Resume-Watchdog reagiert früher: 60/140/280/520 ms
-- sichtbarer Status heißt nun `Antwort startet …`
+- harter TTS-Fallback: **180 ms**
+- langsame TTS-Anfrage wird mit `AbortController` beendet
+- vorhandenes beziehungsweise praktisch sofort verfügbares Gacrux-Audio darf zuerst gewinnen
+- sonst übernimmt die lokale Sofortstimme praktisch unmittelbar
+- iOS-Resume-Watchdog: 60/140/280/520 ms
+- Status: `Antwort startet …`
 
-Ziel: Nach einer Nutzerfrage soll die Sprachausgabe praktisch sofort beginnen. Die natürliche Gacrux-Stimme bleibt ein Qualitätsbonus für bereits vorbereitete Schritte, aber kein Latenz-Blocker mehr.
+Gacrux bleibt damit die bevorzugte Qualität für fertige freigegebene Texte, ist aber kein Latenz-Blocker für freie beziehungsweise noch nicht vorgebaute Antworten.
 
-### Layout
+### iPhone-Layout
 
-`assets/ux-v27.css`
+`assets/ux-v27.css`:
 
-- im Sprachmodus werden alle direkten Workspace-Geschwister außer `.voice-focus-stage` ausgeblendet
-- die Voice-Bühne beginnt fest Safe-Area-abhängig unter der Kopfzeile
-- `.voice-focus-inner` und `.voice-focus-main` verwenden eine eindeutige vertikale Flex-Stapelung statt konkurrierender Grid-Höhen
-- Anweisung, Console-Slot und Aktionsleiste besitzen getrennte Flex-Bereiche
-- Mikrofon wird auf kleinen beziehungsweise niedrigen iPhones stärker begrenzt
-- Voice-Engine-Badge wird in der fokussierten Ansicht ausgeblendet, um doppelten Status und Überlagerungen zu vermeiden
-- normaler `Version … Aktuell`-Status wird ausgeblendet; Update-/Fehlerzustände bleiben sichtbar
+- im Sprachmodus bleibt als Workspace-Inhalt nur `.voice-focus-stage` sichtbar
+- feste Safe-Area-Trennung zur Kopfzeile
+- eindeutige vertikale Flex-Stapelung
+- getrennte Flächen für Schritttext, Voice-Console und Aktionen
+- stärker begrenztes Mikrofon auf kleinen/niedrigen iPhones
+- Voice-Engine-Badge im Fokus ausgeblendet
+- normaler `Version … Aktuell`-Status ausgeblendet; Update-/Fehlerstatus bleibt möglich
 
-Zusätzlich wurde der Chat visuell verdichtet: klarere Gesprächsfläche, kompaktere mobile Schnellaktionen und kein redundanter aktueller Versionsstatus mitten in der Ansicht.
+### Chat-Aufräumstufe
+
+Im selben Hotfix wurde der Schreibmodus bereits etwas bereinigt:
+
+- klar abgegrenzte Gesprächsfläche
+- kompaktere mobile Schnellaktionen
+- redundanter aktueller Versionsstatus entfernt
+
+Der größere vom Nutzer gewünschte Umbau des Chat-Erlebnisses und der häufigen Abläufe bleibt ein eigener nächster Produktblock.
 
 ### PWA-Auslieferung
 
-`service-worker.js`
+`service-worker.js` enthält:
 
-- Hotfix-Revisionsmarker `20260807-fluid-voice-layout-1`
-- Service-Worker-Datei ändert sich dadurch sicher und erzwingt einen neuen Install-/Aktivierungszyklus
-- bestehende Build-27-Core-Dateien werden beim Installieren erneut in den Cache geschrieben
+`HOTFIX_REVISION = '20260807-fluid-voice-layout-1'`
 
-Das ist wichtig, weil Build-ID und Asset-URLs weiterhin `20260806-27` heißen. Der Revisionsmarker verhindert, dass eine bereits installierte PWA den alten 1,2-s-Stand dauerhaft weiterverwendet.
+Dadurch wurde trotz unveränderter Build-ID ein neuer Service-Worker-Zyklus ausgelöst und der alte 1,2-Sekunden-PWA-Cache ersetzt.
 
-## Tests
+## Validierung
 
-Die Vertragsprüfungen wurden auf die neue tatsächliche Zielsetzung umgestellt:
+Der erste PR-#67-Lauf #261 scheiterte an drei veralteten Testexpectations aus dem vorherigen 1,2-Sekunden-Stand. Die Produktlogik selbst war dort bereits weitgehend grün. Die Tests wurden auf den neuen ausdrücklich gewünschten Vertrag aktualisiert.
 
-- keine sichtbaren Workspace-Reste neben der Voice-Bühne
-- Flex-Stapelung und getrennte Bereiche
-- Safe-Area-Inset
-- kleine/niedrige iPhone-Geometrie
-- 180-ms-Fallback
-- früher iOS-Resume-Watchdog
-- Service-Worker-Hotfixrevision
+Finaler exakter Head `f19290cb75fe0a11d918f9dec2a9eeab3641d187`:
 
-### Erster PR-#67-Lauf
+- `Deploy DokoHilf` Run #264: **success**
+- `Validate dark iPhone UI v27` Run #28: **success**
+- deterministische Fach-, Datenschutz-, Sicherheits- und UI-Verträge: grün
+- iPhone-Render und Interaktion: grün
+- Live-Router: grün
+- Live dynamischer Voice-Fallback: grün
+- privates Guide-Audio: grün
+- exakter releasbarer statischer Site-Build: grün
 
-`Deploy DokoHilf` Run #261 startete automatisch. Bereits erfolgreich waren:
+## Veröffentlichung geprüft
 
-- Syntax- und Quellverträge
-- 165/165 Routingfälle
-- 3/3 Gesprächssequenzen
-- 12/12 bestätigte Workflow-Marker
-- 119 von 122 deterministischen Tests
+Nach Merge wurden direkt geprüft:
 
-Drei Tests scheiterten ausschließlich an veralteten Erwartungen aus PR #64:
+- `main/assets/ux-v27.js`: `HARD_FALLBACK_MS = 180`
+- `gh-pages/assets/ux-v27.js`: `HARD_FALLBACK_MS = 180`
+- `gh-pages/assets/ux-v27.css`: neue Flex-/Safe-Area-Regeln vorhanden
+- `gh-pages/service-worker.js`: Hotfixrevision vorhanden
 
-- `tests/dark-premium-v27.test.mjs` erwartete noch `HARD_FALLBACK_MS = 1200`
-- `tests/fast-voice-v27.test.mjs` erwartete ebenfalls noch 1200 ms
-- derselbe Test erwartete noch den alten iOS-Watchdog `120/320/700/1100 ms`
+Supabase wurde durch PR #67 nicht verändert. Letzter während des Abschlusses live abgefragter statischer Audiobestand: **7/93**, Indizes `0,1,2,3,4,5,33`. Dieser Bestand ist veränderlich.
 
-Die Produktlogik selbst war an dieser Stelle nicht der Fehler. Die drei veralteten Verträge wurden auf den neuen 180-ms-Fallback und `60/140/280/520 ms` aktualisiert. Zusätzlich wurde die erwartete kompakte mobile Mikrofonbreite auf den tatsächlich neuen Wert 92 px angepasst. Ein neuer vollständiger Lauf muss nun den aktuellen exakten Head prüfen.
+## Nächster Produktblock
 
-## Noch erforderlich
+Nach diesem Stabilitätsfix sind die nächsten bereits bestätigten Nutzerwünsche:
 
-- vollständige GitHub-Actions-Prüfung auf dem aktuellen exakten PR-#67-Head
-- Fehler ausschließlich auf dem Branch beheben
-- erst bei vollständig grünem exakten Head mergen
-- danach `main`, `gh-pages`, festen Hauptlink und tatsächliche ausgelieferte Dateien prüfen
-- `PROJECT_HANDOFF.md` auf den finalen Merge-/Live-Stand aktualisieren
+1. **Detailhilfe** hinter `Ich brauche Hilfe / Ich finde das nicht`: gezielt nach sichtbarem Zustand fragen, ohne nicht bestätigte Klickwege zu erfinden.
+2. **Häufige Abläufe** im Hauptmenü: ein Tipp soll direkt die komplette Schritt-für-Schritt-Anleitung öffnen, nicht erst einen normalen Chat erzeugen.
+3. **Chatdesign weiter verbessern**: stärker als eigenständige, ruhige Gesprächsansicht statt als Formular-/Chat-Mischung.
 
-## Bereits vorgemerkter nächster Produktblock
-
-Nach diesem Stabilitätsfix bleibt die bereits bestätigte Produktarbeit offen:
-
-- Detailhilfe hinter `Ich brauche Hilfe / Ich finde das nicht`
-- häufige Abläufe sollen direkt eine vollständige Schritt-für-Schritt-Anleitung öffnen, statt zuerst einen normalen Chat zu erzeugen
-
-Diese beiden Punkte werden getrennt von diesem akuten Sprach-/Layout-Hotfix umgesetzt, damit die dringende iPhone-Sprachkorrektur klein und sicher validierbar bleibt.
+Für Punkt 1 gilt `ACTIVE_WORK_DETAIL_HELP.md`. Für Punkt 2 dürfen nur bestätigte Guides aus `CONFIRMED_WORKFLOWS.md` beziehungsweise aktuell freigegebene Supabase-Guides verwendet werden.
