@@ -26,19 +26,25 @@ jobs:
         run: |
           set -euo pipefail
           test -s assets/detail-help-v27.js
+          test -s assets/detail-help-polish-v27.js
           test -s scripts/apply-detail-help-v27.mjs
           test -s scripts/detail-help-render-v27.mjs
           test -s tests/detail-help-v27.test.mjs
+          test -s tests/detail-help-polish-v27.test.mjs
           test -s ACTIVE_WORK_DETAIL_HELP.md
           node --check assets/detail-help-v27.js
+          node --check assets/detail-help-polish-v27.js
           node --check scripts/apply-detail-help-v27.mjs
           node --check scripts/detail-help-render-v27.mjs
-          node --test tests/detail-help-v27.test.mjs
+          node --test tests/detail-help-v27.test.mjs tests/detail-help-polish-v27.test.mjs
           grep -q '__DOKOHILF_DETAIL_HELP_V27__' assets/detail-help-v27.js
+          grep -q '__DOKOHILF_DETAIL_HELP_POLISH_V27__' assets/detail-help-polish-v27.js
           grep -q 'keinen bestätigten Alternativ-Klickweg' assets/detail-help-v27.js
+          grep -q 'DEVICE_FALLBACK_MS = 160' assets/detail-help-polish-v27.js
           grep -q 'Vitalwerte Sammelerf.' assets/detail-help-v27.js
           grep -q 'iOS und Android' ACTIVE_WORK_DETAIL_HELP.md
           grep -q 'localStorage\|sessionStorage\|indexedDB' assets/detail-help-v27.js && exit 1 || true
+          grep -q 'localStorage\|sessionStorage\|indexedDB' assets/detail-help-polish-v27.js && exit 1 || true
 
       - name: Build exact releasable site
         run: |
@@ -46,8 +52,10 @@ jobs:
           bash -n scripts/build-static-site-v27.sh
           bash scripts/build-static-site-v27.sh _detail_site
           grep -q 'assets/detail-help-v27.js?v=20260806-27' _detail_site/index.html
-          grep -q "HOTFIX_REVISION = '20260807-detail-help-cross-platform-1'" _detail_site/service-worker.js
+          grep -q 'assets/detail-help-polish-v27.js?v=20260806-27' _detail_site/index.html
+          grep -q "HOTFIX_REVISION = '20260807-voice-followup-detail-polish-1'" _detail_site/service-worker.js
           grep -q 'detail-help-v27.js?v=20260806-27' _detail_site/service-worker.js
+          grep -q 'detail-help-polish-v27.js?v=20260806-27' _detail_site/service-worker.js
 
       - name: Render detail help on iOS and Android
         run: |
