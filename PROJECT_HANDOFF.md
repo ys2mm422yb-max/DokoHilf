@@ -87,6 +87,7 @@ Build `20260806-27` ist veröffentlicht.
 - Client-Fallback: **180 ms**
 - Gacrux bleibt bevorzugt; wenn natürliche Live-Stimme nicht praktisch sofort bereit ist, übernimmt die Gerätestimme.
 - iOS-Speech-Watchdog verhindert stumm pausierten `speechSynthesis`-Fallback.
+- Historie: PR #64 hatte den ersten Fallback noch auf **1,2 Sekunden** gesetzt; dieser Stand ist durch PR #67 ersetzt und nicht mehr der aktuelle Clientvertrag.
 
 ### Direkte häufige Abläufe und Chatpolish
 
@@ -226,15 +227,15 @@ Wichtige Dateien:
 Zuletzt live bestätigt:
 
 - `dokohilf-ai-router` v11
-- `dokohilf-tts` v21
+- `dokohilf-tts` **v21**
 - `dokohilf-guide-audio` v1
-- `dokohilf-guide-audio-build` v3
+- `dokohilf-guide-audio-build` **v3**
 - `dokohilf-editor` v1
 - `public.dokohilf_guides`
 - `public.dokohilf_topics`
 - `public.dokohilf_static_guide_audio`
 - `public.dokohilf_internal_build_control`
-- privater Bucket `dokohilf-guide-audio`
+- Audio liegt in einem **privaten Supabase-Bucket** `dokohilf-guide-audio`
 - alte Diagnose-/Export-/Batch-/Store-/Snapshot-Endpunkte neutralisiert auf HTTP 410
 
 Die Detailhilfe aus PR #74 erforderte **keine Supabase-Schreibänderung**. Der bestehende AI-Router bleibt eine zweite Sicherheitsebene.
@@ -242,6 +243,8 @@ Die Detailhilfe aus PR #74 erforderte **keine Supabase-Schreibänderung**. Der b
 ## 10. Sprache und private Gacrux-Audios
 
 Natürliche Stimme: **Gacrux**.
+
+`dokohilf-tts` **v21** verwendet weiterhin den Roh-REST-Parser `raw-steps-content-v1` für die Gemini-Interactions-Audioantworten.
 
 Aktuelle Client-Reihenfolge:
 
