@@ -20,11 +20,10 @@
       const value = String(button.dataset.detailHelpValue || '');
       const label = LABELS[value];
       const span = button.querySelector('span');
-      if (label && span) {
-        span.textContent = label;
-        button.dataset.detailHelpLabel = label;
-      }
-      button.querySelector('small')?.remove();
+      if (label && span && span.textContent !== label) span.textContent = label;
+      if (label && button.dataset.detailHelpLabel !== label) button.dataset.detailHelpLabel = label;
+      const small = button.querySelector('small');
+      if (small) small.remove();
     }
   }
 
