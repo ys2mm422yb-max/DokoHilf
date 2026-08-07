@@ -4,22 +4,22 @@
 **Stand:** 7. August 2026  
 **Veröffentlichter Build:** `20260807-28`  
 **Sichtbare Version:** `v28`  
-**Veröffentlichter Release:** `local-natural-voice`  
-**Aktuelle PWA-Hotfixrevision:** `20260807-local-natural-voice-v28-2`  
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
-> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle vorhandenen `ACTIVE_WORK_*.md`. Danach werden GitHub, Actions, `main`, `gh-pages` und bei Bedarf Supabase live geprüft. Veränderte Zustände werden niemals nur aus dieser Datei abgeleitet.
+> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle vorhandenen `ACTIVE_WORK_*.md`. Danach werden GitHub, Actions, `main`, `gh-pages` und bei Bedarf Supabase live geprüft. Veränderliche Zustände werden niemals nur aus dieser Datei abgeleitet.
 
-## 1. Harte Projektgrenzen
+## 1. Harte Projekt- und Produktgrenzen
 
 - Einziges Repository: `ys2mm422yb-max/DokoHilf`
-- Einziges Supabase-Projekt: `efifbuqctylsujiauabg`
-- Region: Frankfurt, `eu-central-1`
+- Einziges Supabase-Projekt: `efifbuqctylsujiauabg`, Region Frankfurt (`eu-central-1`)
 - Fester öffentlicher Hauptlink: `https://ys2mm422yb-max.github.io/DokoHilf/`
 - Andere Repositories oder Supabase-Projekte niemals öffnen, verändern oder verbinden.
-- Keine produktive Verbindung zur Dokumentationssoftware, kein Scraping und keine nicht dokumentierten Schnittstellen.
+- DokoHilf ist ausschließlich eine **erklärende Schritt-für-Schritt-Bedienhilfe**.
+- Die App besitzt keine Endnutzerkonten, Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken. Solche Funktionen werden nicht eingeplant.
+- Bewohner-, Mitarbeiter- und sonstige Personendaten werden nicht in DokoHilf eingegeben oder gespeichert.
 - Dauerhaft keine realen Bewohner-, Klienten-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in Repository, Supabase, App, Tests oder Artefakten.
-- Das Echtdatenverbot gilt dauerhaft und wird auch durch spätere betriebliche, technische oder datenschutzrechtliche Freigaben nicht aufgehoben.
+- Das Echtdatenverbot gilt dauerhaft und wird durch spätere betriebliche, technische oder datenschutzrechtliche Freigaben nicht aufgehoben.
+- Automatisierte Tests verwenden ausschließlich synthetische UI-Zustände, neutrale Platzhalter und erfundene Werte; keine reale Person und kein realer Fall werden nachgebildet.
 - Öffentlich sichtbare Projektinhalte enthalten ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Ergebnisse. Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert.
 
 ## 2. Verbindlicher GitHub-Ablauf
@@ -33,7 +33,7 @@
 7. Nach Merge `main`, `gh-pages` und relevante Live-Komponenten prüfen.
 8. Gegenüber dem Nutzer keine alternativen Preview-/Branch-/Cache-Links als Hauptzugang nennen.
 
-## 3. Dauerhafte GitHub-Dokumentationspflicht
+## 3. Dauerhafte Dokumentationspflicht
 
 Nach jedem relevanten Arbeitsblock dauerhaft dokumentieren:
 
@@ -47,169 +47,62 @@ Nach jedem relevanten Arbeitsblock dauerhaft dokumentieren:
 
 Bestätigte Klickwege gehören nach `CONFIRMED_WORKFLOWS.md`. Größere Arbeitsblöcke erhalten eine `ACTIVE_WORK_*.md`.
 
-Öffentliche Dokumentation beschreibt nur anonymisierte Fachinhalte, technische Entscheidungen und Ergebnisse. Keine Herkunfts- oder Prüfmaterialhinweise veröffentlichen.
-
 ## 4. Mobile Grundregel – iOS UND Android
 
-Seit PR #71 gilt dauerhaft: **„mobil geprüft“ bedeutet immer iOS und Android.**
+„Mobil geprüft“ bedeutet immer mindestens:
 
-Mindest-QA:
+- iOS `393 × 852`
+- Android `412 × 915`
 
-- iOS: `393 × 852`
-- Android: `412 × 915`
+Geprüft werden je nach Änderung insbesondere Overflow, Überlagerungen, Safe Areas, Touch-Ziele, Chat, Voice und PWA-Updateverhalten. Details: `ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md`.
 
-Bei jeder mobilen Änderung werden mindestens geprüft:
+## 5. Bestätigte Produktfunktionen
 
-- kein horizontaler Overflow
-- keine Überlagerungen oder abgeschnittenen Inhalte
-- Header/Footer/Safe Areas
-- Touch-Ziele
-- Chat und Voice, sofern betroffen
-- PWA-/Updateverhalten, sofern betroffen
+Direkte häufige Abläufe öffnen vollständige bestätigte Anleitungen für Bericht, Visite, Vitalwerte, An-/Abwesenheit, Medikation ansehen, Formulare und Übergabe.
 
-Plattformspezifische Änderungen dürfen die andere Plattform nicht ungeprüft lassen.
+Detailhilfe bei Aussagen wie `Ich finde das nicht` hält den aktuellen Guide-Schritt fest, fragt nach dem sichtbaren Zustand und verwendet ausschließlich bestätigte Bezeichnungen. `Weiter` bleibt während der Fehlersuche verborgen. Keine Alternativwege erfinden.
 
-Details: `ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md`.
+`CONFIRMED_WORKFLOWS.md` ist die verbindliche Fachquelle.
 
-## 5. Aktueller veröffentlichter Produktstand – v28
+## 6. Bericht – neu bestätigter Sonderfall
 
-### Direkte häufige Abläufe
+Für **Bericht anlegen** gilt verbindlich:
 
-PR #72 ist gemergt und veröffentlicht.
+- `Kontakt – alles außer Arzt` → automatisch verknüpftes **Fallgespräch**
+- `Sturzereignis` → automatisch verknüpftes **Sturzprotokoll**
+- nur bei diesen beiden Kategorien gelten die Protokollschritte 6–9
+- bei allen anderen Berichtskategorien Schritte 6–9 überspringen und direkt mit Datum/Uhrzeit bei Schritt 10 fortfahren
+- das kleine rote X entfernt nur die Protokollverknüpfung, nicht den Bericht
 
-`Häufige Abläufe` öffnet direkt vollständige bestätigte Anleitungen für:
+Diese Logik ist im laufenden PR #82 Gegenstand von Fach-, UI- und Cross-Platform-QA.
 
-- Bericht anlegen
-- Visite anlegen
-- Vitalwerte erfassen
-- An-/Abwesenheit
-- Medikation ansehen
-- Formular anlegen
-- Übergabe anzeigen
+## 7. Voice v28 – veröffentlichter Stand und laufende Korrektur
 
-Vitalwerte verzweigt nur in die bestätigten Varianten Einzelwert und Sammelerfassung.
+Der veröffentlichte v28-Stand nutzt bereits Supertonic 3 als kostenlose lokale Sprachengine. Ein realer iPhone-Praxistest zeigte jedoch, dass lokale WASM-Inferenz für Folgeantworten auf dem Gerät nicht zuverlässig genug ist.
 
-Details: `ACTIVE_WORK_DIRECT_GUIDES_CHAT.md`.
+### Laufender PR #82
 
-### PWA-Installationssymbol
+Branch: `fix/voice-guides-report-conditions-v28-20260807`
 
-PR #73 ist gemergt und veröffentlicht.
+Ziel des laufenden Blocks:
 
-- `icon-v3.svg`
-- iOS `icon-touch-180-v3.png`
-- Android `icon-192-v3.png`
-- Android `icon-512-v3.png`
-- Android maskable `icon-maskable-512-v3.png`
+1. Für bestätigte Guide-Sätze **Supertonic F1 als einzige reguläre Stimme** verwenden.
+2. Die bestätigten allgemeinen Guide-Texte einmalig im öffentlichen GitHub-Actions-Build mit Supertonic 3 erzeugen.
+3. Das iPhone spielt diese statischen Audios nur ab und muss dafür keine lokale KI-Inferenz ausführen.
+4. Keine System-/Gerätestimme als regulären Fallback.
+5. Kein Cloud-TTS-Aufruf für den Voice-Releasepfad und keine kostenpflichtige TTS-Stufe.
+6. Nur noch nicht statisch vorbereitete freie Sätze dürfen als technischer Notweg lokal mit derselben Supertonic-F1-Stimme erzeugt werden; auf iOS bleibt dafür eine harte Zeitgrenze bestehen.
+7. iOS 393×852 und Android 412×915 bleiben Pflicht-QA.
 
-Die Installationsdateien werden deterministisch aus eigenem Code erzeugt.
+Der alte automatische statische Cloud-Sprachaufbau ist serverseitig über `dokohilf_internal_build_control.enabled=false` deaktiviert. Ein vorhandener Cron kann technisch weiter auslösen, darf bei deaktiviertem Build-Schalter aber keine neue Sprachgenerierung starten. Vor späteren Aussagen hierzu immer live prüfen.
 
-Details: `ACTIVE_WORK_PWA_ICONS_CROSS_PLATFORM.md`.
-
-### Detailhilfe bei Klickproblemen
-
-PR #74 ist gemergt und veröffentlicht.
-
-Problemformulierungen wie `Ich finde das nicht`, `Wo ist ...?`, `Wo muss ich klicken?`, `Bei mir heißt es anders`, `Ich bin auf einer anderen Seite` oder `Ich brauche Hilfe` öffnen einen Orientierungs-/Detailhilfemodus.
-
-Verbindlich:
-
-- aktueller Guide und aktueller Schritt bleiben erhalten
-- `Weiter` wird während der Fehlersuche ausgeblendet
-- DokoHilf fragt zuerst, was der Nutzer tatsächlich sieht
-- erst nach bestätigtem Fund wird der normale Guide fortgesetzt
-- keine alternativen Klickwege oder Feldnamen erfinden
-- Chat und Voice verwenden dieselbe Fachlogik
-- Hilfesitzung bleibt flüchtig im RAM
-
-Details: `ACTIVE_WORK_DETAIL_HELP.md`.
-
-### Voice-/Detailhilfe-Polish
-
-PR #76 ist gemergt und veröffentlicht.
-
-- kürzere nutzernahe Detailhilfe-Texte
-- kompaktere Auswahl im Voice-Modus
-- konkurrierende Aktionen während der Detailhilfe ausgeblendet
-- Mutation-Loop bei Button-Synchronisierung beseitigt
-- iOS- und Android-Interaktion als Pflicht-QA
-
-## 6. v28 – lokale natürliche Stimme und iPhone-Hotfix
-
-### Ausgangsrelease PR #78
-
-PR #78 wurde auf exaktem grünem Head `591f945d68675aa323090143ca2934957e5c093c` manuell gemergt.
-
-Veröffentlicht wurden:
-
-- Build `20260807-28`
-- sichtbare Version `KI · v28`
-- Release `local-natural-voice`
-- lokale Browser-TTS mit Supertonic 3
-- Sprache Deutsch
-- Android bevorzugt WebGPU, WASM als lokaler Fallback
-- iOS WASM
-- keine hörbare System-/Gerätestimme als v28-Fallback
-- generierte freie Audios werden nicht dauerhaft gespeichert
-- Modellressourcen dürfen lokal gecacht werden
-
-Ein realer iPhone-Praxistest zeigte danach, dass das große lokale Modell beim Sprachstart zu früh initialisiert wurde und die App bei der Begrüßung hängen konnte.
-
-### Hotfix PR #80 – veröffentlicht
-
-PR #80 wurde auf exaktem grünem Head `d10be14fee6a6e2389f57b203379d05f541e5e60` manuell gemergt.
-
-Merge-Commit:
-
-`725fbbab510ff2af300b1074577420c74ca9f477`
-
-Aktueller Sprachweg:
-
-1. zuerst freigegebenes statisches Guide-Audio prüfen,
-2. vorhandenes bestätigtes Audio direkt abspielen,
-3. Supertonic nur für nicht statisch vorhandene freie Antworten starten,
-4. beim bloßen Voice-Einstieg das große Modell nicht vorab initialisieren,
-5. iOS verwendet 2 Denoising-Schritte,
-6. lokale Inferenzgrenze: iOS 20 Sekunden, andere Plattformen 35 Sekunden,
-7. System-/Gerätestimme bleibt blockiert,
-8. generierte freie Audios werden nicht dauerhaft gespeichert.
-
-Finale Pflicht-QA auf exakt diesem Head:
-
-- `Deploy DokoHilf` Run #355 – success
-- `Validate local voice v28 iOS Android` Run #43 – success
-- `Validate detailed help iOS Android` Run #66 – success
-- `Validate dark iPhone UI v27` Run #98 – success
-
-Nach Merge verifiziert:
-
-- `main` enthält Merge-Commit `725fbbab510ff2af300b1074577420c74ca9f477`,
-- `gh-pages/service-worker.js` liefert `HOTFIX_REVISION = '20260807-local-natural-voice-v28-2'`,
-- `gh-pages/assets/local-voice-gate-v28.js` nutzt den freigegebenen statischen Audiopfad vor lokaler Supertonic-Inferenz,
-- lokaler Modellcache und freigegebener Audio-Cache bleiben beim normalen Service-Worker-Aktivierer erhalten.
-
-Details: `ACTIVE_WORK_LOCAL_VOICE_V28.md` und `ACTIVE_WORK_IOS_VOICE_HOTFIX_V28.md`.
-
-## 7. Öffentliche Inhalts- und Datenschutzgrenze
-
-Am 7. August 2026 wurden die öffentlichen Kernunterlagen und editierbaren Projektbeschreibungen auf eine neutrale Veröffentlichungsgrenze vereinheitlicht.
-
-Verbindlich:
-
-- öffentliche DokoHilf-Inhalte sind ausschließlich selbst formuliert, anonymisiert und veröffentlichungsfähig,
-- öffentlich dokumentiert werden Regeln, technische Entscheidungen, Ergebnisse und anonymisierte Fachinhalte,
-- Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert,
-- Testoberflächen und Testdaten sind vollständig synthetisch,
-- das Echtdatenverbot ist dauerhaft, ohne Ausnahme und nicht durch spätere organisatorische Freigaben aufhebbar.
-
-`PROJECT_RULES.md` ist hierfür die verbindliche Quelle.
+**Wichtig:** PR #82 ist erst veröffentlicht, wenn sein aktueller exakter Head vollständig grün ist, manuell gemergt wurde und `gh-pages` verifiziert ist.
 
 ## 8. Verbindliche Fachquelle
 
-`CONFIRMED_WORKFLOWS.md` ist die verbindliche Quelle für bestätigte lokale Klickwege. Router, Supabase-Guides, direkte Anleitungen, Detailhilfe und Tests müssen damit übereinstimmen.
-
 Bestätigt sind insbesondere:
 
-- Bericht anlegen einschließlich Kategorieauswahl und automatisch verknüpfter Protokolle
+- Bericht anlegen einschließlich bedingter Protokollverknüpfung
 - Bericht durchstreichen
 - Folgebericht erstellen
 - falsch abgezeichnete Durchführung stornieren
@@ -225,49 +118,33 @@ Nie fehlende Feldnamen, alternative Menüs oder Klickwege ergänzen, nur weil si
 
 ## 9. Supabase-Grundstand
 
-Vor veränderlichen Aussagen immer live prüfen.
+Vor veränderlichen Aussagen immer live prüfen. Zuletzt bekannte technische Kernkomponenten:
 
-Zuletzt bekannte Kernkomponenten:
-
-- `dokohilf-ai-router` v11
-- `dokohilf-tts` v21
-- `dokohilf-guide-audio` v1
-- `dokohilf-guide-audio-build` v3
-- `dokohilf-editor` v1
+- `dokohilf-ai-router`
+- `dokohilf-tts` (serverseitig vorhanden, aber nicht als Ziel des neuen kostenlosen Voice-Releasepfads)
+- `dokohilf-guide-audio`
+- `dokohilf-guide-audio-build`
 - `public.dokohilf_guides`
 - `public.dokohilf_topics`
 - `public.dokohilf_static_guide_audio`
 - `public.dokohilf_internal_build_control`
 
-Keine andere Supabase-Instanz verwenden.
-
-Der zuletzt während PR #80 live geprüfte statische Audio-Bestand für Build `20260806-27` lag bei 9 Einträgen. Dieser Wert ist veränderlich und muss bei Audioarbeit erneut live geprüft werden.
+Supabase ist technische Infrastruktur, **keine DokoHilf-Endnutzerverwaltung**. Keine Endnutzerkonten, Rollenprofile, Bewohnerprofile oder Mitarbeiterprofile in DokoHilf einführen.
 
 ## 10. Dauerhafte Datenschutz- und Sicherheitsgrenzen
 
-- dauerhaft keine Echtdaten, auch nicht nach einer späteren organisatorischen Freigabe
-- Testkonten und Testdaten vollständig synthetisch
+- dauerhaft keine Echtdaten, auch nicht nach späterer organisatorischer Freigabe
+- keine Endnutzerkonten oder Personenprofile in DokoHilf
 - keine produktiven Exporte oder Kopien in DokoHilf
 - keine Nutzerstimmen, Diktate oder freien Gesprächsinhalte dauerhaft speichern
 - keine Secrets im Browser, Repository oder öffentlich sichtbaren Projekttext
 - keine fremden Handbücher oder geschützten Inhalte kopieren
 - keine erfundenen Fach- oder Klickwege
-- öffentliche Projekttexte enthalten nur selbst formulierte, anonymisierte und veröffentlichungsfähige Inhalte
+- öffentliche Projekttexte nur selbst formuliert, anonymisiert und veröffentlichungsfähig
 
 `PROJECT_RULES.md` ist hierfür verbindlich.
 
-## 11. Nächster ausführbarer Schritt
-
-Der technische v28-2-Hotfix ist veröffentlicht. Nächster Schritt ist ein realer iPhone-Praxistest:
-
-1. DokoHilf vollständig schließen und neu öffnen.
-2. Prüfen, dass `KI · v28` sichtbar ist.
-3. Sprachmodus öffnen und die Begrüßung testen.
-4. Danach eine freie Folgefrage stellen und Antwortzeit sowie Klang bewerten.
-
-Wenn eine freie Folgeantwort auf realem iOS weiterhin zu langsam oder stumm bleibt, nicht auf die Systemstimme zurückfallen. Dann die lokale Freitext-Engine gesondert neu bewerten.
-
-## 12. Pflicht für jeden neuen Chat
+## 11. Pflicht für jeden neuen Chat
 
 1. `README.md` lesen.
 2. `PROJECT_RULES.md` lesen.
@@ -276,7 +153,7 @@ Wenn eine freie Folgeantwort auf realem iOS weiterhin zu langsam oder stumm blei
 5. alle `ACTIVE_WORK_*.md` prüfen.
 6. Live-GitHub prüfen: `main`, offene PRs, aktuelle Heads, Actions und `gh-pages`.
 7. Live-Supabase prüfen, wenn der Arbeitsblock Supabase, Router, Audio oder Guides betrifft.
-8. Bei Audioarbeit den veränderlichen statischen Audio-Bestand live prüfen.
+8. Bei Audioarbeit den aktiven Sprachpfad und Build-Schalter live prüfen.
 9. Exakt beim dokumentierten nächsten ausführbaren Schritt fortfahren.
 10. Nach eigener Arbeit Repository-Dokumentation wieder aktualisieren.
 
