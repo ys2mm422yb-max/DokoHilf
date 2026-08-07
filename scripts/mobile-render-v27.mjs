@@ -63,6 +63,31 @@ if (USE_MOCK_SERVICES) {
       }),
     });
   });
+  await page.route(/\/functions\/v1\/dokohilf-guide-audio(?:\?.*)?$/, async route => {
+    const url = new URL(route.request().url());
+    if (url.searchParams.get('manifest') === '1') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json; charset=utf-8',
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({
+          schemaVersion: 1,
+          buildId: '20260806-27',
+          voice: 'Gacrux',
+          source: 'ui-render-mock',
+          entryCount: 0,
+          entries: [],
+        }),
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'audio/wav',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: silentWav(),
+    });
+  });
   await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => {
     const wav = silentWav();
     await route.fulfill({
