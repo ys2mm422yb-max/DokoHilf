@@ -34,7 +34,8 @@ def main() -> None:
     parser.add_argument('--limit', type=int, default=0)
     args = parser.parse_args()
 
-    catalog = json.loads(Path(args.catalog).read_text(encoding='utf-8'))
+    catalog_path = Path(args.catalog)
+    catalog = json.loads(catalog_path.read_text(encoding='utf-8'))
     entries = list(catalog.get('entries') or [])
     if not entries:
         raise SystemExit('guide audio catalog is empty')
@@ -71,6 +72,10 @@ def main() -> None:
             'bytes': destination.stat().st_size,
             'duration': float(duration[0]) if hasattr(duration, '__len__') else float(duration),
         })
+
+    catalog['voice'] = f'Supertonic-{args.voice}'
+    catalog['generatedWith'] = 'Supertonic 3 static GitHub build'
+    catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
     (output_root / 'build-summary.json').write_text(
         json.dumps({
