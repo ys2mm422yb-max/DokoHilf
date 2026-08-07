@@ -4,6 +4,13 @@ import { chromium } from 'playwright';
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || 'artifacts/mobile-v27';
 const USE_MOCK_SERVICES = process.env.DOKOHILF_UI_MOCK === '1';
+const PROFILE = process.env.DOKOHILF_MOBILE_PROFILE || 'ios';
+const VIEWPORT_WIDTH = Number(process.env.DOKOHILF_VIEWPORT_WIDTH || 393);
+const VIEWPORT_HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || 852);
+const DEVICE_SCALE_FACTOR = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
+const USER_AGENT = PROFILE === 'android'
+  ? 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'
+  : 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1';
 
 function silentWav() {
   const samples = 2400;
@@ -28,13 +35,14 @@ function silentWav() {
 await mkdir(OUTPUT_DIR, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
-  viewport: { width: 393, height: 852 },
-  deviceScaleFactor: 2,
+  viewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT },
+  deviceScaleFactor: DEVICE_SCALE_FACTOR,
   isMobile: true,
   hasTouch: true,
   colorScheme: 'dark',
   locale: 'de-DE',
   reducedMotion: 'reduce',
+  userAgent: USER_AGENT,
 });
 const page = await context.newPage();
 const consoleErrors = [];
@@ -81,12 +89,7 @@ if (USE_MOCK_SERVICES) {
       });
       return;
     }
-    await route.fulfill({
-      status: 200,
-      contentType: 'audio/wav',
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      body: silentWav(),
-    });
+    await route.fulfill({ status: 200, contentType: 'audio/wav', headers: { 'Access-Control-Allow-Origin': '*' }, body: silentWav() });
   });
   await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => {
     const wav = silentWav();
@@ -142,6 +145,7 @@ async function openDeterministicFirstStart() {
 async function layoutState() {
   return page.evaluate(() => ({
     viewportWidth: window.innerWidth,
+    viewportHeight: window.innerHeight,
     documentWidth: document.documentElement.scrollWidth,
     bodyWidth: document.body.scrollWidth,
     mode: document.getElementById('appShell')?.dataset.mode || null,
@@ -153,7 +157,7 @@ try {
   const privacyButton = await openDeterministicFirstStart();
   const privacyDialog = page.locator('#privacyAckV27');
   assert(await privacyDialog.isVisible(), 'Erststart-Datenschutzbestätigung fehlt.');
-  await page.screenshot({ path: `${OUTPUT_DIR}/00-privacy-first-start.png`, fullPage: false });
+  await page.screenshot({ path: `${OUTPUT_DIR}/00-privacy-first-start-${PROFILE}.png`, fullPage: false });
   await privacyButton.click();
   await privacyDialog.waitFor({ state: 'detached' });
 
@@ -177,14 +181,62 @@ try {
   assert(identity.bodyBackground !== 'none', 'Dunkle Hintergrundgestaltung fehlt.');
 
   const startLayout = await layoutState();
-  assert(startLayout.documentWidth <= startLayout.viewportWidth + 1, 'Startseite hat horizontalen Überlauf.');
+  assert(startLayout.documentWidth <= startLayout.viewportWidth + 1, `Startseite hat auf ${PROFILE} horizontalen Überlauf.`);
   assert(await page.locator('[data-select-mode="voice"]').isVisible(), 'Sprechen-Karte fehlt.');
   assert(await page.locator('[data-select-mode="chat"]').isVisible(), 'Schreiben-Karte fehlt.');
-  assert(await page.getByRole('button', { name: 'Bericht anlegen' }).isVisible(), 'Häufiger Ablauf Bericht fehlt.');
-  await page.screenshot({ path: `${OUTPUT_DIR}/01-start-dark-iphone.png`, fullPage: true });
+  await page.waitForFunction(() => document.querySelectorAll('.examples button[data-direct-guide]').length === 7, null, { timeout: 8_000 });
+  assert(await page.locator('.examples button[data-direct-guide]').count() === 7, 'Die sieben sichtbaren häufigen Abläufe sind nicht vollständig als direkte Anleitungen verdrahtet.');
+  assert(await page.locator('.examples button[data-prompt]').count() === 0, 'Alte Chat-Prompts haben die direkten Hauptmenü-Abläufe wieder überschrieben.');
+  assert(await page.getByRole('button', { name: 'Übergabe anzeigen' }).isVisible(), 'Direkte Übergabe-Anleitung fehlt.');
+  await page.screenshot({ path: `${OUTPUT_DIR}/01-start-dark-${PROFILE}.png`, fullPage: true });
 
+  // Häufige Abläufe öffnen die vollständige Anleitung direkt – ohne KI-Roundtrip und ohne Chat dazwischen.
   await page.getByRole('button', { name: 'Bericht anlegen' }).click();
+  const directGuide = page.locator('#directGuideView');
+  await directGuide.waitFor({ state: 'visible' });
+  assert(await page.locator('#workspace').isHidden(), 'Direkte Anleitung öffnet zusätzlich den Chat-Arbeitsbereich.');
+  assert((await layoutState()).mode === 'direct-guide', 'Direkte Anleitung setzt keinen eigenen UI-Modus.');
+  assert(await directGuide.locator('.direct-guide-step').count() === 12, 'Bericht-Anleitung ist nicht vollständig mit 12 bestätigten Schritten sichtbar.');
+  const directGuideLabel = directGuide.locator('.direct-guide-heading > span').first();
+  await directGuideLabel.waitFor({ state: 'visible' });
+  assert((await directGuideLabel.textContent())?.trim() === 'Komplette Anleitung', 'Direkte Anleitung ist nicht eindeutig als komplette Anleitung gekennzeichnet.');
+  const directGuideLayout = await layoutState();
+  assert(directGuideLayout.documentWidth <= directGuideLayout.viewportWidth + 1, `Direkte Anleitung hat auf ${PROFILE} horizontalen Überlauf.`);
+  const directBack = await directGuide.locator('.direct-guide-back').boundingBox();
+  assert(directBack && directBack.width >= 40 && directBack.height >= 40, `Zurück-Touchziel ist auf ${PROFILE} zu klein.`);
+  await page.screenshot({ path: `${OUTPUT_DIR}/02-direct-guide-${PROFILE}.png`, fullPage: true });
+
+  await page.locator('[data-direct-guide-close]').first().click();
+  await page.locator('#startScreen').waitFor({ state: 'visible' });
+  await page.getByRole('button', { name: 'Vitalwerte erfassen' }).click();
+  await directGuide.waitFor({ state: 'visible' });
+  assert(await directGuide.locator('[data-direct-guide-variant]').count() === 2, 'Vitalwerte bietet nicht beide bestätigten Varianten an.');
+  await directGuide.locator('[data-direct-guide-variant="vitalSammel"]').click();
+  assert(await directGuide.locator('.direct-guide-step').count() === 6, 'Sammelerfassung zeigt nicht die vollständigen sechs bestätigten Schritte.');
+  await page.locator('[data-direct-guide-close]').first().click();
+  await page.locator('#startScreen').waitFor({ state: 'visible' });
+
+  await page.getByRole('button', { name: 'Übergabe anzeigen' }).click();
+  await directGuide.waitFor({ state: 'visible' });
+  assert(await directGuide.locator('.direct-guide-step').count() === 4, 'Übergabe zeigt nicht die vier bestätigten Schritte.');
+  await page.locator('[data-direct-guide-close]').first().click();
+  await page.locator('#startScreen').waitFor({ state: 'visible' });
+
+  // Der Schreibmodus bleibt als eigener kompakter Chat erreichbar.
+  await page.locator('[data-select-mode="chat"]').click();
   await page.locator('#workspace').waitFor({ state: 'visible' });
+  await page.locator('.chat-head').waitFor({ state: 'visible' });
+  const chatEyebrow = page.locator('.chat-eyebrow');
+  assert((await chatEyebrow.textContent())?.trim() === 'DokoHilf Chat', 'Kompakte Chat-Kennung fehlt.');
+  assert((await page.locator('.chat-head h1').textContent())?.trim() === 'Schreib deine Frage.', 'Alte Build-27-Schicht überschreibt den kompakten Chatkopf.');
+  const chatLayout = await layoutState();
+  assert(chatLayout.documentWidth <= chatLayout.viewportWidth + 1, `Chat hat auf ${PROFILE} horizontalen Überlauf.`);
+  const chatHeadBox = await page.locator('.chat-head').boundingBox();
+  assert(chatHeadBox && chatHeadBox.height <= 190, `Chat-Kopf ist auf ${PROFILE} zu hoch: ${chatHeadBox?.height}`);
+  await page.screenshot({ path: `${OUTPUT_DIR}/03-chat-clean-${PROFILE}.png`, fullPage: true });
+
+  // Bestehender schrittweiser Chat und die Sprachbühne bleiben Regressionstests.
+  await page.getByRole('button', { name: 'Visite', exact: true }).click();
   await page.locator('.message.assistant .bubble').last().waitFor({ state: 'visible', timeout: 20_000 });
   await page.waitForTimeout(350);
 
@@ -201,11 +253,7 @@ try {
 
   const visibleText = await page.locator('body').innerText();
   assert(!/In Übungen nur Fantasie|Im öffentlichen Test nur Fantasie/i.test(visibleText), 'Wiederholter Fantasiedaten-Hinweis ist im Guide sichtbar.');
-  const chatLayout = await layoutState();
-  assert(chatLayout.documentWidth <= chatLayout.viewportWidth + 1, 'Chat hat horizontalen Überlauf.');
-  await page.screenshot({ path: `${OUTPUT_DIR}/02-chat-compact-iphone.png`, fullPage: true });
 
-  // Guide-Zustand bleibt aktiv; direkt in die Sprachansicht wechseln, damit die echte Schrittkarte mitgetestet wird.
   await page.locator('[data-switch-mode="voice"]').click();
   const voiceStage = page.locator('.voice-focus-stage');
   await voiceStage.waitFor({ state: 'visible', timeout: 15_000 });
@@ -217,21 +265,21 @@ try {
   const instruction = page.locator('.voice-focus-instruction');
   await instruction.waitFor({ state: 'visible', timeout: 8_000 });
   const instructionBox = await instruction.boundingBox();
-  assert(topbarBox && stageBox && stageBox.y >= topbarBox.y + topbarBox.height, `Sprachfläche liegt unter der Kopfzeile: topbar ${JSON.stringify(topbarBox)}, stage ${JSON.stringify(stageBox)}`);
+  assert(topbarBox && stageBox && stageBox.y >= topbarBox.y + topbarBox.height, `Sprachfläche liegt auf ${PROFILE} unter der Kopfzeile: topbar ${JSON.stringify(topbarBox)}, stage ${JSON.stringify(stageBox)}`);
   assert(!(await page.locator('.build-status').isVisible().catch(() => false)), 'Versionsstatus überlagert den fokussierten Sprachmodus.');
 
   const shell = page.locator('#appShell');
   await shell.evaluate(element => { element.dataset.voiceState = 'idle'; });
   const idleBox = await page.locator('.voice-focus-stage .voice-orb').boundingBox();
   assert(idleBox && idleBox.width <= 90, `Mikrofon ist im Leerlauf zu groß: ${idleBox?.width}`);
-  await page.screenshot({ path: `${OUTPUT_DIR}/03-voice-idle-iphone.png`, fullPage: false });
+  await page.screenshot({ path: `${OUTPUT_DIR}/04-voice-idle-${PROFILE}.png`, fullPage: false });
 
   await shell.evaluate(element => { element.dataset.voiceState = 'listening'; });
   await page.waitForTimeout(300);
   const listeningBox = await page.locator('.voice-focus-stage .voice-orb').boundingBox();
   const actionsBox = await page.locator('.voice-focus-actions').boundingBox();
   assert(listeningBox && idleBox && listeningBox.width >= idleBox.width + 40, `Mikrofon wird beim Zuhören nicht deutlich größer: idle ${idleBox?.width}, listening ${listeningBox?.width}`);
-  assert(listeningBox && listeningBox.width <= 140, `Mikrofon dominiert die iPhone-Fläche noch zu stark: ${listeningBox?.width}`);
+  assert(listeningBox && listeningBox.width <= 140, `Mikrofon dominiert die mobile Fläche noch zu stark: ${listeningBox?.width}`);
   assert(instructionBox && listeningBox, 'Schrittkarte oder Mikrofon konnte nicht vermessen werden.');
   const instructionToOrbGap = listeningBox.y - (instructionBox.y + instructionBox.height);
   assert(instructionToOrbGap >= 8, `Schrittkarte und Mikrofon liegen zu dicht übereinander: ${instructionToOrbGap}`);
@@ -241,19 +289,25 @@ try {
   assert(actionsBox && stageBox && actionsBox.y + actionsBox.height <= stageBox.y + stageBox.height + 1, 'Aktionsleiste ragt aus der Sprachbühne heraus.');
 
   const voiceLayout = await layoutState();
-  assert(voiceLayout.documentWidth <= voiceLayout.viewportWidth + 1, 'Sprachmodus hat horizontalen Überlauf.');
-  await page.screenshot({ path: `${OUTPUT_DIR}/04-voice-listening-balanced-iphone.png`, fullPage: false });
+  assert(voiceLayout.documentWidth <= voiceLayout.viewportWidth + 1, `Sprachmodus hat auf ${PROFILE} horizontalen Überlauf.`);
+  await page.screenshot({ path: `${OUTPUT_DIR}/05-voice-listening-balanced-${PROFILE}.png`, fullPage: false });
 
   assert(consoleErrors.length === 0, `Console-Fehler: ${consoleErrors.join(' | ')}`);
   assert(pageErrors.length === 0, `Page-Fehler: ${pageErrors.join(' | ')}`);
 
   const report = {
     passed: true,
+    profile: PROFILE,
     url: BASE_URL,
-    viewport: { width: 393, height: 852, deviceScaleFactor: 2 },
+    viewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT, deviceScaleFactor: DEVICE_SCALE_FACTOR },
     mockServices: USE_MOCK_SERVICES,
     identity,
     privacyAcknowledgementStored: true,
+    directGuideButtonCount: 7,
+    directGuideStepCount: 12,
+    handoverStepCount: 4,
+    vitalVariantCount: 2,
+    chatHeadHeight: chatHeadBox?.height,
     visibleCommands,
     progressHeight: progressBox?.height,
     topbarBottom: topbarBox ? topbarBox.y + topbarBox.height : null,
@@ -267,10 +321,10 @@ try {
     pageErrors,
   };
   await writeFile(`${OUTPUT_DIR}/report.json`, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  console.log('DokoHilf mobile Renderprüfung bestanden.');
+  console.log(`DokoHilf mobile Renderprüfung ${PROFILE} bestanden.`);
 } catch (error) {
-  await page.screenshot({ path: `${OUTPUT_DIR}/failure.png`, fullPage: true }).catch(() => {});
-  await writeFile(`${OUTPUT_DIR}/report.json`, `${JSON.stringify({ passed: false, error: error.message, consoleErrors, pageErrors }, null, 2)}\n`, 'utf8');
+  await page.screenshot({ path: `${OUTPUT_DIR}/failure-${PROFILE}.png`, fullPage: true }).catch(() => {});
+  await writeFile(`${OUTPUT_DIR}/report.json`, `${JSON.stringify({ passed: false, profile: PROFILE, error: error.message, consoleErrors, pageErrors }, null, 2)}\n`, 'utf8');
   throw error;
 } finally {
   await browser.close();
