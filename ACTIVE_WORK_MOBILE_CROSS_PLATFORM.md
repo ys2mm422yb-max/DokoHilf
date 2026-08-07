@@ -55,4 +55,4 @@ Jeder neue Chat muss diese Datei zusammen mit den übrigen `ACTIVE_WORK_*.md` le
 
 ## Datenschutz
 
-Nutzerbilder/Screenshots bleiben weiterhin ausschließlich im Chat. Für automatisierte iOS-/Android-Renderprüfungen werden nur künstliche Oberflächen und Fantasiedaten verwendet.
+Automatisierte iOS-/Android-Renderprüfungen verwenden ausschließlich selbst erzeugte, synthetische Oberflächen und Fantasiedaten. Reale Personen-, Gesundheits-, Mitarbeiter- oder Falldaten sind dauerhaft ausgeschlossen.

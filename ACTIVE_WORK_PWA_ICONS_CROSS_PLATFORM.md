@@ -3,11 +3,11 @@
 **Stand:** 7. August 2026  
 **Build:** `20260806-27`  
 **Branch:** `fix/pwa-install-icons-v3-20260807`  
-**Status:** Umsetzung läuft; vollständige PR-Validierung steht noch aus
+**Status:** abgeschlossen und veröffentlicht
 
 ## Nutzerfeedback
 
-Der Nutzer meldete nach dem ersten Icon-Restyling, dass auf dem Homescreen weiterhin das gleiche beziehungsweise alte App-Symbol sichtbar ist. Zusätzlich hat der Nutzer ausdrücklich festgelegt, dass DokoHilf **nicht nur auf dem iPhone**, sondern bei jeder mobilen Änderung auch auf **Android** passend funktionieren muss.
+Nach dem ersten Icon-Restyling war auf dem Homescreen weiterhin das gleiche beziehungsweise alte App-Symbol sichtbar. Zusätzlich gilt verbindlich, dass DokoHilf **nicht nur auf dem iPhone**, sondern bei jeder mobilen Änderung auch auf **Android** passend funktionieren muss.
 
 Die dauerhafte Cross-Platform-Regel steht in `ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md` und gilt für die gesamte Webapp/PWA.
 
@@ -31,7 +31,7 @@ Das neue Symbol ist bewusst näher an der dunklen Build-27-Oberfläche:
 - kleine Audiopegel links und rechts;
 - ausreichend Innenabstand für Android `maskable`.
 
-`icon-v3.svg` ist die diffbare Vektorquelle. Die Installations-PNGs werden deterministisch aus eigenem Code erzeugt; keine Nutzerbilder oder externen Assets werden verwendet.
+`icon-v3.svg` ist die diffbare Vektorquelle. Die Installations-PNGs werden deterministisch vollständig aus eigenem Code erzeugt.
 
 ## Plattformdateien
 
@@ -73,12 +73,12 @@ Der Release-Build:
 2. setzt die neuen HTML-/Service-Worker-Referenzen;
 3. verlangt alle vier Dateien;
 4. prüft die iOS- und Android-Metadaten;
-5. erlaubt im öffentlichen Build ausschließlich diese vier freigegebenen Rasterbilder;
+5. erlaubt im öffentlichen Build ausschließlich diese vier freigegebenen Rasterdateien;
 6. blockiert weiterhin jedes andere JPG/JPEG/PNG und alle WAV-Dateien im Pages-Artefakt.
 
 ## Mobile QA
 
-Die bestehende verpflichtende Mobile-QA aus PR #72 läuft weiterhin auf beiden Profilen:
+Die bestehende verpflichtende Mobile-QA läuft auf beiden Profilen:
 
 - iOS: 393 × 852
 - Android: 412 × 915
@@ -87,14 +87,11 @@ Der Icon-Block verändert keine Voice-/Chat-Geometrie. Der exakte Release-Build 
 
 ## Datenschutz
 
-Keine vom Nutzer hochgeladenen Bilder werden verwendet, kopiert, gespeichert oder veröffentlicht. Das neue Icon ist vollständig neu konstruiert und enthält keinerlei Personen-, Bewohner-, Gesundheits- oder Zugangsdaten.
+Das Icon und sämtliche Installationsdateien werden vollständig selbst erzeugt und enthalten keine realen Personen-, Gesundheits-, Mitarbeiter-, Fall- oder Zugangsdaten.
 
-## Noch erforderlich
+## Abschluss
 
-- PR öffnen;
-- exakten Head vollständig über alle DokoHilf-Workflows prüfen;
-- auftretende Fehler nur auf diesem Branch korrigieren;
-- nur vollständig grünen exakten Head manuell mergen;
-- Branch nicht automatisch löschen;
-- danach `main`, `gh-pages`, Manifest, Touch-Icon, Android-Icons und festen Hauptlink kontrollieren;
-- finalen Stand in `PROJECT_HANDOFF.md` dokumentieren.
+- PR #73 wurde auf vollständig grünem exakten Head manuell gemergt;
+- Branch wurde nicht automatisch gelöscht;
+- `main`, `gh-pages`, Manifest, Touch-Icon und Android-Icons wurden geprüft;
+- die versionierten Installationspfade sind veröffentlicht.

@@ -40,34 +40,30 @@
 - Anleitungen werden vollständig selbst formuliert.
 - Der Lizenzvertrag des Arbeitgebers mit dem Softwarehersteller muss vor produktivem Einsatz geprüft werden.
 
-## 5. Absolute Chat-only-Regel für Bilder
+## 5. Öffentliche Inhalts- und Materialgrenze
 
-Die vom Nutzer zur Bestätigung geschickten Bilder und Screenshots bleiben **ausschließlich im jeweiligen Chat**.
+Öffentlich sichtbare DokoHilf-Inhalte müssen vollständig selbst erstellt, anonymisiert und veröffentlichungsfähig sein.
 
-Sie dürfen niemals:
+Repository, Pull Requests, Issues, Actions-Artefakte, Supabase und die App dürfen keine personenbezogenen, gesundheitsbezogenen, produktiven, internen oder fremden geschützten Inhalte enthalten.
 
-- in GitHub-Dateien, Commits, Branches, Issues, Pull Requests oder Actions-Artefakte gelangen;
-- in Supabase-Tabellen, Storage-Buckets, Edge Functions, Logs oder Backups gespeichert werden;
-- in die öffentliche oder installierte App eingebaut werden;
-- in Testfälle, Dokumentationen, Präsentationen oder andere externe Dateien übernommen werden;
-- erneut hochgeladen, verlinkt oder als Bildnachweis veröffentlicht werden.
+Für automatisierte Tests und Renderprüfungen werden ausschließlich vollständig synthetische Oberflächen, Texte und Fantasiedaten verwendet.
 
-Aus den Bildern dürfen ausschließlich anonymisierte, selbst formulierte Text-Klickwege abgeleitet werden. Sichtbare Namen, Benutzerkennungen, Datumsangaben, Bewohnerinformationen oder andere Bildinhalte werden nicht übernommen.
+Öffentliche Projektdokumentation beschreibt ausschließlich Regeln, Ergebnisse, technische Entscheidungen und anonymisierte Fachinhalte. Herkunft, Prüfmaterialien oder interne Ausgangsmaterialien werden nicht öffentlich dokumentiert.
 
-Für automatisierte visuelle Tests werden ausschließlich künstliche Oberflächen und Fantasiedaten verwendet.
+## 6. Dauerhaftes absolutes Echtdatenverbot
 
-## 6. Vollständiges Echtdatenverbot
-
-Bis zur schriftlichen Freigabe durch Arbeitgeber, IT und Datenschutz gilt:
+Diese Regel gilt **dauerhaft, ohne Ausnahme und unabhängig von späteren betrieblichen, technischen oder datenschutzrechtlichen Freigaben**:
 
 - keine Bewohner-, Klienten-, Patienten- oder Angehörigendaten;
 - keine Gesundheitsdaten;
 - keine echten Berichte, Übergaben, Medikamentenpläne, Vitalwerte oder Termine;
-- keine echten Mitarbeiterdaten außer technisch notwendigen Projekt-Testkonten;
-- keine Exporte aus der eingesetzten Dokumentationssoftware;
-- keine Echtdaten in Logs, Fehlermeldungen, Screenshots, Issues, Commits oder Pull Requests.
+- keine realen Mitarbeiterdaten oder realen Mitarbeiterkonten;
+- keine Exporte oder Kopien aus produktiven Dokumentationssystemen;
+- keine Echtdaten in Logs, Fehlermeldungen, Issues, Commits, Pull Requests, Actions-Artefakten, Supabase oder der App.
 
-Testdaten müssen vollständig erfunden sein und dürfen keiner realen Person nachgebildet werden.
+Testkonten und Testdaten müssen vollständig synthetisch sein und dürfen keiner realen Person nachgebildet werden.
+
+Eine spätere Freigabe darf dieses Verbot **nicht** aufheben oder abschwächen. Soll DokoHilf jemals in einem realen betrieblichen Kontext eingesetzt werden, bleibt die Anwendung trotzdem strikt von Echtdaten getrennt.
 
 ## 7. Datenschutz, lokale Speicherung und Audio
 
@@ -75,9 +71,9 @@ Testdaten müssen vollständig erfunden sein und dürfen keiner realen Person na
 - Keine Werbung, Nutzertracking, Analyse-SDKs, Social-Media-Pixel oder unnötigen Cookies.
 - Gesprächsverläufe, Nutzerstimmen, Diktate, freie Sprachantworten und personenbezogene Audioinhalte werden nicht dauerhaft im Browser, Repository oder in Supabase gespeichert.
 - Flüchtige Caches für dynamische Sprachantworten dürfen ausschließlich im Arbeitsspeicher existieren und müssen mit dem Prozess enden.
-- Als eng begrenzte Ausnahme dürfen **allgemeine, fachlich freigegebene Guide-Anweisungen** einmal mit Gacrux erzeugt und als statische WAV-Dateien in der App ausgeliefert und im PWA-Cache gespeichert werden.
-- Diese statischen Dateien dürfen ausschließlich aus `step.text` freigegebener Guides entstehen. Nutzerantworten, Checks, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten sind als Audioquelle ausgeschlossen.
-- Jede statische Guide-Audiodatei benötigt einen dokumentierten Textschlüssel, gültigen WAV-Header, Dateigröße und SHA-256 im Manifest. Ändert sich der freigegebene Text, muss die Datei neu erzeugt werden.
+- Als eng begrenzte Ausnahme dürfen **allgemeine, fachlich freigegebene Guide-Anweisungen** einmal mit einer natürlichen Stimme erzeugt und als statische Audiodateien technisch bereitgestellt und im PWA-Cache gespeichert werden.
+- Diese statischen Dateien dürfen ausschließlich aus freigegebenen Guide-Texten entstehen. Nutzerantworten, Checks, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten sind als Audioquelle ausgeschlossen.
+- Jede statische Guide-Audiodatei benötigt einen dokumentierten Textschlüssel, gültigen Dateinachweis, Dateigröße und SHA-256 im Manifest. Ändert sich der freigegebene Text, muss die Datei neu erzeugt werden.
 - Lokal dauerhaft gespeichert werden darf genau ein unpersönliches Ja/Nein-Merkmal: `dokohilf-privacy-ack-v1=yes`. Es zeigt ausschließlich an, dass der zentrale Datenschutz-Hinweis bereits bestätigt wurde. Keine Zeit, Identität, Gerätekennung oder weitere Nutzungsinformation speichern.
 - Vor Produktivstart müssen Verantwortlicher, Rechtsgrundlage, Datenschutzhinweis, Löschkonzept, Berechtigungskonzept und Auftragsverarbeitungsverträge geklärt sein.
 - Eine EU-Region ersetzt keine vollständige DSGVO-Prüfung.
@@ -88,7 +84,7 @@ Testdaten müssen vollständig erfunden sein und dürfen keiner realen Person na
 - `anon` erhält keinen unkontrollierten Zugriff auf interne Inhalte.
 - Öffentliche Selbstregistrierung bleibt deaktiviert; Nutzer werden kontrolliert eingeladen oder freigeschaltet.
 - Rollen niemals aus nutzerveränderbarem `user_metadata` ableiten.
-- `service_role`, Secret Keys, Datenbankpasswörter und privilegierte Schlüssel niemals im Browser, Repository, Issue, Chat oder Screenshot speichern.
+- `service_role`, Secret Keys, Datenbankpasswörter und privilegierte Schlüssel niemals im Browser, Repository, Issue oder öffentlich sichtbaren Projekttext speichern.
 - Im Frontend nur Publishable Key und nur zusammen mit geprüften RLS-Regeln.
 - Jede Migration enthält erforderliche Grants, RLS und Policies.
 - Vor Veröffentlichung Security Advisor und Zugriffstests prüfen.
@@ -96,7 +92,7 @@ Testdaten müssen vollständig erfunden sein und dürfen keiner realen Person na
 ## 9. GitHub, Veröffentlichung und Secrets
 
 - Das Repository ist aktuell öffentlich; deshalb dürfen dort ausschließlich neutrale, anonymisierte und veröffentlichungsfähige Inhalte liegen.
-- Keine Echtdaten oder internen Screenshots im Repository oder in der Git-Historie.
+- Keine Echtdaten oder internen nicht öffentlichen Inhalte im Repository oder in der Git-Historie.
 - Keine `.env`-Dateien oder Secrets committen.
 - Keine internen Fallinformationen in Issues und Pull Requests.
 - Statische App-Bundles dürfen keine internen oder personenbezogenen Inhalte enthalten.
@@ -125,6 +121,8 @@ Testdaten müssen vollständig erfunden sein und dürfen keiner realen Person na
 - Backup-, Lösch-, Update- und Sicherheitskonzept;
 - Notfall- und Abschaltprozess.
 
+Diese organisatorischen Freigaben erlauben **niemals** die Verarbeitung von Echtdaten in DokoHilf; das absolute Echtdatenverbot aus Abschnitt 6 bleibt unverändert bestehen.
+
 Private Konten dürfen nicht ohne ausdrückliche betriebliche Entscheidung dauerhaft die alleinige Produktiv-Infrastruktur der Einrichtung bleiben.
 
 ## 12. Freigabecheck für jede Anleitung
@@ -132,8 +130,9 @@ Private Konten dürfen nicht ohne ausdrückliche betriebliche Entscheidung dauer
 Eine Anleitung darf erst veröffentlicht werden, wenn alle Punkte erfüllt sind:
 
 - vollständig selbst formulierter Text;
-- keine echten Personen- oder Gesundheitsdaten;
-- keine Bilder aus dem Nutzerchat;
+- ausschließlich anonymisierte und veröffentlichungsfähige Inhalte;
+- keine echten Personen-, Gesundheits-, Mitarbeiter- oder Falldaten;
+- keine fremden geschützten Inhalte;
 - kein Eindruck eines offiziellen Herstellerprodukts;
 - fachlich durch den Nutzer oder eine zuständige Rolle bestätigt;
 - Prüfdatum und verantwortliche Rolle hinterlegt;
@@ -150,8 +149,8 @@ Die Arbeit wird sofort gestoppt, wenn:
 
 - Repository oder Supabase-Projekt-ID nicht eindeutig sind;
 - ein anderes Projekt betroffen sein könnte;
-- echte Bewohner- oder Gesundheitsdaten übernommen werden müssten;
-- ein Bild aus dem Chat außerhalb des Chats gespeichert werden soll;
+- echte Bewohner-, Gesundheits-, Mitarbeiter- oder sonstige Echtdaten übernommen werden müssten;
+- nicht veröffentlichungsfähige, interne oder fremde geschützte Inhalte übernommen werden müssten;
 - fremde Handbuchtexte übernommen werden sollen;
 - ein geheimer Schlüssel im Frontend oder Repository landen würde;
 - eine statische Audiodatei Nutzer-, Gesprächs- oder personenbezogene Inhalte enthalten könnte;
@@ -172,4 +171,4 @@ Diese Regeln sind ein technisches und organisatorisches Schutzkonzept, keine anw
 - Der aktuelle Gesamtstand und alle Übergaben werden in `PROJECT_HANDOFF.md` gepflegt.
 - Laufende größere Aufgaben erhalten bei Bedarf eine eigene `ACTIVE_WORK_*.md`, die im Handoff verlinkt wird.
 - PR-Beschreibungen und relevante Statusdokumente müssen bei Head- oder Scope-Wechseln aktualisiert werden; veraltete Aussagen dürfen nicht als aktueller Stand stehen bleiben.
-- Bild- und Echtdatenregeln bleiben vorrangig: Screenshots selbst werden trotz Dokumentationspflicht niemals nach GitHub übernommen. Dokumentiert werden ausschließlich anonymisierte, selbst formulierte Erkenntnisse.
+- Datenschutz-, Echtdaten- und Veröffentlichungsgrenzen bleiben vorrangig. Öffentlich dokumentiert werden ausschließlich anonymisierte, selbst formulierte und veröffentlichungsfähige Ergebnisse.

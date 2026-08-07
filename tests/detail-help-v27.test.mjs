@@ -66,11 +66,11 @@ test('Detailhilfe bleibt flüchtig und speichert keine Gesprächsdaten', () => {
   assert.match(help, /const session = \{/);
 });
 
-test('v28 Release aktiviert Detailhilfe innerhalb der lokalen Voice-Revision', () => {
+test('v28-2 Release aktiviert Detailhilfe innerhalb der Static-first-Voice-Revision', () => {
   assert.match(buildScript, /apply-detail-help-v27\.mjs/);
   assert.match(buildScript, /assets\/detail-help-v27\.js/);
   assert.match(buildScript, /assets\/detail-help-polish-v27\.js/);
-  assert.match(buildScript, /20260807-local-natural-voice-v28-1/);
+  assert.match(buildScript, /20260807-local-natural-voice-v28-2/);
   assert.match(applyScript, /detail-help-v27\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyScript, /detail-help-polish-v27\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyScript, /HOTFIX_REVISION = '\$\{REVISION\}'/);

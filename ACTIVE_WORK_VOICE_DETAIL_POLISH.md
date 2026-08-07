@@ -5,9 +5,9 @@
 **Build:** `20260806-27`  
 **PWA-Hotfixrevision:** `20260807-voice-followup-detail-polish-1`
 
-## Nutzerproblem
+## Reproduziertes Produktproblem
 
-Der Nutzer hat reproduzierbar gemeldet:
+Im praktischen Mobiltest wurden drei Probleme bestätigt:
 
 - Die Begrüßung im Sprachmodus wird gesprochen, spätere Antworten bleiben jedoch stumm oder starten erst sehr spät.
 - Die Detailhilfe bei `Ich finde das nicht` war mobil zu voll, enthielt interne Zustandsformulierungen und konkurrierende Aktionen.
@@ -83,10 +83,9 @@ Der Cross-Platform-Test prüft:
 - Supabase-Projekt `efifbuqctylsujiauabg` wurde nach dem Merge als `ACTIVE_HEALTHY` geprüft.
 - Dieser Arbeitsblock erforderte **keine Supabase-Schreibänderung**.
 
-## Datenschutz / Bilder
+## Datenschutz
 
-- Nutzer-Screenshots und Fotos bleiben ausschließlich im Chat.
-- Keine Bilder, Bewohnerdaten, Mitarbeiterdaten, Gesundheitsdaten oder sonstigen Echtdaten wurden in GitHub, Supabase, Tests oder Artefakte übernommen.
+DokoHilf enthält ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Projektinhalte sowie vollständig synthetische Testdaten. Reale Personen-, Gesundheits-, Mitarbeiter-, Fall- und Zugangsdaten sind dauerhaft ausgeschlossen.
 
 ## Nächster realer Praxistest
 

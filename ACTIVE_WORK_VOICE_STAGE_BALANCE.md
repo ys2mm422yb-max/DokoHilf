@@ -1,22 +1,22 @@
 # Aktiver Arbeitsstand – iPhone-Sprachbühne visuell ausbalancieren
 
 **Stand:** 7. August 2026  
-**Status:** Umsetzung abgeschlossen, vollständige Validierung ausstehend  
+**Status:** abgeschlossen und veröffentlicht  
 **Build:** `20260806-27`  
-**Branch:** `fix/voice-stage-balance-20260807`
+**Produkt-PR:** `#70`
 
 ## Nutzer-Retest
 
-Nach dem veröffentlichten Überlappungs-/Latenzfix aus PR #67 meldete der Nutzer auf dem iPhone: Die Ansicht sei sichtbar besser, aber noch nicht zufriedenstellend.
+Nach dem veröffentlichten Überlappungs-/Latenzfix aus PR #67 wurde auf dem iPhone bestätigt: Die Ansicht war sichtbar besser, aber noch nicht zufriedenstellend.
 
-Das aktuelle Nutzerbild zeigt keine alte harte Überlagerung mehr. Der verbleibende Qualitätsmangel ist jetzt überwiegend **Geometrie und visuelle Hierarchie**:
+Der verbleibende Qualitätsmangel war überwiegend **Geometrie und visuelle Hierarchie**:
 
-- zwischen Schrittkarte und Mikrofon liegt zu viel tote vertikale Fläche
-- das aktive Mikrofon sitzt optisch zu tief und wirkt von der Schrittkarte getrennt
-- Status und Pause wirken wie ein eigener dritter Block statt als Teil der Mikrofoninteraktion
-- die unteren Aktionen sind korrekt erreichbar, aber der Gesamtbildschirm wirkt nicht wie eine zusammenhängende Sprachbühne
+- zwischen Schrittkarte und Mikrofon lag zu viel tote vertikale Fläche
+- das aktive Mikrofon saß optisch zu tief und wirkte von der Schrittkarte getrennt
+- Status und Pause wirkten wie ein eigener dritter Block statt als Teil der Mikrofoninteraktion
+- die unteren Aktionen waren erreichbar, aber der Gesamtbildschirm wirkte nicht wie eine zusammenhängende Sprachbühne
 
-Das Nutzerbild bleibt ausschließlich im Chat und wird weder in GitHub noch Supabase, Tests oder Artefakte übernommen.
+Öffentlich dokumentiert werden ausschließlich das beobachtete Produktverhalten, technische Ursachen und anonymisierte Ergebnisse.
 
 ## Ziel
 
@@ -85,18 +85,14 @@ Der Test hält einen aktiven Guide offen, wechselt **mit bestehender Schrittkart
 - Aktionsleiste bleibt vollständig innerhalb der Bühne
 - kein horizontaler Overflow
 
-Damit würde genau die im neuen Nutzerbild sichtbare riesige tote Fläche künftig als Regression fehlschlagen.
+Damit würde dieselbe übergroße tote Fläche künftig als Regression fehlschlagen.
 
-## Parallel laufender anderer Produktblock
+## Trennung zu anderen Produktblöcken
 
-PR #69 (`feature/direct-guides-chat-polish-20260807`) bleibt bewusst getrennt. Dieser Branch verändert ausschließlich die Voice-Geometrie und ihre Tests. Direkte häufige Anleitungen und der größere Chat-Umbau werden hier nicht eingemischt.
+Der damalige PR #69 blieb bewusst getrennt. Dieser Block veränderte ausschließlich die Voice-Geometrie und ihre Tests. Direkte häufige Anleitungen und der größere Chat-Umbau wurden separat bearbeitet.
 
-## Noch erforderlich
+## Abschluss
 
-- Pull Request öffnen
-- exakten Head über die vollständigen DokoHilf-Workflows prüfen
-- tatsächliches 393 × 852-Renderartefakt kontrollieren
-- nur vollständig grünen exakten Head manuell mergen
-- Branch nicht automatisch löschen
-- danach `main`, `gh-pages`, Service Worker und tatsächlich ausgelieferte Balance-CSS prüfen
-- finalen Live-Stand in `PROJECT_HANDOFF.md` dokumentieren
+- PR #70 wurde auf vollständig grünem exakten Head manuell gemergt;
+- Branch wurde nicht automatisch gelöscht;
+- `main`, `gh-pages`, Service Worker und die tatsächlich ausgelieferte Balance-CSS wurden geprüft.

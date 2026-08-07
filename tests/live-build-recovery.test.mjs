@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [html, worker, version, router, localVoice, premiumCss25, premiumCss26, premiumCss27, activeVoice, confirmed] = await Promise.all([
+const [html, worker, version, router, localVoice, premiumCss25, premiumCss26, premiumCss27, activeVoice, confirmed, rules] = await Promise.all([
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
   readFile(new URL('../version.json', import.meta.url), 'utf8'),
@@ -13,6 +13,7 @@ const [html, worker, version, router, localVoice, premiumCss25, premiumCss26, pr
   readFile(new URL('../assets/premium-ui-v27.css', import.meta.url), 'utf8'),
   readFile(new URL('../ACTIVE_WORK_LOCAL_VOICE_V28.md', import.meta.url), 'utf8'),
   readFile(new URL('../CONFIRMED_WORKFLOWS.md', import.meta.url), 'utf8'),
+  readFile(new URL('../PROJECT_RULES.md', import.meta.url), 'utf8'),
 ]);
 
 test('Build 28 ist in HTML, Versionsdatei und Service Worker identisch', () => {
@@ -70,12 +71,14 @@ test('Router v9 hält Ziele, erkennt neue Ziele und schützt Medikation', () => 
   assert.match(router, /Vitalwerte Sammelerf\./);
 });
 
-test('dauerhafte Fach- und Mobile-Grenzen bleiben im v28-Block dokumentiert', () => {
+test('dauerhafte Fach-, Mobile- und Veröffentlichungsgrenzen bleiben im v28-Block dokumentiert', () => {
   assert.match(activeVoice, /iOS \*\*und\*\* Android/);
   assert.match(activeVoice, /iOS 393×852/);
   assert.match(activeVoice, /Android 412×915/);
-  assert.match(activeVoice, /keine Nutzerbilder\/Screenshots/);
-  assert.match(confirmed, /Bilder bleiben ausschließlich im Chat/);
+  assert.match(activeVoice, /ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Projektinhalte/);
+  assert.match(confirmed, /Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien/);
+  assert.match(rules, /Dauerhaftes absolutes Echtdatenverbot/);
+  assert.match(rules, /Eine spätere Freigabe darf dieses Verbot \*\*nicht\*\* aufheben oder abschwächen/);
   assert.match(confirmed, /Klienten auswählen/);
   assert.match(confirmed, /Bis leer lassen und niemals schätzen/);
 });

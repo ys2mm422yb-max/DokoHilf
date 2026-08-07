@@ -7,9 +7,31 @@ const HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE === 'andr
 const SCALE = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/detail-help-v27/${PROFILE}`;
+const GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+function silentWav() {
+  const sampleRate = 8000;
+  const samples = 640;
+  const dataSize = samples * 2;
+  const buffer = Buffer.alloc(44 + dataSize);
+  buffer.write('RIFF', 0, 'ascii');
+  buffer.writeUInt32LE(36 + dataSize, 4);
+  buffer.write('WAVE', 8, 'ascii');
+  buffer.write('fmt ', 12, 'ascii');
+  buffer.writeUInt32LE(16, 16);
+  buffer.writeUInt16LE(1, 20);
+  buffer.writeUInt16LE(1, 22);
+  buffer.writeUInt32LE(sampleRate, 24);
+  buffer.writeUInt32LE(sampleRate * 2, 28);
+  buffer.writeUInt16LE(2, 32);
+  buffer.writeUInt16LE(16, 34);
+  buffer.write('data', 36, 'ascii');
+  buffer.writeUInt32LE(dataSize, 40);
+  return buffer;
 }
 
 await mkdir(OUTPUT_DIR, { recursive: true });
@@ -109,6 +131,8 @@ await page.addInitScript(({ profile }) => {
 
 let unexpectedRouterRequests = 0;
 let cloudTtsRequests = 0;
+let approvedManifestRequests = 0;
+let approvedAudioRequests = 0;
 await page.route(/\/functions\/v1\/dokohilf-ai-router(?:\?.*)?$/, async route => {
   unexpectedRouterRequests += 1;
   await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'detail_help_should_intercept_before_router' }) });
@@ -116,6 +140,38 @@ await page.route(/\/functions\/v1\/dokohilf-ai-router(?:\?.*)?$/, async route =>
 await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => {
   cloudTtsRequests += 1;
   await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'cloud_tts_forbidden_in_v28' }) });
+});
+await page.route(/\/functions\/v1\/dokohilf-guide-audio(?:\?.*)?$/, async route => {
+  const url = new URL(route.request().url());
+  if (url.searchParams.get('manifest') === '1') {
+    approvedManifestRequests += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({
+        schemaVersion: 2,
+        buildId: '20260806-27',
+        voice: 'Gacrux',
+        entryCount: 1,
+        complete: false,
+        entries: [{
+          index: 0,
+          key: 'greeting',
+          text: GREETING,
+          file: 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-guide-audio?index=000&build=20260806-27',
+        }],
+      }),
+    });
+    return;
+  }
+  approvedAudioRequests += 1;
+  await route.fulfill({
+    status: 200,
+    contentType: 'audio/wav',
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    body: silentWav(),
+  });
 });
 
 try {
@@ -158,8 +214,11 @@ try {
   await page.locator('#startScreen').waitFor({ state: 'visible' });
   await page.locator('[data-select-mode="voice"]').click();
   await page.locator('.voice-focus-stage').waitFor({ state: 'visible' });
-  await page.waitForFunction(() => (window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__?.length || 0) >= 1);
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit === '0');
+  assert(approvedManifestRequests >= 1, 'Der freigegebene Audio-Manifestpfad wurde nicht geprüft.');
+  assert(approvedAudioRequests === 1, `Begrüßungs-Audio wurde ${approvedAudioRequests}x statt einmal geladen.`);
   const localCallsBefore = await page.evaluate(() => window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__.length);
+  assert(localCallsBefore === 0, 'Die Begrüßung darf die lokale Inferenzengine nicht starten.');
 
   await page.evaluate(() => window.DokoHilf?.sendMessage?.('Ich finde die Vitalwerte nicht wo sind die?', { fromVoice: true }));
   const voiceHelp = page.locator('#voiceDetailHelpOptionsV27');
@@ -208,6 +267,8 @@ try {
     viewport: { width: WIDTH, height: HEIGHT },
     routerRequests: unexpectedRouterRequests,
     cloudTtsRequests,
+    approvedManifestRequests,
+    approvedAudioRequests,
     localCalls,
     systemCalls,
     geometry,

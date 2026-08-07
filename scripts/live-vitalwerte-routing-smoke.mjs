@@ -39,12 +39,12 @@ const result = {
 };
 
 await mkdir('artifacts', { recursive: true });
-await writeFile('artifacts/dokohilf-screenshot-regression.json', JSON.stringify(result, null, 2), 'utf8');
+await writeFile('artifacts/dokohilf-vitalwerte-routing-regression.json', JSON.stringify(result, null, 2), 'utf8');
 await writeFile(
-  'artifacts/dokohilf-screenshot-regression.md',
-  `# Screenshot-Regressionsprüfung\n\n- ${passed ? '✅' : '❌'} „${input}“ → ${payload.source || payload.guideSlug || `HTTP ${response.status}`}\n`,
+  'artifacts/dokohilf-vitalwerte-routing-regression.md',
+  `# Vitalwerte-Routing-Regressionsprüfung\n\n- ${passed ? '✅' : '❌'} „${input}“ → ${payload.source || payload.guideSlug || `HTTP ${response.status}`}\n`,
   'utf8',
 );
 
-console.log(`DokoHilf Screenshot-Regressionsprüfung: ${passed ? 'bestanden' : 'fehlgeschlagen'}.`);
+console.log(`DokoHilf Vitalwerte-Routing-Regressionsprüfung: ${passed ? 'bestanden' : 'fehlgeschlagen'}.`);
 if (!passed) process.exitCode = 1;

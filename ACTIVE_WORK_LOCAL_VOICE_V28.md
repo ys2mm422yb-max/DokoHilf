@@ -9,7 +9,7 @@
 
 ## Nutzerentscheidung
 
-Der Nutzer möchte für den Sprachmodus:
+Für den Sprachmodus gelten folgende Ziele:
 
 - keine hörbare iOS-/Android-Systemstimme mehr,
 - eine durchgehend gute/natürliche Stimme auch bei freien Folgeantworten,
@@ -79,8 +79,8 @@ Der erste v28-Sprachkürzer verwendete nur die ersten zwei Sätze einer längere
 
 Unverändert:
 
-- keine Nutzerbilder/Screenshots in Repo, Supabase, Testartefakte oder App übernehmen,
-- keine echten Bewohner-/Gesundheits-/Mitarbeiter-/Zugangsdaten,
+- dauerhaft keine realen Bewohner-, Gesundheits-, Mitarbeiter-, Fall- oder Zugangsdaten,
+- ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Projektinhalte,
 - freie Nutzereingaben weiterhin durch bestehenden DokoHilf-Schutzfilter,
 - keine erfundenen Vivendi-Klickwege.
 
@@ -94,7 +94,7 @@ Neu für lokale TTS:
 
 Supertonic 3 wird laut bei der Implementierung geprüfter Model Card unter OpenRAIL-M angeboten; der Beispielcode ist dort als MIT-lizenziert ausgewiesen. Modellgewichte werden nicht in DokoHilf weiterverteilt. Details stehen in `THIRD_PARTY_NOTICES.md`.
 
-Das ist **keine automatische rechtliche Freigabe** für einen organisationsweiten produktiven Einsatz. Vor einem echten Arbeitsplatz-Rollout müssen Lizenz-/Datenschutz-/IT-Vorgaben separat bestätigt werden.
+Das ist **keine automatische rechtliche Freigabe** für einen organisationsweiten produktiven Einsatz. Vor einem echten Arbeitsplatz-Rollout müssen Lizenz-/Datenschutz-/IT-Vorgaben separat bestätigt werden. Das dauerhafte Echtdatenverbot aus `PROJECT_RULES.md` bleibt unabhängig davon bestehen.
 
 ## Erbrachter Freigabenachweis
 
@@ -126,4 +126,4 @@ Nach Veröffentlichung ist deshalb ein realer Praxistest erforderlich:
 - Klangqualität akzeptabel?
 - Antwortzeit auf echtem iPhone und Android akzeptabel?
 
-Wenn Klang oder Geschwindigkeit auf realen Geräten nicht ausreichen, wird nicht wieder auf die Computerstimme zurückgefallen. Dann wird die lokale Engine/Voice bzw. das Modell neu bewertet.
+Wenn Klang oder Geschwindigkeit auf realen Geräten nicht ausreichen, wird nicht wieder auf die Computerstimme zurückgefallen. Dann wird die lokale Engine/Voice beziehungsweise das Modell neu bewertet.

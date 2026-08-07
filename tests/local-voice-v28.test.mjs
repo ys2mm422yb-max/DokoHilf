@@ -16,32 +16,59 @@ const [runtime, gate, helper, ux, detail, applyLocal, applyDetail, build, versio
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
 ]);
 
-test('v28 uses an on-device German Supertonic voice instead of cloud TTS', () => {
+test('v28 nutzt freigegebene statische Audios zuerst und Supertonic nur für freie Antworten', () => {
   assert.match(runtime, /Supertone\/supertonic-3\/resolve\/main/);
   assert.match(runtime, /const LANGUAGE = 'de';/);
   assert.match(runtime, /const TOTAL_STEPS = 5;/);
+  assert.match(runtime, /const IOS_TOTAL_STEPS = 2;/);
   assert.match(runtime, /voice_styles\/F1\.json/);
   assert.match(runtime, /local-on-device-v28/);
+  assert.match(gate, /APPROVED_AUDIO_MANIFEST/);
+  assert.match(gate, /static-approved-guide-v28/);
+  assert.match(gate, /loadApprovedStaticVoice/);
   assert.match(gate, /DokoHilfLocalVoiceV28\.synthesize/);
+  assert.ok(gate.indexOf('loadApprovedStaticVoice(text)') < gate.indexOf('localFallback(text)'), 'Statisches freigegebenes Audio muss vor lokaler Inferenz geprüft werden.');
   assert.doesNotMatch(runtime, /GEMINI_API_KEY|dokohilf-tts'\s*,\s*\{/);
 });
 
-test('iOS gets WASM while Android can prefer WebGPU and fall back to WASM', () => {
+test('iOS nutzt WASM mit schnellerer Inferenz, Android kann WebGPU bevorzugen und auf WASM fallen', () => {
   assert.match(runtime, /if \(!isIOS\(\) && navigator\.gpu\)/);
   assert.match(runtime, /loaded = await load\('webgpu'\)/);
   assert.match(runtime, /loaded = await load\('wasm'\)/);
+  assert.match(runtime, /isIOS\(\) \? IOS_TOTAL_STEPS : TOTAL_STEPS/);
   assert.match(runtime, /wasmThreads: 1/);
   assert.match(helper, /onnxruntime-web@1\.27\.0/);
 });
 
-test('voice model is downloaded only after an explicit voice action and only model assets persist', () => {
+test('Voice-Einstieg lädt das große Modell nicht mehr vorab; Modellressourcen bleiben lokal cachebar', () => {
   assert.match(runtime, /let armed = false;/);
+  assert.match(runtime, /function arm\(\)/);
   assert.match(runtime, /function armAndPrepare\(\)/);
+  assert.match(runtime, /if \(voiceEntry\) arm\(\);/);
+  assert.doesNotMatch(runtime, /if \(voiceEntry\) armAndPrepare\(\)/);
   assert.match(runtime, /dokohilf-local-voice-model-v28-1/);
   assert.match(runtime, /caches\.open\(MODEL_CACHE\)/);
   assert.match(runtime, /no-generated-audio-storage/);
   assert.doesNotMatch(runtime, /localStorage|sessionStorage|indexedDB/);
   assert.doesNotMatch(runtime, /cache\.put\([^\n]*(?:wav|audioResponse|result\.wav)/);
+});
+
+test('iPhone-Inferenz kann nicht mehr endlos drehen', () => {
+  assert.match(gate, /const IOS_LOCAL_TIMEOUT_MS = 20000;/);
+  assert.match(gate, /const OTHER_LOCAL_TIMEOUT_MS = 35000;/);
+  assert.match(gate, /local_voice_timeout/);
+  assert.match(gate, /updateVoiceStatus\('Lokale Stimme nicht bereit'/);
+});
+
+test('freigegebene statische Audios enthalten keine Nutzerdaten und werden getrennt gecacht', () => {
+  assert.match(gate, /dokohilf-guide-audio\?manifest=1/);
+  assert.match(gate, /APPROVED_AUDIO_BUILD = '20260806-27'/);
+  assert.match(gate, /dokohilf-approved-guide-audio-v28-1/);
+  assert.match(gate, /entry\.text/);
+  assert.match(gate, /entry\.file/);
+  assert.match(gate, /prebuilt-approved-guide/);
+  assert.match(worker, /APPROVED_AUDIO_CACHE/);
+  assert.match(worker, /key !== APPROVED_AUDIO_CACHE/);
 });
 
 test('legacy 180/160ms device-voice races are disabled whenever v28 is active', () => {
@@ -51,7 +78,7 @@ test('legacy 180/160ms device-voice races are disabled whenever v28 is active', 
   assert.match(detail, /data-local-voice-only/);
 });
 
-test('system speech is blocked and the release app has an explicit local-only fallback guard', () => {
+test('system speech stays blocked and the release app keeps an explicit local-only fallback guard', () => {
   assert.match(gate, /blockSystemSpeech/);
   assert.match(gate, /__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__/);
   assert.match(gate, /utterance\?\.onerror/);
@@ -59,15 +86,16 @@ test('system speech is blocked and the release app has an explicit local-only fa
   assert.match(applyLocal, /Lokale Stimme nicht bereit/);
 });
 
-test('v28 release does not load legacy Gacrux diagnostics or prewarm Gacrux audio', () => {
+test('v28 lädt keine alte Gacrux-Diagnostik, nutzt aber den schmalen freigegebenen Audio-Endpunkt', () => {
   assert.match(applyLocal, /replace\(`  <script src="assets\/voice-diagnostics\.js/);
   assert.match(applyLocal, /if \(window\.__DOKOHILF_LOCAL_VOICE_V28__ !== true\) loadPrebuiltManifest/);
   assert.match(applyLocal, /if \(window\.__DOKOHILF_LOCAL_VOICE_V28__ === true\) return;/);
   assert.doesNotMatch(worker, /dokohilf-guide-audio\?manifest=/);
-  assert.doesNotMatch(worker, /cacheApprovedGuideAudio/);
+  assert.match(gate, /APPROVED_AUDIO_ENDPOINT/);
+  assert.match(gate, /method: 'GET'/);
 });
 
-test('v28 build ID, load order and PWA model-cache survival are explicit', () => {
+test('v28 build ID, load order and PWA voice caches are explicit', () => {
   assert.match(version, /"buildId": "20260807-28"/);
   assert.match(version, /"release": "local-natural-voice"/);
   assert.match(index, /KI · v28/);
@@ -79,13 +107,14 @@ test('v28 build ID, load order and PWA model-cache survival are explicit', () =>
   assert(local >= 0 && local < experience && experience < uxIndex && uxIndex < gateIndex && gateIndex < app);
   assert.match(worker, /const BUILD_ID = '20260807-28';/);
   assert.match(worker, /LOCAL_VOICE_MODEL_CACHE/);
-  assert.match(worker, /key !== LOCAL_VOICE_MODEL_CACHE/);
-  assert.match(applyDetail, /20260807-local-natural-voice-v28-1/);
+  assert.match(worker, /APPROVED_AUDIO_CACHE/);
+  assert.match(applyDetail, /20260807-local-natural-voice-v28-2/);
   assert.match(build, /local-voice-v28\.js/);
   assert.match(build, /local-voice-gate-v28\.js/);
+  assert.match(build, /static-approved-guide-v28/);
 });
 
-test('model weights are not redistributed inside the public repository bundle', () => {
+test('model weights and generated speech files are not redistributed inside the public bundle', () => {
   assert.match(helper, /Model weights are NOT redistributed/);
   assert.doesNotMatch(helper, /data:application\/octet-stream;base64/);
   assert.match(build, /Generierte Sprachdateien dürfen nicht im öffentlichen Pages-Build liegen/);

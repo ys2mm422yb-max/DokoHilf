@@ -2,11 +2,12 @@
 
 **Status:** Verbindliche Arbeitsquelle  
 **Stand:** 7. August 2026  
-**Veröffentlichter Build:** `20260806-27`  
-**Aktueller Produktstand:** Build 27 live; direkte Komplettanleitungen, Cross-Platform-Mobile-QA, neue iOS-/Android-PWA-Icons und detaillierte Orientierungshilfe bei Klickproblemen veröffentlicht  
-**Aktuelle PWA-Hotfixrevision:** `20260807-detail-help-cross-platform-1`
+**Veröffentlichter Build:** `20260807-28`  
+**Sichtbare Version:** `v28`  
+**Veröffentlichter Release:** `local-natural-voice`  
+**Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
-> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle vorhandenen `ACTIVE_WORK_*.md`. Danach werden der tatsächliche GitHub-, Actions-, Pages- und gegebenenfalls Supabase-Stand live geprüft. GitHub ist das dauerhafte Arbeitsgedächtnis; alte Chats sind keine notwendige Voraussetzung zur Fortsetzung.
+> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle vorhandenen `ACTIVE_WORK_*.md`. Danach werden GitHub, Actions, `main`, `gh-pages` und bei Bedarf Supabase live geprüft. Veränderte Zustände werden niemals nur aus dieser Datei abgeleitet.
 
 ## 1. Harte Projektgrenzen
 
@@ -16,12 +17,22 @@
 - Fester öffentlicher Hauptlink: `https://ys2mm422yb-max.github.io/DokoHilf/`
 - Andere Repositories oder Supabase-Projekte niemals öffnen, verändern oder verbinden.
 - Keine produktive Verbindung zur Dokumentationssoftware, kein Scraping und keine nicht dokumentierten Schnittstellen.
-- Keine echten Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten in Repository, Supabase, Tests oder Artefakten.
-- Nutzerbilder und Screenshots bleiben ausschließlich im jeweiligen Chat. Nur anonymisierte, selbst formulierte und fachlich bestätigte Klickwege dürfen daraus übernommen werden.
+- Dauerhaft keine realen Bewohner-, Klienten-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in Repository, Supabase, App, Tests oder Artefakten.
+- Das Echtdatenverbot gilt dauerhaft und wird auch durch spätere betriebliche, technische oder datenschutzrechtliche Freigaben nicht aufgehoben.
+- Öffentlich sichtbare Projektinhalte enthalten ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Ergebnisse. Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert.
 
-## 2. Dauerhafte GitHub-Dokumentationspflicht
+## 2. Verbindlicher GitHub-Ablauf
 
-Diese Regel wurde vom Nutzer ausdrücklich bestätigt.
+1. Vor Eingriffen `main`, offene Pull Requests, Actions und `gh-pages` prüfen; Supabase zusätzlich prüfen, wenn der Block Supabase betrifft.
+2. Nie direkt auf `main` arbeiten.
+3. Eigener Branch und Pull Request pro Arbeitsblock.
+4. Änderungen und Arbeitsstand dauerhaft dokumentieren.
+5. Nur einen vollständig geprüften **exakten PR-Head** manuell mergen.
+6. Kein Auto-Merge und keine automatische Branch-Löschung.
+7. Nach Merge `main`, `gh-pages` und relevante Live-Komponenten prüfen.
+8. Gegenüber dem Nutzer keine alternativen Preview-/Branch-/Cache-Links als Hauptzugang nennen.
+
+## 3. Dauerhafte GitHub-Dokumentationspflicht
 
 Nach jedem relevanten Arbeitsblock dauerhaft dokumentieren:
 
@@ -33,18 +44,9 @@ Nach jedem relevanten Arbeitsblock dauerhaft dokumentieren:
 - Merge- und Veröffentlichungsstand
 - nächsten ausführbaren Schritt
 
-Bestätigte Klickwege gehören nach `CONFIRMED_WORKFLOWS.md`. Größere Arbeitsblöcke erhalten eine `ACTIVE_WORK_*.md`. Ein neuer Chat soll aus GitHub ohne Rekonstruktion alter Chats weiterarbeiten können.
+Bestätigte Klickwege gehören nach `CONFIRMED_WORKFLOWS.md`. Größere Arbeitsblöcke erhalten eine `ACTIVE_WORK_*.md`.
 
-## 3. Verbindlicher GitHub-Ablauf
-
-1. Vor Eingriffen `main`, offene Pull Requests, Actions und `gh-pages` prüfen; Supabase zusätzlich prüfen, wenn der Block Supabase betrifft.
-2. Produktänderungen nie direkt auf `main`.
-3. Eigener Branch und Pull Request pro Arbeitsblock.
-4. Änderungen und Arbeitsstand dauerhaft dokumentieren.
-5. Nur einen vollständig geprüften **exakten PR-Head** mergen.
-6. Kein Auto-Merge und keine automatische Branch-Löschung.
-7. Nach Merge `main`, `gh-pages` und relevante Live-Komponenten prüfen.
-8. Gegenüber dem Nutzer keine alternativen Preview-/Branch-/Cache-Links als Hauptzugang nennen.
+Öffentliche Dokumentation beschreibt nur anonymisierte Fachinhalte, technische Entscheidungen und Ergebnisse. Keine Herkunfts- oder Prüfmaterialhinweise veröffentlichen.
 
 ## 4. Mobile Grundregel – iOS UND Android
 
@@ -52,8 +54,8 @@ Seit PR #71 gilt dauerhaft: **„mobil geprüft“ bedeutet immer iOS und Androi
 
 Mindest-QA:
 
-- iOS/iPhone-orientiert: `393 × 852`
-- Android/Pixel-orientiert: `412 × 915`
+- iOS: `393 × 852`
+- Android: `412 × 915`
 
 Bei jeder mobilen Änderung werden mindestens geprüft:
 
@@ -68,205 +70,119 @@ Plattformspezifische Änderungen dürfen die andere Plattform nicht ungeprüft l
 
 Details: `ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md`.
 
-## 5. Build 27 – Basis und aktuelle veröffentlichte Produktblöcke
+## 5. Aktueller veröffentlichter Produktstand – v28
 
-Build `20260806-27` ist veröffentlicht.
+### Direkte häufige Abläufe
 
-### Basis-Release
+PR #72 ist gemergt und veröffentlicht.
 
-- PR #53 `Finale Build-27-Validierung und iPhone-Renderfix`
-- Merge-Commit: `5d58167e2df9c78493f2e4ef880ac293be8aa2be`
-- final geprüfter Feature-Head: `0ca4cd911297b22702f38b82b8caafeab9975a4e`
-- `version.json`: Build `20260806-27`, Release `dark-premium-fast-voice`
+`Häufige Abläufe` öffnet direkt vollständige bestätigte Anleitungen für:
 
-### Schneller Sprachfallback und Voice-Geometrie
+- Bericht anlegen
+- Visite anlegen
+- Vitalwerte erfassen
+- An-/Abwesenheit
+- Medikation ansehen
+- Formular anlegen
+- Übergabe anzeigen
 
-- PR #67 `Mache Sprachantwort sofort und beseitige iPhone-Überlagerungen`
-- finaler Head: `f19290cb75fe0a11d918f9dec2a9eeab3641d187`
-- Merge-Commit: `98a8718027bfc520a9ccba03db3b38152b852c2b`
-- Client-Fallback: **180 ms**
-- Gacrux bleibt bevorzugt; wenn natürliche Live-Stimme nicht praktisch sofort bereit ist, übernimmt die Gerätestimme.
-- iOS-Speech-Watchdog verhindert stumm pausierten `speechSynthesis`-Fallback.
-- Historie: PR #64 hatte den ersten Fallback noch auf **1,2 Sekunden** gesetzt; dieser Stand ist durch PR #67 ersetzt und nicht mehr der aktuelle Clientvertrag.
-
-### Direkte häufige Abläufe und Chatpolish
-
-- alter PR #69 wurde nicht gemergt und ist historisch ersetzt.
-- PR #72 `Direkte Anleitungen und Cross-Platform-QA` wurde gemergt.
-- Merge-Commit: `33cfdad0ab62a69c961d0288b72849f3fc74e5d9`
-- `Häufige Abläufe` öffnet direkt eine **vollständige bestätigte Anleitung**, nicht zuerst einen Chat.
-- Direkt geführt werden derzeit:
-  - Bericht anlegen
-  - Visite anlegen
-  - Vitalwerte erfassen
-  - An-/Abwesenheit
-  - Medikation ansehen
-  - Formular anlegen
-  - Übergabe anzeigen
-- Vitalwerte verzweigen nur in die bestätigten Varianten Einzelwert und Sammelerfassung.
-- Schreibmodus wurde kompakter und als eigener Chatbereich gestaltet.
-- Der reale Mobile-Flow ist auf iOS `393×852` und Android `412×915` geprüft.
+Vitalwerte verzweigt nur in die bestätigten Varianten Einzelwert und Sammelerfassung.
 
 Details: `ACTIVE_WORK_DIRECT_GUIDES_CHAT.md`.
 
-### PWA-Installationssymbol iOS und Android
+### PWA-Installationssymbol
 
-- PR #73 `Ersetze PWA-Icon sauber auf iOS und Android` wurde gemergt.
-- Merge-SHA aus GitHub-Livehistorie prüfen, wenn für einen Folgeblock benötigt.
-- Browser-/UI-Vektorquelle: `icon-v3.svg`
-- iOS: `icon-touch-180-v3.png` – 180×180
-- Android/PWA: `icon-192-v3.png` – 192×192
-- Android/PWA: `icon-512-v3.png` – 512×512
-- Android maskable: `icon-maskable-512-v3.png` – 512×512
-- Die versionierten Dateinamen lösen die alte SVG-/Homescreen-Cachekopplung.
-- Der Release-Build erzeugt/prüft die freigegebenen PNGs deterministisch; Nutzerbilder werden niemals verwendet.
+PR #73 ist gemergt und veröffentlicht.
+
+- `icon-v3.svg`
+- iOS `icon-touch-180-v3.png`
+- Android `icon-192-v3.png`
+- Android `icon-512-v3.png`
+- Android maskable `icon-maskable-512-v3.png`
+
+Die Installationsdateien werden deterministisch aus eigenem Code erzeugt.
 
 Details: `ACTIVE_WORK_PWA_ICONS_CROSS_PLATFORM.md`.
 
-### Detaillierte Orientierung bei Klickproblemen
+### Detailhilfe bei Klickproblemen
 
-- PR #74 `Mache „Ich finde das nicht“ zu echter detaillierter Orientierung`
-- finaler geprüfter Head: `e770efa6060d9ced966d57870baa52eff04cc710`
-- Merge-Commit: `644e93aa55997b0ac62c45db2daf232d1650a646`
-- PR #74 ist gemergt und die Release-Ausgabe liegt auf `gh-pages`.
-- aktuelle PWA-Hotfixrevision: `20260807-detail-help-cross-platform-1`
+PR #74 ist gemergt und veröffentlicht.
 
-Verbindliches Verhalten:
+Problemformulierungen wie `Ich finde das nicht`, `Wo ist ...?`, `Wo muss ich klicken?`, `Bei mir heißt es anders`, `Ich bin auf einer anderen Seite` oder `Ich brauche Hilfe` öffnen einen Orientierungs-/Detailhilfemodus.
 
-- Problemformulierungen wie `Ich finde das nicht`, `Wo ist ...?`, `Wo muss ich klicken?`, `Bei mir heißt es anders`, `Ich bin auf einer anderen Seite` oder `Ich brauche Hilfe` öffnen einen **Orientierungs-/Detailhilfemodus**.
-- aktueller Guide und aktueller Schritt bleiben erhalten.
-- der Problemhinweis markiert keinen Schritt als erledigt.
-- `Weiter` wird während der Fehlersuche ausgeblendet.
-- DokoHilf fragt zuerst, **was der Nutzer tatsächlich sieht**.
-- erst nach bestätigtem Fund darf die normale Führung fortgesetzt werden.
-- wenn der bestätigte Menüpunkt fehlt, wird **kein alternativer Klickweg erfunden**; DokoHilf bleibt an der Fachgrenze und führt zum letzten sicheren Einstieg oder zu menschlicher Unterstützung.
-- Chat und Voice verwenden dieselbe Fachlogik.
-- die Hilfesitzung bleibt nur im RAM; keine dauerhafte Speicherung.
+Verbindlich:
+
+- aktueller Guide und aktueller Schritt bleiben erhalten
+- `Weiter` wird während der Fehlersuche ausgeblendet
+- DokoHilf fragt zuerst, was der Nutzer tatsächlich sieht
+- erst nach bestätigtem Fund wird der normale Guide fortgesetzt
+- keine alternativen Klickwege oder Feldnamen erfinden
+- Chat und Voice verwenden dieselbe Fachlogik
+- Hilfesitzung bleibt flüchtig im RAM
 
 Details: `ACTIVE_WORK_DETAIL_HELP.md`.
 
-## 6. Vitalwerte – Referenzbeispiel der neuen Detailhilfe
+### Voice-/Detailhilfe-Polish
 
-Beim Satz wie `Ich finde die Vitalwerte nicht, wo sind die?` läuft jetzt:
+PR #76 ist gemergt und veröffentlicht.
 
-1. DokoHilf erklärt, dass zunächst **nur die richtige Stelle gesucht** wird und nichts als erledigt gilt.
-2. Orientierung auf den bestätigten Einstieg `Doku-Erweitert`.
-3. strukturierte Rückfrage, z. B.:
-   - `Doku-Erweitert ist offen`
-   - `Ich bin in Doku / einem anderen Reiter`
-   - `Doku-Erweitert fehlt`
-   - `Ich weiß nicht, wo ich bin`
-4. Nach bestätigtem geöffnetem Reiter erklärt DokoHilf, dass `Vitalwerte` und `Vitalwerte Sammelerf.` zwei getrennte Einträge sind.
-5. zweite Rückfrage:
-   - `Vitalwerte sehe ich`
-   - `Ich sehe nur „Vitalwerte Sammelerf.“`
-   - `„Vitalwerte“ fehlt`
-   - `Ich bin mir nicht sicher`
-6. Nur bei bestätigtem Fund endet der Hilfemodus und `Weiter` wird wieder möglich.
-7. Bei fehlendem Eintrag: keine Vermutung, kein ähnlich klingender Menüpunkt, sondern transparente Fachgrenze.
+- kürzere nutzernahe Detailhilfe-Texte
+- kompaktere Auswahl im Voice-Modus
+- konkurrierende Aktionen während der Detailhilfe ausgeblendet
+- Mutation-Loop bei Button-Synchronisierung beseitigt
+- iOS- und Android-Interaktion als Pflicht-QA
 
-## 7. Detailhilfe – technische Architektur und QA
+Der alte v27-Systemstimmen-Fallback wurde anschließend durch v28 ersetzt.
 
-Neue Kernkomponenten:
+## 6. v28 – lokale natürliche Stimme
 
-- `assets/detail-help-v27.js` – flüchtige kontrollierte Detailhilfe
-- `scripts/apply-detail-help-v27.mjs` – Release-Injektion
-- `scripts/detail-help-render-v27.mjs` – realer Cross-Platform-Interaktionstest
-- `tests/detail-help-v27.test.mjs` – deterministische Verträge
-- `.github/workflows/detail-help-mobile.yml` – iOS-/Android-Pflicht-QA
+PR #78 wurde auf exaktem grünem Head `591f945d68675aa323090143ca2934957e5c093c` manuell gemergt.
 
-Verbindliche Wrapper-Reihenfolge im gebauten `index.html`:
+Veröffentlicht:
 
-`clarification-ui.js → detail-help-v27.js → guide-progress.js`
+- Build `20260807-28`
+- sichtbare Version `KI · v28`
+- Release `local-natural-voice`
+- lokale Browser-TTS mit Supertonic 3
+- Sprache Deutsch
+- Android bevorzugt WebGPU, WASM als lokaler Fallback
+- iOS WASM
+- keine hörbare System-/Gerätestimme als v28-Fallback
+- generierte freie Audios werden nicht dauerhaft gespeichert
+- Modellressourcen dürfen lokal gecacht werden
 
-Dadurch kann die Detailhilfe eine offensichtliche Orientierungsfrage kontrolliert abfangen, während `guide-progress.js` die sichere synthetische Hilfsantwort weiterhin sieht und den Schritt korrekt hält.
+Der erste v28-Release startete das große lokale Modell bereits beim Öffnen des Sprachmodus. Ein realer iPhone-Praxistest zeigte, dass die App dabei dauerhaft auf `Lokale Stimme erzeugt Antwort …` stehen bleiben konnte.
 
-Finaler exakter PR-#74-Head `e770efa6060d9ced966d57870baa52eff04cc710`:
+Details zum ursprünglichen v28-Release: `ACTIVE_WORK_LOCAL_VOICE_V28.md`.
 
-- `Deploy DokoHilf` Run #296 – **success**
-- `Validate dark iPhone UI v27` Run #49 – **success**
-- `Validate detailed help iOS Android` Run #7 – **success**
-- 7/7 neue deterministische Detailhilfe-Tests grün
-- exakter Release-Build grün
-- Detailhilfe-Render auf iOS grün
-- Detailhilfe-Render auf Android grün
+## 7. Aktuell offener iPhone-Sprachhotfix – PR #80
 
-Nach Merge wurde direkt auf `gh-pages` geprüft:
+Aktueller Arbeitsbranch:
 
-- `service-worker.js` enthält `HOTFIX_REVISION = '20260807-detail-help-cross-platform-1'`
-- `detail-help-v27.js` liegt im Core-Cache
-- `index.html` lädt die Detailhilfe in der vorgesehenen Reihenfolge.
+`fix/ios-static-first-voice-v28-20260807`
 
-## 8. Build-27-Frontendarchitektur
+Pull Request:
 
-Wichtige Dateien:
+`#80` – **offen; vor Merge aktuellen exakten Head und alle Checks live prüfen**.
 
-- `index.html`
-- `assets/app.js` – Kernlogik
-- `assets/conversation-intelligence.js` – Gesprächslogik
-- `assets/clarification-ui.js` – strukturierte Auswahl
-- `assets/detail-help-v27.js` – detaillierte Orientierung bei Klickproblemen
-- `assets/guide-progress.js` – Guidezustand
-- `assets/voice-focus-mode.js` – fokussierte Sprachbühne
-- `assets/mobile-audio-fix.js` – Audio-Entsperrung
-- `assets/update-manager.js` – Updates
-- `assets/premium-ui-v27.css` – Dark-Design
-- `assets/ux-v27.css` / `assets/ux-v27.js` – Interaktion, Datenschutz, 180-ms-Fallback
-- `assets/voice-stage-balance-v27.css` – Voice-Geometrie
-- `assets/direct-guides-v27.js` – direkte Komplettanleitungen
-- `assets/direct-guides-chat-v27.css` – Direktguide-/Chatdarstellung
-- `assets/experience-v27.js` – statische und dynamische Sprachausgabe
-- `assets/voice-diagnostics.js` – privater Audiokatalog und Gerätecache
-- `assets/guide-audio-catalog.json` – Zielkatalog allgemeiner statischer Audio-Texte
-- `service-worker.js` – PWA, aktueller Release-Hotfix wird beim Build angewandt
-- `scripts/build-static-site-v27.sh` – exakter Pages-Build
-- `scripts/mobile-render-v27.mjs` – allgemeiner iOS-/Android-Rendernachweis
+Zielarchitektur:
 
-## 9. Supabase-Stand
+1. Für eine Sprachausgabe zuerst den bestehenden freigegebenen statischen Audio-Manifestpfad prüfen.
+2. Ist ein passendes bestätigtes Audio vorhanden, direkt dieses abspielen.
+3. Nur wenn kein statisches Audio existiert, Supertonic lokal starten.
+4. Beim bloßen Öffnen des Sprachmodus das große Modell nicht vorab initialisieren.
+5. iOS verwendet für freie lokale Sätze 2 Denoising-Schritte.
+6. Lokale Inferenz erhält eine harte Obergrenze: iOS 20 Sekunden, andere Plattformen 35 Sekunden.
+7. System-/Gerätestimme bleibt blockiert.
+8. Generierte freie Audios werden nicht dauerhaft gespeichert.
 
-Zuletzt live bestätigt:
+Für Build `20260806-27` waren bei der letzten Live-Abfrage 9 statische Gacrux-Audios registriert. Dieser Bestand ist veränderlich und muss bei Audioarbeit live geprüft werden.
 
-- `dokohilf-ai-router` v11
-- `dokohilf-tts` **v21**
-- `dokohilf-guide-audio` v1
-- `dokohilf-guide-audio-build` **v3**
-- `dokohilf-editor` v1
-- `public.dokohilf_guides`
-- `public.dokohilf_topics`
-- `public.dokohilf_static_guide_audio`
-- `public.dokohilf_internal_build_control`
-- Audio liegt in einem **privaten Supabase-Bucket** `dokohilf-guide-audio`
-- alte Diagnose-/Export-/Batch-/Store-/Snapshot-Endpunkte neutralisiert auf HTTP 410
+Details: `ACTIVE_WORK_IOS_VOICE_HOTFIX_V28.md`.
 
-Die Detailhilfe aus PR #74 erforderte **keine Supabase-Schreibänderung**. Der bestehende AI-Router bleibt eine zweite Sicherheitsebene.
+## 8. Verbindliche Fachquelle
 
-## 10. Sprache und private Gacrux-Audios
-
-Natürliche Stimme: **Gacrux**.
-
-`dokohilf-tts` **v21** verwendet weiterhin den Roh-REST-Parser `raw-steps-content-v1` für die Gemini-Interactions-Audioantworten.
-
-Aktuelle Client-Reihenfolge:
-
-1. vorhandenes statisches freigegebenes Gacrux-Audio
-2. dynamisches Gacrux nur, wenn es innerhalb des 180-ms-Fensters praktisch sofort bereit ist
-3. lokale Sofortstimme
-4. iOS-Resume-Watchdog gegen stumm pausiertes `speechSynthesis`
-
-Statische Audio-Sicherheitsgrenze:
-
-- nur allgemeine freigegebene Guide-Texte
-- keine Nutzerstimmen
-- keine Diktate
-- keine freien Antworten
-- keine Gesprächsverläufe
-- keine Namen, Fall- oder Gesundheitsdaten
-
-Der Audio-Bestand ist veränderlich. Vor jeder neuen Audioarbeit aktuellen Bestand und Cronzustand **live aus Supabase** prüfen; alte Zahlen aus diesem Dokument nicht als aktuellen Bestand behandeln.
-
-## 11. Verbindliche Fachquelle
-
-`CONFIRMED_WORKFLOWS.md` ist die verbindliche Quelle für lokal bestätigte Klickwege. Router, Supabase-Guides, direkte Anleitungen, Detailhilfe und Tests müssen damit übereinstimmen.
+`CONFIRMED_WORKFLOWS.md` ist die verbindliche Quelle für bestätigte lokale Klickwege. Router, Supabase-Guides, direkte Anleitungen, Detailhilfe und Tests müssen damit übereinstimmen.
 
 Bestätigt sind insbesondere:
 
@@ -284,44 +200,48 @@ Bestätigt sind insbesondere:
 
 Nie fehlende Feldnamen, alternative Menüs oder Klickwege ergänzen, nur weil sie plausibel erscheinen.
 
-## 12. Bildbasierte Nachbestätigungen
+## 9. Supabase-Grundstand
 
-Die vom Nutzer geschickten Vivendi-Bilder bleiben Chat-only und dürfen niemals in GitHub, Supabase, Tests oder Artefakte kopiert werden.
+Vor veränderlichen Aussagen immer live prüfen.
 
-Anonymisiert daraus bestätigt und in `CONFIRMED_WORKFLOWS.md` festgehalten sind unter anderem:
+Zuletzt bekannte Kernkomponenten:
 
-- `Doku-Erweitert → Visiten → Neu → Klienten auswählen → Neue Visite → Durchführen`
-- Bericht anlegen mit Kategorieauswahl
-- Einzel-Vitalwerte und separater Menüpunkt `Vitalwerte Sammelerf.`
-- Bericht über `Eintrag bearbeiten → Durchstreichen`
-- `Doku → Durchführungsnachweis → Durchführung stornieren`
-- kleines rotes Kreuz → `Notfallblatt aufrufen`
-- `Formulare → Neu → Formular anlegen → Protokoll auswählen → OK`
-- `Analyse → Was war los? → Alle anzeigen → Alles ausklappen`
+- `dokohilf-ai-router` v11
+- `dokohilf-tts` v21
+- `dokohilf-guide-audio` v1
+- `dokohilf-guide-audio-build` v3
+- `dokohilf-editor` v1
+- `public.dokohilf_guides`
+- `public.dokohilf_topics`
+- `public.dokohilf_static_guide_audio`
+- `public.dokohilf_internal_build_control`
 
-## 13. Nächster sinnvoller Produktblock
+Keine andere Supabase-Instanz verwenden.
 
-Die generische Detailhilfe ist **implementiert und live**. Der nächste sinnvolle Ausbau ist nicht mehr der Grundmechanismus, sondern **zusätzliche bestätigte Orientierungszustände pro Workflow**.
+## 10. Dauerhafte Datenschutz- und Sicherheitsgrenzen
 
-Geeignete nächste Kandidaten:
+- dauerhaft keine Echtdaten, auch nicht nach einer späteren organisatorischen Freigabe
+- Testkonten und Testdaten vollständig synthetisch
+- keine produktiven Exporte oder Kopien in DokoHilf
+- keine Nutzerstimmen, Diktate oder freien Gesprächsinhalte dauerhaft speichern
+- keine Secrets im Browser, Repository oder öffentlich sichtbaren Projekttext
+- keine fremden Handbücher oder geschützten Inhalte kopieren
+- keine erfundenen Fach- oder Klickwege
+- öffentliche Projekttexte enthalten nur selbst formulierte, anonymisierte und veröffentlichungsfähige Inhalte
 
-- Visite: detaillierte Orientierung `Doku-Erweitert → Visiten → Neu → Klientenauswahl`
-- Bericht: Orientierung zur Berichtsliste, Kategorieauswahl und Bearbeitung
-- Formulare: Orientierung zum Menü `Formulare` und `Neu`
-- Durchführung: Orientierung `Doku → Durchführungsnachweis`
+`PROJECT_RULES.md` ist hierfür verbindlich.
 
-Für jeden solchen Ausbau gilt weiterhin: nur bestätigte sichtbare Zustände und Begriffe verwenden; keine Alternativen erfinden.
+## 11. Pflicht für jeden neuen Chat
 
-## 14. Pflicht für jeden neuen Chat
-
-1. `PROJECT_RULES.md` lesen.
-2. `CONFIRMED_WORKFLOWS.md` lesen.
-3. `PROJECT_HANDOFF.md` lesen.
-4. alle `ACTIVE_WORK_*.md` prüfen.
-5. Live-GitHub prüfen: `main`, offene PRs, aktuelle Heads, Actions und `gh-pages`.
-6. Live-Supabase prüfen, wenn der Arbeitsblock Supabase, Router, Audio oder Guides betrifft.
-7. Bei Audioarbeit den veränderlichen statischen Audio-Bestand und Cronzustand live prüfen.
-8. Exakt beim dokumentierten nächsten ausführbaren Schritt fortfahren.
-9. Nach eigener Arbeit Repository-Dokumentation wieder aktualisieren.
+1. `README.md` lesen.
+2. `PROJECT_RULES.md` lesen.
+3. `CONFIRMED_WORKFLOWS.md` lesen.
+4. `PROJECT_HANDOFF.md` lesen.
+5. alle `ACTIVE_WORK_*.md` prüfen.
+6. Live-GitHub prüfen: `main`, offene PRs, aktuelle Heads, Actions und `gh-pages`.
+7. Live-Supabase prüfen, wenn der Arbeitsblock Supabase, Router, Audio oder Guides betrifft.
+8. Bei Audioarbeit den veränderlichen statischen Audio-Bestand live prüfen.
+9. Exakt beim dokumentierten nächsten ausführbaren Schritt fortfahren.
+10. Nach eigener Arbeit Repository-Dokumentation wieder aktualisieren.
 
 Diese Datei ist das dauerhafte Handoff, ersetzt aber nie die Live-Prüfung veränderlicher Zustände.

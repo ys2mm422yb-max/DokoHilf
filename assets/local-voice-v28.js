@@ -10,6 +10,7 @@
   const MODEL_CACHE = 'dokohilf-local-voice-model-v28-1';
   const LANGUAGE = 'de';
   const TOTAL_STEPS = 5;
+  const IOS_TOTAL_STEPS = 2;
   const SPEED = 1.06;
   const SILENCE_SECONDS = 0.2;
   const previousFetch = window.fetch.bind(window);
@@ -92,7 +93,7 @@
   async function loadProductionEngine() {
     engineState = 'loading';
     lastError = '';
-    updateVoiceStatus('Stimme wird eingerichtet …', 'Beim ersten Mal wird das Sprachmodell geladen.');
+    updateVoiceStatus('Stimme wird eingerichtet …', 'Beim ersten freien Satz wird das Sprachmodell geladen.');
 
     const helperUrl = new URL('assets/vendor/supertonic-web-v28.mjs', document.baseURI).href;
     const helper = await import(helperUrl);
@@ -120,7 +121,7 @@
 
     const style = await helper.loadVoiceStyle(VOICE_STYLE_URL);
     engineState = 'ready';
-    updateVoiceStatus('Lokale Stimme bereit', 'Läuft direkt auf diesem Gerät.');
+    updateVoiceStatus('Lokale Stimme bereit', 'Freie Sätze werden direkt auf diesem Gerät erzeugt.');
 
     return {
       sampleRate: loaded.cfgs.ae.sample_rate,
@@ -130,7 +131,7 @@
           compactText(text),
           LANGUAGE,
           style,
-          TOTAL_STEPS,
+          isIOS() ? IOS_TOTAL_STEPS : TOTAL_STEPS,
           SPEED,
           SILENCE_SECONDS,
         );
@@ -140,6 +141,11 @@
         };
       },
     };
+  }
+
+  function arm() {
+    armed = true;
+    return true;
   }
 
   async function prepare() {
@@ -216,19 +222,20 @@
   };
 
   function armAndPrepare() {
-    armed = true;
+    arm();
     return prepare();
   }
 
   document.addEventListener('click', event => {
     const voiceEntry = event.target.closest?.('[data-select-mode="voice"], [data-switch-mode="voice"], #voiceButton, #pauseVoiceButton');
-    if (voiceEntry) armAndPrepare().catch(() => {});
+    if (voiceEntry) arm();
   }, { capture: true });
 
   window.DokoHilfLocalVoiceV28 = {
+    arm,
     armAndPrepare,
     prepare,
     synthesize,
-    getState: () => ({ buildId: BUILD_ID, state: engineState, backend, lastError, armed, model: 'Supertonic 3', voice: 'F1', language: LANGUAGE }),
+    getState: () => ({ buildId: BUILD_ID, state: engineState, backend, lastError, armed, model: 'Supertonic 3', voice: 'F1', language: LANGUAGE, inferenceSteps: isIOS() ? IOS_TOTAL_STEPS : TOTAL_STEPS }),
   };
 })();

@@ -43,7 +43,7 @@ Im veröffentlichten Build 27 war das dunkle Sprachdesign deutlich verbessert, a
 
 Ein erneuter Nutzertest nach PR #64/#65 bestätigte, dass 1,2 Sekunden als Fallback für einen flüssigen Sprachdialog weiterhin zu langsam wirkten und die Voice-Geometrie noch nicht robust genug war.
 
-Die vom Nutzer zur Beurteilung gezeigten Oberflächen bleiben gemäß Projektregel ausschließlich im Chat. Dieses Dokument enthält nur anonymisierte technische Erkenntnisse.
+Öffentlich dokumentiert werden ausschließlich anonymisierte technische Erkenntnisse und reproduziertes Produktverhalten.
 
 Live-Diagnose:
 
@@ -127,7 +127,8 @@ Index 33 ist der bereits vorbereitete Visiten-Schritt:
 
 - keine Nutzerstimmen oder freien Sprachantworten speichern
 - keine neuen Browser-Speicher außer der bereits erlaubten Datenschutzbestätigung
-- keine Nutzerbilder oder Screenshots übernehmen
+- dauerhaft keine realen Bewohner-, Gesundheits-, Mitarbeiter-, Fall- oder Zugangsdaten
+- ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Projektinhalte
 - Gacrux bleibt die bevorzugte natürliche Stimme für fertige freigegebene Guide-Texte
 - statische Audios bleiben ausschließlich auf allgemeine fachlich freigegebene Guide-Texte begrenzt
 - öffentlicher TTS-Datenschutzfilter bleibt unverändert streng
@@ -137,7 +138,7 @@ Index 33 ist der bereits vorbereitete Visiten-Schritt:
 
 Die akute Sprach-/Layout-Stabilisierung ist nach PR #67 abgeschlossen.
 
-Als Nächstes sind bereits vom Nutzer bestätigt:
+Als Nächstes waren bestätigt:
 
 1. Detailhilfe hinter **„Ich brauche Hilfe / Ich finde das nicht“** gemäß `ACTIVE_WORK_DETAIL_HELP.md`.
 2. Häufige Abläufe im Hauptmenü sollen bei direkter Auswahl **sofort die vollständige Schritt-für-Schritt-Anleitung** öffnen, statt zuerst einen normalen Chat zu erzeugen.

@@ -3,9 +3,9 @@
 **Status:** verbindliche fachliche Quelle  
 **Stand:** 7. August 2026
 
-Diese Datei enthält ausschließlich anonymisierte, vom Nutzer anhand der lokalen Oberfläche bestätigte Klickwege. Die zugrunde liegenden Bilder bleiben ausschließlich im Chat und werden nicht in GitHub, Supabase, Issues, Pull Requests, Tests oder Artefakte übernommen.
+Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien.
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ anhand neuer lokaler Nutzerbilder erneut bestätigt. Dabei wurden keine Bilder oder personenbezogenen Bildinhalte übernommen.
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt.
 
 ## Allgemeine Regeln
 
@@ -37,7 +37,7 @@ Verbindliche Regeln für diese Hilfeschleife:
 6. In diesem Fall zum letzten sicheren bestätigten Schritt zurückführen oder menschliche Unterstützung empfehlen.
 7. Sprach- und Schreibmodus verwenden dieselbe fachliche Hilfelogik.
 
-Die technische Umsetzung dieser Detailhilfe ist als nächster Arbeitsblock in `ACTIVE_WORK_DETAIL_HELP.md` dokumentiert.
+Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` dokumentiert.
 
 ## Bericht anlegen
 
@@ -182,5 +182,5 @@ In der aufgeklappten Ansicht können unter anderem **durchgeführte Visiten** un
 
 - Keine Klickwege, Feldnamen oder fachlichen Inhalte erfinden.
 - Bei unbekannten Formularfeldern transparent sagen, dass dafür noch keine bestätigte Anleitung vorliegt.
-- Bei Varianten immer die vom Nutzer bestätigten lokalen Bezeichnungen bevorzugen.
-- Bilder aus dem Chat niemals in das Repository oder in Supabase übernehmen.
+- Bei Varianten immer die fachlich bestätigten lokalen Bezeichnungen bevorzugen.
+- Öffentlich werden ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Fachinhalte dokumentiert.
