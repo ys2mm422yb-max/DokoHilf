@@ -1,18 +1,19 @@
 # DokoHilf – App-Icon an v27-Design angleichen
 
-**Status:** In Umsetzung  
+**Status:** Abgeschlossen und veröffentlicht  
 **Stand:** 7. August 2026  
-**Branch:** `design/app-icon-20260807`
+**Arbeitsbranch:** `design/app-icon-20260807`  
+**Produkt-PR:** #62
 
 ## Nutzerauftrag
 
 Das Webapp-/Homescreen-Symbol soll deutlich besser zum tatsächlichen DokoHilf-Appdesign passen.
 
-## Designentscheidung
+## Umgesetzte Designentscheidung
 
-Das bisherige helle grüne Symbol mit großer weißer Fläche, gelbem Glanzstern und eher illustrativem Look wird durch ein ruhigeres, dunkles App-Icon ersetzt.
+Das bisherige helle grüne Symbol mit großer weißer Fläche, gelbem Glanzstern und eher illustrativem Look wurde durch ein ruhigeres, dunkles App-Icon ersetzt.
 
-Verbindliche Richtung:
+Umgesetzt:
 
 - dunkle Petrol-/Schwarz-Grundfläche passend zu Build 27
 - dezente grüne und blaue Lichtakzente aus dem bestehenden UI
@@ -20,22 +21,22 @@ Verbindliche Richtung:
 - weiterhin eindeutig DokoHilf: Sprechblase + Mikrofon
 - keine Schrift im Icon
 - keine gelbe Dekoration und keine cartoonartige weiße Großfläche
-- wichtige Geometrie bleibt innerhalb der maskable-safe-zone
+- wichtige Geometrie innerhalb der maskable-safe-zone
 - auch in kleiner Homescreen-/Favicon-Größe klar erkennbar
 
-## Betroffene Dateien
+## Geänderte Produktdateien
 
 - `icon.svg`
 - `manifest.webmanifest`
 
-`manifest.webmanifest` wird zusätzlich auf die echten dunklen Build-27-Farben ausgerichtet:
+`manifest.webmanifest` wurde auf die echten dunklen Build-27-Farben ausgerichtet:
 
 - `background_color`: `#020c12`
 - `theme_color`: `#061018`
 
 ## Lokale visuelle Prüfung
 
-Vor dem Commit wurde die SVG-Fassung lokal gerendert und geprüft:
+Vor dem Produkt-PR wurde die SVG-Fassung lokal gerendert und geprüft:
 
 - native Vorschau: 512 × 512
 - Kleingrößenprüfung: 64 × 64
@@ -47,22 +48,35 @@ Vor dem Commit wurde die SVG-Fassung lokal gerendert und geprüft:
 
 PR #62, erster Head `03ca78ea01cacc02c5174f163b4fff3b3549c441`:
 
-- alle 165/165 Routingfälle bestanden
-- alle 3/3 Gesprächssequenzen bestanden
-- alle 117/117 deterministischen Fach-, Datenschutz- und UI-Vertragstests bestanden
-- der anschließende Playwright-iPhone-Renderlauf scheiterte einmalig in `page.reload` mit `net::ERR_ABORTED; maybe frame was detached?`
-- der Fehler trat nach erfolgreichem Aufbau der isolierten UI-Testoberfläche auf und betrifft keinen geänderten App-Icon- oder Manifest-Vertrag
-- wegen der verbindlichen Regel „nur grüner exakter Head“ wird nicht auf diesem Head gemergt; ein neuer exakter Head startet die vollständige Prüfung erneut
+- 165/165 Routingfälle bestanden
+- 3/3 Gesprächssequenzen bestanden
+- 117/117 deterministische Fach-, Datenschutz- und UI-Vertragstests bestanden
+- anschließender Playwright-iPhone-Renderlauf scheiterte einmalig in `page.reload` mit `net::ERR_ABORTED; maybe frame was detached?`
+- deshalb kein Merge auf diesem Head
 
-## Veröffentlichungsregel
+PR #62, finaler exakter Head `62e0b683ec33bcaf8d677494f72bfd8115ea5beb`:
 
-- keine Änderung direkt auf `main`
-- Pull Request mit exaktem Head
-- vorhandene DokoHilf-Prüfungen müssen grün sein
-- kein Auto-Merge
-- Branch nach Merge nicht automatisch löschen
-- nach Merge `main`, Pages und öffentlichen Hauptlink prüfen
+- `Deploy DokoHilf` Run #244 vollständig erfolgreich
+- iPhone-Render erfolgreich
+- Live-Router erfolgreich
+- dynamischer Voice-Fallback erfolgreich
+- privates freigegebenes Guide-Audio erfolgreich geprüft
+- exakter releasbarer statischer Site-Build erfolgreich
+
+## Merge und Veröffentlichung
+
+- PR #62 manuell gemergt
+- Merge-Commit: `10fedecd38d25fb2eb29d2061383cce8d26a5a39`
+- kein Auto-Merge verwendet
+- Arbeitsbranch nicht automatisch gelöscht
+- `gh-pages/icon.svg` enthält nach Veröffentlichung das neue dunkle Symbol
+- `gh-pages/manifest.webmanifest` enthält `background_color: #020c12` und `theme_color: #061018`
+- veröffentlichter Produktbuild bleibt `20260806-27`; geändert wurde die visuelle PWA-Marke, nicht der fachliche Build
 
 ## Hinweis zu bereits installierten iPhone-Homescreen-Icons
 
-iOS kann das Homescreen-Icon einer bereits hinzugefügten Webapp länger zwischenspeichern. Der veröffentlichte Webstand wird aktualisiert; falls ein bereits installiertes Symbol trotzdem alt bleibt, kann ein erneutes Entfernen und Hinzufügen zum Homescreen erforderlich sein. Das ist ein iOS-Cacheverhalten und kein Grund, mehrere alternative öffentliche Links zu verwenden.
+iOS kann das Homescreen-Icon einer bereits hinzugefügten Webapp länger zwischenspeichern. Wenn ein bereits installiertes Symbol trotz veröffentlichter Änderung alt bleibt, kann ein erneutes Entfernen und Hinzufügen zum Homescreen erforderlich sein. Das ist iOS-Cacheverhalten und kein Grund, alternative öffentliche Links zu verwenden.
+
+## Nächster Produktstand
+
+Der App-Icon-Arbeitsblock ist abgeschlossen. Der vorher dokumentierte nächste größere Produktblock bleibt die Detailhilfe für `Ich brauche Hilfe / Ich finde das nicht`.
