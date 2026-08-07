@@ -10,7 +10,7 @@
 
 ## Nutzerentscheidung
 
-Der Nutzer hat die veröffentlichte Führung praktisch getestet. Bei der Frage sinngemäß **„Ich finde die Vitalwerte nicht, wo sind die?“** startete DokoHilf zwar den passenden Guide, behandelte das Orientierungsproblem aber anschließend noch wie einen normalen Ablauf mit `Weiter`.
+Der veröffentlichte Ablauf wurde praktisch getestet. Bei der Frage sinngemäß **„Ich finde die Vitalwerte nicht, wo sind die?“** startete DokoHilf zwar den passenden Guide, behandelte das Orientierungsproblem aber anschließend noch wie einen normalen Ablauf mit `Weiter`.
 
 Seit PR #74 gilt deshalb verbindlich:
 
@@ -24,7 +24,7 @@ Seit PR #74 gilt deshalb verbindlich:
 - Fehlt der bestätigte Punkt wirklich, stoppt DokoHilf und führt zum letzten sicheren Einstieg zurück oder empfiehlt menschliche Unterstützung.
 - Dieselbe Logik gilt im Schreib- und Sprachmodus.
 
-Die zugrunde liegenden Nutzerbilder bleiben ausschließlich im Chat. Sie wurden nicht in GitHub, Supabase, Tests, Issues, PRs, Artefakte oder die App übernommen.
+Öffentlich dokumentiert werden ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Fach- und Testergebnisse.
 
 ## Erkennung typischer Probleme
 
@@ -43,7 +43,7 @@ Der Detailhilfemodus berücksichtigt unter anderem Formulierungen wie:
 
 ## Vitalwerte – jetzt bestätigtes Verhalten
 
-Für den vom Nutzer gezeigten Fall läuft die Hilfe bewusst detailliert:
+Für diesen Problemfall läuft die Hilfe bewusst detailliert:
 
 1. DokoHilf sagt ausdrücklich, dass jetzt **nur die richtige Stelle gesucht** und noch kein Schritt abgeschlossen wird.
 2. Orientierung auf den bestätigten Einstieg **Doku-Erweitert**.
@@ -156,7 +156,7 @@ Verifiziert:
 
 ## Datenschutz und Fachgrenze
 
-Keine Nutzerbilder, Echtdaten, Namen, Bewohner-, Gesundheits-, Mitarbeiter- oder Zugangsdaten wurden in die Umsetzung übernommen. Die automatisierten Screenshots enthalten ausschließlich künstliche App-Zustände und Bedienfragen.
+DokoHilf verarbeitet dauerhaft keine realen Bewohner-, Gesundheits-, Mitarbeiter-, Zugangs- oder Falldaten. Automatisierte Tests verwenden ausschließlich synthetische Zustände und Fantasiedaten.
 
 Detailhilfe darf weiterhin nur aus `CONFIRMED_WORKFLOWS.md` und anderen ausdrücklich bestätigten DokoHilf-Fachquellen ableiten. Wenn eine sichtbare Abweichung nicht bestätigt ist, sagt DokoHilf das offen und erfindet keinen Klickweg.
 
@@ -166,4 +166,4 @@ Die Grundlogik ist fertig und live. Weitere Detailhilfen können nun **pro best�
 
 ## Dauerhafte Dokumentationsregel
 
-Jeder zukünftige DokoHilf-Arbeitsblock hinterlässt seinen echten Stand dauerhaft im Repository: Entscheidung, betroffene Dateien/Komponenten, Tests, Fehler, Blocker, aktueller PR/Head sowie der nächste ausführbare Schritt. Ein neuer Chat soll die Arbeit aus GitHub fortsetzen können, ohne alte Chats rekonstruieren zu müssen.
+Jeder zukünftige DokoHilf-Arbeitsblock hinterlässt seinen echten Stand dauerhaft im Repository: Entscheidung, betroffene Dateien/Komponenten, Tests, Fehler, Blocker, aktueller PR/Head sowie der nächste ausführbare Schritt. Ein neuer Chat soll die Arbeit aus GitHub fortsetzen können, ohne alte Chats rekonstruieren zu müssen. Öffentlich dokumentiert werden dabei ausschließlich anonymisierte, selbst formulierte und veröffentlichungsfähige Ergebnisse.
