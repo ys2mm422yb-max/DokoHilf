@@ -9,6 +9,7 @@ const diagnostics = await readFile(new URL('assets/voice-diagnostics.js', root),
 const tts = await readFile(new URL('supabase/functions/dokohilf-tts/index.ts', root), 'utf8');
 const policy = await readFile(new URL('PREBUILT_AUDIO.md', root), 'utf8');
 const rules = await readFile(new URL('PROJECT_RULES.md', root), 'utf8');
+const acceleratedBuilder = await readFile(new URL('supabase/migrations/20260807093000_accelerate_static_guide_audio_builder.sql', root), 'utf8');
 
 function normalizeKey(value) {
   return String(value || '')
@@ -66,4 +67,11 @@ test('static audio exception is narrow and excludes every user-content source', 
   assert.match(policy, /nicht dauerhaft gespeichert/);
   assert.match(rules, /allgemeine, fachlich freigegebene Guide-Anweisungen/);
   assert.match(rules, /Nutzerantworten, Checks, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten/);
+});
+
+test('approved Gacrux library is built progressively every minute until complete', () => {
+  assert.match(acceleratedBuilder, /cron\.unschedule\('dokohilf-static-guide-audio-v27'\)/);
+  assert.match(acceleratedBuilder, /'\* \* \* \* \*'/);
+  assert.match(acceleratedBuilder, /dokohilf_build_next_static_guide_audio\(\)/);
+  assert.doesNotMatch(acceleratedBuilder, /Nutzerstimme|Diktat|Gespräch|personal|name|diagnos|medikament|vitalwert/i);
 });

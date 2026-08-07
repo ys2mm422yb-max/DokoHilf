@@ -9,12 +9,22 @@ const server = await readFile('supabase/functions/dokohilf-tts/index.ts', 'utf8'
 const migration = await readFile('supabase/migrations/20260806173000_remove_repeated_exercise_notices.sql', 'utf8');
 
 test('client starts the immediate fallback instead of waiting indefinitely', () => {
-  assert.match(ux, /HARD_FALLBACK_MS = 1900/);
+  assert.match(ux, /HARD_FALLBACK_MS = 1200/);
   assert.match(ux, /Promise\.race\(\[request, timeout\]\)/);
+  assert.match(ux, /new AbortController\(\)/);
+  assert.match(ux, /controller\.abort\(\)/);
   assert.match(experience, /nextSpokenText/);
   assert.match(experience, /prefetch(?:Text)?/);
   assert.doesNotMatch(experience, /localStorage|indexedDB|caches\.open/);
   assert.doesNotMatch(ux, /indexedDB|caches\.open/);
+});
+
+test('iPhone Sofortstimme wird nach Cloud-Fallback aktiv aus dem pausierten Zustand geholt', () => {
+  assert.match(ux, /installSpeechSynthesisWatchdog/);
+  assert.match(ux, /speechSynthesis/);
+  assert.match(ux, /synth\.resume\(\)/);
+  assert.match(ux, /\[120, 320, 700, 1100\]/);
+  assert.match(ux, /__DOKOHILF_SPEECH_RESUME_WATCHDOG_V27__/);
 });
 
 test('persistent browser storage is limited to one privacy acknowledgement boolean', () => {

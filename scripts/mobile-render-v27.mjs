@@ -112,6 +112,33 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+async function stableReload() {
+  let lastError = null;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      await page.reload({ waitUntil: 'domcontentloaded', timeout: 30_000 });
+      return;
+    } catch (error) {
+      lastError = error;
+      if (!/ERR_ABORTED|frame was detached/i.test(String(error?.message || error))) throw error;
+      await page.waitForTimeout(200);
+      if (await page.locator('#startTitle').isVisible().catch(() => false)) return;
+    }
+  }
+  throw lastError || new Error('Stabile Neuladung fehlgeschlagen.');
+}
+
+async function openDeterministicFirstStart() {
+  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+  await page.locator('#startTitle').waitFor({ state: 'visible' });
+  await page.evaluate(() => localStorage.removeItem('dokohilf-privacy-ack-v1'));
+  await stableReload();
+  await page.locator('#startTitle').waitFor({ state: 'visible' });
+  const ackButton = page.locator('[data-privacy-ack]');
+  await ackButton.waitFor({ state: 'visible', timeout: 8_000 });
+  return ackButton;
+}
+
 async function layoutState() {
   return page.evaluate(() => ({
     viewportWidth: window.innerWidth,
@@ -123,17 +150,14 @@ async function layoutState() {
 }
 
 try {
-  await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30_000 });
-  await page.locator('#startTitle').waitFor({ state: 'visible' });
-
+  const privacyButton = await openDeterministicFirstStart();
   const privacyDialog = page.locator('#privacyAckV27');
-  await privacyDialog.waitFor({ state: 'visible', timeout: 5_000 });
-  assert(await page.getByRole('button', { name: 'Verstanden' }).isVisible(), 'Erststart-Datenschutzbestätigung fehlt.');
+  assert(await privacyDialog.isVisible(), 'Erststart-Datenschutzbestätigung fehlt.');
   await page.screenshot({ path: `${OUTPUT_DIR}/00-privacy-first-start.png`, fullPage: false });
-  await page.getByRole('button', { name: 'Verstanden' }).click();
+  await privacyButton.click();
   await privacyDialog.waitFor({ state: 'detached' });
 
-  await page.reload({ waitUntil: 'networkidle' });
+  await stableReload();
   await page.locator('#startTitle').waitFor({ state: 'visible' });
   assert(await page.locator('#privacyAckV27').count() === 0, 'Datenschutzbestätigung erscheint nach Bestätigung erneut.');
   assert(await page.evaluate(() => localStorage.getItem('dokohilf-privacy-ack-v1') === 'yes'), 'Das einzige unpersönliche Datenschutz-Flag wurde nicht gespeichert.');
@@ -190,9 +214,15 @@ try {
   });
   await page.locator('#startScreen').waitFor({ state: 'visible' });
   await page.getByRole('button', { name: /Sprechen/i }).first().click();
-  await page.locator('.voice-focus-stage').waitFor({ state: 'visible', timeout: 15_000 });
+  const voiceStage = page.locator('.voice-focus-stage');
+  await voiceStage.waitFor({ state: 'visible', timeout: 15_000 });
   assert(await page.locator('#workspace').isHidden(), 'Der alte Arbeitsbereich bleibt im Vollbild-Sprachmodus sichtbar.');
   await page.waitForTimeout(200);
+
+  const topbarBox = await page.locator('.topbar').boundingBox();
+  const stageBox = await voiceStage.boundingBox();
+  assert(topbarBox && stageBox && stageBox.y >= topbarBox.y + topbarBox.height, `Sprachfläche liegt unter der Kopfzeile: topbar ${JSON.stringify(topbarBox)}, stage ${JSON.stringify(stageBox)}`);
+  assert(!(await page.locator('.build-status').isVisible().catch(() => false)), 'Versionsstatus überlagert den fokussierten Sprachmodus.');
 
   const shell = page.locator('#appShell');
   await shell.evaluate(element => { element.dataset.voiceState = 'idle'; });
@@ -220,6 +250,8 @@ try {
     privacyAcknowledgementStored: true,
     visibleCommands,
     progressHeight: progressBox?.height,
+    topbarBottom: topbarBox ? topbarBox.y + topbarBox.height : null,
+    voiceStageTop: stageBox?.y,
     idleOrbWidth: idleBox?.width,
     listeningOrbWidth: listeningBox?.width,
     consoleErrors,
