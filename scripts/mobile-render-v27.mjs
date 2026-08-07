@@ -197,7 +197,9 @@ try {
   assert(await page.locator('#workspace').isHidden(), 'Direkte Anleitung öffnet zusätzlich den Chat-Arbeitsbereich.');
   assert((await layoutState()).mode === 'direct-guide', 'Direkte Anleitung setzt keinen eigenen UI-Modus.');
   assert(await directGuide.locator('.direct-guide-step').count() === 12, 'Bericht-Anleitung ist nicht vollständig mit 12 bestätigten Schritten sichtbar.');
-  assert((await directGuide.innerText()).includes('Komplette Anleitung'), 'Direkte Anleitung ist nicht eindeutig als komplette Anleitung gekennzeichnet.');
+  const directGuideLabel = directGuide.locator('.direct-guide-heading > span').first();
+  await directGuideLabel.waitFor({ state: 'visible' });
+  assert((await directGuideLabel.textContent())?.trim() === 'Komplette Anleitung', 'Direkte Anleitung ist nicht eindeutig als komplette Anleitung gekennzeichnet.');
   const directGuideLayout = await layoutState();
   assert(directGuideLayout.documentWidth <= directGuideLayout.viewportWidth + 1, `Direkte Anleitung hat auf ${PROFILE} horizontalen Überlauf.`);
   const directBack = await directGuide.locator('.direct-guide-back').boundingBox();
