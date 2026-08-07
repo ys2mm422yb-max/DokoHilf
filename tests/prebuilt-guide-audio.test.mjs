@@ -7,9 +7,11 @@ const catalog = JSON.parse(await readFile(new URL('assets/guide-audio-catalog.js
 const experience = await readFile(new URL('assets/experience-v27.js', root), 'utf8');
 const diagnostics = await readFile(new URL('assets/voice-diagnostics.js', root), 'utf8');
 const tts = await readFile(new URL('supabase/functions/dokohilf-tts/index.ts', root), 'utf8');
+const builder = await readFile(new URL('supabase/functions/dokohilf-guide-audio-build/index.ts', root), 'utf8');
 const policy = await readFile(new URL('PREBUILT_AUDIO.md', root), 'utf8');
 const rules = await readFile(new URL('PROJECT_RULES.md', root), 'utf8');
 const acceleratedBuilder = await readFile(new URL('supabase/migrations/20260807093000_accelerate_static_guide_audio_builder.sql', root), 'utf8');
+const resumedBuilder = await readFile(new URL('supabase/migrations/20260807095000_resume_static_guide_audio_builder.sql', root), 'utf8');
 
 function normalizeKey(value) {
   return String(value || '')
@@ -74,4 +76,21 @@ test('approved Gacrux library is built progressively every minute until complete
   assert.match(acceleratedBuilder, /'\* \* \* \* \*'/);
   assert.match(acceleratedBuilder, /dokohilf_build_next_static_guide_audio\(\)/);
   assert.doesNotMatch(acceleratedBuilder, /Nutzerstimme|Diktat|Gespräch|personal|name|diagnos|medikament|vitalwert/i);
+  assert.match(resumedBuilder, /cron\.unschedule\(jobid\)/);
+  assert.match(resumedBuilder, /'\* \* \* \* \*'/);
+  assert.match(resumedBuilder, /count\(\*\).*20260806-27/);
+  assert.doesNotMatch(resumedBuilder, /[a-f0-9]{64}/i);
+});
+
+test('only the authenticated internal builder may bypass user-content privacy heuristics', () => {
+  assert.match(builder, /'x-dokohilf-build-token': control\.data\.build_token/);
+  assert.match(tts, /async function isTrustedStaticAudioBuilder/);
+  assert.match(tts, /\^\[a-f0-9\]\{64\}\$/i);
+  assert.match(tts, /SUPABASE_SERVICE_ROLE_KEY/);
+  assert.match(tts, /dokohilf_internal_build_control/);
+  assert.match(tts, /constantTimeEqual\(suppliedToken, row\.build_token\)/);
+  assert.match(tts, /!trustedStaticBuilder && isRateLimited\(req\)/);
+  assert.match(tts, /!trustedStaticBuilder && containsDirectPersonalData\(text\)/);
+  assert.doesNotMatch(builder, /build_token\s*=\s*['"][a-f0-9]{32,}['"]/i);
+  assert.doesNotMatch(tts, /build_token\s*=\s*['"][a-f0-9]{32,}['"]/i);
 });

@@ -161,7 +161,11 @@ Deno.serve(async (req: Request) => {
     try {
       const response = await fetch(TTS_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Origin: 'https://ys2mm422yb-max.github.io' },
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: 'https://ys2mm422yb-max.github.io',
+          'x-dokohilf-build-token': control.data.build_token,
+        },
         body: JSON.stringify({ text: spokenText }),
         signal: AbortSignal.timeout(30_000),
       });
