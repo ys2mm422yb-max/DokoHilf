@@ -1,9 +1,10 @@
 # Aktiver Arbeitsstand – direkte häufige Anleitungen und Chatdesign
 
 **Stand:** 7. August 2026  
-**Status:** Umsetzung abgeschlossen, Validierung ausstehend  
+**Status:** Umsetzung abgeschlossen; erneute vollständige Validierung läuft  
 **Build:** `20260806-27`  
-**Branch:** `feature/direct-guides-chat-polish-20260807`
+**Branch:** `feature/direct-guides-chat-polish-20260807`  
+**Pull Request:** `#69`
 
 ## Nutzerwunsch
 
@@ -91,6 +92,8 @@ Die Schnellfragen innerhalb des Chatmodus bleiben bewusst Chat-Prompts. Damit bl
 - kompakter Chatvertrag
 - PWA-Core-Cache und Revisionsmarker
 
+Der Test ist jetzt ausdrücklich Bestandteil des verpflichtenden `Deploy DokoHilf`-Workflows. Zusätzlich prüft der Workflow Syntax und Vorhandensein von `assets/direct-guides-v27.js` sowie, dass die Datei keinen `localStorage`- oder `indexedDB`-Zugriff enthält.
+
 ### Echter iPhone-Render
 
 `scripts/mobile-render-v27.mjs` wurde erweitert. Auf 393 × 852 muss der Test jetzt tatsächlich:
@@ -105,10 +108,29 @@ Die Schnellfragen innerhalb des Chatmodus bleiben bewusst Chat-Prompts. Damit bl
 8. den kompakten Chatkopf und die Begrüßung prüfen
 9. danach weiterhin den bestehenden schrittweisen Chat und den Sprachmodus testen
 
+## Erster PR-#69-Lauf
+
+`Deploy DokoHilf` Run #268 lief auf dem ersten PR-Head und erreichte:
+
+- 165/165 Routingfälle erfolgreich
+- 3/3 Gesprächssequenzen erfolgreich
+- 12/12 bestätigte Workflow-Marker vorhanden
+- 121 von 122 damals registrierten deterministischen Tests erfolgreich
+
+Der einzige Fehler war ein **veralteter Testvertrag** in `tests/voice-layout-v26.test.mjs`: Er verlangte noch exakt die frühere Service-Worker-Revision `20260807-fluid-voice-layout-1`, obwohl dieser Produktblock absichtlich die neue Revision `20260807-direct-guides-chat-2` benötigt, um die PWA zu aktualisieren. Der Sprachvertrag selbst – 180-ms-Fallback, Safe-Area und Voice-Flexlayout – war grün.
+
+Korrektur:
+
+- Revisionsprüfung auf den aktuellen Hotfix umgestellt
+- weiterhin ausdrücklich geprüft, dass `ux-v27.js` und `ux-v27.css` im Service-Worker-Core enthalten bleiben
+- neuer Direkt-Guide-Test in den Hauptworkflow aufgenommen
+- `assets/direct-guides-v27.js` in Pflichtdateien und Syntaxprüfung aufgenommen
+
+Damit wird beim nächsten exakten Head nicht nur die alte Regression, sondern auch die neue Direkt-Guide-Fachlogik verpflichtend geprüft.
+
 ## Noch erforderlich
 
-- Pull Request öffnen
-- exakten Head vollständig über beide DokoHilf-Workflows prüfen
+- aktuellen exakten PR-#69-Head vollständig über beide DokoHilf-Workflows prüfen
 - Fehler nur auf diesem Branch korrigieren
 - nur vollständig grünen exakten Head manuell mergen
 - Branch nicht automatisch löschen
