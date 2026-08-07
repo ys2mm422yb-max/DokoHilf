@@ -205,38 +205,44 @@ try {
   assert(chatLayout.documentWidth <= chatLayout.viewportWidth + 1, 'Chat hat horizontalen Überlauf.');
   await page.screenshot({ path: `${OUTPUT_DIR}/02-chat-compact-iphone.png`, fullPage: true });
 
-  await page.locator('.guide-progress-menu summary').click();
-  assert(await page.getByRole('button', { name: /Neu starten/i }).isVisible(), 'Neu starten fehlt im Menü.');
-  assert(await page.getByRole('button', { name: /Anderer Ablauf/i }).isVisible(), 'Anderer Ablauf fehlt im Menü.');
-
-  await page.evaluate(() => {
-    document.getElementById('homeButton')?.click();
-  });
-  await page.locator('#startScreen').waitFor({ state: 'visible' });
-  await page.getByRole('button', { name: /Sprechen/i }).first().click();
+  // Guide-Zustand bleibt aktiv; direkt in die Sprachansicht wechseln, damit die echte Schrittkarte mitgetestet wird.
+  await page.locator('[data-switch-mode="voice"]').click();
   const voiceStage = page.locator('.voice-focus-stage');
   await voiceStage.waitFor({ state: 'visible', timeout: 15_000 });
   assert(await page.locator('#workspace').isHidden(), 'Der alte Arbeitsbereich bleibt im Vollbild-Sprachmodus sichtbar.');
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(250);
 
   const topbarBox = await page.locator('.topbar').boundingBox();
   const stageBox = await voiceStage.boundingBox();
+  const instruction = page.locator('.voice-focus-instruction');
+  await instruction.waitFor({ state: 'visible', timeout: 8_000 });
+  const instructionBox = await instruction.boundingBox();
   assert(topbarBox && stageBox && stageBox.y >= topbarBox.y + topbarBox.height, `Sprachfläche liegt unter der Kopfzeile: topbar ${JSON.stringify(topbarBox)}, stage ${JSON.stringify(stageBox)}`);
   assert(!(await page.locator('.build-status').isVisible().catch(() => false)), 'Versionsstatus überlagert den fokussierten Sprachmodus.');
 
   const shell = page.locator('#appShell');
   await shell.evaluate(element => { element.dataset.voiceState = 'idle'; });
   const idleBox = await page.locator('.voice-focus-stage .voice-orb').boundingBox();
-  assert(idleBox && idleBox.width <= 112, `Mikrofon ist im Leerlauf zu groß: ${idleBox?.width}`);
+  assert(idleBox && idleBox.width <= 90, `Mikrofon ist im Leerlauf zu groß: ${idleBox?.width}`);
   await page.screenshot({ path: `${OUTPUT_DIR}/03-voice-idle-iphone.png`, fullPage: false });
 
   await shell.evaluate(element => { element.dataset.voiceState = 'listening'; });
   await page.waitForTimeout(300);
   const listeningBox = await page.locator('.voice-focus-stage .voice-orb').boundingBox();
-  assert(listeningBox && idleBox && listeningBox.width >= idleBox.width + 35, `Mikrofon wird beim Zuhören nicht deutlich größer: idle ${idleBox?.width}, listening ${listeningBox?.width}`);
+  const actionsBox = await page.locator('.voice-focus-actions').boundingBox();
+  assert(listeningBox && idleBox && listeningBox.width >= idleBox.width + 40, `Mikrofon wird beim Zuhören nicht deutlich größer: idle ${idleBox?.width}, listening ${listeningBox?.width}`);
+  assert(listeningBox && listeningBox.width <= 140, `Mikrofon dominiert die iPhone-Fläche noch zu stark: ${listeningBox?.width}`);
+  assert(instructionBox && listeningBox, 'Schrittkarte oder Mikrofon konnte nicht vermessen werden.');
+  const instructionToOrbGap = listeningBox.y - (instructionBox.y + instructionBox.height);
+  assert(instructionToOrbGap >= 8, `Schrittkarte und Mikrofon liegen zu dicht übereinander: ${instructionToOrbGap}`);
+  assert(instructionToOrbGap <= 72, `Zwischen Schrittkarte und Mikrofon bleibt zu viel tote Fläche: ${instructionToOrbGap}`);
+  const orbCenterY = listeningBox.y + listeningBox.height / 2;
+  assert(stageBox && orbCenterY <= stageBox.y + stageBox.height * 0.62, `Mikrofon sitzt weiterhin zu tief: center ${orbCenterY}, stage ${JSON.stringify(stageBox)}`);
+  assert(actionsBox && stageBox && actionsBox.y + actionsBox.height <= stageBox.y + stageBox.height + 1, 'Aktionsleiste ragt aus der Sprachbühne heraus.');
+
   const voiceLayout = await layoutState();
   assert(voiceLayout.documentWidth <= voiceLayout.viewportWidth + 1, 'Sprachmodus hat horizontalen Überlauf.');
-  await page.screenshot({ path: `${OUTPUT_DIR}/04-voice-listening-iphone.png`, fullPage: false });
+  await page.screenshot({ path: `${OUTPUT_DIR}/04-voice-listening-balanced-iphone.png`, fullPage: false });
 
   assert(consoleErrors.length === 0, `Console-Fehler: ${consoleErrors.join(' | ')}`);
   assert(pageErrors.length === 0, `Page-Fehler: ${pageErrors.join(' | ')}`);
@@ -252,8 +258,11 @@ try {
     progressHeight: progressBox?.height,
     topbarBottom: topbarBox ? topbarBox.y + topbarBox.height : null,
     voiceStageTop: stageBox?.y,
+    instructionBottom: instructionBox ? instructionBox.y + instructionBox.height : null,
     idleOrbWidth: idleBox?.width,
     listeningOrbWidth: listeningBox?.width,
+    instructionToOrbGap,
+    listeningOrbCenterY: orbCenterY,
     consoleErrors,
     pageErrors,
   };
