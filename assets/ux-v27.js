@@ -8,6 +8,10 @@
   let syncScheduled = false;
   let observer = null;
 
+  function localVoiceV28() {
+    return window.__DOKOHILF_LOCAL_VOICE_V28__ === true;
+  }
+
   function clean(value) {
     return String(value || '').replace(/\s+/g, ' ').trim();
   }
@@ -72,6 +76,7 @@
     const url = typeof input === 'string' ? input : input?.url;
     const method = String(init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
     if (typeof url !== 'string' || !url.includes(TTS_MARKER) || method !== 'POST') return previousFetch(input, init);
+    if (localVoiceV28()) return previousFetch(input, init);
 
     const controller = new AbortController();
     const originalSignal = init.signal || (input instanceof Request ? input.signal : null);
@@ -97,6 +102,7 @@
   };
 
   function installSpeechSynthesisWatchdog() {
+    if (localVoiceV28()) return;
     const synth = window.speechSynthesis;
     if (!synth || typeof synth.speak !== 'function' || window.__DOKOHILF_SPEECH_RESUME_WATCHDOG_V27__) return;
     const nativeSpeak = synth.speak.bind(synth);
@@ -165,6 +171,16 @@
     if (!shell || !status || !hint) return false;
     let changed = false;
     const current = normalize(status.textContent);
+
+    if (localVoiceV28()) {
+      if (shell.dataset.voiceState === 'thinking' || current.includes('stimme wird vorbereitet') || current.includes('antwort startet')) {
+        changed = setTextIfChanged(status, 'Lokale Stimme erzeugt Antwort …') || changed;
+        changed = setTextIfChanged(hint, 'Die Sprachausgabe läuft direkt auf diesem Gerät.') || changed;
+      }
+      if (badge) changed = setTextIfChanged(badge, 'Lokale Stimme') || changed;
+      return changed;
+    }
+
     if (shell.dataset.voiceState === 'thinking' || current.includes('stimme wird vorbereitet') || current.includes('stimme ladt')) {
       changed = setTextIfChanged(status, 'Antwort startet …') || changed;
       changed = setTextIfChanged(hint, 'Ist Gacrux schon fertig, hörst du sie direkt. Sonst spricht sofort die Sofortstimme.') || changed;
@@ -209,7 +225,7 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true });
   else initialize();
   window.DokoHilfUxV27 = {
-    hardFallbackMs: HARD_FALLBACK_MS,
+    hardFallbackMs: localVoiceV28() ? null : HARD_FALLBACK_MS,
     privacyAckKey: PRIVACY_ACK_KEY,
     hasPrivacyAcknowledgement,
     showPrivacyAcknowledgement,
@@ -220,5 +236,6 @@
   window.__DOKOHILF_UX_CLEANUP_V27__ = true;
   window.__DOKOHILF_PRIVACY_ACK_V27__ = true;
   window.__DOKOHILF_IDEMPOTENT_SYNC_V27__ = true;
-  window.__DOKOHILF_FLUID_VOICE_180MS_V27__ = true;
+  window.__DOKOHILF_FLUID_VOICE_180MS_V27__ = !localVoiceV28();
+  window.__DOKOHILF_LOCAL_VOICE_ONLY_V28__ = localVoiceV28();
 })();
