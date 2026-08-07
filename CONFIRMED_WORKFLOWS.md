@@ -46,15 +46,13 @@ Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` 
 3. Oben links auf das grüne Plus klicken.
 4. In der geöffneten Auswahl die Berichtskategorie wählen.
 5. Danach öffnet sich die Eingabemaske für den Bericht.
-6. Nur bei **Kontakt – alles außer Arzt** und **Sturzereignis** prüfen, ob ein zusätzliches Protokoll automatisch verknüpft ist.
-7. Wird das Protokoll benötigt, bleibt es verknüpft.
-8. Wird es nicht benötigt, den angezeigten Protokollnamen anklicken und anschließend oben rechts auf das kleine rote X klicken.
+6. **Nur bei zwei Kategorien gilt der folgende Protokollblock:** Bei **Kontakt – alles außer Arzt** ist automatisch das **Fallgespräch** verknüpft. Bei **Sturzereignis** ist automatisch das **Sturzprotokoll** verknüpft. Bei allen anderen Berichtskategorien die Schritte 6–9 überspringen und direkt mit Schritt 10 fortfahren.
+7. Nur in diesem Sonderfall: Wird das automatisch verknüpfte Protokoll benötigt, bleibt es verknüpft.
+8. Nur in diesem Sonderfall: Wird es nicht benötigt, den angezeigten Protokollnamen anklicken und anschließend oben rechts auf das kleine rote X klicken.
 9. Das rote X entfernt nur die Protokollverknüpfung, nicht den Bericht.
 10. Datum und Uhrzeit prüfen.
 11. Berichtstext eintragen.
 12. Mit OK bestätigen und den Eintrag kontrollieren.
-
-Bei **Kontakt – alles außer Arzt** ist das automatisch verknüpfte Protokoll ein **Fallgespräch**. Beim Sturzereignis wird neutral vom automatisch zugeordneten Protokoll gesprochen, solange dessen genauer Name nicht nochmals bestätigt wurde.
 
 ## Bericht durchstreichen
 
