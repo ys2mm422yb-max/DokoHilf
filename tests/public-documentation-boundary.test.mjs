@@ -26,8 +26,8 @@ test('PROJECT_RULES macht das Echtdatenverbot dauerhaft und die App zur reinen E
   assert.match(rules, /dauerhaft, ohne Ausnahme und unabhängig von späteren betrieblichen, technischen oder datenschutzrechtlichen Freigaben/);
   assert.match(rules, /Eine spätere Freigabe darf dieses Verbot \*\*nicht\*\* aufheben oder abschwächen/);
   assert.match(rules, /ausschließlich eine \*\*erklärende Schritt-für-Schritt-Bedienhilfe\*\*/);
-  assert.match(rules, /keine Benutzerkonten, keine Bewohner-\/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken/);
-  assert.match(rules, /DokoHilf führt grundsätzlich keine Endnutzerkonten oder Personenprofile/);
+  assert.match(rules, /keine App-Konten oder Anmeldung, keine Bewohner-\/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken/);
+  assert.match(rules, /DokoHilf führt grundsätzlich keinerlei App-Konten, Anmeldungen oder Personenprofile/);
   assert.match(rules, /Solche Funktionen sind nicht Teil des Produkts und werden nicht vorsorglich eingeplant/);
   assert.match(rules, /Diese Tests bilden keine reale Person und keinen realen Fall nach/);
   assert.match(readme, /Solche Funktionen werden auch später nicht eingeplant/);

@@ -88,7 +88,7 @@ test('static audio exception is narrow and excludes every user-content source', 
   assert.match(policy, /nicht dauerhaft gespeichert/);
   assert.match(rules, /Allgemeine, fachlich freigegebene Guide-Anweisungen dürfen als statische Audiodateien/);
   assert.match(rules, /Nutzerantworten, Diktate, Namen, Fallinhalte, Gesundheitsdaten und Gesprächsdaten sind als statische Audioquelle ausgeschlossen/);
-  assert.match(rules, /keine Benutzerkonten, keine Bewohner-\/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken/);
+  assert.match(rules, /keine App-Konten oder Anmeldung, keine Bewohner-\/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken/);
 });
 
 test('legacy cloud builder is disabled, JWT-geschützt and its cron is removed', () => {

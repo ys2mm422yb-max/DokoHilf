@@ -26,13 +26,13 @@
 ## 3. Zweck und technische Grenzen
 
 - DokoHilf ist ausschließlich eine **erklärende Schritt-für-Schritt-Bedienhilfe**.
-- DokoHilf besitzt **keine Benutzerkonten, keine Bewohner-/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken**. Solche Funktionen sind nicht Teil des Produkts und werden nicht vorsorglich eingeplant.
+- DokoHilf besitzt **keine App-Konten oder Anmeldung, keine Bewohner-/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken**. Das schließt Redaktions-, Mitarbeiter-, Administrations- und sonstige Rollen-Konten innerhalb von DokoHilf ein. Solche Funktionen sind nicht Teil des Produkts und werden nicht vorsorglich eingeplant.
 - In DokoHilf werden keine Bewohner-, Mitarbeiter- oder sonstigen Personendaten eingegeben. Die Anwendung erklärt nur, welche Schritte der Nutzer in der davon getrennten Dokumentationssoftware ausführen soll.
 - Keine Verbindung zu produktiven Dokumentationsdatenbanken.
 - Kein Scraping, Reverse Engineering, automatisiertes Auslesen oder Nutzen nicht dokumentierter Schnittstellen.
 - Keine Speicherung von Zugangsdaten der eingesetzten Fremdsoftware.
 - Keine medizinischen, pflegerischen oder betreuerischen Entscheidungen durch die Anwendung.
-- Bedienantworten stammen nur aus redaktionell gepflegten und freigegebenen Anleitungen.
+- Bedienantworten stammen nur aus fachlich geprüften und freigegebenen Anleitungen. Änderungen erfolgen über den geprüften Repository-/Migrationsweg, niemals über einen App-Login.
 - Gemini darf Nutzerabsichten und freie Fragen interpretieren, aber niemals interne Klickwege erfinden.
 
 ## 4. Urheber-, Marken- und Lizenzschutz
@@ -63,7 +63,7 @@ Diese Regel gilt **dauerhaft, ohne Ausnahme und unabhängig von späteren betrie
 - keine Exporte oder Kopien aus produktiven Dokumentationssystemen;
 - keine Echtdaten in Logs, Fehlermeldungen, Issues, Commits, Pull Requests, Actions-Artefakten, Supabase oder der App.
 
-DokoHilf führt grundsätzlich keine Endnutzerkonten oder Personenprofile. Automatisierte Tests verwenden nur synthetische UI-Zustände, neutrale Platzhalter und erfundene Werte.
+DokoHilf führt grundsätzlich keinerlei App-Konten, Anmeldungen oder Personenprofile. Automatisierte Tests verwenden nur synthetische UI-Zustände, neutrale Platzhalter und erfundene Werte.
 
 Eine spätere Freigabe darf dieses Verbot **nicht** aufheben oder abschwächen. Soll DokoHilf jemals in einem realen betrieblichen Kontext eingesetzt werden, bleibt die Anwendung trotzdem strikt von Echtdaten getrennt und weiterhin reine Erklärungshilfe.
 
@@ -81,8 +81,10 @@ Eine spätere Freigabe darf dieses Verbot **nicht** aufheben oder abschwächen. 
 
 ## 8. Supabase-Sicherheit
 
-- Supabase dient ausschließlich als technische Inhalts-, Router- und Entwicklungsinfrastruktur für DokoHilf, nicht als Endnutzerverwaltung.
-- DokoHilf-Endnutzerkonten, Selbstregistrierung, Rollenprofile, Bewohnerprofile und Mitarbeiterprofile sind nicht Teil des Produkts und dürfen nicht eingeführt werden.
+- Supabase dient ausschließlich als technische Inhalts-, Router- und Entwicklungsinfrastruktur für DokoHilf, nicht als Nutzerverwaltung.
+- App-Konten jeder Art, Anmeldung, Selbstregistrierung, Redaktions-/Administrationsrollen, Bewohnerprofile und Mitarbeiterprofile sind nicht Teil des Produkts und dürfen nicht eingeführt werden.
+- Allgemeine Guide-Inhalte werden ausschließlich durch geprüfte Repository-Änderungen und technische Migrationen gepflegt. Dafür gibt es keinen App-Login.
+- Technische Eigentümerkonten bei GitHub und Supabase dienen nur Betrieb und Veröffentlichung; sie sind keine DokoHilf-Konten und dürfen nicht als Personenprofile in die App oder Fachdatenbank gespiegelt werden.
 - Jede exponierte Tabelle erhält Row Level Security, soweit sie nicht ausschließlich serverseitig mit Service Role genutzt wird.
 - `anon` erhält keinen unkontrollierten Zugriff auf interne technische Inhalte.
 - `service_role`, Secret Keys, Datenbankpasswörter und privilegierte Schlüssel niemals im Browser, Repository, Issue oder öffentlich sichtbaren Projekttext speichern.

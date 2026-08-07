@@ -12,13 +12,13 @@
 
 DokoHilf bleibt dauerhaft eine **reine erklärende Bedienhilfe**:
 
-- keine DokoHilf-Endnutzerkonten
+- keinerlei DokoHilf-Konten oder Anmeldung, auch keine Redaktions-, Mitarbeiter- oder Administrationskonten
 - keine Bewohner-/Mitarbeiterprofile
 - keine Fallakten oder personenbezogenen Eingabemasken
 - keine Eingabe oder Speicherung von Bewohner-, Mitarbeiter- oder sonstigen Personendaten
 - automatisierte Tests ausschließlich mit synthetischen UI-Zuständen, neutralen Platzhaltern und erfundenen technischen Werten; keine reale Person und kein realer Fall werden nachgebildet
 
-Technische GitHub-/Supabase-Administrationskonten sind Infrastruktur und keine App-Benutzerkonten.
+Allgemeine Guide-Inhalte werden ausschließlich über geprüfte Repository-Änderungen und technische Migrationen gepflegt. Technische GitHub-/Supabase-Eigentümerkonten sind reine Infrastruktur, keine DokoHilf-Konten, und werden nicht in App oder Fachdatenbank gespiegelt.
 
 Für die Stimme gilt: **keine kostenpflichtige TTS-API und kein Wechsel auf eine System-/Gerätestimme.** Die reguläre DokoHilf-Stimme soll einheitlich Supertonic F1 sein.
 
@@ -71,11 +71,13 @@ PR #86 ersetzt `dokohilf-tts`, `dokohilf-guide-audio-build` und die alte Gacrux-
 Öffentliche Projekttexte sollen klar sagen, dass DokoHilf:
 
 - ausschließlich erklärt,
-- keine Endnutzerkonten besitzt,
+- keinerlei App-Konten oder Anmeldung besitzt,
 - keine Personenprofile oder Fallakten führt,
 - keine personenbezogenen Bewohner-/Mitarbeiterdaten entgegennimmt.
 
 Das ist keine später aufzuweichende Planung, sondern eine dauerhafte Produktgrenze.
+
+Der nie produktiv genutzte Redaktions-Login ist deshalb ebenfalls entfernt. Der öffentliche Build enthält weder `editor.html` noch Editor-JavaScript/CSS. Die JWT-geschützte Edge Function `dokohilf-editor` ist nur noch ein `410 Gone`-Ruhestandsendpunkt; leere Rollen-/Auditstrukturen und ungenutzte Auth-Verweise sind entfernt. Allgemeine Guide-Inhalte und ihr unpersönlicher technischer Versionsverlauf bleiben erhalten.
 
 ## Finaler QA-Nachweis
 
@@ -107,6 +109,6 @@ Live-Supabase nach Merge:
 - Build-Schalter `false`
 - Cron `dokohilf-static-guide-audio-v27` entfernt
 - Supabase Auth: 0 Nutzer
-- Security-Advisories: 0 Hinweise; Performance-Advisories: 6 reine Infohinweise zu bislang ungenutzten Indizes
+- Security-Advisories: 0 Hinweise; Performance-Advisories: 1 reiner Infohinweis zum bislang ungenutzten Guide-Versionsindex
 
 Der Pages-Workflow veröffentlicht dasselbe exakt geprüfte `_site` ausschließlich über den dafür zugelassenen `gh-pages`-Branch; der redundante, durch die Environment-Regeln verbotene API-Deployjob wurde entfernt. Nächster Schritt ist der reale iPhone-Test mit Begrüßung plus mehreren bestätigten Guide-Schritten.

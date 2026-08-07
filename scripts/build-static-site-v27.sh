@@ -8,7 +8,7 @@ REQUIRE_STATIC_SUPERTONIC="${DOKOHILF_REQUIRE_STATIC_SUPERTONIC:-0}"
 rm -rf "$SITE_DIR"
 mkdir -p "$SITE_DIR/assets"
 
-cp index.html editor.html manifest.webmanifest icon.svg icon-v3.svg service-worker.js version.json "$SITE_DIR/"
+cp index.html manifest.webmanifest icon.svg icon-v3.svg service-worker.js version.json "$SITE_DIR/"
 cp -R assets/. "$SITE_DIR/assets/"
 rm -f "$SITE_DIR/assets/guide-audio-manifest.json"
 node scripts/generate-pwa-icons-v27.mjs "$SITE_DIR"
@@ -40,6 +40,14 @@ test -s "$SITE_DIR/assets/direct-guides-v27.js"
 test -s "$SITE_DIR/assets/detail-help-v27.js"
 test -s "$SITE_DIR/assets/detail-help-polish-v27.js"
 test -s "$SITE_DIR/assets/detail-help-render-sync-v27.js"
+test ! -e "$SITE_DIR/editor.html"
+test ! -e "$SITE_DIR/assets/editor.js"
+test ! -e "$SITE_DIR/assets/editor.css"
+
+if grep -R -E -n 'auth/v1|grant_type=password|sb_publishable_' "$SITE_DIR"; then
+  echo "Der öffentliche Build darf keine Konto- oder Anmeldeoberfläche enthalten." >&2
+  exit 1
+fi
 
 grep -q "dokohilf-build\" content=\"$BUILD_ID" "$SITE_DIR/index.html"
 grep -q 'KI · v28' "$SITE_DIR/index.html"

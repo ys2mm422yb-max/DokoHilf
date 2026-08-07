@@ -1,3 +1,7 @@
+-- HISTORISCHER MIGRATIONSSTAND: Dieser nie produktiv genutzte Account-/Editorpfad
+-- wird durch 20260807230003_remove_app_account_infrastructure.sql dauerhaft entfernt.
+-- Die folgenden Befehle dokumentieren nur die bereits angewendete Reihenfolge und
+-- sind keine aktuelle oder spätere Produktplanung.
 -- DokoHilf Block 7: geschützte Redaktion ohne öffentliche Selbstregistrierung.
 -- Enthält ausschließlich Struktur und Berechtigungen, keine Nutzer- oder Echtdaten.
 
