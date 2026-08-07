@@ -14,6 +14,7 @@ rm -f "$SITE_DIR/assets/guide-audio-manifest.json"
 node scripts/generate-pwa-icons-v27.mjs "$SITE_DIR"
 node scripts/apply-pwa-icons-v27.mjs "$SITE_DIR"
 node scripts/apply-detail-help-v27.mjs "$SITE_DIR"
+node scripts/apply-local-voice-v28.mjs "$SITE_DIR"
 touch "$SITE_DIR/.nojekyll"
 
 test -s "$SITE_DIR/index.html"
@@ -65,11 +66,17 @@ grep -q '__DOKOHILF_LOCAL_VOICE_V28__' "$SITE_DIR/assets/local-voice-v28.js"
 grep -q '__DOKOHILF_LOCAL_VOICE_GATE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_LOCAL_VOICE_ONLY_V28__' "$SITE_DIR/assets/ux-v27.js"
+grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ === true' "$SITE_DIR/assets/app.js"
+grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ !== true' "$SITE_DIR/assets/experience-v27.js"
 grep -q '__DOKOHILF_DIRECT_GUIDES_V27__' "$SITE_DIR/assets/direct-guides-v27.js"
 grep -q '__DOKOHILF_DETAIL_HELP_V27__' "$SITE_DIR/assets/detail-help-v27.js"
 grep -q '__DOKOHILF_DETAIL_HELP_POLISH_V27__' "$SITE_DIR/assets/detail-help-polish-v27.js"
 grep -q '__DOKOHILF_DETAIL_HELP_RENDER_SYNC_V27__' "$SITE_DIR/assets/detail-help-render-sync-v27.js"
 
+if grep -q 'voice-diagnostics.js' "$SITE_DIR/index.html"; then
+  echo "v28 darf die alte Gacrux-/Gerätestimmen-Diagnostik nicht laden." >&2
+  exit 1
+fi
 if grep -q 'dokohilf-guide-audio?manifest=' "$SITE_DIR/service-worker.js"; then
   echo "v28 darf keine Gacrux-Guide-Audios mehr im Service Worker vorladen." >&2
   exit 1
