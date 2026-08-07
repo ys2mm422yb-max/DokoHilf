@@ -1,5 +1,5 @@
 const BUILD_ID = '20260806-27';
-const HOTFIX_REVISION = '20260807-fluid-voice-layout-1';
+const HOTFIX_REVISION = '20260807-voice-stage-balance-3';
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}`;
 const AUDIO_CACHE_NAME = `dokohilf-approved-guide-audio-${BUILD_ID}`;
 const AUDIO_MANIFEST = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-guide-audio?manifest=1&build=20260806-27';
@@ -13,6 +13,7 @@ const CORE_FILES = [
   './assets/premium-ui-v26.css?v=20260806-27',
   './assets/premium-ui-v27.css?v=20260806-27',
   './assets/ux-v27.css?v=20260806-27',
+  './assets/voice-stage-balance-v27.css?v=20260806-27',
   './assets/guide-audio-catalog.json?v=20260806-27',
   './assets/update-manager.js?v=20260806-27',
   './assets/mobile-audio-fix.js?v=20260806-27',
