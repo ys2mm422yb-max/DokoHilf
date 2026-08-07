@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [runtime, gate, helper, ux, detail, applyLocal, applyDetail, build, builder, version, index, worker] = await Promise.all([
+const [runtime, gate, helper, ux, detail, applyLocal, applyDetail, build, builder, extras, version, index, worker] = await Promise.all([
   readFile(new URL('../assets/local-voice-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/local-voice-gate-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/vendor/supertonic-web-v28.mjs', import.meta.url), 'utf8'),
@@ -12,6 +12,7 @@ const [runtime, gate, helper, ux, detail, applyLocal, applyDetail, build, builde
   readFile(new URL('../scripts/apply-detail-help-v27.mjs', import.meta.url), 'utf8'),
   readFile(new URL('../scripts/build-static-site-v27.sh', import.meta.url), 'utf8'),
   readFile(new URL('../scripts/build-supertonic-guide-audio-v28.py', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/voice-extra-catalog-v28.json', import.meta.url), 'utf8'),
   readFile(new URL('../version.json', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
@@ -31,14 +32,20 @@ test('v28 nutzt dieselbe kostenlose Supertonic-F1-Stimme statisch für Guides un
   assert.doesNotMatch(gate, /APPROVED_AUDIO_ENDPOINT|dokohilf-guide-audio\?manifest=1|X-DokoHilf-Voice': 'Gacrux/);
 });
 
-test('GitHub-Build erzeugt bestätigte Guide-Audios ohne TTS-API mit Supertonic 3', () => {
+test('GitHub-Build erzeugt alle bestätigten statischen Sprachsätze ohne TTS-API mit Supertonic 3', () => {
   assert.match(builder, /from supertonic import TTS/);
   assert.match(builder, /TTS\(auto_download=True\)/);
   assert.match(builder, /lang='de'/);
   assert.match(builder, /voice_name=args\.voice/);
-  assert.match(builder, /--voice.*F1/s);
+  assert.match(builder, /--extra-catalog/);
+  assert.match(builder, /merged_entries/);
+  assert.match(builder, /supertonic_text/);
+  assert.match(builder, /'„': ''/);
   assert.match(build, /DOKOHILF_REQUIRE_STATIC_SUPERTONIC/);
-  assert.match(build, /exakt 93 statische Supertonic-Guideaudios/);
+  assert.match(build, /statische Supertonic-Sprachbestand unvollständig/);
+  assert.match(extras, /Okay\. Schau oben in die grüne Reiterleiste/);
+  assert.match(extras, /Die Medikation darf hier nur angesehen werden/);
+  assert.match(extras, /Der Ablauf ist erledigt/);
 });
 
 test('iOS nutzt WASM mit schnellerer lokaler Notinferenz, Android kann WebGPU bevorzugen', () => {
@@ -118,8 +125,9 @@ test('v28 Build-ID, Load-Order, report spokenText und Supertonic-PWA-Revision si
   assert.match(build, /Sturzprotokoll/);
 });
 
-test('Modellgewichte werden nicht ins Repository eingebettet; nur allgemeine Guide-WAVs gehen in Pages', () => {
+test('Modellgewichte werden nicht ins Repository eingebettet; allgemeine statische Sprach-WAVs gehen nur in Pages', () => {
   assert.match(helper, /Model weights are NOT redistributed/);
   assert.doesNotMatch(helper, /data:application\/octet-stream;base64/);
-  assert.match(build, /93 statische Supertonic-Guideaudios/);
+  assert.match(build, /baseGuideCount/);
+  assert.match(build, /Okay\. Schau oben in die grüne Reiterleiste/);
 });
