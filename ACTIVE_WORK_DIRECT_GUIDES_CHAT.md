@@ -1,20 +1,20 @@
 # Aktiver Arbeitsstand – direkte häufige Anleitungen und Chatdesign
 
 **Stand:** 7. August 2026  
-**Status:** Ersatz für den veralteten PR #69; vollständige Cross-Platform-Validierung ausstehend  
+**Status:** abgeschlossen und veröffentlicht  
 **Build:** `20260806-27`  
-**Branch:** `feature/direct-guides-chat-cross-platform-20260807`
+**Produkt-PR:** `#72`
 
 ## Nutzerwunsch
 
-Der Nutzer hat zwei Produktänderungen ausdrücklich bestätigt:
+Zwei Produktänderungen wurden ausdrücklich bestätigt:
 
 1. Der Schreibmodus soll ruhiger und klarer wie ein eigener Chat wirken.
 2. Ein Tipp auf einen Eintrag unter **„Häufige Abläufe“** soll nicht zuerst einen normalen Chat öffnen. Stattdessen soll direkt die **vollständige Schritt-für-Schritt-Anleitung** des ausgewählten bestätigten Ablaufs sichtbar werden.
 
 Zusätzlich gilt seit PR #71 verbindlich: jede mobile Änderung muss auf **iOS und Android** funktionieren und geprüft werden.
 
-Die zugrunde liegenden Nutzerbilder bleiben ausschließlich im Chat und werden nicht in GitHub, Supabase, Tests oder Artefakte übernommen.
+Öffentlich dokumentiert werden ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Ergebnisse.
 
 ## Warum PR #69 nicht gemergt wurde
 
@@ -22,7 +22,7 @@ PR #69 (`feature/direct-guides-chat-polish-20260807`) war fachlich weitgehend ko
 
 `Die sieben sichtbaren häufigen Abläufe sind nicht vollständig als direkte Anleitungen verdrahtet.`
 
-Ursache: ältere Build-27-Laufzeitlogik konnte die Hauptmenü-Schaltflächen nachträglich wieder als Chat-Prompts aufbauen. Danach kamen weitere Änderungen auf `main` hinzu, insbesondere die balancierte Sprachbühne und die neue iOS-/Android-Baseline. Der alte PR wird deshalb nicht blind neu gestartet, sondern durch diesen aktuellen Branch ersetzt.
+Ursache: ältere Build-27-Laufzeitlogik konnte die Hauptmenü-Schaltflächen nachträglich wieder als Chat-Prompts aufbauen. Danach kamen weitere Änderungen auf `main` hinzu, insbesondere die balancierte Sprachbühne und die neue iOS-/Android-Baseline. Der alte PR wurde deshalb durch PR #72 ersetzt.
 
 ## Fachquelle
 
@@ -97,13 +97,9 @@ Beide Profile prüfen unter anderem:
 - bestehende Voice-Balance inklusive Schrittkarte, Mikrofon und Aktionen
 - keine Console-/Page-Errors
 
-## Noch erforderlich
+## Abschluss
 
-- Pull Request gegen aktuellen `main` öffnen
-- alten PR #69 als ersetzt markieren und schließen
-- exakten neuen Head vollständig über GitHub Actions prüfen
-- auftretende Fehler nur auf dem neuen Branch korrigieren
-- nur vollständig grünen exakten Head manuell mergen
-- Branch nicht automatisch löschen
-- danach `main`, `gh-pages`, Service Worker und festen Hauptlink prüfen
-- abschließenden Live-Stand in `PROJECT_HANDOFF.md` dokumentieren
+- PR #72 wurde auf vollständig grünem exakten Head manuell gemergt;
+- der alte PR #69 wurde als ersetzt geschlossen;
+- Branches wurden nicht automatisch gelöscht;
+- `main`, `gh-pages`, Service Worker und der feste Hauptlink wurden anschließend geprüft.
