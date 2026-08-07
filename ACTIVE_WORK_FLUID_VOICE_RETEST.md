@@ -10,12 +10,12 @@
 
 ## Nutzer-Retest
 
-Der Nutzer hatte den veröffentlichten Stand nach PR #64/#65 erneut auf einem iPhone getestet und zwei reale Probleme bestätigt:
+Der veröffentlichte Stand nach PR #64/#65 wurde erneut auf einem iPhone getestet und zwei reale Probleme wurden bestätigt:
 
 1. In der fokussierten Sprachansicht überschnitten beziehungsweise überlagerten sich Darstellungen noch teilweise.
 2. Die Begrüßung startete schnell, aber nach einer gesprochenen Frage dauerte der Start der Antwort weiterhin zu lange.
 
-Das Nutzerbild blieb ausschließlich im Chat. Es wurde weder ins Repository noch nach Supabase oder in Testartefakte übernommen.
+Öffentlich dokumentiert werden ausschließlich das reproduzierte Produktverhalten und anonymisierte technische Erkenntnisse.
 
 ## Ursache
 
@@ -60,7 +60,7 @@ Im selben Hotfix wurde der Schreibmodus bereits etwas bereinigt:
 - kompaktere mobile Schnellaktionen
 - redundanter aktueller Versionsstatus entfernt
 
-Der größere vom Nutzer gewünschte Umbau des Chat-Erlebnisses und der häufigen Abläufe bleibt ein eigener nächster Produktblock.
+Der größere Umbau des Chat-Erlebnisses und der häufigen Abläufe blieb ein eigener Produktblock.
 
 ### PWA-Auslieferung
 
@@ -98,7 +98,7 @@ Supabase wurde durch PR #67 nicht verändert. Letzter während des Abschlusses l
 
 ## Nächster Produktblock
 
-Nach diesem Stabilitätsfix sind die nächsten bereits bestätigten Nutzerwünsche:
+Nach diesem Stabilitätsfix waren die nächsten bestätigten Produktwünsche:
 
 1. **Detailhilfe** hinter `Ich brauche Hilfe / Ich finde das nicht`: gezielt nach sichtbarem Zustand fragen, ohne nicht bestätigte Klickwege zu erfinden.
 2. **Häufige Abläufe** im Hauptmenü: ein Tipp soll direkt die komplette Schritt-für-Schritt-Anleitung öffnen, nicht erst einen normalen Chat erzeugen.
