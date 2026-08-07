@@ -3,7 +3,7 @@
 **Stand:** 7. August 2026  
 **Status:** Umsetzung im PR; Merge erst nach vollständig grünem exakten Head  
 **Branch:** `fix/voice-guides-report-conditions-v28-20260807`  
-**PR:** `#82`  
+**PR:** `#85`  
 **Build:** `20260807-28` / sichtbare Version `v28`
 
 ## Verbindliche Nutzerentscheidungen
