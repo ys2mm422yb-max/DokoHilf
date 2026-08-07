@@ -53,9 +53,11 @@ test('Sprachantwort fällt nach höchstens 180 ms auf die sofortige Gerätestimm
   assert.match(experience, /loadPrebuiltVoice/);
 });
 
-test('Service Worker erzwingt die Auslieferung des Sprach- und Layout-Hotfixes', () => {
-  assert.match(worker, /HOTFIX_REVISION = '20260807-fluid-voice-layout-1'/);
+test('Service Worker erzwingt weiterhin die Auslieferung des aktuellen PWA-Hotfixes', () => {
+  assert.match(worker, /HOTFIX_REVISION = '20260807-direct-guides-chat-2'/);
   assert.match(worker, /hotfixRevision: HOTFIX_REVISION/);
+  assert.match(worker, /assets\/ux-v27\.js\?v=20260806-27/);
+  assert.match(worker, /assets\/ux-v27\.css\?v=20260806-27/);
 });
 
 test('Build 27 lädt die bewährte v26-Basisschicht und die neue v27-Erfahrung gemeinsam', () => {
