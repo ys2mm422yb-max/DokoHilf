@@ -74,11 +74,13 @@ try {
 
   await page.getByRole('button', { name: 'Doku-Erweitert ist offen' }).click();
   await page.waitForFunction(() => document.querySelector('#guideProgressStep')?.textContent?.includes('Schritt 2 von 2'));
+  await page.waitForFunction(() => document.querySelector('.message.assistant:last-of-type .bubble p')?.textContent?.includes('Siehst du den Eintrag') || [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('Siehst du den Eintrag'));
   const secondReply = await page.locator('.message.assistant .bubble p').last().innerText();
   assert(secondReply.includes('Vitalwerte Sammelerf.'), 'Zweiter Orientierungsschritt erklärt den getrennten Sammel-Eintrag nicht.');
   assert(secondReply.includes('Siehst du den Eintrag'), 'Zweiter Orientierungsschritt stellt keine echte Rückfrage.');
 
   await page.getByRole('button', { name: '„Vitalwerte“ fehlt' }).click();
+  await page.waitForFunction(() => [...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes('keinen bestätigten Alternativ-Klickweg'));
   const missingReply = await page.locator('.message.assistant .bubble p').last().innerText();
   assert(missingReply.includes('keinen bestätigten Alternativ-Klickweg'), 'Fehlender Menüpunkt stoppt nicht an der bestätigten Fachgrenze.');
   assert(missingReply.includes('Bitte nichts raten'), 'Sicherheitsgrenze gegen erfundene Klickwege fehlt.');
@@ -111,7 +113,6 @@ try {
     profile: PROFILE,
     viewport: { width: WIDTH, height: HEIGHT },
     routerRequests: unexpectedRouterRequests,
-    guideStepAfterMissingTarget: await page.locator('#guideProgressStep').innerText().catch(() => null),
     consoleErrors,
     pageErrors,
   }, null, 2));
