@@ -1,3 +1,6 @@
+-- HISTORISCHER MIGRATIONSSTAND: Diese Indizes gehörten zum nie produktiv
+-- genutzten Account-/Editorpfad und werden durch
+-- 20260807230003_remove_app_account_infrastructure.sql entfernt.
 -- Performance-Nachschärfung nach Supabase Advisor.
 
 create index if not exists dokohilf_editor_audit_actor_id_idx

@@ -16,7 +16,8 @@
 - Fester öffentlicher Hauptlink: `https://ys2mm422yb-max.github.io/DokoHilf/`
 - Andere Repositories oder Supabase-Projekte niemals öffnen, verändern oder verbinden.
 - DokoHilf ist ausschließlich eine **erklärende Schritt-für-Schritt-Bedienhilfe**.
-- Die App besitzt keine Endnutzerkonten, Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken. Solche Funktionen werden nicht eingeplant.
+- Die App besitzt keinerlei Konten oder Anmeldung – einschließlich Redaktions-, Mitarbeiter- oder Administrationskonten –, keine Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken. Solche Funktionen werden nicht eingeplant.
+- Allgemeine Guide-Inhalte werden ausschließlich über geprüfte Repository-Änderungen und technische Migrationen gepflegt, nie über einen App-Login.
 - Bewohner-, Mitarbeiter- und sonstige Personendaten werden nicht in DokoHilf eingegeben oder gespeichert.
 - Dauerhaft keine realen Bewohner-, Klienten-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in Repository, Supabase, App, Tests oder Artefakten.
 - Das Echtdatenverbot gilt dauerhaft und wird durch spätere betriebliche, technische oder datenschutzrechtliche Freigaben nicht aufgehoben.
@@ -158,12 +159,14 @@ Vor veränderlichen Aussagen immer live prüfen. Zuletzt bekannte technische Ker
 - `public.dokohilf_static_guide_audio`
 - `public.dokohilf_internal_build_control`
 
-Supabase ist technische Infrastruktur, **keine DokoHilf-Endnutzerverwaltung**. Keine Endnutzerkonten, Rollenprofile, Bewohnerprofile oder Mitarbeiterprofile in DokoHilf einführen.
+Supabase ist technische Infrastruktur, **keine DokoHilf-Nutzerverwaltung**. Keine App-Konten, Anmeldung, Rollenprofile, Bewohnerprofile oder Mitarbeiterprofile in DokoHilf einführen.
+
+Der frühere, nie produktiv verwendete Redaktions-Login ist vollständig stillgelegt: keine veröffentlichte Editor-Seite, keine App-Rollen oder Kontentabellen, keine Auth-Verweise in den Guide-Tabellen und nur ein JWT-geschützter `410 Gone`-Ruhestandsendpunkt. Die 25 allgemeinen Guide-Inhalte und 38 technischen Versionseinträge bleiben ohne Personenbezug erhalten. Supabase Auth bleibt leer.
 
 ## 11. Dauerhafte Datenschutz- und Sicherheitsgrenzen
 
 - dauerhaft keine Echtdaten, auch nicht nach späterer organisatorischer Freigabe
-- keine Endnutzerkonten oder Personenprofile in DokoHilf
+- keinerlei App-Konten, Anmeldung, Rollen- oder Personenprofile in DokoHilf
 - keine produktiven Exporte oder Kopien in DokoHilf
 - keine Nutzerstimmen, Diktate oder freien Gesprächsinhalte dauerhaft speichern
 - keine Secrets im Browser, Repository oder öffentlich sichtbaren Projekttext

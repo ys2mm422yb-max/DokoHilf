@@ -1,3 +1,6 @@
+-- HISTORISCHER MIGRATIONSSTAND: Der zugehörige nie produktiv genutzte
+-- Account-/Editorpfad wird durch 20260807230003_remove_app_account_infrastructure.sql
+-- dauerhaft entfernt. Keine aktuelle oder spätere Produktplanung.
 -- Nachschärfung nach Supabase Security Advisor.
 -- Rollenfunktionen liegen außerhalb des exponierten public-Schemas.
 

@@ -2,7 +2,7 @@
 
 DokoHilf ist eine unabhängige interne Schritt-für-Schritt-Hilfe für Dokumentationsabläufe.
 
-DokoHilf ist ausschließlich eine **erklärende Bedienhilfe**. Die App hat keine Endnutzerkonten, keine Personenprofile und keine Fallakten. Solche Funktionen werden auch später nicht eingeplant. Personenbezogene Informationen werden nicht in DokoHilf eingegeben oder gespeichert; Tests bilden weder reale Personen noch reale Fälle nach.
+DokoHilf ist ausschließlich eine **erklärende Bedienhilfe**. Die App hat keinerlei Konten oder Anmeldung – auch keine Redaktions-, Mitarbeiter- oder Administrationskonten –, keine Personenprofile und keine Fallakten. Solche Funktionen werden auch später nicht eingeplant. Personenbezogene Informationen werden nicht in DokoHilf eingegeben oder gespeichert; Tests bilden weder reale Personen noch reale Fälle nach. Allgemeine Anleitungen werden ausschließlich über geprüfte Repository-Änderungen gepflegt, nicht über Konten in der App.
 
 ## Start für jeden neuen Chat
 
@@ -27,11 +27,11 @@ Das ist der einzige feste öffentliche Link von DokoHilf. Veröffentlichte Ände
 
 - eigenständiges GitHub-Repository
 - getrenntes Supabase-Projekt in Frankfurt als technische Infrastruktur
-- reine erklärende Bedienhilfe ohne Endnutzerkonten oder Personenprofile
+- reine erklärende Bedienhilfe ohne App-Konten, Anmeldung oder Personenprofile
 - automatisierte Tests ausschließlich mit synthetischen UI-Zuständen, neutralen Platzhaltern und erfundenen Werten
 - dauerhaft keine realen Bewohner-, Gesundheits- oder Mitarbeiterdaten
 - keine Logos, kopierten Handbücher oder geschützten Schulungsunterlagen
-- zustandsbasierte, redaktionell freigegebene Schritt-für-Schritt-Anleitungen
+- zustandsbasierte, fachlich geprüfte Schritt-für-Schritt-Anleitungen
 - PWA-Veröffentlichung über `main` und den tatsächlich ausgelieferten Branch `gh-pages`
 
 ## Projektgrenzen

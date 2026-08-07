@@ -30,20 +30,23 @@ jobs:
           for file in \
             README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md \
             FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md ACTIVE_WORK_DIRECT_GUIDES_CHAT.md \
+            ACTIVE_WORK_ACCOUNT_FREE_V28.md \
             assets/guide-audio-catalog.json assets/voice-extra-catalog-v28.json assets/direct-guides-v27.js assets/direct-guides-chat-v27.css \
             scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh scripts/build-supertonic-guide-audio-v28.py \
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
             scripts/live-routing-stable.mjs scripts/live-vitalwerte-routing-smoke.mjs \
             tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs tests/direct-guides-v27.test.mjs \
-            tests/public-documentation-boundary.test.mjs \
+            tests/public-documentation-boundary.test.mjs tests/account-free-product.test.mjs \
             supabase/functions/dokohilf-ai-router/index.ts \
+            supabase/functions/dokohilf-editor/index.ts \
             supabase/functions/dokohilf-tts/index.ts \
             supabase/functions/dokohilf-guide-audio/index.ts \
             supabase/functions/dokohilf-guide-audio-build/index.ts \
             supabase/config.toml \
             supabase/migrations/20260806194500_create_static_guide_audio_registry.sql \
             supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql \
-            supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql; do
+            supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql \
+            supabase/migrations/20260807230003_remove_app_account_infrastructure.sql; do
             test -s "$file"
           done
 
@@ -86,6 +89,15 @@ jobs:
             echo "Pages wird über den geschützten gh-pages-Branch veröffentlicht; ein zusätzlicher API-Deployjob ist unzulässig." >&2
             exit 1
           fi
+          test ! -e editor.html
+          test ! -e assets/editor.js
+          test ! -e assets/editor.css
+          test ! -e docs/EDITOR_ROLLOUT.md
+          grep -q 'app_accounts_retired_v28' supabase/functions/dokohilf-editor/index.ts
+          grep -q 'drop table if exists public.dokohilf_user_roles' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql
+          grep -q 'dokohilf_block_all_user_creation' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql
+          grep -q 'before insert on auth.users' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql
+          grep -q '\[functions.dokohilf-editor\]' supabase/config.toml
 
           node --check assets/update-manager.js
           node --check assets/mobile-audio-fix.js
@@ -98,7 +110,6 @@ jobs:
           node --check assets/ux-v27.js
           node --check assets/direct-guides-v27.js
           node --check assets/app.js
-          node --check assets/editor.js
           node --check service-worker.js
           node --check scripts/mobile-render-v27.mjs
           node --check scripts/live-routing-smoke.mjs
@@ -131,7 +142,7 @@ jobs:
             tests/mobile-layout-contract.test.mjs \
             tests/privacy-contract.test.mjs \
             tests/public-documentation-boundary.test.mjs \
-            tests/editor-security.test.mjs \
+            tests/account-free-product.test.mjs \
             tests/vitalwerte-intent.test.mjs \
             tests/live-build-recovery.test.mjs \
             tests/confirmed-workflows.test.mjs \
@@ -148,7 +159,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p _ui_site/assets artifacts/mobile-v27/ios artifacts/mobile-v27/android
-          cp index.html editor.html manifest.webmanifest icon.svg service-worker.js version.json _ui_site/
+          cp index.html manifest.webmanifest icon.svg service-worker.js version.json _ui_site/
           cp -R assets/. _ui_site/assets/
           rm -rf _ui_site/assets/audio
           rm -f _ui_site/assets/guide-audio-manifest.json

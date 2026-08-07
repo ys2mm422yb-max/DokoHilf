@@ -1,5 +1,8 @@
 project_id = "efifbuqctylsujiauabg"
 
+[functions.dokohilf-editor]
+verify_jwt = true
+
 [functions.dokohilf-tts]
 verify_jwt = true
 
