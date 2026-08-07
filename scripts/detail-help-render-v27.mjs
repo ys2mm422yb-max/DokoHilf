@@ -8,7 +8,7 @@ const SCALE = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/detail-help-v27/${PROFILE}`;
 const GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
-const DOKU_ENTRY = 'Öffne Doku-Erweitert.';
+const DETAIL_ORIENTATION = 'Okay. Schau oben in die grüne Reiterleiste. Siehst du Doku-Erweitert?';
 
 function assert(condition, message) { if (!condition) throw new Error(message); }
 function silentWav() {
@@ -47,7 +47,7 @@ await page.addInitScript(({profile})=>{
 let unexpectedRouterRequests=0,cloudTtsRequests=0,staticManifestRequests=0,staticAudioRequests=0;
 await page.route(/\/functions\/v1\/dokohilf-ai-router(?:\?.*)?$/,async r=>{unexpectedRouterRequests+=1;await r.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'detail_help_should_intercept_before_router'})});});
 await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/,async r=>{cloudTtsRequests+=1;await r.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'tts_network_forbidden_in_v28'})});});
-await page.route('**/assets/guide-audio-catalog.json*',async r=>{staticManifestRequests+=1;await r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schemaVersion:1,voice:'Supertonic-F1',entries:[{file:'assets/audio/guides/000.wav',text:GREETING},{file:'assets/audio/guides/029.wav',text:DOKU_ENTRY}]})});});
+await page.route('**/assets/guide-audio-catalog.json*',async r=>{staticManifestRequests+=1;await r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schemaVersion:1,voice:'Supertonic-F1',entries:[{file:'assets/audio/guides/000.wav',text:GREETING},{file:'assets/audio/guides/093.wav',text:DETAIL_ORIENTATION}]})});});
 await page.route('**/assets/audio/guides/*.wav',async r=>{staticAudioRequests+=1;await r.fulfill({status:200,contentType:'audio/wav',body:silentWav()});});
 
 try{
@@ -64,8 +64,8 @@ try{
   await page.evaluate(()=>window.DokoHilf?.resetConversation?.({keepMode:false}));await page.locator('#startScreen').waitFor({state:'visible'});await page.locator('[data-select-mode="voice"]').click();await page.locator('.voice-focus-stage').waitFor({state:'visible'});await page.waitForFunction(()=>window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('000.wav'));
   assert(staticManifestRequests>=1,'Supertonic-Katalog nicht geladen.');assert(staticAudioRequests>=1,'Begrüßungs-Audio nicht geladen.');assert(await page.evaluate(()=>window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__.length)===0,'Begrüßung startete lokale Inferenz.');
 
-  await page.evaluate(()=>window.DokoHilf?.sendMessage?.('Ich finde die Vitalwerte nicht wo sind die?',{fromVoice:true}));const voiceHelp=page.locator('#voiceDetailHelpOptionsV27');await voiceHelp.waitFor({state:'visible'});await page.waitForFunction(()=>document.querySelector('#voiceFocusText')?.textContent?.includes('Schau oben in die grüne Reiterleiste'));await page.waitForFunction(()=>window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('029.wav'));
-  const voiceText=await page.locator('#voiceFocusText').innerText();assert(!/erledigt|tun nicht so|markiere/i.test(voiceText),'Voice zeigt interne Zustände.');assert(await voiceHelp.locator('[data-detail-help-value]').count()===4,'Vier Voice-Optionen fehlen.');assert(await page.locator('#appShell').getAttribute('data-detail-help')==='true','Voice-Detailhilfe-Zustand fehlt.');assert(await page.evaluate(()=>window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__.length)===0,'Bestätigte Folgeantwort fiel in lokale Inferenz.');
+  await page.evaluate(()=>window.DokoHilf?.sendMessage?.('Ich finde die Vitalwerte nicht wo sind die?',{fromVoice:true}));const voiceHelp=page.locator('#voiceDetailHelpOptionsV27');await voiceHelp.waitFor({state:'visible'});await page.waitForFunction(()=>document.querySelector('#voiceFocusText')?.textContent?.includes('Schau oben in die grüne Reiterleiste'));await page.waitForFunction(()=>window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('093.wav'));
+  const voiceText=await page.locator('#voiceFocusText').innerText();assert(!/erledigt|tun nicht so|markiere/i.test(voiceText),'Voice zeigt interne Zustände.');assert(await voiceHelp.locator('[data-detail-help-value]').count()===4,'Vier Voice-Optionen fehlen.');assert(await page.locator('#appShell').getAttribute('data-detail-help')==='true','Voice-Detailhilfe-Zustand fehlt.');assert(await page.evaluate(()=>window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__.length)===0,'Bestätigte Detailhilfe fiel in lokale Inferenz.');
 
   const systemCalls=await page.evaluate(()=>[...window.__DOKOHILF_SYSTEM_SPEECH_TEST_CALLS__]);assert(systemCalls.length===0,'Systemstimme aufgerufen.');assert(cloudTtsRequests===0,'TTS-Netzwerkpfad erreicht.');assert(unexpectedRouterRequests===0,'Detailhilfe rief Router unnötig auf.');
   const geometry=await page.evaluate(()=>{const rect=s=>document.querySelector(s)?.getBoundingClientRect();const opts=[...document.querySelectorAll('#voiceDetailHelpOptionsV27 [data-detail-help-value]')].map(n=>n.getBoundingClientRect());const actions=document.querySelector('#voiceFocusActions');return{instruction:rect('.voice-focus-instruction'),panel:rect('#voiceDetailHelpOptionsV27'),orb:rect('.voice-focus-stage .voice-orb'),actionsDisplay:actions?getComputedStyle(actions).display:'missing',optionRects:opts.map(x=>({x:x.x,y:x.y,width:x.width,height:x.height})),scrollWidth:document.documentElement.scrollWidth,viewportWidth:window.innerWidth};});
