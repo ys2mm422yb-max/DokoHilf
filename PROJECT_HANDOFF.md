@@ -96,6 +96,7 @@ Zuletzt live bestätigt:
 - `public.dokohilf_static_guide_audio`
 - `public.dokohilf_internal_build_control`
 - privater Bucket `dokohilf-guide-audio`
+- freigegebene Guide-Audios liegen im **privaten Supabase-Bucket** `dokohilf-guide-audio` und werden nur über den kontrollierten Guide-Audio-Endpunkt ausgeliefert
 - alte Diagnose-, Export-, Batch-, Store- und Snapshot-Endpunkte neutralisiert auf HTTP 410
 
 ## 6. Sprache und Audio
