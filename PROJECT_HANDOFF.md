@@ -3,9 +3,10 @@
 **Status:** Verbindliche Arbeitsquelle  
 **Stand:** 7. August 2026  
 **Veröffentlichter Build:** `20260806-27`  
-**Aktueller Produktstand:** Build 27 live; nächster Produktblock ist Detailhilfe bei „Ich brauche Hilfe / Ich finde das nicht“
+**Aktueller Produktstand:** Build 27 live; Sprachstart und iPhone-Sprachlayout nachgebessert; statische Gacrux-Bibliothek baut sich kontrolliert weiter auf  
+**Nächster Produktblock:** Detailhilfe bei „Ich brauche Hilfe / Ich finde das nicht“
 
-> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und vorhandene `ACTIVE_WORK_*.md`. Danach werden der tatsächliche GitHub-, Actions-, Pages- und Supabase-Stand live geprüft. GitHub ist das dauerhafte Arbeitsgedächtnis; alte Chats sind keine notwendige Voraussetzung zur Fortsetzung.
+> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle vorhandenen `ACTIVE_WORK_*.md`. Danach werden der tatsächliche GitHub-, Actions-, Pages- und Supabase-Stand live geprüft. GitHub ist das dauerhafte Arbeitsgedächtnis; alte Chats sind keine notwendige Voraussetzung zur Fortsetzung.
 
 ## 1. Projektgrenzen
 
@@ -49,22 +50,37 @@ Bestätigte Klickwege gehören nach `CONFIRMED_WORKFLOWS.md`. Laufende größere
 
 Build `20260806-27` ist veröffentlicht und live.
 
-Finaler Produktnachweis:
+Basis-Release:
 
 - PR #53 **„Finale Build-27-Validierung und iPhone-Renderfix“** wurde am 7. August 2026 gemergt.
 - Merge-Commit: `5d58167e2df9c78493f2e4ef880ac293be8aa2be`
-- final geprüfter Feature-Head vor Merge: `0ca4cd911297b22702f38b82b8caafeab9975a4e`
-- `Deploy DokoHilf` Run #238: erfolgreich
-- `Validate dark iPhone UI v27` Run #17: erfolgreich
-- `version.json` auf `main`: Build `20260806-27`, Release `dark-premium-fast-voice`
-- öffentlicher Hauptlink liefert Build-Marker `20260806-27` mit HTTP 200
-- Supabase-Projekt ist `ACTIVE_HEALTHY`
+- final geprüfter Feature-Head: `0ca4cd911297b22702f38b82b8caafeab9975a4e`
+- `version.json`: Build `20260806-27`, Release `dark-premium-fast-voice`
 
-Historischer Hinweis: PR #52 ist in GitHub ebenfalls als geschlossen und gemergt markiert. Für den aktuellen Produktstand ist der tatsächlich veröffentlichte `main`- und Pages-Stand maßgeblich; nicht aus alten PR-Beschreibungen ableiten.
+Nachgelagerter App-Icon-Block:
 
-## 5. Build-27-Architektur
+- PR #62 veröffentlichte das dunkle, zum Build-27-Design passende App-/Homescreen-Icon.
+- Merge-Commit: `10fedecd38d25fb2eb29d2061383cce8d26a5a39`
+- Details: `ACTIVE_WORK_APP_ICON.md`
 
-### Frontend
+Nachgelagerter Sprach-/Layout-Fix:
+
+- PR #64 **„Beschleunige Sprachstart und korrigiere iPhone-Überlappungen“**
+- finaler exakter Head: `6ddc93f7f1e22258132b741b80866c9615a2ea91`
+- Merge-Commit: `d3f8d16956defeefa7d9a4d5cbbd76c63d03db9a`
+- exakter Head vollständig grün
+- `gh-pages/assets/ux-v27.js` live mit `HARD_FALLBACK_MS = 1200`
+- `gh-pages/assets/ux-v27.css` live mit Safe-Area-Sprachlayout und im Sprachmodus ausgeblendetem Versionsstatus
+
+Serverseitiger statischer Gacrux-Fix:
+
+- PR #65 **„Erlaube sicheren Aufbau der vollständigen Gacrux-Guidebibliothek“**
+- finaler exakter Head: `affff5b53b0ae1a5f0b97688b5a6b49d78bd94a1`
+- Merge-Commit: `6afc9267756b5fa1617b8b067f246598a44bd90a`
+- `Deploy DokoHilf` Run #256 vollständig erfolgreich
+- Details und Live-Nachweise: `ACTIVE_WORK_VOICE_RELIABILITY.md`
+
+## 5. Build-27-Frontendarchitektur
 
 - statische PWA auf GitHub Pages
 - `index.html`
@@ -75,52 +91,88 @@ Historischer Hinweis: PR #52 ist in GitHub ebenfalls als geschlossen und gemergt
 - `assets/mobile-audio-fix.js` – Audio-Entsperrung
 - `assets/update-manager.js` – Updates
 - `assets/premium-ui-v27.css` – Dark-Design
-- `assets/ux-v27.css`, `assets/ux-v27.js` – kompakte Bedienung und Erststart-Datenschutz
+- `assets/ux-v27.css`, `assets/ux-v27.js` – kompakte Bedienung, iPhone-Sprachlayout, 1,2-s-Sprachfallback und Erststart-Datenschutz
 - `assets/experience-v27.js` – statische und dynamische Sprachausgabe
 - `assets/voice-diagnostics.js` – privater Audiokatalog und Gerätecache
-- `assets/guide-audio-catalog.json` – statischer Audio-Textkatalog
+- `assets/guide-audio-catalog.json` – 93 allgemeine statische Audio-Texte
 - `scripts/build-static-site-v27.sh` – exakter Pages-Build
-- `scripts/mobile-render-v27.mjs` – mobiler Rendernachweis
+- `scripts/mobile-render-v27.mjs` – mobiler Rendernachweis inklusive realer Geometrieprüfung von Kopfzeile und Sprachfläche
 
-### Supabase
+## 6. Aktueller Supabase-Stand
 
 Zuletzt live bestätigt:
 
 - `dokohilf-ai-router` v11
-- `dokohilf-tts` v20
+- `dokohilf-tts` **v21**
 - `dokohilf-guide-audio` v1
-- `dokohilf-guide-audio-build` v2
+- `dokohilf-guide-audio-build` **v3**
 - `dokohilf-editor` v1
 - `public.dokohilf_guides`
 - `public.dokohilf_topics`
 - `public.dokohilf_static_guide_audio`
 - `public.dokohilf_internal_build_control`
 - privater Bucket `dokohilf-guide-audio`
-- freigegebene Guide-Audios liegen im **privaten Supabase-Bucket** `dokohilf-guide-audio` und werden nur über den kontrollierten Guide-Audio-Endpunkt ausgeliefert
 - alte Diagnose-, Export-, Batch-, Store- und Snapshot-Endpunkte neutralisiert auf HTTP 410
 
-## 6. Sprache und Audio
+Freigegebene statische Guide-Audios liegen im privaten Bucket und werden nur über den kontrollierten Guide-Audio-Endpunkt ausgeliefert.
+
+## 7. Sprache und Audio – aktueller Stand
 
 Natürliche Stimme: **Gacrux**.
 
-TTS v20:
+`dokohilf-tts` v21:
 
 - Roh-REST-Parser `raw-steps-content-v1`
 - primär `gemini-3.1-flash-tts-preview`
 - Fallback `gemini-2.5-flash-preview-tts`
 - gültige RIFF/WAVE-Ausgabe
 - echte Providerstatus 429/502/503/504 werden weitergegeben
-- vorhandene statische freigegebene Audios werden vor Live-TTS verwendet
-- danach Live-TTS v20
-- nach rund 1,9 Sekunden lokale Sofortstimme als Fallback
+- öffentliche Browser-/Sprachanfragen behalten den strengen Datenschutzfilter
+- der interne statische Builder erhält nur nach serverseitiger Tokenprüfung einen engen Sonderpfad für bereits fachlich freigegebene allgemeine Guide-Texte
+- Tokenprüfung erfolgt serverseitig gegen `dokohilf_internal_build_control`; kein Tokenwert liegt im Repository oder Browser
 
-Statische Audioquelle ausschließlich allgemeines `step.text` freigegebener Guides. Keine Nutzerstimmen, Diktate, freien Antworten, Namen, Fall- oder Gesundheitsdaten speichern.
+Client-Reihenfolge:
 
-Der vollständige 93/93-Audiobestand ist ein separater Ausbauzustand und kein Blocker für den veröffentlichten Build 27. Veränderliche Bestandszahlen immer live aus Supabase prüfen.
+1. vorhandenes statisches freigegebenes Gacrux-Audio
+2. dynamisches Gacrux-TTS
+3. nach **1,2 Sekunden** lokale Sofortstimme
+4. iOS-Resume-Watchdog verhindert einen stumm pausierten `speechSynthesis`-Fallback
 
-## 7. Verbindliche Fachquelle
+Der Live-Provider kann weiterhin zeitweise 429 liefern oder 6–13 Sekunden benötigen. Diese Providerlatenz blockiert den Nutzer aber nicht mehr so lange, weil der Client früh auf die Sofortstimme wechselt.
 
-`CONFIRMED_WORKFLOWS.md` ist die einzige verbindliche Quelle für lokale bestätigte Klickwege. Router, Supabase-Guides, Detailhilfe und Tests müssen damit übereinstimmen. Keine fehlenden Feldnamen oder Klickwege erfinden.
+## 8. Statische Gacrux-Bibliothek
+
+Ziel: 93/93 allgemeine, fachlich freigegebene Texte.
+
+Sicherheitsgrenze:
+
+- ausschließlich allgemeine freigegebene `step.text`-Inhalte
+- keine Nutzerstimmen
+- keine Diktate
+- keine freien Antworten
+- keine Gesprächsverläufe
+- keine Namen, Fall- oder Gesundheitsdaten
+
+Aktiver Builder:
+
+- `dokohilf-guide-audio-build` v3
+- genau ein Eintrag pro Minute
+- Cron: `dokohilf-static-guide-audio-v27`
+- Schedule zuletzt live bestätigt: `* * * * *`
+- der Builder deaktiviert seine Steuerung und entfernt den Cronjob selbst bei 93/93
+
+Live-Nachweis nach PR #65:
+
+- zuvor durch Privacy-Heuristik blockierter allgemeiner Index 4 erfolgreich erstellt
+- HTTP 200, Registry-Zuwachs von 4 auf 5
+- der vom Nutzer aktuell verwendete Visiten-Schritt Katalogindex 33 wurde zusätzlich erfolgreich statisch erzeugt
+- letzter Abschlussstand: **7/93**, Indizes `0,1,2,3,4,5,33`
+
+Diese Bestandszahl ist absichtlich veränderlich. Jeder neue Chat muss sie bei Audioarbeit live aus Supabase prüfen.
+
+## 9. Verbindliche Fachquelle
+
+`CONFIRMED_WORKFLOWS.md` ist die einzige verbindliche Quelle für lokal bestätigte Klickwege. Router, Supabase-Guides, Detailhilfe und Tests müssen damit übereinstimmen. Keine fehlenden Feldnamen oder Klickwege erfinden.
 
 Bestätigt sind insbesondere:
 
@@ -136,9 +188,9 @@ Bestätigt sind insbesondere:
 - Notfallblatt öffnen
 - Übergabe über `Analyse → Was war los? → Alle anzeigen → Alles ausklappen`
 
-## 8. Bildbasierte Nachbestätigung vom 7. August 2026
+## 10. Bildbasierte Nachbestätigung vom 7. August 2026
 
-Der Nutzer hat erneut lokale Bilder zu mehreren Abläufen geschickt. Die Bilder selbst bleiben Chat-only und dürfen niemals nach GitHub oder Supabase übernommen werden.
+Die vom Nutzer geschickten lokalen Bilder bleiben Chat-only und dürfen niemals nach GitHub oder Supabase übernommen werden.
 
 Anonymisiert erneut bestätigt:
 
@@ -153,7 +205,7 @@ Anonymisiert erneut bestätigt:
 
 Die vollständigen anonymisierten Schritte stehen in `CONFIRMED_WORKFLOWS.md`.
 
-## 9. Aktiver nächster Produktblock: Detailhilfe
+## 11. Aktiver nächster Produktblock: Detailhilfe
 
 Datei: `ACTIVE_WORK_DETAIL_HELP.md`
 
@@ -172,20 +224,7 @@ Verbindliche Richtung:
 
 **Umsetzung ist noch nicht erfolgt.** Der nächste Entwickler soll diesen Block aus `ACTIVE_WORK_DETAIL_HELP.md` aufnehmen, implementieren, testen, dokumentieren und erst nach vollständiger Prüfung veröffentlichen.
 
-## 10. Aktueller Dokumentations-Arbeitsblock
-
-Arbeitsbranch: `docs/handoff-20260807`
-
-Zweck:
-
-- ausdrückliche dauerhafte GitHub-Dokumentationspflicht verankern
-- neue Bild-Nachbestätigungen anonymisiert dokumentieren
-- Detailhilfe als nächsten Produktblock festhalten
-- diese Übergabe vom alten Pre-Release-Stand auf den tatsächlich veröffentlichten Build 27 aktualisieren
-
-Vor Merge dieses Dokumentationsblocks gelten weiterhin die Projektregeln für Branch, PR, Prüfung und Merge. Branch nicht löschen.
-
-## 11. Pflicht für jeden neuen Chat
+## 12. Pflicht für jeden neuen Chat
 
 1. `PROJECT_RULES.md` lesen.
 2. `CONFIRMED_WORKFLOWS.md` lesen.
@@ -193,7 +232,8 @@ Vor Merge dieses Dokumentationsblocks gelten weiterhin die Projektregeln für Br
 4. alle `ACTIVE_WORK_*.md` prüfen.
 5. Live-GitHub prüfen: `main`, offene PRs, aktuelle Heads, Actions und `gh-pages`.
 6. Live-Supabase prüfen, wenn der Arbeitsblock Supabase, Router, Audio oder Guides betrifft.
-7. Exakt beim dokumentierten nächsten ausführbaren Schritt fortfahren.
-8. Nach eigener Arbeit Repository-Dokumentation wieder aktualisieren.
+7. Bei Audioarbeit den veränderlichen statischen Audio-Bestand und den Cronzustand live prüfen.
+8. Exakt beim dokumentierten nächsten ausführbaren Schritt fortfahren.
+9. Nach eigener Arbeit Repository-Dokumentation wieder aktualisieren.
 
 Diese Datei ist das dauerhafte Handoff, ersetzt aber nie die Live-Prüfung veränderlicher Zustände.
