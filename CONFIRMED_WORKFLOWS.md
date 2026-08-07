@@ -1,9 +1,11 @@
 # DokoHilf – bestätigte Arbeitsabläufe
 
 **Status:** verbindliche fachliche Quelle  
-**Stand:** 6. August 2026
+**Stand:** 7. August 2026
 
 Diese Datei enthält ausschließlich anonymisierte, vom Nutzer anhand der lokalen Oberfläche bestätigte Klickwege. Die zugrunde liegenden Bilder bleiben ausschließlich im Chat und werden nicht in GitHub, Supabase, Issues, Pull Requests, Tests oder Artefakte übernommen.
+
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ anhand neuer lokaler Nutzerbilder erneut bestätigt. Dabei wurden keine Bilder oder personenbezogenen Bildinhalte übernommen.
 
 ## Allgemeine Regeln
 
@@ -14,6 +16,28 @@ Diese Datei enthält ausschließlich anonymisierte, vom Nutzer anhand der lokale
 - Visiten werden bei euch erst nach erfolgter Durchführung dokumentiert und immer als **durchgeführt** erfasst, niemals als abgeschlossen.
 - Medikation wird in DokoHilf ausschließlich angesehen; DokoHilf leitet dort zu keiner Änderung an.
 - Bei An- und Abwesenheit wird **Von immer** eingetragen. **Bis nur**, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist. Niemals schätzen.
+- Wenn ein Nutzer einen Menüpunkt oder Schritt nicht findet, bleibt der aktuelle Guide-Schritt aktiv. DokoHilf darf nicht so tun, als sei der Schritt erledigt.
+- Detailhilfe darf nur aus bestätigten lokalen Bezeichnungen und bestätigten Alternativen bestehen. Keine Klickwege oder Feldnamen erfinden.
+
+## Detailhilfe bei „Ich brauche Hilfe / Ich finde das nicht“
+
+Die Aktion **„Ich brauche Hilfe“** und freie Aussagen wie **„Ich finde das nicht“**, **„Bei mir heißt das anders“**, **„Ich bin auf einer anderen Seite“** oder **„Was muss ich jetzt drücken?“** sollen eine gezielte Hilfeschleife innerhalb des laufenden Guides öffnen.
+
+Verbindliche Regeln für diese Hilfeschleife:
+
+1. Aktuelle Absicht und aktueller Guide-Schritt bleiben erhalten.
+2. DokoHilf fragt zuerst nach dem sichtbaren Zustand, statt den Schritt weiterzuschalten.
+3. Sinnvolle bestätigte Hilfekategorien sind:
+   - Menüpunkt fehlt
+   - Bezeichnung sieht anders aus
+   - andere Seite / anderer Reiter sichtbar
+   - Nutzer weiß nicht, wo er sich befindet
+4. Danach nur mit bestätigten Bezeichnungen und bestätigten sicheren Rückwegen weiterhelfen.
+5. Gibt es für den beschriebenen Zustand noch keine bestätigte Anleitung, muss DokoHilf das transparent sagen.
+6. In diesem Fall zum letzten sicheren bestätigten Schritt zurückführen oder menschliche Unterstützung empfehlen.
+7. Sprach- und Schreibmodus verwenden dieselbe fachliche Hilfelogik.
+
+Die technische Umsetzung dieser Detailhilfe ist als nächster Arbeitsblock in `ACTIVE_WORK_DETAIL_HELP.md` dokumentiert.
 
 ## Bericht anlegen
 
@@ -151,6 +175,8 @@ Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, er
 3. Oben links **Alle anzeigen** anklicken.
 4. **Alles ausklappen** wählen.
 5. Zeitraum nur bei Bedarf ändern und Anzeige aktualisieren.
+
+In der aufgeklappten Ansicht können unter anderem **durchgeführte Visiten** und **neue/geänderte Formulare (mit Abschluss)** erscheinen. Diese sichtbaren Kategorien wurden am 7. August 2026 erneut bestätigt.
 
 ## Umgang mit noch nicht bestätigten Details
 
