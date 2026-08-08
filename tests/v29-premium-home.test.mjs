@@ -23,6 +23,6 @@ test('v29 premium home renders the accepted visual hierarchy', () => {
 
 test('premium home refreshes the PWA shell without changing the established v29 release contract', () => {
   assert.match(sw, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
-  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-premium-home-1/);
+  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-mobile-polish-2/);
   assert.match(sw, /hardRefresh: true/);
 });
