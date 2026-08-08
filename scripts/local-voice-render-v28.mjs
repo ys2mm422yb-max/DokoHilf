@@ -7,7 +7,7 @@ const HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE === 'andr
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/local-voice-v29/${PROFILE}`;
 const GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
-const DETAIL_ORIENTATION = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“.';
+const CONTEXT_HELP = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“.';
 
 function assert(condition, message) { if (!condition) throw new Error(message); }
 function silentWav() {
@@ -66,50 +66,65 @@ await page.route('**/assets/guide-audio-catalog.json*', async route => {
   staticManifestRequests += 1;
   await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
     schemaVersion: 1, voice: 'Supertonic-F1', entries: [
-      { file: 'assets/audio/guides/000.wav', text: GREETING },
-      { file: 'assets/audio/guides/142.wav', text: DETAIL_ORIENTATION },
+      { file: 'assets/audio/guides/greeting.wav', text: GREETING },
+      { file: 'assets/audio/guides/context-report.wav', text: CONTEXT_HELP },
     ],
   }) });
 });
 await page.route('**/assets/audio/guides/*.wav', async route => { staticAudioRequests += 1; await route.fulfill({status:200,contentType:'audio/wav',body:silentWav()}); });
 await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => { cloudTtsRequests += 1; await route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'tts_network_must_not_be_called_in_v29'})}); });
-await page.route(/\/functions\/v1\/dokohilf-(?:chat-router|ai-router)(?:\?.*)?$/, async route => { unexpectedRouterRequests += 1; await route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'detail_help_should_intercept'})}); });
+await page.route(/\/functions\/v1\/dokohilf-(?:chat-router|ai-router)(?:\?.*)?$/, async route => { unexpectedRouterRequests += 1; await route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'voice_static_test_does_not_need_router'})}); });
+
+async function requestVoice(text) {
+  return page.evaluate(async value => {
+    const response = await fetch('https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-tts', {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ text: value }),
+    });
+    await response.arrayBuffer();
+    return {
+      ok: response.ok,
+      voice: response.headers.get('X-DokoHilf-Voice'),
+      mode: response.headers.get('X-DokoHilf-Voice-Mode'),
+    };
+  }, text);
+}
 
 try {
   await page.goto(BASE_URL, { waitUntil: 'networkidle' });
   assert((await page.locator('#buildPill').innerText()).includes('v29'), 'Die gerenderte App ist nicht v29.');
   await page.locator('[data-select-mode="voice"]').click();
   await page.locator('.voice-focus-stage').waitFor({ state: 'visible' });
-  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('000.wav'));
-  await page.waitForTimeout(100);
 
   let synthCalls = await page.evaluate(() => [...window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__]);
-  assert(synthCalls.length === 0, 'Begrüßung darf keine lokale iPhone-Inferenz starten.');
-  assert(staticManifestRequests >= 1, 'Statischer Supertonic-Katalog wurde nicht geprüft.');
-  assert(staticAudioRequests >= 1, 'Statisches Supertonic-Begrüßungs-Audio wurde nicht geladen.');
   const beforeState = await page.evaluate(() => window.DokoHilfLocalVoiceV28?.getState?.());
-  assert(beforeState?.armed === true, 'Voice-Einstieg muss lokale Engine nur für nicht vorbereitete freie Antworten freischalten.');
+  assert(beforeState?.armed === true, 'Voice-Einstieg muss die lokale Engine für freie Antworten freischalten.');
   assert(beforeState?.state === 'idle', `Großes Modell wurde beim Einstieg trotzdem vorbereitet: ${beforeState?.state}`);
+  assert(synthCalls.length === 0, 'Der Voice-Einstieg darf keine lokale iPhone-Inferenz starten.');
 
-  await page.evaluate(() => window.DokoHilf?.sendMessage?.('Wo sind Berichte?', { fromVoice: true }));
-  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('142.wav'));
-  await page.waitForTimeout(100);
+  const greeting = await requestVoice(GREETING);
+  assert(greeting.ok && greeting.voice === 'Supertonic-F1' && greeting.mode === 'static-supertonic-guide-v29', 'Begrüßung kommt nicht aus dem statischen F1-Bestand.');
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('greeting.wav'));
+  synthCalls = await page.evaluate(() => [...window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__]);
+  assert(synthCalls.length === 0, 'Begrüßung darf keine lokale iPhone-Inferenz starten.');
+
+  const contextHelp = await requestVoice(CONTEXT_HELP);
+  assert(contextHelp.ok && contextHelp.voice === 'Supertonic-F1' && contextHelp.mode === 'static-supertonic-guide-v29', 'Bestätigte Kontext-Hilfe kommt nicht aus dem statischen F1-Bestand.');
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('context-report.wav'));
   synthCalls = await page.evaluate(() => [...window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__]);
   assert(synthCalls.length === 0, 'Bestätigte Kontext-Hilfe darf auf dem iPhone keine lokale Inferenz starten.');
 
+  assert(staticManifestRequests >= 1, 'Statischer Supertonic-Katalog wurde nicht geprüft.');
+  assert(staticAudioRequests >= 2, 'Die beiden statischen Supertonic-Audios wurden nicht geladen.');
+
   const uniqueFreeText = 'Dies ist ein absichtlich nicht vorbereiteter freier Testsatz für die lokale Notinferenz.';
-  await page.evaluate(async text => {
-    const response = await fetch('https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-tts', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({text}) });
-    window.__LOCAL_FALLBACK_TEST__ = { ok: response.ok, voice: response.headers.get('X-DokoHilf-Voice'), mode: response.headers.get('X-DokoHilf-Voice-Mode') };
-  }, uniqueFreeText);
+  const fallback = await requestVoice(uniqueFreeText);
   await page.waitForFunction(() => (window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__ || []).length === 1);
-  const fallback = await page.evaluate(() => window.__LOCAL_FALLBACK_TEST__);
-  assert(fallback?.ok && fallback.voice === 'Supertonic-F1' && fallback.mode === 'local-on-device-v29', 'Lokaler Notweg verwendet nicht dieselbe Supertonic-F1-Stimme.');
+  assert(fallback.ok && fallback.voice === 'Supertonic-F1' && fallback.mode === 'local-on-device-v29', 'Lokaler Notweg verwendet nicht dieselbe Supertonic-F1-Stimme.');
 
   const systemCalls = await page.evaluate(() => [...window.__DOKOHILF_SYSTEM_SPEECH_TEST_CALLS__]);
   assert(systemCalls.length === 0, `Systemstimme wurde ${systemCalls.length}x aufgerufen.`);
   assert(cloudTtsRequests === 0, `TTS-Netzwerkpfad wurde ${cloudTtsRequests}x erreicht.`);
-  assert(unexpectedRouterRequests === 0, `Detailhilfe hat ${unexpectedRouterRequests} unnötige Router-Aufrufe erzeugt.`);
+  assert(unexpectedRouterRequests === 0, `Der isolierte Voice-Test hat ${unexpectedRouterRequests} unnötige Router-Aufrufe erzeugt.`);
   const localState = await page.evaluate(() => window.DokoHilfLocalVoiceV28?.getState?.());
   assert(PROFILE === 'android' ? /webgpu/.test(localState.backend) : /wasm/.test(localState.backend), `Unerwartetes Test-Backend: ${localState?.backend}`);
   const staticState = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
@@ -117,6 +132,6 @@ try {
   assert(geometry.scrollWidth <= geometry.viewportWidth + 1, `Horizontaler Overflow: ${geometry.scrollWidth} > ${geometry.viewportWidth}`);
   assert(!/Sofortstimme|Gerätestimme|Gacrux/i.test(`${geometry.status} ${geometry.hint}`), 'Voice-UI erwähnt eine alte/abweichende Stimme.');
   await page.screenshot({path:`${OUTPUT_DIR}/local-voice-v29-${PROFILE}.png`,fullPage:false});
-  await writeFile(`${OUTPUT_DIR}/summary.json`,JSON.stringify({profile:PROFILE,viewport:{width:WIDTH,height:HEIGHT},synthCalls:await page.evaluate(()=>[...window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__]),systemCalls,cloudTtsRequests,unexpectedRouterRequests,staticManifestRequests,staticAudioRequests,localState,staticState,fallback,geometry,consoleErrors,pageErrors},null,2));
+  await writeFile(`${OUTPUT_DIR}/summary.json`,JSON.stringify({profile:PROFILE,viewport:{width:WIDTH,height:HEIGHT},synthCalls:await page.evaluate(()=>[...window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__]),systemCalls,cloudTtsRequests,unexpectedRouterRequests,staticManifestRequests,staticAudioRequests,localState,staticState,greeting,contextHelp,fallback,geometry,consoleErrors,pageErrors},null,2));
   assert(consoleErrors.length===0,`Console-Fehler: ${consoleErrors.join(' | ')}`); assert(pageErrors.length===0,`Page-Fehler: ${pageErrors.join(' | ')}`);
 } finally { await context.close(); await browser.close(); }
