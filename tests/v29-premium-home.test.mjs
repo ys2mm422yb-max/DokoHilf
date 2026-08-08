@@ -21,7 +21,8 @@ test('v29 premium home renders the accepted visual hierarchy', () => {
   assert.match(ui, /mode-card\.chat-card/);
 });
 
-test('PWA revision forces the polished v29 shell onto installed clients', () => {
-  assert.match(sw, /20260808-premium-home-v29-1/);
+test('premium home refreshes the PWA shell without changing the established v29 release contract', () => {
+  assert.match(sw, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
   assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-premium-home-1/);
+  assert.match(sw, /hardRefresh: true/);
 });
