@@ -14,7 +14,9 @@ test('v29 is visible and cache-busted consistently', async () => {
   assert.match(html, new RegExp(`v29-ui\\.js\\?v=${buildId}`));
   assert.match(worker, new RegExp(`BUILD_ID = '${buildId}'`));
   assert.match(localVoice, /Supertone\/supertonic-3/);
-  assert.match(gate, /guide-audio-catalog\.json\?v=20260808-29/);
+  assert.match(localVoice, /meta\[name="dokohilf-build"\]/);
+  assert.match(gate, /meta\[name="dokohilf-build"\]/);
+  assert.match(gate, /guide-audio-catalog\.json\?v=\$\{encodeURIComponent\(BUILD_ID\)\}/);
   assert.match(gate, /dokohilf-static-supertonic-audio-v29-1/);
   assert.match(gate, /IOS_LOCAL_TIMEOUT_MS = 8000/);
 });
