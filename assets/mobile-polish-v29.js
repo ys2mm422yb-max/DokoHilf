@@ -24,20 +24,21 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
 
   html[data-dokohilf-ui="v29"] .mode-grid{gap:9px!important}
   html[data-dokohilf-ui="v29"] .mode-card{
-    grid-template-columns:54px minmax(0,1fr) 34px!important;column-gap:12px!important;align-items:center!important;
+    grid-template-columns:54px minmax(0,1fr) 34px!important;grid-template-rows:1fr!important;column-gap:12px!important;align-items:center!important;
     min-height:94px!important;padding:11px 13px!important;border-radius:21px!important;
   }
   html[data-dokohilf-ui="v29"] .mode-icon{
-    width:50px!important;height:50px!important;align-self:center!important;justify-self:center!important;margin:0!important;transform:none!important;
+    width:50px!important;height:50px!important;grid-column:1!important;grid-row:1!important;place-self:center!important;margin:0!important;transform:none!important;
   }
   html[data-dokohilf-ui="v29"] .mode-icon svg{width:27px!important;height:27px!important}
   html[data-dokohilf-ui="v29"] .mode-text{
-    min-width:0!important;align-self:center!important;display:flex!important;flex-direction:column!important;justify-content:center!important;margin:0!important;
+    min-width:0!important;grid-column:2!important;grid-row:1!important;align-self:center!important;display:flex!important;flex-direction:column!important;justify-content:center!important;margin:0!important;
   }
   html[data-dokohilf-ui="v29"] .mode-text strong{font-size:20px!important;line-height:1.08!important}
   html[data-dokohilf-ui="v29"] .mode-text small{margin-top:4px!important;font-size:12.8px!important;line-height:1.3!important}
   html[data-dokohilf-ui="v29"] .mode-arrow{
-    width:34px!important;height:34px!important;font-size:26px!important;align-self:center!important;justify-self:center!important;margin:0!important;
+    position:static!important;right:auto!important;top:auto!important;grid-column:3!important;grid-row:1!important;place-self:center!important;transform:none!important;
+    width:34px!important;height:34px!important;font-size:26px!important;margin:0!important;
   }
 
   html[data-dokohilf-ui="v29"] .examples{margin-top:10px!important;padding:10px!important;gap:7px!important;border-radius:20px!important}
