@@ -203,10 +203,13 @@ try {
   const chatState = await state();
   assert(chatState.scrollWidth <= chatState.viewportWidth + 1, `Chat hat auf ${PROFILE} horizontalen Überlauf.`);
 
+  const assistantBubbles = page.locator('.message.assistant:not(.typing) .bubble');
+  const assistantCountBeforeSend = await assistantBubbles.count();
   await page.locator('#chatInput').fill('Wo sind die Visiten?');
   await page.getByRole('button', { name: 'Senden' }).click();
-  await page.locator('.message.assistant:not(.typing) .bubble').last().waitFor({ state: 'visible', timeout: 15_000 });
-  const assistantText = await page.locator('.message.assistant:not(.typing) .bubble').last().innerText();
+  const newAssistantBubble = assistantBubbles.nth(assistantCountBeforeSend);
+  await newAssistantBubble.waitFor({ state: 'visible', timeout: 15_000 });
+  const assistantText = await newAssistantBubble.innerText();
   assert(assistantText.includes('Doku erweitert'), `Kontextantwort fehlt: ${assistantText}`);
   await page.locator('.guide-progress').waitFor({ state: 'visible', timeout: 8_000 });
   await page.screenshot({ path: `${OUTPUT_DIR}/03-chat-v29-${PROFILE}.png`, fullPage: true });
