@@ -71,10 +71,10 @@ test('GitHub-Build erzeugt 160 bestätigte statische Sprachsätze ohne TTS-API m
   assert.match(releaseText, /Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste/);
 });
 
-test('Bericht-Detailhilfe bleibt im Bericht-Kontext und übernimmt keine Vitalwerte-Schaltfläche', () => {
+test('Bericht-Kontexthilfe bleibt im Bericht-Kontext und übernimmt keine Vitalwerte-Schaltfläche', () => {
   assert.match(contextHotfix, /'bericht-neu'/);
   assert.match(contextHotfix, /'bericht-folgebericht'/);
-  assert.match(contextHotfix, /REPORT_ENTRY_SPEECH = 'Suche zuerst Berichte\. Hast du sie gefunden\?'/);
+  assert.match(contextHotfix, /REPORT_ENTRY_SPEECH = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach Berichte\. Siehst du Berichte\?'/);
   assert.match(contextHotfix, /isVitalGuide\(slug\) \? 'Vitalwerte fehlt' : 'Der Menüpunkt fehlt'/);
   assert.match(renderSync, /startsWith\('vitalwerte'\)/);
   assert.match(renderSync, /: 'Der Menüpunkt fehlt'/);
@@ -109,9 +109,9 @@ test('iPhone-Inferenz kann nicht endlos drehen und v29 beendet die lokale Notinf
   assert.match(gate, /const OTHER_LOCAL_TIMEOUT_MS = 35000;/);
   assert.match(gate, /local_voice_timeout/);
   assert.match(gate, /updateVoiceStatus\('Stimme nicht bereit'/);
-  assert.match(contextHotfix, /const IOS_SYNTHESIS_TIMEOUT_MS = 12000;/);
+  assert.match(contextHotfix, /const IOS_SYNTHESIS_TIMEOUT_MS = 8000;/);
   assert.match(contextHotfix, /new Error\('local_voice_timeout'\)/);
-  assert.ok(gate.indexOf('IOS_LOCAL_TIMEOUT_MS = 8000') >= 0, 'Der finale v29-Gate muss vor dem älteren 12-Sekunden-Hotfix abbrechen.');
+  assert.ok(gate.indexOf('IOS_LOCAL_TIMEOUT_MS = 8000') >= 0, 'Der finale v29-Gate muss die iPhone-Notinferenz nach acht Sekunden beenden.');
 });
 
 test('statische Supertonic-Audios erhalten einen neuen v29-Cache und der alte v28-Cache wird entfernt', () => {
