@@ -19,6 +19,12 @@
     }
   }
 
+  function ensureLegacyCloseContract(view) {
+    for (const button of view.querySelectorAll('[data-v29-guide-back], [data-v29-guide-home]')) {
+      if (!button.hasAttribute('data-direct-guide-close')) button.setAttribute('data-direct-guide-close', '');
+    }
+  }
+
   function stepParagraphs(view) {
     return [...view.querySelectorAll('.direct-guide-step')].map(step => step.querySelector('p'));
   }
@@ -143,6 +149,7 @@
     polishChatHead();
     const view = document.getElementById('directGuideView');
     if (!view || view.hidden) return;
+    ensureLegacyCloseContract(view);
     polishPresence(view);
     polishForm(view);
     polishMedication(view);
