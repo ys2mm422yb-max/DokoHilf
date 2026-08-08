@@ -1,6 +1,6 @@
 const BUILD_ID = '20260808-29';
 const HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1';
-const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-mobile-polish-6`;
+const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-mobile-polish-7`;
 const LOCAL_VOICE_MODEL_CACHE = 'dokohilf-local-voice-model-v28-1';
 const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1';
 const CORE_FILES = [
@@ -54,6 +54,9 @@ self.addEventListener('activate', event => {
       .filter(key => key.startsWith('dokohilf-') && key !== CACHE_NAME && key !== LOCAL_VOICE_MODEL_CACHE && key !== STATIC_AUDIO_CACHE)
       .map(key => caches.delete(key)));
     await caches.delete('dokohilf-static-supertonic-audio-v28-1');
+    // Static guide WAV filenames stay stable across copy-only releases. Clear the
+    // v29 audio cache once so revised spoken sentences cannot reuse stale bytes.
+    await caches.delete(STATIC_AUDIO_CACHE);
     if (self.registration.navigationPreload) await self.registration.navigationPreload.enable().catch(() => {});
     await self.clients.claim();
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
