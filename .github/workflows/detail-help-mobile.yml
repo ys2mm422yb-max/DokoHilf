@@ -52,12 +52,13 @@ jobs:
           node --check scripts/detail-help-render-v27.mjs
           node --test tests/detail-help-v27.test.mjs tests/detail-help-polish-v27.test.mjs tests/local-voice-v28.test.mjs tests/public-documentation-boundary.test.mjs tests/v29-smart-help-ui.test.mjs
           grep -q '__DOKOHILF_DETAIL_HELP_V27__' assets/detail-help-v27.js
+          grep -q '__DOKOHILF_CONTEXTUAL_HELP_V29__' assets/detail-help-v27.js
           grep -q '__DOKOHILF_DETAIL_HELP_POLISH_V27__' assets/detail-help-polish-v27.js
           grep -q '__DOKOHILF_DETAIL_HELP_RENDER_SYNC_V27__' assets/detail-help-render-sync-v27.js
           grep -q '__DOKOHILF_SMART_HELP_V29__' assets/smart-help-v29.js
           grep -q '__DOKOHILF_LOCAL_VOICE_V28__' assets/local-voice-v28.js
           grep -q '__DOKOHILF_LOCAL_VOICE_GATE_V28__' assets/local-voice-gate-v28.js
-          grep -q 'Vitalwerte Sammelerf.' assets/detail-help-v27.js
+          grep -q 'smartHelpIntent: true' assets/smart-help-v29.js
           grep -q 'iOS und Android' ACTIVE_WORK_DETAIL_HELP.md
           grep -q 'localStorage\|sessionStorage\|indexedDB' assets/local-voice-v28.js && exit 1 || true
           grep -q 'localStorage\|sessionStorage\|indexedDB' assets/smart-help-v29.js && exit 1 || true
