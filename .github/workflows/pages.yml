@@ -31,13 +31,15 @@ jobs:
             README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md \
             FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md ACTIVE_WORK_DIRECT_GUIDES_CHAT.md \
             ACTIVE_WORK_ACCOUNT_FREE_V28.md \
-            assets/guide-audio-catalog.json assets/voice-extra-catalog-v28.json assets/direct-guides-v27.js assets/direct-guides-chat-v27.css \
+            assets/guide-audio-catalog.json assets/voice-extra-catalog-v28.json assets/voice-release-catalog-v29.json \
+            assets/direct-guides-v27.js assets/direct-guide-copy-v29.js assets/direct-guides-chat-v27.css \
+            assets/local-voice-v28.js assets/local-voice-gate-v28.js \
             scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh scripts/build-supertonic-guide-audio-v28.py \
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
             scripts/live-routing-stable.mjs scripts/live-vitalwerte-routing-smoke.mjs \
             tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs tests/direct-guides-v27.test.mjs \
-            tests/public-documentation-boundary.test.mjs tests/account-free-product.test.mjs \
-            supabase/functions/dokohilf-ai-router/index.ts \
+            tests/local-voice-v28.test.mjs tests/public-documentation-boundary.test.mjs tests/account-free-product.test.mjs \
+            supabase/functions/dokohilf-ai-router/index.ts supabase/functions/dokohilf-chat-router/index.ts \
             supabase/functions/dokohilf-editor/index.ts \
             supabase/functions/dokohilf-tts/index.ts \
             supabase/functions/dokohilf-guide-audio/index.ts \
@@ -48,7 +50,8 @@ jobs:
             supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql \
             supabase/migrations/20260807230003_remove_app_account_infrastructure.sql \
             supabase/migrations/20260807232000_deny_all_app_guide_access.sql \
-            supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql; do
+            supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql \
+            supabase/migrations/20260808091000_natural_presence_and_form_save_v29.sql; do
             test -s "$file"
           done
 
@@ -71,6 +74,7 @@ jobs:
           grep -q '412 × 915' ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md
           grep -q 'conversational-guide-router-v9' supabase/functions/dokohilf-ai-router/index.ts
           grep -q 'medication-view-only-safety-v9' supabase/functions/dokohilf-ai-router/index.ts
+          grep -q 'approved-guide-context-help-v28' supabase/functions/dokohilf-chat-router/index.ts
           grep -q 'cloud_tts_retired_v28' supabase/functions/dokohilf-tts/index.ts
           grep -q 'legacy_cloud_audio_builder_retired_v28' supabase/functions/dokohilf-guide-audio-build/index.ts
           grep -q 'legacy_gacrux_audio_delivery_retired_v28' supabase/functions/dokohilf-guide-audio/index.ts
@@ -82,10 +86,14 @@ jobs:
           grep -q 'Öffentliche Dokumentation enthält keine Angaben zu Herkunft' CONFIRMED_WORKFLOWS.md
           grep -q "STATIC_VOICE = 'Supertonic-F1'" assets/local-voice-gate-v28.js
           grep -q '__DOKOHILF_STATIC_SUPERTONIC_V28__' assets/local-voice-gate-v28.js
+          grep -q "STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1'" assets/local-voice-gate-v28.js
+          grep -q 'IOS_LOCAL_TIMEOUT_MS = 8000' assets/local-voice-gate-v28.js
           grep -q 'TTS(auto_download=True)' scripts/build-supertonic-guide-audio-v28.py
           grep -q "lang='de'" scripts/build-supertonic-guide-audio-v28.py
-          grep -q 'STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT' scripts/build-supertonic-guide-audio-v28.py
-          grep -q 'Okay. Schau oben in die grüne Reiterleiste' assets/voice-extra-catalog-v28.json
+          grep -q 'RELEASE_SPEECH_COUNT = 49' scripts/build-supertonic-guide-audio-v28.py
+          grep -q 'STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COUNT' scripts/build-supertonic-guide-audio-v28.py
+          grep -q 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“' assets/voice-release-catalog-v29.json
+          grep -q 'Wenn der Endzeitpunkt noch nicht sicher feststeht' assets/voice-release-catalog-v29.json
           grep -q 'git push --force origin HEAD:gh-pages' .github/workflows/pages.yml
           if grep -q '[a]ctions/deploy-pages' .github/workflows/pages.yml; then
             echo "Pages wird über den geschützten gh-pages-Branch veröffentlicht; ein zusätzlicher API-Deployjob ist unzulässig." >&2
@@ -124,6 +132,9 @@ jobs:
           node --check assets/experience-v27.js
           node --check assets/ux-v27.js
           node --check assets/direct-guides-v27.js
+          node --check assets/direct-guide-copy-v29.js
+          node --check assets/local-voice-v28.js
+          node --check assets/local-voice-gate-v28.js
           node --check assets/app.js
           node --check service-worker.js
           node --check scripts/mobile-render-v27.mjs
@@ -173,7 +184,7 @@ jobs:
       - name: Build isolated UI test surface
         run: |
           set -euo pipefail
-          mkdir -p _ui_site/assets artifacts/mobile-v27/ios artifacts/mobile-v27/android
+          mkdir -p _ui_site/assets artifacts/mobile-v29/ios artifacts/mobile-v29/android
           cp index.html manifest.webmanifest icon.svg service-worker.js version.json _ui_site/
           cp -R assets/. _ui_site/assets/
           rm -rf _ui_site/assets/audio
@@ -188,15 +199,15 @@ jobs:
           set -euo pipefail
           npm install --no-save --package-lock=false playwright@1.54.2
           npx playwright install --with-deps chromium
-          python3 -m http.server 4173 --directory _ui_site >artifacts/mobile-v27-server.log 2>&1 &
+          python3 -m http.server 4173 --directory _ui_site >artifacts/mobile-v29-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 30); do
             curl -fsS http://127.0.0.1:4173/ >/dev/null && break
             sleep 1
           done
-          DOKOHILF_MOBILE_PROFILE=ios DOKOHILF_VIEWPORT_WIDTH=393 DOKOHILF_VIEWPORT_HEIGHT=852 DOKOHILF_DEVICE_SCALE_FACTOR=2 DOKOHILF_RENDER_OUTPUT=artifacts/mobile-v27/ios node scripts/mobile-render-v27.mjs
-          DOKOHILF_MOBILE_PROFILE=android DOKOHILF_VIEWPORT_WIDTH=412 DOKOHILF_VIEWPORT_HEIGHT=915 DOKOHILF_DEVICE_SCALE_FACTOR=2 DOKOHILF_RENDER_OUTPUT=artifacts/mobile-v27/android node scripts/mobile-render-v27.mjs
+          DOKOHILF_MOBILE_PROFILE=ios DOKOHILF_VIEWPORT_WIDTH=393 DOKOHILF_VIEWPORT_HEIGHT=852 DOKOHILF_DEVICE_SCALE_FACTOR=2 DOKOHILF_RENDER_OUTPUT=artifacts/mobile-v29/ios node scripts/mobile-render-v27.mjs
+          DOKOHILF_MOBILE_PROFILE=android DOKOHILF_VIEWPORT_WIDTH=412 DOKOHILF_VIEWPORT_HEIGHT=915 DOKOHILF_DEVICE_SCALE_FACTOR=2 DOKOHILF_RENDER_OUTPUT=artifacts/mobile-v29/android node scripts/mobile-render-v27.mjs
 
       - name: Check active DokoHilf router
         run: |
@@ -222,18 +233,20 @@ jobs:
           python scripts/build-supertonic-guide-audio-v28.py \
             --catalog assets/guide-audio-catalog.json \
             --extra-catalog assets/voice-extra-catalog-v28.json \
+            --release-catalog assets/voice-release-catalog-v29.json \
             --output-root assets/audio/guides \
             --voice F1 \
             --steps 8 \
             --speed 1.05
           expected="$(python -c "import json; print(len(json.load(open('assets/guide-audio-catalog.json', encoding='utf-8'))['entries']))")"
           actual="$(find assets/audio/guides -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')"
-          test "$expected" = 111
-          test "$actual" = 111
+          test "$expected" = 160
+          test "$actual" = 160
           grep -q '"voice": "Supertonic-F1"' assets/guide-audio-catalog.json
           grep -q '"baseGuideCount": 93' assets/guide-audio-catalog.json
           grep -q '"extraSpeechCount": 18' assets/guide-audio-catalog.json
-          grep -q '"staticSpeechCount": 111' assets/guide-audio-catalog.json
+          grep -q '"releaseSpeechCount": 49' assets/guide-audio-catalog.json
+          grep -q '"staticSpeechCount": 160' assets/guide-audio-catalog.json
 
       - name: Build exact releasable static site
         env:
@@ -247,7 +260,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dokohilf-build-28-evidence-${{ github.run_number }}
+          name: dokohilf-build-29-evidence-${{ github.run_number }}
           path: |
             artifacts/
             assets/audio/guides/build-summary.json
