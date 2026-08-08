@@ -2,6 +2,8 @@
   'use strict';
 
   const root = typeof window !== 'undefined' ? window : globalThis;
+  const LEGACY_ROUTER_MARKER = '/functions/v1/dokohilf-ai-router';
+  const CHAT_ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-chat-router';
   const GREETINGS = [
     'guten morgen',
     'guten abend',
@@ -36,9 +38,21 @@
     return String(value || '').trim();
   }
 
+  function requestUrl(input) {
+    return typeof input === 'string' ? input : input?.url;
+  }
+
   function isAiRequest(input) {
-    const url = typeof input === 'string' ? input : input?.url;
+    const url = requestUrl(input);
     return typeof url === 'string' && url.includes('/functions/v1/dokohilf-ai');
+  }
+
+  function rewriteRouterInput(input) {
+    const url = requestUrl(input);
+    if (typeof url !== 'string' || !url.includes(LEGACY_ROUTER_MARKER)) return input;
+    if (typeof input === 'string') return CHAT_ROUTER_ENDPOINT;
+    try { return new Request(CHAT_ROUTER_ENDPOINT, input); }
+    catch { return CHAT_ROUTER_ENDPOINT; }
   }
 
   function rewriteRequestBody(body) {
@@ -66,19 +80,23 @@
     if (typeof window === 'undefined' || window.__DOKOHILF_GREETING_ROUTING_PATCH__) return;
     const previousFetch = window.fetch.bind(window);
     window.fetch = (input, init = {}) => {
-      if (!isAiRequest(input)) return previousFetch(input, init);
-      return previousFetch(input, {
+      const routedInput = rewriteRouterInput(input);
+      if (!isAiRequest(input)) return previousFetch(routedInput, init);
+      return previousFetch(routedInput, {
         ...init,
         body: rewriteRequestBody(init.body),
       });
     };
     window.__DOKOHILF_GREETING_ROUTING_PATCH__ = true;
+    window.__DOKOHILF_CONTEXT_AWARE_CHAT_ROUTER_V28__ = true;
   }
 
   root.DokoHilfRouting = {
     normalize,
     stripLeadingGreeting,
     rewriteRequestBody,
+    rewriteRouterInput,
+    chatRouterEndpoint: CHAT_ROUTER_ENDPOINT,
     installFetchPatch,
   };
 
