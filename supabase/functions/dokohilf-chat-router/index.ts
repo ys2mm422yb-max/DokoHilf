@@ -11,7 +11,19 @@ const requestWindows = new Map<string, { startedAt: number; count: number }>();
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
 type GuideStep = { text?: string; check?: string; stuck?: string };
-type GuideRecord = { slug: string; title: string; steps: GuideStep[]; version?: number };
+type GuideRecord = {
+  slug: string;
+  title: string;
+  steps: GuideStep[];
+  troubleshooting?: Record<string, string>;
+  version?: number;
+};
+type Evidence = {
+  kind: 'step' | 'troubleshooting';
+  text: string;
+  score: number;
+  stepIndex?: number;
+};
 
 function normalize(value: unknown): string {
   return String(value || '')
@@ -45,7 +57,7 @@ function jsonResponse(origin: string | null, status: number, body: unknown): Res
     headers: {
       ...corsHeaders(origin),
       'Content-Type': 'application/json; charset=utf-8',
-      'X-DokoHilf-Chat-Router': 'context-aware-v28',
+      'X-DokoHilf-Chat-Router': 'context-aware-v28-2',
     },
   });
 }
@@ -93,47 +105,164 @@ function containsSensitiveData(text: string): boolean {
   return health && (caseLanguage || /\d/.test(raw));
 }
 
-function isContextHelpQuestion(text: string): boolean {
+function isControlOrConfirmation(text: string): boolean {
   const n = normalize(text);
-  return /\b(wo ist|wo sind|wo finde ich|wie finde ich|wie komme ich zu|wie komme ich zum|wie komme ich zur|wo muss ich hin|wo genau|wo soll ich|welcher bereich|welche leiste|welcher reiter|welches menu)\b/.test(n)
-    || /\b(ich weiss nicht wo ich bin|keine ahnung wo ich bin|ich weiss nicht wo|ich finde mich nicht zurecht)\b/.test(n);
+  if (/^(weiter|nochmal|noch einmal|erneut|wiederholen|zuruck|einen schritt zuruck|abbrechen|stop|stopp|beenden)$/.test(n)) return true;
+  return /^(ja|jap|jo|genau|okay|ok|passt|fertig|erledigt|gefunden|hab ich|habe ich|bin da|ist offen|offen|gemacht|geschafft|bin drin|bin dort)$/.test(n);
+}
+
+function isExplicitHelp(text: string): boolean {
+  const n = normalize(text);
+  return /\b(wo ist|wo sind|wo finde ich|wie finde ich|wie komme ich|wo muss ich|wo genau|wo soll ich|welcher bereich|welche leiste|welcher reiter|welches menu)\b/.test(n)
+    || /\b(finde|sehe|erkenne|entdecke)\b.*\b(nicht|nirgends)\b/.test(n)
+    || /\b(komme nicht weiter|weiss nicht weiter|weiss nicht wo|keine ahnung wo|nicht zurecht|brauche hilfe|hilf mir)\b/.test(n)
+    || /\b(was jetzt|was dann|wie geht es weiter|was muss ich|was soll ich|wo klicken|wo drucken|welchen button|welche taste|was anklicken)\b/.test(n)
+    || /\b(bei mir heisst|bei mir steht|sieht anders aus|ist anders|andere ansicht|anderer reiter|anderes menu)\b/.test(n)
+    || /\b(ich sehe nur|ich habe nur|da steht nur|bei mir sehe ich)\b/.test(n);
+}
+
+function looksLikeQuestion(text: string): boolean {
+  const raw = String(text || '').trim();
+  const n = normalize(raw);
+  return raw.includes('?')
+    || /^(wo|wie|was|welche|welcher|welches|warum|muss|soll|kann|darf|ist|sind|kommt)\b/.test(n);
 }
 
 function questionTerms(text: string): string[] {
   const stop = new Set([
-    'wo','ist','sind','finde','ich','wie','komme','zum','zur','dem','den','der','die','das','hin','genau','soll','muss','welcher','welche','welches','bereich','menu','reiter','leiste','nicht','weiss','keine','ahnung','bin','mich','zurecht',
+    'wo','ist','sind','finde','finden','ich','wie','komme','kommt','zum','zur','dem','den','der','die','das','hin','genau','soll','muss','kann','darf','welcher','welche','welches','bereich','menu','reiter','leiste','nicht','weiss','keine','ahnung','bin','mich','zurecht','jetzt','dann','weiter','bitte','hilfe','druecken','drucken','klicken','anklicken','button','taste','steht','sehe','sieht','anders','heisst','heist','nur',
   ]);
-  return normalize(text).split(' ').filter(word => word.length >= 4 && !stop.has(word));
+  return normalize(text)
+    .split(' ')
+    .filter(word => word.length >= 4 && !stop.has(word));
 }
 
-function chooseStep(guide: GuideRecord, text: string, suppliedStep: unknown): { step: GuideStep; index: number } | null {
-  if (!Array.isArray(guide.steps) || !guide.steps.length) return null;
+function currentStepIndex(guide: GuideRecord, suppliedStep: unknown): number {
+  if (!Array.isArray(guide.steps) || !guide.steps.length) return 0;
   const numeric = Number(suppliedStep);
-  const current = Number.isInteger(numeric) && numeric >= 1
+  return Number.isInteger(numeric) && numeric >= 1
     ? Math.min(numeric - 1, guide.steps.length - 1)
     : 0;
-  const terms = questionTerms(text);
-  if (!terms.length) return { step: guide.steps[current] || guide.steps[0], index: current };
+}
 
-  let bestIndex = current;
-  let bestScore = -1;
+function guideCorpus(guide: GuideRecord): string {
+  return normalize([
+    guide.slug,
+    guide.title,
+    ...guide.steps.flatMap(step => [step.text || '', step.check || '', step.stuck || '']),
+    ...Object.values(guide.troubleshooting || {}),
+  ].join(' '));
+}
+
+function explicitDifferentGoal(text: string, guide: GuideRecord): boolean {
+  const n = normalize(text);
+  if (/\b(neuer ablauf|anderer ablauf|anderes thema|stattdessen|wechseln zu|jetzt lieber)\b/.test(n)) return true;
+  if (!/\b(ich mochte|ich will|wie lege ich|wie erfasse ich|wie offne ich|wie kann ich)\b/.test(n)) return false;
+
+  const domains = [
+    'bericht', 'visite', 'vital', 'medikation', 'formular', 'ubergabe', 'anwesenheit',
+    'notfallblatt', 'stammdaten', 'easy plan', 'durchfuhrung', 'aufgaben',
+  ];
+  const corpus = guideCorpus(guide);
+  return domains.some(domain => n.includes(domain) && !corpus.includes(domain));
+}
+
+function scoreAgainst(haystack: string, terms: string[], bonus = 0): number {
+  let score = bonus;
+  for (const term of terms) {
+    if (haystack.includes(term)) score += term.length >= 9 ? 5 : term.length >= 6 ? 4 : 3;
+  }
+  return score;
+}
+
+function bestEvidence(guide: GuideRecord, text: string, currentIndex: number): Evidence | null {
+  const terms = questionTerms(text);
+  const candidates: Evidence[] = [];
+
   guide.steps.forEach((step, index) => {
     const haystack = normalize(`${step.text || ''} ${step.check || ''} ${step.stuck || ''}`);
-    let score = index === current ? 1 : 0;
-    for (const term of terms) if (haystack.includes(term)) score += term.length >= 8 ? 4 : 3;
-    if (score > bestScore) {
-      bestScore = score;
-      bestIndex = index;
-    }
+    const score = scoreAgainst(haystack, terms, index === currentIndex ? 2 : 0);
+    candidates.push({ kind: 'step', text: step.text || '', score, stepIndex: index });
   });
-  return { step: guide.steps[bestIndex], index: bestIndex };
+
+  for (const value of Object.values(guide.troubleshooting || {})) {
+    const haystack = normalize(value);
+    const score = scoreAgainst(haystack, terms, 0);
+    candidates.push({ kind: 'troubleshooting', text: value, score });
+  }
+
+  candidates.sort((a, b) => b.score - a.score);
+  return candidates[0] || null;
+}
+
+function shouldUseContextHelp(text: string, guide: GuideRecord, currentIndex: number): boolean {
+  if (isControlOrConfirmation(text) || explicitDifferentGoal(text, guide)) return false;
+  if (isExplicitHelp(text)) return true;
+
+  const evidence = bestEvidence(guide, text, currentIndex);
+  if (evidence && evidence.score >= 5) return true;
+  return looksLikeQuestion(text);
+}
+
+function contextHelpResponse(
+  origin: string | null,
+  guide: GuideRecord,
+  text: string,
+  suppliedStep: unknown,
+): Response {
+  const currentIndex = currentStepIndex(guide, suppliedStep);
+  const currentStep = guide.steps[currentIndex] || guide.steps[0] || {};
+  const evidence = bestEvidence(guide, text, currentIndex);
+  const helpIntent = isExplicitHelp(text);
+  const n = normalize(text);
+  const asksDifferentLabel = /\b(bei mir heisst|bei mir steht|sieht anders aus|ist anders|andere ansicht|anderer reiter|anderes menu)\b/.test(n);
+
+  let instruction = '';
+  let check = String(currentStep.check || 'Bist du an dieser Stelle?').trim();
+  let evidenceStep: number | null = null;
+
+  if (evidence?.kind === 'troubleshooting' && evidence.score >= 4) {
+    instruction = evidence.text.trim();
+  } else if (evidence?.kind === 'step' && typeof evidence.stepIndex === 'number' && (evidence.score >= 4 || helpIntent)) {
+    const matched = guide.steps[evidence.stepIndex] || currentStep;
+    evidenceStep = evidence.stepIndex + 1;
+    const useStuck = helpIntent && Boolean(matched.stuck);
+    instruction = String((useStuck ? matched.stuck : matched.text) || matched.stuck || '').trim();
+    if (evidence.stepIndex === currentIndex && matched.check) check = String(matched.check).trim();
+  }
+
+  if (!instruction) {
+    instruction = String((helpIntent ? currentStep.stuck : '') || currentStep.text || currentStep.stuck || '').trim();
+    evidenceStep = currentIndex + 1;
+  }
+
+  if (asksDifferentLabel) {
+    instruction = `${instruction} Wenn die Bezeichnung bei dir abweicht, nenne mir nur die sichtbaren Menü- oder Buttonbezeichnungen; dann gleiche ich sie mit dem bestätigten Ablauf ab.`.trim();
+  }
+
+  if (!instruction) {
+    instruction = `Bleib im Ablauf „${guide.title}“. Der aktuell bestätigte Schritt ist noch nicht eindeutig genug beschrieben.`;
+  }
+
+  return jsonResponse(origin, 200, {
+    reply: `${instruction}\n\n${check}`,
+    spokenText: instruction,
+    guideSlug: guide.slug,
+    guideTitle: guide.title,
+    guideVersion: guide.version || 1,
+    guideStep: currentIndex + 1,
+    guideStepCount: guide.steps.length,
+    completed: false,
+    source: 'approved-guide-context-help-v28-2',
+    contextEvidenceStep: evidenceStep,
+  });
 }
 
 async function loadGuide(slug: string): Promise<GuideRecord | null> {
   const url = Deno.env.get('SUPABASE_URL');
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!url || !serviceKey) return null;
-  const endpoint = `${url}/rest/v1/dokohilf_guides?select=slug,title,steps,version&status=eq.approved&slug=eq.${encodeURIComponent(slug)}&limit=1`;
+  const endpoint = `${url}/rest/v1/dokohilf_guides?select=slug,title,steps,troubleshooting,version&status=eq.approved&slug=eq.${encodeURIComponent(slug)}&limit=1`;
   const response = await fetch(endpoint, {
     headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
     signal: AbortSignal.timeout(4_000),
@@ -181,25 +310,11 @@ Deno.serve(async (req: Request) => {
     return forwardToExistingRouter(rawBody, origin);
   }
 
-  if (guideSlug && isContextHelpQuestion(lastText)) {
+  if (guideSlug) {
     const guide = await loadGuide(guideSlug);
-    const selected = guide ? chooseStep(guide, lastText, parsed.guideStep) : null;
-    if (guide && selected) {
-      const instruction = String(selected.step.stuck || selected.step.text || '').trim();
-      const check = String(selected.step.check || 'Hast du die Stelle gefunden?').trim();
-      if (instruction) {
-        return jsonResponse(origin, 200, {
-          reply: `${instruction}\n\n${check}`,
-          spokenText: instruction,
-          guideSlug: guide.slug,
-          guideTitle: guide.title,
-          guideVersion: guide.version || 1,
-          guideStep: selected.index + 1,
-          guideStepCount: guide.steps.length,
-          completed: false,
-          source: 'approved-guide-context-help-v28',
-        });
-      }
+    const index = guide ? currentStepIndex(guide, parsed.guideStep) : 0;
+    if (guide && shouldUseContextHelp(lastText, guide, index)) {
+      return contextHelpResponse(origin, guide, lastText, parsed.guideStep);
     }
   }
 
