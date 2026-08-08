@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [ui, sw] = await Promise.all([
+const [ui, axisCss, sw] = await Promise.all([
   readFile(new URL('../assets/v29-ui.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/card-axis-fix-v29.css', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
 ]);
 
@@ -21,8 +22,15 @@ test('v29 premium home renders the accepted visual hierarchy', () => {
   assert.match(ui, /mode-card\.chat-card/);
 });
 
+test('mobile header reserves the iPhone status-bar safe area', () => {
+  assert.match(axisCss, /env\(safe-area-inset-top\)/);
+  assert.match(axisCss, /margin-top:max\(10px,calc\(env\(safe-area-inset-top\) \+ 8px\)\)!important/);
+  assert.match(axisCss, /\.app-shell\[data-mode="start"\] > \.topbar/);
+  assert.match(axisCss, /\.app-shell\[data-mode="chat"\] > \.topbar/);
+});
+
 test('premium home refreshes the PWA shell without changing the established v29 release contract', () => {
   assert.match(sw, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
-  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-mobile-polish-5/);
+  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-mobile-polish-6/);
   assert.match(sw, /hardRefresh: true/);
 });
