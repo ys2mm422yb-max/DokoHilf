@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: dokohilf-ui-v27-${{ github.event.pull_request.number || github.ref }}
+  group: dokohilf-ui-v29-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -30,15 +30,17 @@ jobs:
       - name: Checkout exact feature head
         uses: actions/checkout@v4
 
-      - name: Build exact v28 UI surface
+      - name: Build exact v29 UI surface
         run: |
           set -euo pipefail
-          mkdir -p artifacts/mobile-v28
+          mkdir -p artifacts/mobile-v29
           bash scripts/build-static-site-v27.sh _ui_site
           test -s _ui_site/index.html
-          grep -q 'KI · v28' _ui_site/index.html
-          grep -q 'dokohilf-build" content="20260807-28' _ui_site/index.html
+          grep -q 'KI · v29' _ui_site/index.html
+          grep -q 'dokohilf-build" content="20260808-29' _ui_site/index.html
           grep -q -- '--v27-bg:#020c12' _ui_site/assets/premium-ui-v27.css
+          grep -q -- '--v29-bg:#020a10' _ui_site/assets/v29-ui.css
+          grep -q '__DOKOHILF_UI_V29__' _ui_site/assets/v29-ui.js
           grep -q '__DOKOHILF_PRIVACY_ACK_V27__' _ui_site/assets/ux-v27.js
           grep -q '__DOKOHILF_LOCAL_VOICE_V28__' _ui_site/assets/local-voice-v28.js
           ! grep -q 'voice-diagnostics.js' _ui_site/index.html
@@ -54,10 +56,10 @@ jobs:
           DOKOHILF_VIEWPORT_WIDTH: '393'
           DOKOHILF_VIEWPORT_HEIGHT: '852'
           DOKOHILF_RENDER_URL: http://127.0.0.1:4173/
-          DOKOHILF_RENDER_OUTPUT: artifacts/mobile-v28
+          DOKOHILF_RENDER_OUTPUT: artifacts/mobile-v29
         run: |
           set -euo pipefail
-          python3 -m http.server 4173 --directory _ui_site >artifacts/mobile-v28-server.log 2>&1 &
+          python3 -m http.server 4173 --directory _ui_site >artifacts/mobile-v29-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 30); do
@@ -70,7 +72,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dokohilf-dark-ui-v28-${{ github.run_number }}
+          name: dokohilf-dark-ui-v29-${{ github.run_number }}
           path: artifacts/
           if-no-files-found: error
           retention-days: 30
