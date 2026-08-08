@@ -2,13 +2,13 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
-const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || 'artifacts/mobile-v28';
+const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || 'artifacts/mobile-v29';
 const USE_MOCK_SERVICES = process.env.DOKOHILF_UI_MOCK === '1';
 const PROFILE = process.env.DOKOHILF_MOBILE_PROFILE || 'ios';
 const VIEWPORT_WIDTH = Number(process.env.DOKOHILF_VIEWPORT_WIDTH || 393);
 const VIEWPORT_HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || 852);
 const DEVICE_SCALE_FACTOR = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
-const BUILD_ID = '20260807-28';
+const BUILD_ID = '20260808-29';
 const USER_AGENT = PROFILE === 'android'
   ? 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'
   : 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1';
@@ -44,8 +44,6 @@ const context = await browser.newContext({
   locale: 'de-DE',
   reducedMotion: 'reduce',
   userAgent: USER_AGENT,
-  // Diese Prüfung misst UI/Interaktion. Service-Worker-Transitions werden separat getestet;
-  // ein erster clients.claim()-Wechsel darf keine laufende Geometriemessung zerstören.
   serviceWorkers: 'block',
 });
 const page = await context.newPage();
@@ -80,7 +78,7 @@ if (USE_MOCK_SERVICES) {
   }, { profile: PROFILE });
 
   const reply = 'Öffne beim gewünschten Bewohner den Bereich „Berichte“.';
-  await page.route(/\/functions\/v1\/dokohilf-ai(?:-router)?(?:\?.*)?$/, async route => {
+  await page.route(/\/functions\/v1\/dokohilf-(?:chat-router|ai(?:-router)?)(?:\?.*)?$/, async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json; charset=utf-8',
@@ -104,7 +102,7 @@ if (USE_MOCK_SERVICES) {
         status: 200,
         contentType: 'application/json; charset=utf-8',
         headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ schemaVersion: 1, buildId: BUILD_ID, voice: 'legacy-disabled-v28', source: 'ui-render-mock', entryCount: 0, entries: [] }),
+        body: JSON.stringify({ schemaVersion: 1, buildId: BUILD_ID, voice: 'legacy-disabled-v29', source: 'ui-render-mock', entryCount: 0, entries: [] }),
       });
       return;
     }
@@ -115,7 +113,7 @@ if (USE_MOCK_SERVICES) {
       status: 500,
       contentType: 'application/json; charset=utf-8',
       headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: 'cloud_tts_must_not_be_used_by_v28_ui' }),
+      body: JSON.stringify({ error: 'cloud_tts_must_not_be_used_by_v29_ui' }),
     });
   });
 }
@@ -184,7 +182,7 @@ try {
   }));
   assert(identity.title.includes('DokoHilf'), 'Falsche Seitenidentität.');
   assert(identity.build === BUILD_ID, `Falscher Build: ${identity.build}`);
-  assert(identity.version === 'KI · v28', `Falscher sichtbarer Marker: ${identity.version}`);
+  assert(identity.version === 'KI · v29', `Falscher sichtbarer Marker: ${identity.version}`);
   assert(/rgb\((?:0|1|2|3|4|5|6|7|8|9|1\d|2\d),\s*(?:0|1|2|3|4|5|6|7|8|9|1\d|2\d),\s*(?:0|1|2|3|4|5|6|7|8|9|1\d|2\d)\)/.test(identity.htmlBackground), `Grundfläche ist nicht dunkel: ${identity.htmlBackground}`);
   assert(identity.bodyBackground !== 'none', 'Dunkle Hintergrundgestaltung fehlt.');
 
@@ -220,6 +218,24 @@ try {
   assert(await directGuide.locator('[data-direct-guide-variant]').count() === 2, 'Vitalwerte bietet nicht beide bestätigten Varianten an.');
   await directGuide.locator('[data-direct-guide-variant="vitalSammel"]').click();
   assert(await directGuide.locator('.direct-guide-step').count() === 6, 'Sammelerfassung zeigt nicht die vollständigen sechs bestätigten Schritte.');
+  await page.locator('[data-direct-guide-close]').first().click();
+  await page.locator('#startScreen').waitFor({ state: 'visible' });
+
+  await page.getByRole('button', { name: 'An-/Abwesenheit' }).click();
+  await directGuide.waitFor({ state: 'visible' });
+  await page.waitForFunction(() => document.querySelector('#directGuideView')?.dataset.v29NaturalPresence === 'true');
+  const presenceText = await directGuide.innerText();
+  assert(/Bei „Von“ immer Datum und Uhrzeit eintragen/.test(presenceText), 'Natürliche Von-Formulierung fehlt.');
+  assert(/Bis.*Endzeitpunkt sicher feststeht/.test(presenceText), 'Natürliche Bis-Formulierung fehlt.');
+  assert(!/100 Prozent/.test(presenceText), 'Alte technische 100-Prozent-Formulierung ist noch sichtbar.');
+  await page.locator('[data-direct-guide-close]').first().click();
+  await page.locator('#startScreen').waitFor({ state: 'visible' });
+
+  await page.getByRole('button', { name: 'Formular anlegen' }).click();
+  await directGuide.waitFor({ state: 'visible' });
+  await page.waitForFunction(() => document.querySelector('#directGuideView')?.dataset.v29FormSave === 'true');
+  assert(await directGuide.locator('.direct-guide-step').count() === 8, 'Formular-Anleitung enthält nicht acht Schritte.');
+  assert(/oben links in der Leiste/.test(await directGuide.locator('.direct-guide-step').last().innerText()), 'Abschließender Speicherschritt oben links fehlt.');
   await page.locator('[data-direct-guide-close]').first().click();
   await page.locator('#startScreen').waitFor({ state: 'visible' });
 
@@ -310,6 +326,7 @@ try {
     privacyAcknowledgementStored: true,
     directGuideButtonCount: 7,
     directGuideStepCount: 12,
+    formStepCount: 8,
     handoverStepCount: 4,
     vitalVariantCount: 2,
     chatHeadHeight: chatHeadBox?.height,
@@ -326,7 +343,7 @@ try {
     pageErrors,
   };
   await writeFile(`${OUTPUT_DIR}/report.json`, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  console.log(`DokoHilf mobile Renderprüfung ${PROFILE} für v28 bestanden.`);
+  console.log(`DokoHilf mobile Renderprüfung ${PROFILE} für v29 bestanden.`);
 } catch (error) {
   await page.screenshot({ path: `${OUTPUT_DIR}/failure-${PROFILE}.png`, fullPage: true }).catch(() => {});
   await writeFile(`${OUTPUT_DIR}/report.json`, `${JSON.stringify({ passed: false, profile: PROFILE, error: error.message, consoleErrors, pageErrors }, null, 2)}\n`, 'utf8');
