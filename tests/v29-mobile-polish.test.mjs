@@ -32,7 +32,7 @@ test('home cards and frequent flows are compact without breaking touch layout', 
 test('initial typed chat removes duplicate welcome and guide controls until a guide is active', () => {
   assert.match(polish, /function isInitialWelcome/);
   assert.match(polish, /if \(isInitialWelcome\(message\)\) message\.remove\(\)/);
-  assert.match(polish, /commandRow\.hidden = !activeGuide/);
+  assert.match(polish, /if \(commandRow\.hidden !== !activeGuide\) commandRow\.hidden = !activeGuide/);
   assert.match(polish, /messages:empty\{display:none!important\}/);
   assert.match(polish, /requestAnimationFrame\(\(\) => window\.scrollTo/);
 });
@@ -41,6 +41,8 @@ test('typed chat is visually lighter and keeps minimum mobile touch targets', ()
   assert.match(polish, /\.chat-head h1\{font-size:24px!important/);
   assert.match(polish, /\.chat-head p\{display:none!important\}/);
   assert.match(polish, /data-mode="chat"\]\:not\(\[data-v29-guide-active="true"\]\) \.conversation/);
+  assert.match(polish, /data-mode="chat"\]\{min-height:100dvh!important;padding-bottom:0!important\}/);
+  assert.match(polish, /\.composer-wrap\{position:sticky!important;[\s\S]*bottom:0!important/);
   assert.match(polish, /\.composer\{gap:5px!important;padding:3px!important/);
   assert.match(polish, /\.composer textarea\{min-height:44px!important/);
   assert.match(polish, /\.small-mic\{width:44px!important/);
