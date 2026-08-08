@@ -10,17 +10,17 @@ const [index, css, uxCss, experience, diagnostics, localVoice, localGate, ux, ap
   readFile('supabase/migrations/20260806173000_remove_repeated_exercise_notices.sql', 'utf8'),
 ]);
 
-test('v28 assets are wired consistently', () => {
-  assert.match(index, /dokohilf-build" content="20260807-28/);
-  assert.match(index, /premium-ui-v27\.css\?v=20260807-28/);
-  assert.match(index, /ux-v27\.css\?v=20260807-28/);
-  assert.match(index, /local-voice-v28\.js\?v=20260807-28/);
-  assert.match(index, /local-voice-gate-v28\.js\?v=20260807-28/);
-  assert.match(index, /KI · v28/);
-  assert.match(serviceWorker, /BUILD_ID = '20260807-28'/);
-  assert.match(serviceWorker, /local-voice-v28\.js\?v=20260807-28/);
-  assert.match(serviceWorker, /local-voice-gate-v28\.js\?v=20260807-28/);
-  assert.equal(JSON.parse(version).buildId, '20260807-28');
+test('v29 assets are wired consistently', () => {
+  assert.match(index, /dokohilf-build" content="20260808-29/);
+  assert.match(index, /premium-ui-v27\.css\?v=20260808-29/);
+  assert.match(index, /ux-v27\.css\?v=20260808-29/);
+  assert.match(index, /local-voice-v28\.js\?v=20260808-29/);
+  assert.match(index, /local-voice-gate-v28\.js\?v=20260808-29/);
+  assert.match(index, /KI · v29/);
+  assert.match(serviceWorker, /BUILD_ID = '20260808-29'/);
+  assert.match(serviceWorker, /local-voice-v28\.js\?v=20260808-29/);
+  assert.match(serviceWorker, /local-voice-gate-v28\.js\?v=20260808-29/);
+  assert.equal(JSON.parse(version).buildId, '20260808-29');
 });
 
 test('dark premium home and workflow shortcuts are present', () => {
@@ -40,10 +40,11 @@ test('mobile synchronization is idempotent and cannot feed its own mutation obse
   assert.doesNotMatch(ux, /new MutationObserver\(sync\)/); assert.match(ux, /__DOKOHILF_IDEMPOTENT_SYNC_V27__/);
 });
 
-test('published v28 voice is local-only while the old cloud/device paths remain inactive compatibility code', () => {
+test('published v29 voice is Supertonic-F1 static-first while old cloud/device paths stay inactive compatibility code', () => {
   assert.match(localVoice, /Supertone\/supertonic-3/); assert.match(localVoice, /const LANGUAGE = 'de'/);
   assert.match(localVoice, /if \(!isIOS\(\) && navigator\.gpu\)/); assert.match(localVoice, /loaded = await load\('wasm'\)/);
   assert.match(localGate, /DokoHilfLocalVoiceV28\.synthesize/); assert.match(localGate, /blockSystemSpeech/);
+  assert.match(localGate, /dokohilf-static-supertonic-audio-v29-1/); assert.match(localGate, /IOS_LOCAL_TIMEOUT_MS = 8000/);
   assert.match(ux, /if \(localVoiceV28\(\)\) return previousFetch\(input, init\)/); assert.match(ux, /__DOKOHILF_LOCAL_VOICE_ONLY_V28__/);
   assert.match(app, /function speakWithSystemVoice/);
   assert.match(experience, /FAST_FALLBACK_MS = 2400/);
