@@ -19,7 +19,8 @@ test('bestätigte Supertonic-Sätze werden vor lokaler Inferenz statisch getroff
   assert.match(gate, /approvedText\.length < 16/);
   assert.match(gate, /key\.includes\(approvedText\)/);
   assert.match(gate, /STATIC_VOICE = 'Supertonic-F1'/);
-  assert.match(gate, /static-supertonic-guide-v28/);
+  assert.match(gate, /static-supertonic-guide-v29/);
+  assert.match(gate, /dokohilf-static-supertonic-audio-v29-1/);
   assert.ok(gate.indexOf('loadStaticSupertonicVoice(text)') < gate.indexOf('localFallback(text)'));
   assert.doesNotMatch(gate, /Gacrux|dokohilf-guide-audio\?manifest=1/);
 });
