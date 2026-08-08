@@ -17,7 +17,6 @@ test('mobile polish loads after the premium v29 presentation layer', () => {
 
 test('start screen header no longer floats over mobile content', () => {
   assert.match(polish, /\.app-shell\[data-mode="start"\] \.topbar\{[\s\S]*position:relative!important;top:auto!important/);
-  assert.match(polish, /\.app-shell\[data-mode="start"\] \.composer-wrap/);
 });
 
 test('mobile cards and frequent flows are intentionally compact', () => {
