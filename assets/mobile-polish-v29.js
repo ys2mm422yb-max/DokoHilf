@@ -43,7 +43,7 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
   html[data-dokohilf-ui="v29"] .examples button:after{margin-top:4px!important;font-size:9.5px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="start"] .legal-note{margin-top:10px!important;padding-bottom:9px!important;font-size:10px!important}
 
-  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"]{min-height:100dvh!important;padding-bottom:calc(82px + env(safe-area-inset-bottom))!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"]{min-height:100dvh!important;padding-bottom:0!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .topbar{
     min-height:58px!important;padding:6px 8px!important;border-radius:18px!important;
   }
@@ -72,7 +72,7 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .command-row{gap:6px!important;margin-top:7px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .command-row button{min-height:44px!important;border-radius:12px!important;font-size:11.5px!important}
 
-  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer-wrap{padding:5px 8px calc(4px + env(safe-area-inset-bottom))!important;border-top-color:rgba(78,230,160,.10)!important;background:rgba(1,10,15,.94)!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer-wrap{position:sticky!important;left:auto!important;right:auto!important;bottom:0!important;z-index:30!important;width:auto!important;margin-top:8px!important;padding:5px 8px calc(4px + env(safe-area-inset-bottom))!important;border-top-color:rgba(78,230,160,.10)!important;background:rgba(1,10,15,.94)!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer{gap:5px!important;padding:3px!important;border:1px solid rgba(117,217,188,.13)!important;border-radius:17px!important;background:rgba(6,24,30,.94)!important;box-shadow:0 10px 28px rgba(0,0,0,.28)!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer textarea{min-height:44px!important;max-height:88px!important;padding:10px 11px!important;border-radius:13px!important;font-size:15px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .small-mic{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;border-radius:13px!important}
