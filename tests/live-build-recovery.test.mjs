@@ -16,10 +16,11 @@ const [html, worker, version, router, localVoice, premiumCss25, premiumCss26, pr
   readFile(new URL('../PROJECT_RULES.md', import.meta.url), 'utf8'),
 ]);
 
+const buildId = JSON.parse(version).buildId;
+
 test('Build 29 ist in HTML, Versionsdatei und Service Worker identisch', () => {
-  assert.match(html, /dokohilf-build\" content=\"20260808-29/);
-  assert.equal(JSON.parse(version).buildId, '20260808-29');
-  assert.match(worker, /BUILD_ID = '20260808-29'/);
+  assert.match(html, new RegExp(`dokohilf-build\\" content=\\"${buildId}`));
+  assert.match(worker, new RegExp(`BUILD_ID = '${buildId}'`));
   assert.match(html, /KI · v29/);
 });
 
@@ -40,12 +41,12 @@ test('Mobile PWA kann alte Shell-Caches entfernen und den lokalen v28-Modellcach
 });
 
 test('Build 29 lädt Premium-Basisschichten, Voice-Balance und lokale Stimme gemeinsam', () => {
-  assert.match(html, /premium-ui-v25\.css\?v=20260808-29/);
-  assert.match(html, /premium-ui-v26\.css\?v=20260808-29/);
-  assert.match(html, /premium-ui-v27\.css\?v=20260808-29/);
-  assert.match(html, /voice-stage-balance-v27\.css\?v=20260808-29/);
-  assert.match(html, /local-voice-v28\.js\?v=20260808-29/);
-  assert.match(html, /local-voice-gate-v28\.js\?v=20260808-29/);
+  assert.match(html, new RegExp(`premium-ui-v25\\.css\\?v=${buildId}`));
+  assert.match(html, new RegExp(`premium-ui-v26\\.css\\?v=${buildId}`));
+  assert.match(html, new RegExp(`premium-ui-v27\\.css\\?v=${buildId}`));
+  assert.match(html, new RegExp(`voice-stage-balance-v27\\.css\\?v=${buildId}`));
+  assert.match(html, new RegExp(`local-voice-v28\\.js\\?v=${buildId}`));
+  assert.match(html, new RegExp(`local-voice-gate-v28\\.js\\?v=${buildId}`));
   assert.match(premiumCss25, /--dh-deep/);
   assert.match(premiumCss26, /grid-template-rows:minmax\(92px,auto\) minmax\(0,1fr\)/);
   assert.match(premiumCss26, /voice-copy strong:after\{content:none/);
