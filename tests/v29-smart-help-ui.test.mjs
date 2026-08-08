@@ -18,18 +18,37 @@ test('v29 is visible and cache-busted consistently', async () => {
   assert.match(gate, /IOS_LOCAL_TIMEOUT_MS = 8000/);
 });
 
-test('free-text help behaves like the help button without replacing approved guide data', async () => {
-  const smart = await read('assets/smart-help-v29.js');
+test('free-text help and the help button use the same contextual router path', async () => {
+  const [smart, detail, router] = await Promise.all([
+    read('assets/smart-help-v29.js'),
+    read('assets/detail-help-v27.js'),
+    read('supabase/functions/dokohilf-chat-router/index.ts'),
+  ]);
   assert.match(smart, /ich brauche hilfe/);
+  assert.match(smart, /ich weiss nicht/);
   assert.match(smart, /keine ahnung/);
-  assert.match(smart, /wo bin ich/);
-  assert.match(smart, /das gibt es bei mir nicht/);
-  assert.match(smart, /messages\[index\]\.content = replacement/);
-  assert.match(smart, /replacement\).*ich finde das nicht|rewriteLatestUser\(parsed, 'ich finde das nicht'\)/s);
-  assert.match(smart, /selectedGuideSlug/);
-  assert.doesNotMatch(smart, /reply:\s*`\$\{guide\.text\}/);
-  assert.doesNotMatch(smart, /Wähle zuerst den gewünschten Bewohner aus\./);
+  assert.match(smart, /was meinst du/);
+  assert.match(smart, /smartHelpIntent: true/);
+  assert.doesNotMatch(smart, /rewriteLatestUser|ich finde das nicht/);
+  assert.match(detail, /__DOKOHILF_CONTEXTUAL_HELP_V29__/);
+  assert.doesNotMatch(detail, /helpOptions|Was trifft bei dir zu\?|syntheticResponse|startSession/);
+  assert.match(router, /smartHelpIntent/);
+  assert.match(router, /approved-guide-context-help-v29-4/);
   assert.doesNotMatch(smart, /localStorage|sessionStorage|indexedDB/);
+  assert.doesNotMatch(detail, /localStorage|sessionStorage|indexedDB/);
+});
+
+test('Hallo ich suche den Blutdruck starts the approved single-value guide instead of an overview', async () => {
+  const [smart, router] = await Promise.all([
+    read('assets/smart-help-v29.js'),
+    read('supabase/functions/dokohilf-chat-router/index.ts'),
+  ]);
+  assert.match(smart, /blutdruck\|puls\|temperatur/);
+  assert.match(smart, /return 'vitalwerte-einzelwert'/);
+  assert.match(smart, /selectedGuideSlug/);
+  assert.match(router, /selectedGuideSlug/);
+  assert.match(router, /approved-guide-smart-start-v29-1/);
+  assert.match(router, /stepResponse\(origin, guide, 0/);
 });
 
 test('v29 redesign covers home, written chat and distinct voice states', async () => {
