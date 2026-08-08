@@ -1,0 +1,209 @@
+/* DokoHilf v29 — clearer hierarchy, compact guide mode, richer mobile polish. */
+:root{
+  --v29-bg:#020a10;
+  --v29-surface:#081920;
+  --v29-surface-2:#0b2229;
+  --v29-line:rgba(137,225,198,.16);
+  --v29-line-strong:rgba(83,244,170,.34);
+  --v29-text:#f4fbf8;
+  --v29-muted:#8da7a0;
+  --v29-green:#4ee6a0;
+  --v29-green-strong:#19bd78;
+  --v29-blue:#4da8ff;
+  --v29-purple:#9d77ff;
+  --v29-warm:#f0c568;
+  --v29-shadow:0 22px 70px rgba(0,0,0,.36);
+}
+
+html[data-dokohilf-ui="v29"],html[data-dokohilf-ui="v29"] body{background:var(--v29-bg)!important}
+html[data-dokohilf-ui="v29"] body{
+  background:
+    radial-gradient(circle at 14% 0%,rgba(56,230,157,.12),transparent 25rem),
+    radial-gradient(circle at 96% 18%,rgba(77,168,255,.09),transparent 27rem),
+    linear-gradient(180deg,#020a10 0%,#04131a 52%,#020a0f 100%)!important;
+}
+html[data-dokohilf-ui="v29"] body:before{opacity:.14!important;background-size:42px 42px!important}
+
+html[data-dokohilf-ui="v29"] .topbar{
+  min-height:64px!important;padding:8px 10px!important;border-radius:20px!important;
+  border-color:rgba(111,227,190,.16)!important;
+  background:linear-gradient(135deg,rgba(7,27,33,.96),rgba(7,48,43,.91))!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.07)!important;
+}
+html[data-dokohilf-ui="v29"] .brand img{width:42px!important;height:42px!important;border-radius:14px!important;filter:drop-shadow(0 7px 18px rgba(51,228,155,.16))}
+html[data-dokohilf-ui="v29"] .brand strong{font-size:20px!important;letter-spacing:-.04em!important}
+html[data-dokohilf-ui="v29"] .build-pill{
+  height:40px!important;min-height:40px!important;padding:0 13px!important;border-radius:13px!important;
+  background:linear-gradient(145deg,rgba(78,230,160,.16),rgba(23,126,91,.15))!important;
+  border-color:rgba(78,230,160,.27)!important;color:#72f5b4!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.05),0 8px 24px rgba(16,150,100,.08)!important;
+}
+html[data-dokohilf-ui="v29"] .home-button,html[data-dokohilf-ui="v29"] .new-button{height:40px!important;min-height:40px!important;border-radius:13px!important}
+
+/* Hauptmenü */
+html[data-dokohilf-ui="v29"] .main-content{padding-top:42px!important}
+html[data-dokohilf-ui="v29"] .start-screen{width:min(860px,100%)!important;margin:0 auto!important}
+html[data-dokohilf-ui="v29"] .start-copy{position:relative;text-align:center!important;margin-bottom:24px!important}
+html[data-dokohilf-ui="v29"] .start-copy:before{
+  content:'DOKOHILF · BEDIENUNGSHILFE';display:inline-flex;align-items:center;min-height:28px;padding:0 11px;margin-bottom:12px;
+  border:1px solid rgba(78,230,160,.18);border-radius:999px;background:rgba(78,230,160,.055);
+  color:#6de9b0;font-size:10px;font-weight:900;letter-spacing:.13em;
+}
+html[data-dokohilf-ui="v29"] .start-copy h1{font-size:clamp(40px,7vw,62px)!important;line-height:.98!important;letter-spacing:-.06em!important;text-wrap:balance}
+html[data-dokohilf-ui="v29"] .start-copy p{max-width:560px;margin:13px auto 0!important;color:#91aaa3!important;font-size:15px!important;line-height:1.5!important}
+html[data-dokohilf-ui="v29"] .mode-grid{gap:13px!important}
+html[data-dokohilf-ui="v29"] .mode-card{
+  position:relative;overflow:hidden;min-height:128px!important;border-radius:26px!important;
+  background:linear-gradient(150deg,rgba(10,31,38,.98),rgba(5,18,25,.98))!important;
+  box-shadow:0 20px 60px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.04)!important;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease!important;
+}
+html[data-dokohilf-ui="v29"] .mode-card:before{
+  content:'';position:absolute;width:180px;height:180px;border-radius:50%;right:-62px;top:-70px;pointer-events:none;
+  background:radial-gradient(circle,rgba(78,230,160,.14),transparent 66%);
+}
+html[data-dokohilf-ui="v29"] .mode-card.chat-card:before{background:radial-gradient(circle,rgba(77,168,255,.15),transparent 66%)}
+html[data-dokohilf-ui="v29"] .mode-card:hover{transform:translateY(-2px)!important;border-color:rgba(78,230,160,.27)!important;box-shadow:0 26px 70px rgba(0,0,0,.37),0 0 38px rgba(62,213,150,.05)!important}
+html[data-dokohilf-ui="v29"] .mode-card.chat-card:hover{border-color:rgba(77,168,255,.28)!important;box-shadow:0 26px 70px rgba(0,0,0,.37),0 0 38px rgba(77,168,255,.05)!important}
+html[data-dokohilf-ui="v29"] .mode-icon{position:relative!important;z-index:1!important;box-shadow:0 12px 34px rgba(0,0,0,.22)!important}
+html[data-dokohilf-ui="v29"] .voice-card .mode-icon{background:linear-gradient(145deg,rgba(43,223,145,.2),rgba(14,116,82,.15))!important;border-color:rgba(75,238,168,.26)!important}
+html[data-dokohilf-ui="v29"] .chat-card .mode-icon{background:linear-gradient(145deg,rgba(77,168,255,.2),rgba(53,86,163,.14))!important;border-color:rgba(91,177,255,.25)!important}
+html[data-dokohilf-ui="v29"] .mode-text strong{font-size:22px!important;letter-spacing:-.035em!important}
+html[data-dokohilf-ui="v29"] .mode-text small{margin-top:5px!important;max-width:390px!important;color:#91aaa3!important;line-height:1.42!important}
+html[data-dokohilf-ui="v29"] .mode-arrow{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:13px!important;background:rgba(255,255,255,.035)!important}
+html[data-dokohilf-ui="v29"] .examples{margin-top:18px!important;padding:16px!important;border:1px solid rgba(126,200,179,.11)!important;border-radius:22px!important;background:linear-gradient(150deg,rgba(8,25,31,.72),rgba(5,17,23,.62))!important}
+html[data-dokohilf-ui="v29"] .examples>span{display:block!important;margin:0 0 10px!important;color:#73928a!important;font-size:10px!important;font-weight:900!important;letter-spacing:.1em!important;text-transform:uppercase!important}
+html[data-dokohilf-ui="v29"] .examples button{border-radius:14px!important;background:rgba(8,27,34,.92)!important;border-color:rgba(137,225,198,.12)!important;box-shadow:none!important;transition:transform .16s ease,border-color .16s ease,background .16s ease!important}
+html[data-dokohilf-ui="v29"] .examples button:hover{transform:translateY(-1px);border-color:rgba(78,230,160,.27)!important;background:rgba(15,42,45,.96)!important}
+html[data-dokohilf-ui="v29"] .safety-note{margin-top:14px!important;border-radius:17px!important;border-color:rgba(78,230,160,.12)!important;background:rgba(7,24,29,.58)!important;color:#86a59c!important}
+
+/* Schreib-Chat */
+html[data-dokohilf-ui="v29"] .workspace{max-width:780px!important}
+html[data-dokohilf-ui="v29"] .chat-head{position:relative;margin:0 0 18px!important;padding:20px!important;border:1px solid rgba(112,218,186,.11)!important;border-radius:24px!important;background:linear-gradient(145deg,rgba(8,28,35,.74),rgba(5,18,24,.48))!important;overflow:hidden}
+html[data-dokohilf-ui="v29"] .chat-head:after{content:'';position:absolute;right:-50px;top:-70px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(77,168,255,.1),transparent 67%);pointer-events:none}
+html[data-dokohilf-ui="v29"] .chat-head .chat-eyebrow{display:none!important}
+html[data-dokohilf-ui="v29"] .chat-head h1{position:relative;z-index:1;font-size:clamp(34px,6vw,46px)!important;line-height:1.02!important;margin:0!important;letter-spacing:-.055em!important}
+html[data-dokohilf-ui="v29"] .chat-head p{position:relative;z-index:1;margin:10px 0 0!important;max-width:560px!important;font-size:15px!important;line-height:1.45!important;color:var(--v29-muted)!important}
+html[data-dokohilf-ui="v29"] .quick-prompts{position:relative;z-index:1;margin-top:14px!important;gap:7px!important}
+html[data-dokohilf-ui="v29"] .quick-prompts button{min-height:38px!important;border-radius:12px!important;font-size:12px!important;background:rgba(255,255,255,.035)!important;border-color:rgba(126,198,179,.12)!important}
+html[data-dokohilf-ui="v29"] .quick-prompts button:hover{background:rgba(77,168,255,.075)!important;border-color:rgba(77,168,255,.25)!important}
+html[data-dokohilf-ui="v29"] .app-shell[data-v29-guide-active="true"] .chat-head{display:none!important}
+
+html[data-dokohilf-ui="v29"] .guide-progress{
+  position:sticky!important;top:82px!important;z-index:17!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  margin:0 0 14px!important;padding:11px 12px!important;border-radius:18px!important;
+  border:1px solid rgba(78,230,160,.18)!important;
+  background:linear-gradient(145deg,rgba(8,29,35,.97),rgba(7,21,28,.96))!important;
+  box-shadow:0 15px 42px rgba(0,0,0,.28)!important;
+}
+html[data-dokohilf-ui="v29"] .guide-progress-copy{grid-template-columns:auto minmax(0,1fr)!important;column-gap:9px!important}
+html[data-dokohilf-ui="v29"] .guide-progress-index{width:38px!important;height:38px!important;border-radius:12px!important;background:linear-gradient(145deg,#36dc94,#0f875e)!important;font-size:13px!important;box-shadow:0 8px 24px rgba(36,204,133,.18)!important}
+html[data-dokohilf-ui="v29"] .guide-progress-copy strong{font-size:14px!important;color:#f4fbf8!important}
+html[data-dokohilf-ui="v29"] .guide-progress-copy small{font-size:11px!important;color:#7f9b93!important}
+html[data-dokohilf-ui="v29"] .guide-progress-actions{gap:5px!important}
+html[data-dokohilf-ui="v29"] .guide-progress-actions button{min-height:36px!important;padding:0 9px!important;border-radius:11px!important;font-size:10.5px!important;background:rgba(255,255,255,.035)!important}
+
+html[data-dokohilf-ui="v29"] .conversation{max-width:760px!important}
+html[data-dokohilf-ui="v29"] .messages{gap:11px!important}
+html[data-dokohilf-ui="v29"] .message{animation:v29MessageIn .22s ease-out both}
+@keyframes v29MessageIn{from{opacity:0;transform:translateY(6px) scale(.995)}to{opacity:1;transform:none}}
+html[data-dokohilf-ui="v29"] .avatar{width:34px!important;height:34px!important;flex-basis:34px!important;border-radius:12px!important;font-size:13px!important;background:linear-gradient(145deg,#174e43,#0a2f32)!important;border-color:rgba(91,227,179,.2)!important;color:#84f2bd!important;box-shadow:0 8px 22px rgba(0,0,0,.19)!important}
+html[data-dokohilf-ui="v29"] .bubble{max-width:min(620px,90%)!important;padding:14px 16px!important;border-radius:19px!important;font-size:15.5px!important;line-height:1.47!important;background:linear-gradient(150deg,rgba(12,34,41,.98),rgba(7,23,30,.98))!important;box-shadow:0 12px 34px rgba(0,0,0,.22)!important}
+html[data-dokohilf-ui="v29"] .message.assistant.v29-current-answer .bubble{border-color:rgba(78,230,160,.25)!important;border-left:3px solid var(--v29-green)!important;box-shadow:0 16px 46px rgba(0,0,0,.27),0 0 0 1px rgba(78,230,160,.035)!important}
+html[data-dokohilf-ui="v29"] .message.assistant.v29-past-answer{opacity:.68}
+html[data-dokohilf-ui="v29"] .message.assistant.v29-past-answer .bubble{font-size:14px!important;padding:11px 13px!important;box-shadow:0 8px 24px rgba(0,0,0,.16)!important}
+html[data-dokohilf-ui="v29"] .message.user .bubble{background:linear-gradient(135deg,#168b63,#0b533f)!important;border-color:rgba(112,242,180,.23)!important;border-bottom-right-radius:6px!important;box-shadow:0 12px 30px rgba(9,109,75,.16)!important}
+html[data-dokohilf-ui="v29"] .message.typing .bubble{min-width:64px!important;padding:13px 16px!important;border-color:rgba(77,168,255,.16)!important;background:linear-gradient(145deg,rgba(9,30,39,.98),rgba(7,21,30,.98))!important}
+html[data-dokohilf-ui="v29"] .message.typing .bubble i{background:#67b5ff!important;box-shadow:0 0 14px rgba(77,168,255,.36)!important}
+html[data-dokohilf-ui="v29"] .v29-history-collapsed{display:none!important}
+html[data-dokohilf-ui="v29"] .v29-history-toggle{width:100%;min-height:38px;margin:0 0 10px;padding:0 13px;border:1px solid rgba(126,182,166,.13);border-radius:13px;background:rgba(8,24,30,.72);color:#7f9d94;font:inherit;font-size:11px;font-weight:800;letter-spacing:.01em}
+html[data-dokohilf-ui="v29"] .v29-history-toggle[hidden]{display:none!important}
+html[data-dokohilf-ui="v29"] .command-row{display:grid!important;grid-template-columns:1.2fr 1fr!important;gap:8px!important;margin-top:12px!important}
+html[data-dokohilf-ui="v29"] .command-row button{min-height:48px!important;border-radius:15px!important;font-size:13px!important;font-weight:850!important;background:rgba(8,27,34,.94)!important;border-color:rgba(137,225,198,.15)!important;transition:transform .14s ease,border-color .14s ease!important}
+html[data-dokohilf-ui="v29"] .command-row button:active{transform:scale(.985)!important}
+html[data-dokohilf-ui="v29"] .command-row button:first-child{background:linear-gradient(135deg,#24c783,#107a59)!important;border-color:rgba(90,239,170,.32)!important;color:#fff!important}
+html[data-dokohilf-ui="v29"] .command-row button:nth-child(3){background:linear-gradient(135deg,rgba(67,129,201,.28),rgba(45,73,128,.28))!important;border-color:rgba(77,168,255,.28)!important;color:#dcecff!important}
+
+html[data-dokohilf-ui="v29"] .detail-help-options,html[data-dokohilf-ui="v29"] .voice-detail-help-options{border-radius:18px!important;border-color:rgba(77,168,255,.19)!important;background:linear-gradient(150deg,rgba(8,28,36,.98),rgba(5,20,28,.98))!important;box-shadow:0 16px 42px rgba(0,0,0,.25)!important}
+html[data-dokohilf-ui="v29"] .detail-help-option{border-radius:14px!important;background:rgba(255,255,255,.035)!important}
+html[data-dokohilf-ui="v29"] .detail-help-option:hover{border-color:rgba(77,168,255,.35)!important;background:rgba(77,168,255,.07)!important}
+
+html[data-dokohilf-ui="v29"] .composer-wrap{padding:9px 10px calc(8px + env(safe-area-inset-bottom))!important;background:linear-gradient(180deg,rgba(2,10,15,.58),rgba(2,10,15,.96))!important;border-top-color:rgba(137,225,198,.11)!important;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+html[data-dokohilf-ui="v29"] .composer{border-radius:20px!important;padding:5px!important;background:rgba(7,25,32,.98)!important;border-color:rgba(137,225,198,.16)!important;box-shadow:0 18px 50px rgba(0,0,0,.38)!important;transition:border-color .18s ease,box-shadow .18s ease!important}
+html[data-dokohilf-ui="v29"] .composer:focus-within{border-color:rgba(78,230,160,.35)!important;box-shadow:0 18px 50px rgba(0,0,0,.4),0 0 0 3px rgba(78,230,160,.045)!important}
+html[data-dokohilf-ui="v29"] .composer textarea{font-size:15px!important;padding-inline:13px!important}
+html[data-dokohilf-ui="v29"] .small-mic{border-radius:14px!important;background:rgba(78,230,160,.075)!important;border-color:rgba(78,230,160,.13)!important}
+html[data-dokohilf-ui="v29"] .send-button{border-radius:15px!important;background:linear-gradient(135deg,#38df94,#17af70)!important;color:#03150e!important;box-shadow:0 9px 28px rgba(25,189,120,.18)!important}
+
+/* Sprachmodus: eigene Zustände statt nur statischem Kreis */
+html[data-dokohilf-ui="v29"] .voice-focus-stage{background:radial-gradient(circle at 50% 35%,rgba(53,225,152,.14),transparent 27%),radial-gradient(circle at 50% 61%,rgba(77,168,255,.07),transparent 32%),linear-gradient(180deg,#020b11,#04151b 58%,#020a0f)!important}
+html[data-dokohilf-ui="v29"] .voice-focus-top{width:min(720px,100%);padding:9px 11px;border:1px solid rgba(124,213,187,.1);border-radius:17px;background:rgba(6,22,28,.54);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+html[data-dokohilf-ui="v29"] .voice-focus-progress span{color:#6e9188!important}
+html[data-dokohilf-ui="v29"] .voice-focus-progress strong{color:#eefaf6!important}
+html[data-dokohilf-ui="v29"] .voice-focus-toolbar button{border-color:rgba(123,213,187,.14)!important;background:rgba(9,29,35,.88)!important;color:#bce8d9!important;box-shadow:none!important}
+html[data-dokohilf-ui="v29"] .voice-focus-instruction{position:relative;overflow:hidden;border-radius:22px!important;border-color:rgba(91,220,180,.18)!important;background:linear-gradient(150deg,rgba(9,31,38,.96),rgba(6,21,28,.96))!important;box-shadow:0 18px 52px rgba(0,0,0,.3)!important}
+html[data-dokohilf-ui="v29"] .voice-focus-instruction:after{content:'';position:absolute;inset:auto 12% 0;height:1px;background:linear-gradient(90deg,transparent,rgba(80,226,166,.45),transparent);opacity:.7}
+html[data-dokohilf-ui="v29"] .voice-focus-instruction p{color:#f3fbf8!important}
+html[data-dokohilf-ui="v29"] .voice-focus-stage .voice-orb{position:relative!important;isolation:isolate;overflow:visible!important;background:radial-gradient(circle at 38% 28%,rgba(140,230,255,.26),transparent 22%),radial-gradient(circle at 50% 58%,#1974bd 0%,#115696 41%,#0a315f 72%,#071c37 100%)!important;box-shadow:0 24px 78px rgba(20,145,98,.2),0 0 0 8px rgba(55,222,149,.045),0 0 66px rgba(66,147,255,.14)!important}
+html[data-dokohilf-ui="v29"] .voice-focus-stage .voice-orb:before,html[data-dokohilf-ui="v29"] .voice-focus-stage .voice-orb:after{content:'';position:absolute;pointer-events:none;border-radius:50%;z-index:-1}
+html[data-dokohilf-ui="v29"] .voice-focus-stage .voice-orb:before{inset:-18px;border:1px solid rgba(93,230,185,.18);box-shadow:0 0 28px rgba(61,219,159,.1)}
+html[data-dokohilf-ui="v29"] .voice-focus-stage .voice-orb:after{inset:-36px;border:1px solid rgba(77,168,255,.1);opacity:.6}
+html[data-dokohilf-ui="v29"] .voice-focus-stage .mic-symbol{filter:drop-shadow(0 8px 24px rgba(0,0,0,.24))}
+html[data-dokohilf-ui="v29"] .voice-focus-stage .voice-copy strong{display:inline-flex!important;align-items:center;justify-content:center;min-height:34px;padding:0 12px;border:1px solid rgba(126,216,189,.11);border-radius:999px;background:rgba(7,26,32,.56);color:#edf9f5!important;font-size:16px!important;box-shadow:0 8px 26px rgba(0,0,0,.18)!important}
+html[data-dokohilf-ui="v29"] .voice-focus-stage .voice-copy>span:not(.voice-engine-badge){color:#78958e!important}
+html[data-dokohilf-ui="v29"] .voice-focus-actions button{background:rgba(8,29,35,.9)!important;border-color:rgba(125,216,190,.13)!important;color:#eaf7f3!important;box-shadow:0 8px 24px rgba(0,0,0,.16)!important}
+
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="idle"] .voice-orb:before{animation:v29IdleHalo 3s ease-in-out infinite}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="listening"] .voice-focus-stage{background:radial-gradient(circle at 50% 43%,rgba(62,204,255,.16),transparent 30%),radial-gradient(circle at 50% 72%,rgba(53,225,152,.08),transparent 34%),linear-gradient(180deg,#020b11,#04151b 58%,#020a0f)!important}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="listening"] .voice-orb{box-shadow:0 24px 80px rgba(48,163,232,.25),0 0 0 10px rgba(69,178,255,.065),0 0 74px rgba(77,168,255,.2)!important;animation:v29ListenBreath 1.75s ease-in-out infinite!important}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="listening"] .voice-orb:before{border-color:rgba(99,194,255,.37);animation:v29ListeningRing 1.8s ease-out infinite}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="listening"] .voice-orb:after{border-color:rgba(70,226,173,.18);animation:v29ListeningRing 1.8s .45s ease-out infinite}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-orb:before{inset:-23px;border:2px solid transparent;background:conic-gradient(from 0deg,rgba(157,119,255,.05),rgba(157,119,255,.9),rgba(77,168,255,.45),rgba(157,119,255,.05)) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:v29ThinkSpin 1.55s linear infinite}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-orb{box-shadow:0 24px 80px rgba(98,72,193,.2),0 0 0 9px rgba(157,119,255,.045),0 0 70px rgba(157,119,255,.16)!important}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-orb{animation:v29SpeakPulse 1.05s ease-in-out infinite!important;box-shadow:0 24px 84px rgba(50,203,142,.25),0 0 0 9px rgba(78,230,160,.06),0 0 82px rgba(78,230,160,.18)!important}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-wave i{background:linear-gradient(180deg,#ecfff7,#61e7ac)!important;box-shadow:0 0 16px rgba(88,232,173,.28)!important;animation-name:v29VoiceBar!important;animation-timing-function:ease-in-out!important;animation-iteration-count:infinite!important}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-wave i:nth-child(1){animation-delay:-.42s!important}.app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-wave i:nth-child(2){animation-delay:-.18s!important}.app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-wave i:nth-child(3){animation-delay:-.54s!important}.app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-wave i:nth-child(4){animation-delay:-.28s!important}.app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-wave i:nth-child(5){animation-delay:-.08s!important}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="error"] .voice-orb{box-shadow:0 24px 70px rgba(210,92,105,.16),0 0 0 8px rgba(210,92,105,.045)!important;filter:saturate(.72)}
+@keyframes v29IdleHalo{0%,100%{transform:scale(.97);opacity:.45}50%{transform:scale(1.03);opacity:.85}}
+@keyframes v29ListenBreath{0%,100%{transform:scale(.985)}50%{transform:scale(1.025)}}
+@keyframes v29ListeningRing{0%{transform:scale(.9);opacity:.68}80%,100%{transform:scale(1.15);opacity:0}}
+@keyframes v29ThinkSpin{to{transform:rotate(360deg)}}
+@keyframes v29SpeakPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.028)}}
+@keyframes v29VoiceBar{0%,100%{transform:scaleY(.48);opacity:.72}50%{transform:scaleY(1.22);opacity:1}}
+
+@media(max-width:700px){
+  html[data-dokohilf-ui="v29"] .topbar{width:calc(100% - 12px)!important;margin-top:6px!important;min-height:62px!important;border-radius:19px!important}
+  html[data-dokohilf-ui="v29"] .main-content{padding:31px 13px 22px!important}
+  html[data-dokohilf-ui="v29"] .start-copy{margin-bottom:18px!important}
+  html[data-dokohilf-ui="v29"] .mode-card{min-height:112px!important;padding:16px!important}
+  html[data-dokohilf-ui="v29"] .examples{padding:13px!important}
+  html[data-dokohilf-ui="v29"] .chat-head{padding:17px!important;border-radius:21px!important}
+  html[data-dokohilf-ui="v29"] .chat-head h1{font-size:34px!important}
+  html[data-dokohilf-ui="v29"] .guide-progress{top:74px!important;grid-template-columns:1fr!important;padding:10px!important}
+  html[data-dokohilf-ui="v29"] .guide-progress-actions{display:grid!important;grid-template-columns:repeat(3,1fr)!important}
+  html[data-dokohilf-ui="v29"] .bubble{max-width:92%!important;font-size:15px!important}
+  html[data-dokohilf-ui="v29"] .command-row{grid-template-columns:1fr 1fr!important}
+  html[data-dokohilf-ui="v29"] .voice-focus-top{padding:8px 10px!important}
+}
+
+@media(max-width:420px){
+  html[data-dokohilf-ui="v29"] .brand strong{font-size:18px!important}
+  html[data-dokohilf-ui="v29"] .build-pill{font-size:12px!important;padding:0 10px!important}
+  html[data-dokohilf-ui="v29"] .new-button{min-width:57px!important;padding:0 10px!important}
+  html[data-dokohilf-ui="v29"] .main-content{padding-top:27px!important}
+  html[data-dokohilf-ui="v29"] .start-copy:before{font-size:9px!important;letter-spacing:.1em!important}
+  html[data-dokohilf-ui="v29"] .start-copy h1{font-size:38px!important}
+  html[data-dokohilf-ui="v29"] .mode-text strong{font-size:20px!important}
+  html[data-dokohilf-ui="v29"] .bubble{max-width:94%!important;padding:13px 14px!important}
+  html[data-dokohilf-ui="v29"] .guide-progress-actions button{font-size:10px!important;padding:0 5px!important}
+  html[data-dokohilf-ui="v29"] .command-row button{min-height:46px!important;padding-inline:9px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html[data-dokohilf-ui="v29"] .message,
+  html[data-dokohilf-ui="v29"] .voice-orb,
+  html[data-dokohilf-ui="v29"] .voice-orb:before,
+  html[data-dokohilf-ui="v29"] .voice-orb:after,
+  html[data-dokohilf-ui="v29"] .voice-wave i{animation:none!important;transition:none!important}
+}

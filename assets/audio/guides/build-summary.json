@@ -1,0 +1,1294 @@
+{
+  "engine": "Supertonic 3",
+  "voice": "F1",
+  "language": "de",
+  "steps": 8,
+  "speed": 1.05,
+  "baseGuideCount": 93,
+  "extraSpeechCount": 18,
+  "releaseSpeechCount": 49,
+  "staticSpeechCount": 160,
+  "count": 160,
+  "entries": [
+    {
+      "index": 0,
+      "file": "assets/audio/guides/000.wav",
+      "text": "Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.",
+      "synthesizedText": "Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.",
+      "bytes": 657452,
+      "duration": 7.4205522537231445
+    },
+    {
+      "index": 1,
+      "file": "assets/audio/guides/001.wav",
+      "text": "„Notfallblatt_Allgemein“ ist normalerweise bereits vorausgewählt. Lasse diese Auswahl bestehen.",
+      "synthesizedText": "Notfallblatt Allgemein ist normalerweise bereits vorausgewählt. Lasse diese Auswahl bestehen.",
+      "bytes": 565292,
+      "duration": 6.393509864807129
+    },
+    {
+      "index": 2,
+      "file": "assets/audio/guides/002.wav",
+      "text": "Bestätige mit „OK“ beziehungsweise „Speichern“ und kontrolliere die Werte in der Übersicht.",
+      "synthesizedText": "Bestätige mit OK beziehungsweise Speichern und kontrolliere die Werte in der Übersicht.",
+      "bytes": 553004,
+      "duration": 6.202852725982666
+    },
+    {
+      "index": 3,
+      "file": "assets/audio/guides/003.wav",
+      "text": "Bestätige mit „OK“ und kontrolliere den neuen Wert in der Übersicht.",
+      "synthesizedText": "Bestätige mit OK und kontrolliere den neuen Wert in der Übersicht.",
+      "bytes": 430124,
+      "duration": 4.813729286193848
+    },
+    {
+      "index": 4,
+      "file": "assets/audio/guides/004.wav",
+      "text": "Bestätige mit „OK“ und kontrolliere, ob der Folgebericht beim Bewohner sichtbar ist.",
+      "synthesizedText": "Bestätige mit OK und kontrolliere, ob der Folgebericht beim Bewohner sichtbar ist.",
+      "bytes": 528428,
+      "duration": 5.930871963500977
+    },
+    {
+      "index": 5,
+      "file": "assets/audio/guides/005.wav",
+      "text": "Bestätige mit „OK“.",
+      "synthesizedText": "Bestätige mit OK.",
+      "bytes": 159788,
+      "duration": 1.8066895008087158
+    },
+    {
+      "index": 6,
+      "file": "assets/audio/guides/006.wav",
+      "text": "Bestätige und kontrolliere den neuen An- oder Abwesenheitseintrag.",
+      "synthesizedText": "Bestätige und kontrolliere den neuen An- oder Abwesenheitseintrag.",
+      "bytes": 417836,
+      "duration": 4.6809468269348145
+    },
+    {
+      "index": 7,
+      "file": "assets/audio/guides/007.wav",
+      "text": "Bestätige und kontrolliere die neuen Werte.",
+      "synthesizedText": "Bestätige und kontrolliere die neuen Werte.",
+      "bytes": 270380,
+      "duration": 3.0041751861572266
+    },
+    {
+      "index": 8,
+      "file": "assets/audio/guides/008.wav",
+      "text": "Das Feld „Mitarbeiter“ bleibt immer auf „ohne Mitarbeiter“ beziehungsweise leer.",
+      "synthesizedText": "Das Feld Mitarbeiter bleibt immer auf ohne Mitarbeiter beziehungsweise leer.",
+      "bytes": 460844,
+      "duration": 5.223277568817139
+    },
+    {
+      "index": 9,
+      "file": "assets/audio/guides/009.wav",
+      "text": "Ein Bericht wird nicht endgültig gelöscht. Öffne beim gewünschten Bewohner den Bereich „Berichte“.",
+      "synthesizedText": "Ein Bericht wird nicht endgültig gelöscht. Öffne beim gewünschten Bewohner den Bereich Berichte.",
+      "bytes": 571436,
+      "duration": 6.444304943084717
+    },
+    {
+      "index": 10,
+      "file": "assets/audio/guides/010.wav",
+      "text": "Ergänze nur bei Bedarf vorhandene Angaben wie Messart, Qualität oder Bemerkung.",
+      "synthesizedText": "Ergänze nur bei Bedarf vorhandene Angaben wie Messart, Qualität oder Bemerkung.",
+      "bytes": 485420,
+      "duration": 5.443929195404053
+    },
+    {
+      "index": 11,
+      "file": "assets/audio/guides/011.wav",
+      "text": "Ergänze nur die tatsächlich benötigten weiteren Angaben, zum Beispiel Ziel, Begleitung oder Grund beziehungsweise Bemerkung.",
+      "synthesizedText": "Ergänze nur die tatsächlich benötigten weiteren Angaben, zum Beispiel Ziel, Begleitung oder Grund beziehungsweise Bemerkung.",
+      "bytes": 743468,
+      "duration": 8.416536331176758
+    },
+    {
+      "index": 12,
+      "file": "assets/audio/guides/012.wav",
+      "text": "Fülle „Bis“ nur aus, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist. Ist das Ende unsicher, lasse „Bis“ leer und schätze niemals.",
+      "synthesizedText": "Fülle Bis nur aus, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist. Ist das Ende unsicher, lasse Bis leer und schätze niemals.",
+      "bytes": 847916,
+      "duration": 9.551495552062988
+    },
+    {
+      "index": 13,
+      "file": "assets/audio/guides/013.wav",
+      "text": "Fülle das geöffnete Formular wie gewohnt aus.",
+      "synthesizedText": "Fülle das geöffnete Formular wie gewohnt aus.",
+      "bytes": 270380,
+      "duration": 3.0583112239837646
+    },
+    {
+      "index": 14,
+      "file": "assets/audio/guides/014.wav",
+      "text": "Für einen einzelnen Wert klickst du oben links auf das grüne Plus. Für mehrere Werte gleichzeitig wählst du „Sammelerfassung“.",
+      "synthesizedText": "Für einen einzelnen Wert klickst du oben links auf das grüne Plus. Für mehrere Werte gleichzeitig wählst du Sammelerfassung.",
+      "bytes": 725036,
+      "duration": 8.202498435974121
+    },
+    {
+      "index": 15,
+      "file": "assets/audio/guides/015.wav",
+      "text": "Gehe zur Bewohnerübersicht.",
+      "synthesizedText": "Gehe zur Bewohnerübersicht.",
+      "bytes": 202796,
+      "duration": 2.247905969619751
+    },
+    {
+      "index": 16,
+      "file": "assets/audio/guides/016.wav",
+      "text": "Klicke den Eintrag mit der rechten Maustaste an.",
+      "synthesizedText": "Klicke den Eintrag mit der rechten Maustaste an.",
+      "bytes": 294956,
+      "duration": 3.3022220134735107
+    },
+    {
+      "index": 17,
+      "file": "assets/audio/guides/017.wav",
+      "text": "Klicke den ursprünglichen Bericht mit der rechten Maustaste an.",
+      "synthesizedText": "Klicke den ursprünglichen Bericht mit der rechten Maustaste an.",
+      "bytes": 387116,
+      "duration": 4.3282623291015625
+    },
+    {
+      "index": 18,
+      "file": "assets/audio/guides/018.wav",
+      "text": "Klicke ganz oben links auf das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil.",
+      "synthesizedText": "Klicke ganz oben links auf das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil.",
+      "bytes": 522284,
+      "duration": 5.875509262084961
+    },
+    {
+      "index": 19,
+      "file": "assets/audio/guides/019.wav",
+      "text": "Klicke oben in der Maske auf „Durchführen“. Dadurch wird die Visite als durchgeführt dokumentiert. Verwende niemals den Status „abgeschlossen“.",
+      "synthesizedText": "Klicke oben in der Maske auf Durchführen. Dadurch wird die Visite als durchgeführt dokumentiert. Verwende niemals den Status abgeschlossen.",
+      "bytes": 817196,
+      "duration": 9.212994575500488
+    },
+    {
+      "index": 20,
+      "file": "assets/audio/guides/020.wav",
+      "text": "Klicke oben links auf „Alle anzeigen“.",
+      "synthesizedText": "Klicke oben links auf Alle anzeigen.",
+      "bytes": 233516,
+      "duration": 2.6296255588531494
+    },
+    {
+      "index": 21,
+      "file": "assets/audio/guides/021.wav",
+      "text": "Klicke oben links auf „Neu“.",
+      "synthesizedText": "Klicke oben links auf Neu.",
+      "bytes": 184364,
+      "duration": 2.046501874923706
+    },
+    {
+      "index": 22,
+      "file": "assets/audio/guides/022.wav",
+      "text": "Klicke oben links auf das grüne Plus beziehungsweise „Neu“.",
+      "synthesizedText": "Klicke oben links auf das grüne Plus beziehungsweise Neu.",
+      "bytes": 356396,
+      "duration": 3.9746899604797363
+    },
+    {
+      "index": 23,
+      "file": "assets/audio/guides/023.wav",
+      "text": "Klicke oben links auf das grüne Plus für einen neuen Berichtseintrag.",
+      "synthesizedText": "Klicke oben links auf das grüne Plus für einen neuen Berichtseintrag.",
+      "bytes": 411692,
+      "duration": 4.645135879516602
+    },
+    {
+      "index": 24,
+      "file": "assets/audio/guides/024.wav",
+      "text": "Kontrolliere, ob der Bericht sichtbar durchgestrichen ist.",
+      "synthesizedText": "Kontrolliere, ob der Bericht sichtbar durchgestrichen ist.",
+      "bytes": 368684,
+      "duration": 4.169112682342529
+    },
+    {
+      "index": 25,
+      "file": "assets/audio/guides/025.wav",
+      "text": "Kontrolliere, ob der neue Berichtseintrag im Berichteblatt sichtbar ist.",
+      "synthesizedText": "Kontrolliere, ob der neue Berichtseintrag im Berichteblatt sichtbar ist.",
+      "bytes": 454700,
+      "duration": 5.150358200073242
+    },
+    {
+      "index": 26,
+      "file": "assets/audio/guides/026.wav",
+      "text": "Kontrolliere, ob die Durchführung als storniert beziehungsweise ungültig gekennzeichnet ist.",
+      "synthesizedText": "Kontrolliere, ob die Durchführung als storniert beziehungsweise ungültig gekennzeichnet ist.",
+      "bytes": 546860,
+      "duration": 6.1859450340271
+    },
+    {
+      "index": 27,
+      "file": "assets/audio/guides/027.wav",
+      "text": "Lege die gewünschten Suchkriterien und den Zeitraum fest.",
+      "synthesizedText": "Lege die gewünschten Suchkriterien und den Zeitraum fest.",
+      "bytes": 362540,
+      "duration": 4.095291614532471
+    },
+    {
+      "index": 28,
+      "file": "assets/audio/guides/028.wav",
+      "text": "Nur bei „Kontakt – alles außer Arzt“ und „Sturzereignis“: Prüfe das automatisch zugeordnete Protokoll. Wird es nicht benötigt, klicke zuerst auf den Protokollnamen und danach oben rechts auf das kleine rote X. Das entfernt nur die Protokollverknüpfung, nicht den Bericht.",
+      "synthesizedText": "Nur bei Kontakt - alles außer Arzt und Sturzereignis: Prüfe das automatisch zugeordnete Protokoll. Wird es nicht benötigt, klicke zuerst auf den Protokollnamen und danach oben rechts auf das kleine rote X. Das entfernt nur die Protokollverknüpfung, nicht den Bericht.",
+      "bytes": 1628204,
+      "duration": 18.414527893066406
+    },
+    {
+      "index": 29,
+      "file": "assets/audio/guides/029.wav",
+      "text": "Öffne „Doku erweitert“.",
+      "synthesizedText": "Öffne Doku erweitert.",
+      "bytes": 165932,
+      "duration": 1.8293066024780273
+    },
+    {
+      "index": 30,
+      "file": "assets/audio/guides/030.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „An-/Abwesenheiten“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle An- oder Abwesenheiten.",
+      "bytes": 350252,
+      "duration": 3.9064745903015137
+    },
+    {
+      "index": 31,
+      "file": "assets/audio/guides/031.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „Formulare“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle Formulare.",
+      "bytes": 270380,
+      "duration": 3.01355242729187
+    },
+    {
+      "index": 32,
+      "file": "assets/audio/guides/032.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „Medikation“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle Medikation.",
+      "bytes": 276524,
+      "duration": 3.065763235092163
+    },
+    {
+      "index": 33,
+      "file": "assets/audio/guides/033.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „Visiten“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle Visiten.",
+      "bytes": 258092,
+      "duration": 2.900784492492676
+    },
+    {
+      "index": 34,
+      "file": "assets/audio/guides/034.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „Vitalwerte“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle Vitalwerte.",
+      "bytes": 270380,
+      "duration": 3.0550484657287598
+    },
+    {
+      "index": 35,
+      "file": "assets/audio/guides/035.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle direkt „Vitalwerte Sammelerf.“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle direkt Vitalwerte Sammelerf..",
+      "bytes": 393260,
+      "duration": 4.453948974609375
+    },
+    {
+      "index": 36,
+      "file": "assets/audio/guides/036.wav",
+      "text": "Öffne „Doku“.",
+      "synthesizedText": "Öffne Doku.",
+      "bytes": 122924,
+      "duration": 1.3855957984924316
+    },
+    {
+      "index": 37,
+      "file": "assets/audio/guides/037.wav",
+      "text": "Öffne beim gewünschten Bewohner den Bereich „Berichte“.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner den Bereich Berichte.",
+      "bytes": 319532,
+      "duration": 3.585385799407959
+    },
+    {
+      "index": 38,
+      "file": "assets/audio/guides/038.wav",
+      "text": "Öffne beim gewünschten Bewohner entweder „Doku erweitert“ oder „Doku“.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner entweder Doku erweitert oder Doku.",
+      "bytes": 387116,
+      "duration": 4.385989665985107
+    },
+    {
+      "index": 39,
+      "file": "assets/audio/guides/039.wav",
+      "text": "Öffne den „Durchführungsnachweis“.",
+      "synthesizedText": "Öffne den Durchführungsnachweis.",
+      "bytes": 215084,
+      "duration": 2.3779549598693848
+    },
+    {
+      "index": 40,
+      "file": "assets/audio/guides/040.wav",
+      "text": "Öffne den Reiter „Doku“.",
+      "synthesizedText": "Öffne den Reiter Doku.",
+      "bytes": 165932,
+      "duration": 1.849830985069275
+    },
+    {
+      "index": 41,
+      "file": "assets/audio/guides/041.wav",
+      "text": "Öffne die gewünschte Person mit einem Doppelklick.",
+      "synthesizedText": "Öffne die gewünschte Person mit einem Doppelklick.",
+      "bytes": 301100,
+      "duration": 3.378441333770752
+    },
+    {
+      "index": 42,
+      "file": "assets/audio/guides/042.wav",
+      "text": "Öffne oben den Reiter „Analyse“.",
+      "synthesizedText": "Öffne oben den Reiter Analyse.",
+      "bytes": 202796,
+      "duration": 2.2570927143096924
+    },
+    {
+      "index": 43,
+      "file": "assets/audio/guides/043.wav",
+      "text": "Öffne oben den Reiter „Aufgaben“.",
+      "synthesizedText": "Öffne oben den Reiter Aufgaben.",
+      "bytes": 202796,
+      "duration": 2.29207444190979
+    },
+    {
+      "index": 44,
+      "file": "assets/audio/guides/044.wav",
+      "text": "Öffne oben den Reiter „Planung“.",
+      "synthesizedText": "Öffne oben den Reiter Planung.",
+      "bytes": 202796,
+      "duration": 2.232375144958496
+    },
+    {
+      "index": 45,
+      "file": "assets/audio/guides/045.wav",
+      "text": "Passe den Zeitraum nur bei Bedarf an und aktualisiere anschließend die Anzeige.",
+      "synthesizedText": "Passe den Zeitraum nur bei Bedarf an und aktualisiere anschließend die Anzeige.",
+      "bytes": 503852,
+      "duration": 5.690246105194092
+    },
+    {
+      "index": 46,
+      "file": "assets/audio/guides/046.wav",
+      "text": "Prüfe Datum und Uhrzeit und ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht.",
+      "synthesizedText": "Prüfe Datum und Uhrzeit und ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht.",
+      "bytes": 602156,
+      "duration": 6.800307750701904
+    },
+    {
+      "index": 47,
+      "file": "assets/audio/guides/047.wav",
+      "text": "Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein. Bei Blutdruck sind beispielsweise Systole und Diastole erforderlich.",
+      "synthesizedText": "Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein. Bei Blutdruck sind beispielsweise Systole und Diastole erforderlich.",
+      "bytes": 786476,
+      "duration": 8.896986961364746
+    },
+    {
+      "index": 48,
+      "file": "assets/audio/guides/048.wav",
+      "text": "Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein.",
+      "synthesizedText": "Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein.",
+      "bytes": 362540,
+      "duration": 4.0730671882629395
+    },
+    {
+      "index": 49,
+      "file": "assets/audio/guides/049.wav",
+      "text": "Prüfe Datum und Uhrzeit und trage den Inhalt des Folgeberichts ein.",
+      "synthesizedText": "Prüfe Datum und Uhrzeit und trage den Inhalt des Folgeberichts ein.",
+      "bytes": 417836,
+      "duration": 4.730838298797607
+    },
+    {
+      "index": 50,
+      "file": "assets/audio/guides/050.wav",
+      "text": "Prüfe Datum und Uhrzeit und trage die gemessenen Werte ein.",
+      "synthesizedText": "Prüfe Datum und Uhrzeit und trage die gemessenen Werte ein.",
+      "bytes": 368684,
+      "duration": 4.16443395614624
+    },
+    {
+      "index": 51,
+      "file": "assets/audio/guides/051.wav",
+      "text": "Prüfe Datum, Beginn und gegebenenfalls Ende der bereits durchgeführten Visite.",
+      "synthesizedText": "Prüfe Datum, Beginn und gegebenenfalls Ende der bereits durchgeführten Visite.",
+      "bytes": 491564,
+      "duration": 5.536574840545654
+    },
+    {
+      "index": 52,
+      "file": "assets/audio/guides/052.wav",
+      "text": "Sieh die Medikation ausschließlich an. Nimm hier keinerlei Änderungen vor.",
+      "synthesizedText": "Sieh die Medikation ausschließlich an. Nimm hier keinerlei Änderungen vor.",
+      "bytes": 491564,
+      "duration": 5.520779609680176
+    },
+    {
+      "index": 53,
+      "file": "assets/audio/guides/053.wav",
+      "text": "Speichere und kontrolliere, ob die Visite unter den durchgeführten Visiten erscheint.",
+      "synthesizedText": "Speichere und kontrolliere, ob die Visite unter den durchgeführten Visiten erscheint.",
+      "bytes": 522284,
+      "duration": 5.915117263793945
+    },
+    {
+      "index": 54,
+      "file": "assets/audio/guides/054.wav",
+      "text": "Starte die Abfrage.",
+      "synthesizedText": "Starte die Abfrage.",
+      "bytes": 153644,
+      "duration": 1.727141261100769
+    },
+    {
+      "index": 55,
+      "file": "assets/audio/guides/055.wav",
+      "text": "Suche den Bericht, zu dem du einen Folgebericht erstellen möchtest.",
+      "synthesizedText": "Suche den Bericht, zu dem du einen Folgebericht erstellen möchtest.",
+      "bytes": 405548,
+      "duration": 4.5708746910095215
+    },
+    {
+      "index": 56,
+      "file": "assets/audio/guides/056.wav",
+      "text": "Suche den falschen Berichtseintrag und klicke ihn mit der rechten Maustaste an.",
+      "synthesizedText": "Suche den falschen Berichtseintrag und klicke ihn mit der rechten Maustaste an.",
+      "bytes": 473132,
+      "duration": 5.360929012298584
+    },
+    {
+      "index": 57,
+      "file": "assets/audio/guides/057.wav",
+      "text": "Suche die falsch abgezeichnete Durchführung.",
+      "synthesizedText": "Suche die falsch abgezeichnete Durchführung.",
+      "bytes": 270380,
+      "duration": 3.0034961700439453
+    },
+    {
+      "index": 58,
+      "file": "assets/audio/guides/058.wav",
+      "text": "Trage bei „Anforderung“ ein, wer die Sprechstunde angefordert hat.",
+      "synthesizedText": "Trage bei Anforderung ein, wer die Sprechstunde angefordert hat.",
+      "bytes": 393260,
+      "duration": 4.452548503875732
+    },
+    {
+      "index": 59,
+      "file": "assets/audio/guides/059.wav",
+      "text": "Trage den Beginn bei „Von“ immer vollständig ein.",
+      "synthesizedText": "Trage den Beginn bei Von immer vollständig ein.",
+      "bytes": 294956,
+      "duration": 3.3200156688690186
+    },
+    {
+      "index": 60,
+      "file": "assets/audio/guides/060.wav",
+      "text": "Trage den Berichtstext ein.",
+      "synthesizedText": "Trage den Berichtstext ein.",
+      "bytes": 190508,
+      "duration": 2.1308846473693848
+    },
+    {
+      "index": 61,
+      "file": "assets/audio/guides/061.wav",
+      "text": "Trage den Grund ein, zum Beispiel „Kontrollbesuch“, und wähle den Ort: Einrichtung, beim Arzt oder telefonisch.",
+      "synthesizedText": "Trage den Grund ein, zum Beispiel Kontrollbesuch, und wähle den Ort: Einrichtung, beim Arzt oder telefonisch.",
+      "bytes": 675884,
+      "duration": 7.661529064178467
+    },
+    {
+      "index": 62,
+      "file": "assets/audio/guides/062.wav",
+      "text": "Trage einen Grund der Einweisung nur ein, wenn er für den Vorgang benötigt wird.",
+      "synthesizedText": "Trage einen Grund der Einweisung nur ein, wenn er für den Vorgang benötigt wird.",
+      "bytes": 485420,
+      "duration": 5.471006870269775
+    },
+    {
+      "index": 63,
+      "file": "assets/audio/guides/063.wav",
+      "text": "Trage einen nachvollziehbaren Stornogrund ein und bestätige mit „OK“.",
+      "synthesizedText": "Trage einen nachvollziehbaren Stornogrund ein und bestätige mit OK.",
+      "bytes": 442412,
+      "duration": 4.98270845413208
+    },
+    {
+      "index": 64,
+      "file": "assets/audio/guides/064.wav",
+      "text": "Trage im Feld „Bemerkung zur Bearbeitung“ einen nachvollziehbaren Grund ein.",
+      "synthesizedText": "Trage im Feld Bemerkung zur Bearbeitung einen nachvollziehbaren Grund ein.",
+      "bytes": 466988,
+      "duration": 5.294004917144775
+    },
+    {
+      "index": 65,
+      "file": "assets/audio/guides/065.wav",
+      "text": "Trage rechts im Feld „Bemerkung“ den Inhalt und die wesentlichen Ergebnisse der Visite ein.",
+      "synthesizedText": "Trage rechts im Feld Bemerkung den Inhalt und die wesentlichen Ergebnisse der Visite ein.",
+      "bytes": 540716,
+      "duration": 6.065845489501953
+    },
+    {
+      "index": 66,
+      "file": "assets/audio/guides/066.wav",
+      "text": "Wähle „Abfrage“.",
+      "synthesizedText": "Wähle Abfrage.",
+      "bytes": 135212,
+      "duration": 1.4706170558929443
+    },
+    {
+      "index": 67,
+      "file": "assets/audio/guides/067.wav",
+      "text": "Wähle „Alles ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.",
+      "synthesizedText": "Wähle Alles ausklappen, damit sämtliche Einträge vollständig sichtbar werden.",
+      "bytes": 473132,
+      "duration": 5.299084663391113
+    },
+    {
+      "index": 68,
+      "file": "assets/audio/guides/068.wav",
+      "text": "Wähle „Durchführung stornieren“.",
+      "synthesizedText": "Wähle Durchführung stornieren.",
+      "bytes": 196652,
+      "duration": 2.2085258960723877
+    },
+    {
+      "index": 69,
+      "file": "assets/audio/guides/069.wav",
+      "text": "Wähle „Durchführungsnachweis“.",
+      "synthesizedText": "Wähle Durchführungsnachweis.",
+      "bytes": 190508,
+      "duration": 2.1524107456207275
+    },
+    {
+      "index": 70,
+      "file": "assets/audio/guides/070.wav",
+      "text": "Wähle „Durchstreichen“.",
+      "synthesizedText": "Wähle Durchstreichen.",
+      "bytes": 159788,
+      "duration": 1.777029037475586
+    },
+    {
+      "index": 71,
+      "file": "assets/audio/guides/071.wav",
+      "text": "Wähle „Easy-Plan“.",
+      "synthesizedText": "Wähle Easy-Plan.",
+      "bytes": 147500,
+      "duration": 1.6357780694961548
+    },
+    {
+      "index": 72,
+      "file": "assets/audio/guides/072.wav",
+      "text": "Wähle „Eintrag bearbeiten“.",
+      "synthesizedText": "Wähle Eintrag bearbeiten.",
+      "bytes": 178220,
+      "duration": 2.005645275115967
+    },
+    {
+      "index": 73,
+      "file": "assets/audio/guides/073.wav",
+      "text": "Wähle „Folgebericht erstellen“.",
+      "synthesizedText": "Wähle Folgebericht erstellen.",
+      "bytes": 196652,
+      "duration": 2.1823291778564453
+    },
+    {
+      "index": 74,
+      "file": "assets/audio/guides/074.wav",
+      "text": "Wähle „Notfallblatt aufrufen“.",
+      "synthesizedText": "Wähle Notfallblatt aufrufen.",
+      "bytes": 190508,
+      "duration": 2.113227367401123
+    },
+    {
+      "index": 75,
+      "file": "assets/audio/guides/075.wav",
+      "text": "Wähle „Visiten“.",
+      "synthesizedText": "Wähle Visiten.",
+      "bytes": 135212,
+      "duration": 1.4933141469955444
+    },
+    {
+      "index": 76,
+      "file": "assets/audio/guides/076.wav",
+      "text": "Wähle „Vitalwerte“.",
+      "synthesizedText": "Wähle Vitalwerte.",
+      "bytes": 147500,
+      "duration": 1.6110092401504517
+    },
+    {
+      "index": 77,
+      "file": "assets/audio/guides/077.wav",
+      "text": "Wähle „Was war los?“.",
+      "synthesizedText": "Wähle Was war los?.",
+      "bytes": 172076,
+      "duration": 1.8977880477905273
+    },
+    {
+      "index": 78,
+      "file": "assets/audio/guides/078.wav",
+      "text": "Wähle darunter „Aktuelles“.",
+      "synthesizedText": "Wähle darunter Aktuelles.",
+      "bytes": 178220,
+      "duration": 1.9838765859603882
+    },
+    {
+      "index": 79,
+      "file": "assets/audio/guides/079.wav",
+      "text": "Wähle das benötigte Formular aus, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.",
+      "synthesizedText": "Wähle das benötigte Formular aus, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.",
+      "bytes": 737324,
+      "duration": 8.329721450805664
+    },
+    {
+      "index": 80,
+      "file": "assets/audio/guides/080.wav",
+      "text": "Wähle den passenden Status aus, zum Beispiel „Abwesend“, „Abwesend – Krankenhaus“, „Aktiv“ oder das passende externe Angebot.",
+      "synthesizedText": "Wähle den passenden Status aus, zum Beispiel Abwesend, Abwesend - Krankenhaus, Aktiv oder das passende externe Angebot.",
+      "bytes": 743468,
+      "duration": 8.368581771850586
+    },
+    {
+      "index": 81,
+      "file": "assets/audio/guides/081.wav",
+      "text": "Wähle die benötigten Vitalwerte aus und trage die Werte ein.",
+      "synthesizedText": "Wähle die benötigten Vitalwerte aus und trage die Werte ein.",
+      "bytes": 368684,
+      "duration": 4.125253200531006
+    },
+    {
+      "index": 82,
+      "file": "assets/audio/guides/082.wav",
+      "text": "Wähle die benötigten Vitalwerte für die gemeinsame Erfassung aus.",
+      "synthesizedText": "Wähle die benötigten Vitalwerte für die gemeinsame Erfassung aus.",
+      "bytes": 399404,
+      "duration": 4.46697473526001
+    },
+    {
+      "index": 83,
+      "file": "assets/audio/guides/083.wav",
+      "text": "Wähle die passende Berichtskategorie aus. Danach öffnet sich die Eingabemaske für den Bericht.",
+      "synthesizedText": "Wähle die passende Berichtskategorie aus. Danach öffnet sich die Eingabemaske für den Bericht.",
+      "bytes": 571436,
+      "duration": 6.4464311599731445
+    },
+    {
+      "index": 84,
+      "file": "assets/audio/guides/084.wav",
+      "text": "Wähle im Feld „Arzt“ die Ärztin oder den Arzt aus, die beziehungsweise der die Visite durchgeführt hat.",
+      "synthesizedText": "Wähle im Feld Arzt die Ärztin oder den Arzt aus, die beziehungsweise der die Visite durchgeführt hat.",
+      "bytes": 614444,
+      "duration": 6.900526523590088
+    },
+    {
+      "index": 85,
+      "file": "assets/audio/guides/085.wav",
+      "text": "Wähle im Fenster „Klienten auswählen“ den Bewohner aus, für den du die bereits erfolgte Visite dokumentierst.",
+      "synthesizedText": "Wähle im Fenster Klienten auswählen den Bewohner aus, für den du die bereits erfolgte Visite dokumentierst.",
+      "bytes": 632876,
+      "duration": 7.115670680999756
+    },
+    {
+      "index": 86,
+      "file": "assets/audio/guides/086.wav",
+      "text": "Wähle im Pop-up den Vitalwert aus, den du erfassen möchtest.",
+      "synthesizedText": "Wähle im Pop-up den Vitalwert aus, den du erfassen möchtest.",
+      "bytes": 387116,
+      "duration": 4.326140403747559
+    },
+    {
+      "index": 87,
+      "file": "assets/audio/guides/087.wav",
+      "text": "Wähle jetzt, ob du eine Durchführung dokumentieren, eine falsche Durchführung stornieren oder nur einen Nachweis ansehen möchtest.",
+      "synthesizedText": "Wähle jetzt, ob du eine Durchführung dokumentieren, eine falsche Durchführung stornieren oder nur einen Nachweis ansehen möchtest.",
+      "bytes": 731180,
+      "duration": 8.24708080291748
+    },
+    {
+      "index": 88,
+      "file": "assets/audio/guides/088.wav",
+      "text": "Wähle zuerst den Bewohner aus, für den du das Notfallblatt benötigst.",
+      "synthesizedText": "Wähle zuerst den Bewohner aus, für den du das Notfallblatt benötigst.",
+      "bytes": 423980,
+      "duration": 4.793041229248047
+    },
+    {
+      "index": 89,
+      "file": "assets/audio/guides/089.wav",
+      "text": "Wähle zuerst den gewünschten Bewohner aus.",
+      "synthesizedText": "Wähle zuerst den gewünschten Bewohner aus.",
+      "bytes": 258092,
+      "duration": 2.917539596557617
+    },
+    {
+      "index": 90,
+      "file": "assets/audio/guides/090.wav",
+      "text": "Warte, bis sich das Notfallblatt in Word öffnet. Das kann bis zu etwa drei Minuten dauern. Verhindere Standby und starte den Vorgang nicht mehrfach.",
+      "synthesizedText": "Warte, bis sich das Notfallblatt in Word öffnet. Das kann bis zu etwa drei Minuten dauern. Verhindere Standby und starte den Vorgang nicht mehrfach.",
+      "bytes": 872492,
+      "duration": 9.83326244354248
+    },
+    {
+      "index": 91,
+      "file": "assets/audio/guides/091.wav",
+      "text": "Wechsle innerhalb von „Doku-Erweitert“ zu „Vitalwerte Sammelerf.“.",
+      "synthesizedText": "Wechsle innerhalb von Doku-Erweitert zu Vitalwerte Sammelerf..",
+      "bytes": 405548,
+      "duration": 4.533917427062988
+    },
+    {
+      "index": 92,
+      "file": "assets/audio/guides/092.wav",
+      "text": "Wichtig: Setze die Visite niemals auf „abgeschlossen“. In eurer Arbeitsweise wird eine bearbeitete Visite immer auf den Status „durchgeführt“ gestellt.",
+      "synthesizedText": "Wichtig: Setze die Visite niemals auf abgeschlossen. In eurer Arbeitsweise wird eine bearbeitete Visite immer auf den Status durchgeführt gestellt.",
+      "bytes": 927788,
+      "duration": 10.500733375549316
+    },
+    {
+      "index": 93,
+      "file": "assets/audio/guides/093.wav",
+      "text": "Okay. Schau oben in die grüne Reiterleiste. Siehst du Doku-Erweitert?",
+      "synthesizedText": "Okay. Schau oben in die grüne Reiterleiste. Siehst du Doku-Erweitert?",
+      "bytes": 491564,
+      "duration": 5.53321647644043
+    },
+    {
+      "index": 94,
+      "file": "assets/audio/guides/094.wav",
+      "text": "Suche in Doku-Erweitert nach Vitalwerte. Siehst du Vitalwerte?",
+      "synthesizedText": "Suche in Doku-Erweitert nach Vitalwerte. Siehst du Vitalwerte?",
+      "bytes": 411692,
+      "duration": 4.600667476654053
+    },
+    {
+      "index": 95,
+      "file": "assets/audio/guides/095.wav",
+      "text": "Vitalwerte Sammelerfassung ist für mehrere Werte. Siehst du daneben auch Vitalwerte?",
+      "synthesizedText": "Vitalwerte Sammelerfassung ist für mehrere Werte. Siehst du daneben auch Vitalwerte?",
+      "bytes": 516140,
+      "duration": 5.847232818603516
+    },
+    {
+      "index": 96,
+      "file": "assets/audio/guides/096.wav",
+      "text": "Der Menüpunkt ist dort nicht zu sehen. Prüfe den Einstieg noch einmal. Wenn er weiter fehlt, frag kurz eine Kollegin oder einen Kollegen.",
+      "synthesizedText": "Der Menüpunkt ist dort nicht zu sehen. Prüfe den Einstieg noch einmal. Wenn er weiter fehlt, frag kurz eine Kollegin oder einen Kollegen.",
+      "bytes": 804908,
+      "duration": 9.107442855834961
+    },
+    {
+      "index": 97,
+      "file": "assets/audio/guides/097.wav",
+      "text": "Bei dir heißt der Punkt anders. Welche Bezeichnung siehst du?",
+      "synthesizedText": "Bei dir heißt der Punkt anders. Welche Bezeichnung siehst du?",
+      "bytes": 380972,
+      "duration": 4.301084995269775
+    },
+    {
+      "index": 98,
+      "file": "assets/audio/guides/098.wav",
+      "text": "Okay. Was siehst du gerade?",
+      "synthesizedText": "Okay. Was siehst du gerade?",
+      "bytes": 233516,
+      "duration": 2.6420607566833496
+    },
+    {
+      "index": 99,
+      "file": "assets/audio/guides/099.wav",
+      "text": "Perfekt. Öffne jetzt Vitalwerte. Wenn die Ansicht offen ist, tippe auf Weiter.",
+      "synthesizedText": "Perfekt. Öffne jetzt Vitalwerte. Wenn die Ansicht offen ist, tippe auf Weiter.",
+      "bytes": 522284,
+      "duration": 5.8638410568237305
+    },
+    {
+      "index": 100,
+      "file": "assets/audio/guides/100.wav",
+      "text": "Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen.",
+      "synthesizedText": "Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen.",
+      "bytes": 559148,
+      "duration": 6.3281331062316895
+    },
+    {
+      "index": 101,
+      "file": "assets/audio/guides/101.wav",
+      "text": "Suche zuerst Doku-Erweitert. Hast du ihn gefunden?",
+      "synthesizedText": "Suche zuerst Doku-Erweitert. Hast du ihn gefunden?",
+      "bytes": 319532,
+      "duration": 3.5616726875305176
+    },
+    {
+      "index": 102,
+      "file": "assets/audio/guides/102.wav",
+      "text": "Suche zuerst Vitalwerte. Hast du ihn gefunden?",
+      "synthesizedText": "Suche zuerst Vitalwerte. Hast du ihn gefunden?",
+      "bytes": 301100,
+      "duration": 3.3764915466308594
+    },
+    {
+      "index": 103,
+      "file": "assets/audio/guides/103.wav",
+      "text": "Suche zuerst Analyse. Hast du ihn gefunden?",
+      "synthesizedText": "Suche zuerst Analyse. Hast du ihn gefunden?",
+      "bytes": 276524,
+      "duration": 3.1082115173339844
+    },
+    {
+      "index": 104,
+      "file": "assets/audio/guides/104.wav",
+      "text": "Hier werden fachliche Beobachtungen und Ereignisse als Berichtseinträge dokumentiert. Berichte lassen sich außerdem nach Zeitraum, Kategorie und weiteren Kriterien auswerten.",
+      "synthesizedText": "Hier werden fachliche Beobachtungen und Ereignisse als Berichtseinträge dokumentiert. Berichte lassen sich außerdem nach Zeitraum, Kategorie und weiteren Kriterien auswerten.",
+      "bytes": 1044524,
+      "duration": 11.804811477661133
+    },
+    {
+      "index": 105,
+      "file": "assets/audio/guides/105.wav",
+      "text": "Suche zuerst Doku. Hast du es gefunden?",
+      "synthesizedText": "Suche zuerst Doku. Hast du es gefunden?",
+      "bytes": 270380,
+      "duration": 3.002953290939331
+    },
+    {
+      "index": 106,
+      "file": "assets/audio/guides/106.wav",
+      "text": "Suche zuerst Berichte. Hast du sie gefunden?",
+      "synthesizedText": "Suche zuerst Berichte. Hast du sie gefunden?",
+      "bytes": 288812,
+      "duration": 3.2437703609466553
+    },
+    {
+      "index": 107,
+      "file": "assets/audio/guides/107.wav",
+      "text": "Möchtest du einen einzelnen Wert oder mehrere Werte über die Sammelerfassung eintragen?",
+      "synthesizedText": "Möchtest du einen einzelnen Wert oder mehrere Werte über die Sammelerfassung eintragen?",
+      "bytes": 497708,
+      "duration": 5.6409735679626465
+    },
+    {
+      "index": 108,
+      "file": "assets/audio/guides/108.wav",
+      "text": "Geht es um einen einzelnen Vitalwert oder um mehrere Werte gleichzeitig?",
+      "synthesizedText": "Geht es um einen einzelnen Vitalwert oder um mehrere Werte gleichzeitig?",
+      "bytes": 442412,
+      "duration": 4.989158630371094
+    },
+    {
+      "index": 109,
+      "file": "assets/audio/guides/109.wav",
+      "text": "Hier geht es nur ums Nachsehen der Medikation. Ändere nichts.",
+      "synthesizedText": "Hier geht es nur ums Nachsehen der Medikation. Ändere nichts.",
+      "bytes": 417836,
+      "duration": 4.711040019989014
+    },
+    {
+      "index": 110,
+      "file": "assets/audio/guides/110.wav",
+      "text": "Der Ablauf ist erledigt. Kontrolliere zum Schluss den Eintrag.",
+      "synthesizedText": "Der Ablauf ist erledigt. Kontrolliere zum Schluss den Eintrag.",
+      "bytes": 411692,
+      "duration": 4.620578289031982
+    },
+    {
+      "index": 111,
+      "file": "assets/audio/guides/111.wav",
+      "text": "Trage bei „Von“ immer Datum und Uhrzeit ein.",
+      "synthesizedText": "Trage bei Von immer Datum und Uhrzeit ein.",
+      "bytes": 276524,
+      "duration": 3.111262798309326
+    },
+    {
+      "index": 112,
+      "file": "assets/audio/guides/112.wav",
+      "text": "Trage bei „Bis“ nur dann Datum und Uhrzeit ein, wenn der Endzeitpunkt sicher feststeht. Wenn du den Endzeitpunkt noch nicht sicher kennst, lässt du „Bis“ einfach leer. Bitte nicht schätzen.",
+      "synthesizedText": "Trage bei Bis nur dann Datum und Uhrzeit ein, wenn der Endzeitpunkt sicher feststeht. Wenn du den Endzeitpunkt noch nicht sicher kennst, lässt du Bis einfach leer. Bitte nicht schätzen.",
+      "bytes": 1069100,
+      "duration": 12.073980331420898
+    },
+    {
+      "index": 113,
+      "file": "assets/audio/guides/113.wav",
+      "text": "Ergänze nur die Angaben, die du wirklich brauchst, zum Beispiel Ziel, Begleitung, Grund oder Bemerkung.",
+      "synthesizedText": "Ergänze nur die Angaben, die du wirklich brauchst, zum Beispiel Ziel, Begleitung, Grund oder Bemerkung.",
+      "bytes": 632876,
+      "duration": 7.125551223754883
+    },
+    {
+      "index": 114,
+      "file": "assets/audio/guides/114.wav",
+      "text": "Speichere den Eintrag und prüfe kurz, ob er in der Übersicht erscheint.",
+      "synthesizedText": "Speichere den Eintrag und prüfe kurz, ob er in der Übersicht erscheint.",
+      "bytes": 454700,
+      "duration": 5.089357376098633
+    },
+    {
+      "index": 115,
+      "file": "assets/audio/guides/115.wav",
+      "text": "Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste.",
+      "synthesizedText": "Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste.",
+      "bytes": 516140,
+      "duration": 5.840421676635742
+    },
+    {
+      "index": 116,
+      "file": "assets/audio/guides/116.wav",
+      "text": "„Vitalwerte Sammelerf.“ ist ein eigener Eintrag neben „Vitalwerte“.",
+      "synthesizedText": "Vitalwerte Sammelerf. ist ein eigener Eintrag neben Vitalwerte.",
+      "bytes": 411692,
+      "duration": 4.647861003875732
+    },
+    {
+      "index": 117,
+      "file": "assets/audio/guides/117.wav",
+      "text": "„Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge unter „Doku-Erweitert“.",
+      "synthesizedText": "Vitalwerte und Vitalwerte Sammelerf. sind zwei getrennte Einträge unter Doku-Erweitert.",
+      "bytes": 546860,
+      "duration": 6.197210788726807
+    },
+    {
+      "index": 118,
+      "file": "assets/audio/guides/118.wav",
+      "text": "Bei „Kontakt – alles außer Arzt“ ist automatisch ein Fallgespräch verknüpft. Lasse es bestehen, wenn es benötigt wird. Andernfalls Protokollnamen anklicken und mit dem kleinen roten X entfernen.",
+      "synthesizedText": "Bei Kontakt - alles außer Arzt ist automatisch ein Fallgespräch verknüpft. Lasse es bestehen, wenn es benötigt wird. Andernfalls Protokollnamen anklicken und mit dem kleinen roten X entfernen.",
+      "bytes": 1136684,
+      "duration": 12.821974754333496
+    },
+    {
+      "index": 119,
+      "file": "assets/audio/guides/119.wav",
+      "text": "Bei „Sturzereignis“ kann automatisch ein zusätzliches Protokoll verknüpft sein. Entferne es nur, wenn es nicht benötigt wird.",
+      "synthesizedText": "Bei Sturzereignis kann automatisch ein zusätzliches Protokoll verknüpft sein. Entferne es nur, wenn es nicht benötigt wird.",
+      "bytes": 743468,
+      "duration": 8.409664154052734
+    },
+    {
+      "index": 120,
+      "file": "assets/audio/guides/120.wav",
+      "text": "Bei „Von“ gehören Datum und Uhrzeit immer dazu.",
+      "synthesizedText": "Bei Von gehören Datum und Uhrzeit immer dazu.",
+      "bytes": 301100,
+      "duration": 3.363586664199829
+    },
+    {
+      "index": 121,
+      "file": "assets/audio/guides/121.wav",
+      "text": "Berichte werden zur Nachvollziehbarkeit durchgestrichen und nicht endgültig gelöscht.",
+      "synthesizedText": "Berichte werden zur Nachvollziehbarkeit durchgestrichen und nicht endgültig gelöscht.",
+      "bytes": 503852,
+      "duration": 5.683129787445068
+    },
+    {
+      "index": 122,
+      "file": "assets/audio/guides/122.wav",
+      "text": "Bis zu etwa drei Minuten warten, Standby verhindern und nicht mehrfach auf OK klicken.",
+      "synthesizedText": "Bis zu etwa drei Minuten warten, Standby verhindern und nicht mehrfach auf OK klicken.",
+      "bytes": 540716,
+      "duration": 6.090816974639893
+    },
+    {
+      "index": 123,
+      "file": "assets/audio/guides/123.wav",
+      "text": "Bleibe in der geöffneten Visite und suche nach der Statusauswahl. Die genaue Position kann je nach Ansicht und Berechtigung abweichen.",
+      "synthesizedText": "Bleibe in der geöffneten Visite und suche nach der Statusauswahl. Die genaue Position kann je nach Ansicht und Berechtigung abweichen.",
+      "bytes": 768044,
+      "duration": 8.668206214904785
+    },
+    {
+      "index": 124,
+      "file": "assets/audio/guides/124.wav",
+      "text": "Das Feld „Mitarbeiter“ bleibt ohne Mitarbeiter beziehungsweise leer.",
+      "synthesizedText": "Das Feld Mitarbeiter bleibt ohne Mitarbeiter beziehungsweise leer.",
+      "bytes": 411692,
+      "duration": 4.60605525970459
+    },
+    {
+      "index": 125,
+      "file": "assets/audio/guides/125.wav",
+      "text": "Das grüne Plus befindet sich oben links im Bereich „Berichte“.",
+      "synthesizedText": "Das grüne Plus befindet sich oben links im Bereich Berichte.",
+      "bytes": 368684,
+      "duration": 4.138298034667969
+    },
+    {
+      "index": 126,
+      "file": "assets/audio/guides/126.wav",
+      "text": "Das grüne Plus und „Sammelerfassung“ findest du im geöffneten Bereich „Vitalwerte“.",
+      "synthesizedText": "Das grüne Plus und Sammelerfassung findest du im geöffneten Bereich Vitalwerte.",
+      "bytes": 485420,
+      "duration": 5.443942546844482
+    },
+    {
+      "index": 127,
+      "file": "assets/audio/guides/127.wav",
+      "text": "Das kleine rote X entfernt ausschließlich die Verknüpfung des zusätzlichen Protokolls. Der Bericht bleibt erhalten.",
+      "synthesizedText": "Das kleine rote X entfernt ausschließlich die Verknüpfung des zusätzlichen Protokolls. Der Bericht bleibt erhalten.",
+      "bytes": 688172,
+      "duration": 7.791286945343018
+    },
+    {
+      "index": 128,
+      "file": "assets/audio/guides/128.wav",
+      "text": "Das rote Kreuz ist relativ klein und befindet sich ganz oben links.",
+      "synthesizedText": "Das rote Kreuz ist relativ klein und befindet sich ganz oben links.",
+      "bytes": 423980,
+      "duration": 4.7932891845703125
+    },
+    {
+      "index": 129,
+      "file": "assets/audio/guides/129.wav",
+      "text": "Wenn du bei einem Feld unsicher bist, kläre die fachliche Angabe bitte im Team.",
+      "synthesizedText": "Wenn du bei einem Feld unsicher bist, kläre die fachliche Angabe bitte im Team.",
+      "bytes": 479276,
+      "duration": 5.381701946258545
+    },
+    {
+      "index": 130,
+      "file": "assets/audio/guides/130.wav",
+      "text": "Die Bezeichnung lautet „Alles ausklappen“ und erscheint nach „Alle anzeigen“.",
+      "synthesizedText": "Die Bezeichnung lautet Alles ausklappen und erscheint nach Alle anzeigen.",
+      "bytes": 448556,
+      "duration": 5.049834728240967
+    },
+    {
+      "index": 131,
+      "file": "assets/audio/guides/131.wav",
+      "text": "Dieser Ablauf ist ausschließlich zum Ansehen. Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, ergänzen oder löschen.",
+      "synthesizedText": "Dieser Ablauf ist ausschließlich zum Ansehen. Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, ergänzen oder löschen.",
+      "bytes": 884780,
+      "duration": 10.017633438110352
+    },
+    {
+      "index": 132,
+      "file": "assets/audio/guides/132.wav",
+      "text": "Dieser Protokollschritt gilt nur für „Kontakt – alles außer Arzt“ und „Sturzereignis“. Das kleine rote X wird erst nutzbar, nachdem du den angezeigten Protokollnamen angeklickt hast.",
+      "synthesizedText": "Dieser Protokollschritt gilt nur für Kontakt - alles außer Arzt und Sturzereignis. Das kleine rote X wird erst nutzbar, nachdem du den angezeigten Protokollnamen angeklickt hast.",
+      "bytes": 1056812,
+      "duration": 11.943597793579102
+    },
+    {
+      "index": 133,
+      "file": "assets/audio/guides/133.wav",
+      "text": "Hier geht es nur um das Ansehen der Medikation. Änderungen klärst du bitte über den dafür vorgesehenen Weg.",
+      "synthesizedText": "Hier geht es nur um das Ansehen der Medikation. Änderungen klärst du bitte über den dafür vorgesehenen Weg.",
+      "bytes": 651308,
+      "duration": 7.36382532119751
+    },
+    {
+      "index": 134,
+      "file": "assets/audio/guides/134.wav",
+      "text": "Ein Bericht wird durchgestrichen. Eine falsch abgezeichnete Durchführung wird im Durchführungsnachweis storniert.",
+      "synthesizedText": "Ein Bericht wird durchgestrichen. Eine falsch abgezeichnete Durchführung wird im Durchführungsnachweis storniert.",
+      "bytes": 675884,
+      "duration": 7.630580902099609
+    },
+    {
+      "index": 135,
+      "file": "assets/audio/guides/135.wav",
+      "text": "Ein einzelner Wert führt über das grüne Plus. Mehrere Werte gleichzeitig werden über „Sammelerfassung“ eingegeben.",
+      "synthesizedText": "Ein einzelner Wert führt über das grüne Plus. Mehrere Werte gleichzeitig werden über Sammelerfassung eingegeben.",
+      "bytes": 657452,
+      "duration": 7.438942909240723
+    },
+    {
+      "index": 136,
+      "file": "assets/audio/guides/136.wav",
+      "text": "Falls versehentlich „abgeschlossen“ ausgewählt wurde, nicht so speichern. Stelle den Status auf „durchgeführt“ um.",
+      "synthesizedText": "Falls versehentlich abgeschlossen ausgewählt wurde, nicht so speichern. Stelle den Status auf durchgeführt um.",
+      "bytes": 669740,
+      "duration": 7.523765563964844
+    },
+    {
+      "index": 137,
+      "file": "assets/audio/guides/137.wav",
+      "text": "Führe auf dem Eintrag einen schnellen Doppelklick mit der linken Maustaste aus.",
+      "synthesizedText": "Führe auf dem Eintrag einen schnellen Doppelklick mit der linken Maustaste aus.",
+      "bytes": 460844,
+      "duration": 5.208786487579346
+    },
+    {
+      "index": 138,
+      "file": "assets/audio/guides/138.wav",
+      "text": "Für mehrere Werte wird unter „Doku-Erweitert“ direkt „Vitalwerte Sammelerf.“ geöffnet. Es ist ein eigener Menüpunkt.",
+      "synthesizedText": "Für mehrere Werte wird unter Doku-Erweitert direkt Vitalwerte Sammelerf. geöffnet. Es ist ein eigener Menüpunkt.",
+      "bytes": 669740,
+      "duration": 7.54381799697876
+    },
+    {
+      "index": 139,
+      "file": "assets/audio/guides/139.wav",
+      "text": "Klicke direkt auf den ursprünglichen Bericht und nicht auf eine freie Stelle in der Liste.",
+      "synthesizedText": "Klicke direkt auf den ursprünglichen Bericht und nicht auf eine freie Stelle in der Liste.",
+      "bytes": 522284,
+      "duration": 5.909377098083496
+    },
+    {
+      "index": 140,
+      "file": "assets/audio/guides/140.wav",
+      "text": "Nach „Neu“ beziehungsweise dem grünen Plus kommt zuerst „Klienten auswählen“. Erst danach öffnet sich „Neue Visite“.",
+      "synthesizedText": "Nach Neu beziehungsweise dem grünen Plus kommt zuerst Klienten auswählen. Erst danach öffnet sich Neue Visite.",
+      "bytes": 669740,
+      "duration": 7.547389507293701
+    },
+    {
+      "index": 141,
+      "file": "assets/audio/guides/141.wav",
+      "text": "Nach dem grünen Plus erscheint zuerst die Bewohnerauswahl. Die Visitenmaske öffnet sich erst nach dieser Auswahl.",
+      "synthesizedText": "Nach dem grünen Plus erscheint zuerst die Bewohnerauswahl. Die Visitenmaske öffnet sich erst nach dieser Auswahl.",
+      "bytes": 663596,
+      "duration": 7.470857620239258
+    },
+    {
+      "index": 142,
+      "file": "assets/audio/guides/142.wav",
+      "text": "Nach dem grünen Plus wird zuerst im Pop-up ausgewählt, welcher Vitalwert erfasst werden soll.",
+      "synthesizedText": "Nach dem grünen Plus wird zuerst im Pop-up ausgewählt, welcher Vitalwert erfasst werden soll.",
+      "bytes": 565292,
+      "duration": 6.39406156539917
+    },
+    {
+      "index": 143,
+      "file": "assets/audio/guides/143.wav",
+      "text": "Suche in der festen Leiste nach „Doku erweitert“ oder „Doku“.",
+      "synthesizedText": "Suche in der festen Leiste nach Doku erweitert oder Doku.",
+      "bytes": 344108,
+      "duration": 3.8370347023010254
+    },
+    {
+      "index": 144,
+      "file": "assets/audio/guides/144.wav",
+      "text": "Suche in der festen Leiste nach „Doku erweitert“.",
+      "synthesizedText": "Suche in der festen Leiste nach Doku erweitert.",
+      "bytes": 282668,
+      "duration": 3.194035530090332
+    },
+    {
+      "index": 145,
+      "file": "assets/audio/guides/145.wav",
+      "text": "Suche in der festen Leiste nach „Doku“.",
+      "synthesizedText": "Suche in der festen Leiste nach Doku.",
+      "bytes": 233516,
+      "duration": 2.5813984870910645
+    },
+    {
+      "index": 146,
+      "file": "assets/audio/guides/146.wav",
+      "text": "Suche in der geöffneten Visite nach der Statusauswahl. Verwende ausschließlich „durchgeführt“ und nicht „abgeschlossen“.",
+      "synthesizedText": "Suche in der geöffneten Visite nach der Statusauswahl. Verwende ausschließlich durchgeführt und nicht abgeschlossen.",
+      "bytes": 675884,
+      "duration": 7.619569301605225
+    },
+    {
+      "index": 147,
+      "file": "assets/audio/guides/147.wav",
+      "text": "Suche innerhalb des geöffneten Reiters nach „Vitalwerte“.",
+      "synthesizedText": "Suche innerhalb des geöffneten Reiters nach Vitalwerte.",
+      "bytes": 331820,
+      "duration": 3.731273889541626
+    },
+    {
+      "index": 148,
+      "file": "assets/audio/guides/148.wav",
+      "text": "Suche innerhalb von „Doku“ nach „Durchführungsnachweis“.",
+      "synthesizedText": "Suche innerhalb von Doku nach Durchführungsnachweis.",
+      "bytes": 307244,
+      "duration": 3.4651222229003906
+    },
+    {
+      "index": 149,
+      "file": "assets/audio/guides/149.wav",
+      "text": "Suche innerhalb von Analyse nach „Abfrage“.",
+      "synthesizedText": "Suche innerhalb von Analyse nach Abfrage.",
+      "bytes": 251948,
+      "duration": 2.8558685779571533
+    },
+    {
+      "index": 150,
+      "file": "assets/audio/guides/150.wav",
+      "text": "Suche innerhalb von Aufgaben nach „Aktuelles“.",
+      "synthesizedText": "Suche innerhalb von Aufgaben nach Aktuelles.",
+      "bytes": 270380,
+      "duration": 3.002209186553955
+    },
+    {
+      "index": 151,
+      "file": "assets/audio/guides/151.wav",
+      "text": "Suche innerhalb von Doku erweitert nach „Visiten“.",
+      "synthesizedText": "Suche innerhalb von Doku erweitert nach Visiten.",
+      "bytes": 288812,
+      "duration": 3.270200729370117
+    },
+    {
+      "index": 152,
+      "file": "assets/audio/guides/152.wav",
+      "text": "Suche innerhalb von Planung nach „Easy-Plan“.",
+      "synthesizedText": "Suche innerhalb von Planung nach Easy-Plan.",
+      "bytes": 270380,
+      "duration": 3.000666618347168
+    },
+    {
+      "index": 153,
+      "file": "assets/audio/guides/153.wav",
+      "text": "Suche oben nach dem Reiter „Analyse“.",
+      "synthesizedText": "Suche oben nach dem Reiter Analyse.",
+      "bytes": 221228,
+      "duration": 2.5039966106414795
+    },
+    {
+      "index": 154,
+      "file": "assets/audio/guides/154.wav",
+      "text": "Suche oben nach dem Reiter „Aufgaben“.",
+      "synthesizedText": "Suche oben nach dem Reiter Aufgaben.",
+      "bytes": 227372,
+      "duration": 2.5494444370269775
+    },
+    {
+      "index": 155,
+      "file": "assets/audio/guides/155.wav",
+      "text": "Suche oben nach dem Reiter „Planung“.",
+      "synthesizedText": "Suche oben nach dem Reiter Planung.",
+      "bytes": 221228,
+      "duration": 2.475431442260742
+    },
+    {
+      "index": 156,
+      "file": "assets/audio/guides/156.wav",
+      "text": "Visiten werden bei euch erst nach der Durchführung dokumentiert und immer als durchgeführt erfasst, niemals als abgeschlossen.",
+      "synthesizedText": "Visiten werden bei euch erst nach der Durchführung dokumentiert und immer als durchgeführt erfasst, niemals als abgeschlossen.",
+      "bytes": 731180,
+      "duration": 8.235511779785156
+    },
+    {
+      "index": 157,
+      "file": "assets/audio/guides/157.wav",
+      "text": "Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“.",
+      "synthesizedText": "Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach Berichte.",
+      "bytes": 522284,
+      "duration": 5.912216663360596
+    },
+    {
+      "index": 158,
+      "file": "assets/audio/guides/158.wav",
+      "text": "Wechsle zurück zur Übersicht der Bewohner.",
+      "synthesizedText": "Wechsle zurück zur Übersicht der Bewohner.",
+      "bytes": 270380,
+      "duration": 3.0603270530700684
+    },
+    {
+      "index": 159,
+      "file": "assets/audio/guides/159.wav",
+      "text": "Wenn der Endzeitpunkt noch nicht sicher feststeht, lässt du „Bis“ leer. Bitte nicht schätzen.",
+      "synthesizedText": "Wenn der Endzeitpunkt noch nicht sicher feststeht, lässt du Bis leer. Bitte nicht schätzen.",
+      "bytes": 559148,
+      "duration": 6.277108192443848
+    }
+  ]
+}

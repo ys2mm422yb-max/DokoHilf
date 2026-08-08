@@ -1,0 +1,95 @@
+/* Build 27 direct-guide and chat polish. Loaded after the existing voice layers and intentionally does not alter voice geometry. */
+
+.examples button[data-direct-guide]{
+  position:relative!important;
+  min-height:52px!important;
+  padding-right:82px!important;
+  overflow:hidden!important;
+}
+.examples button[data-direct-guide]::after{
+  content:"Anleitung ›";
+  position:absolute;
+  right:13px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#78a69a;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.02em;
+}
+.examples button[data-direct-guide]:hover::after,.examples button[data-direct-guide]:focus-visible::after{color:var(--v27-green)}
+
+.app-shell[data-mode="chat"] .workspace{max-width:780px!important}
+.app-shell[data-mode="chat"] .mode-switch{margin:0 0 14px!important}
+.app-shell[data-mode="chat"] .chat-head{margin:0 0 14px!important;padding:12px 4px 2px!important;text-align:left!important}
+.chat-eyebrow{display:block;margin-bottom:7px;color:var(--v27-green);font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase}
+.app-shell[data-mode="chat"] .chat-head h1{margin:0!important;font-size:clamp(30px,6vw,40px)!important;line-height:1.04!important;letter-spacing:-.05em!important}
+.app-shell[data-mode="chat"] .chat-head p{max-width:560px!important;margin:8px 0 0!important;color:#8ca59e!important;font-size:14px!important;line-height:1.42!important}
+.app-shell[data-mode="chat"] .quick-prompts{display:flex!important;gap:8px!important;flex-wrap:wrap!important;margin-top:13px!important}
+.app-shell[data-mode="chat"] .quick-prompts button{min-height:42px!important;padding:0 14px!important;border-radius:999px!important;font-size:12px!important}
+.app-shell[data-mode="chat"] .conversation{width:100%!important;max-width:none!important;min-height:128px!important;padding:12px!important;border:1px solid var(--v27-line)!important;border-radius:22px!important;background:linear-gradient(180deg,rgba(7,24,30,.8),rgba(5,18,24,.58))!important;box-shadow:0 18px 48px rgba(0,0,0,.2)!important}
+.app-shell[data-mode="chat"] .messages:empty{display:none!important}
+.app-shell[data-mode="chat"] .messages{gap:11px!important}
+.app-shell[data-mode="chat"] .message{gap:8px!important}
+.app-shell[data-mode="chat"] .avatar{width:34px!important;height:34px!important;flex-basis:34px!important;border-radius:11px!important}
+.app-shell[data-mode="chat"] .bubble{padding:14px 16px!important;border-radius:18px!important;box-shadow:none!important;font-size:15.5px!important;line-height:1.5!important}
+.app-shell[data-mode="chat"] .composer-wrap{box-shadow:0 -12px 38px rgba(0,0,0,.22)!important}
+
+.app-shell[data-mode="direct-guide"] .main-content{width:min(100%,920px)!important;padding-top:44px!important;padding-bottom:calc(38px + env(safe-area-inset-bottom))!important}
+.direct-guide-view{width:min(100%,780px);margin:0 auto;color:var(--v27-text)}
+.direct-guide-view[hidden]{display:none!important}
+.direct-guide-head{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:start;gap:13px;margin-bottom:18px;padding:18px;border:1px solid var(--v27-line);border-radius:24px;background:linear-gradient(145deg,rgba(10,35,41,.96),rgba(5,20,27,.96));box-shadow:0 20px 58px rgba(0,0,0,.28)}
+.direct-guide-back{width:46px;height:46px;border:1px solid var(--v27-line);border-radius:15px;background:rgba(255,255,255,.045);color:#effaf6;font-size:31px;line-height:1;touch-action:manipulation}
+.direct-guide-heading{min-width:0}
+.direct-guide-heading>span{display:block;margin:2px 0 7px;color:var(--v27-green);font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase}
+.direct-guide-heading h1{margin:0;color:#fff;font-size:clamp(30px,6vw,45px);line-height:1;letter-spacing:-.055em;overflow-wrap:anywhere}
+.direct-guide-heading p{margin:8px 0 0;color:#91aaa3;font-size:14px;line-height:1.4}
+.direct-guide-count{align-self:center;padding:8px 10px;border:1px solid rgba(112,240,170,.16);border-radius:999px;background:rgba(112,240,170,.08);color:#a7e8c7;font-size:11px;font-weight:850;white-space:nowrap}
+.direct-guide-callout{margin:0 0 13px;padding:14px 16px;border:1px solid rgba(79,166,255,.18);border-radius:17px;background:rgba(27,69,90,.2)}
+.direct-guide-callout.warning{border-color:rgba(241,204,106,.24);background:rgba(86,63,11,.22)}
+.direct-guide-callout strong{display:block;margin-bottom:4px;color:#d7eee7;font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.1em}
+.direct-guide-callout.warning strong{color:#ffe59a}
+.direct-guide-callout p{margin:0;color:#b4c7c2;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.direct-guide-steps{display:grid;gap:9px;margin:0;padding:0;list-style:none;counter-reset:none}
+.direct-guide-step{display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;align-items:start;padding:14px 15px;border:1px solid var(--v27-line);border-radius:18px;background:linear-gradient(145deg,rgba(10,30,37,.93),rgba(6,21,28,.9));box-shadow:0 9px 28px rgba(0,0,0,.15)}
+.direct-guide-number{display:grid;place-items:center;width:38px;height:38px;border:1px solid rgba(112,240,170,.24);border-radius:13px;background:linear-gradient(145deg,#176b52,#0a4537);color:#eafff4;font-size:13px;font-weight:950}
+.direct-guide-step p{margin:5px 0 0;color:#edf8f4;font-size:15px;line-height:1.46;overflow-wrap:anywhere}
+.direct-guide-footer{display:flex;justify-content:center;padding:20px 0 4px}
+.direct-guide-footer button{min-height:48px;padding:0 22px;border:1px solid var(--v27-line);border-radius:16px;background:rgba(255,255,255,.045);color:#e8f5f0;font-weight:850;touch-action:manipulation}
+.direct-guide-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.direct-guide-choices button{position:relative;display:grid;gap:7px;min-height:135px;padding:19px 50px 19px 19px;border:1px solid var(--v27-line);border-radius:21px;background:linear-gradient(145deg,rgba(11,34,41,.96),rgba(6,22,29,.96));color:#fff;text-align:left;touch-action:manipulation}
+.direct-guide-choices button:hover,.direct-guide-choices button:focus-visible{border-color:var(--v27-line-strong)}
+.direct-guide-choices strong{font-size:19px;letter-spacing:-.025em}
+.direct-guide-choices span{color:#8fa9a1;font-size:13px;line-height:1.4}
+.direct-guide-choices i{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--v27-green);font-size:31px;font-style:normal}
+
+@media(max-width:680px){
+  .examples button[data-direct-guide]{padding-right:14px!important;padding-bottom:28px!important}
+  .examples button[data-direct-guide]::after{left:14px;right:auto;top:auto;bottom:9px;transform:none}
+  .app-shell[data-mode="chat"] .main-content{padding-left:max(14px,env(safe-area-inset-left))!important;padding-right:max(14px,env(safe-area-inset-right))!important}
+  .app-shell[data-mode="chat"] .mode-switch{margin-bottom:10px!important}
+  .app-shell[data-mode="chat"] .chat-head{padding-top:5px!important;margin-bottom:10px!important}
+  .app-shell[data-mode="chat"] .chat-head h1{font-size:30px!important}
+  .app-shell[data-mode="chat"] .chat-head p{font-size:13px!important}
+  .app-shell[data-mode="chat"] .quick-prompts{flex-wrap:nowrap!important;overflow-x:auto!important;padding-bottom:3px!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important}
+  .app-shell[data-mode="chat"] .quick-prompts::-webkit-scrollbar{display:none!important}
+  .app-shell[data-mode="chat"] .quick-prompts button{flex:0 0 auto!important;white-space:nowrap!important}
+  .app-shell[data-mode="chat"] .conversation{min-height:108px!important;padding:9px!important;border-radius:18px!important}
+  .app-shell[data-mode="chat"] .bubble{font-size:14.5px!important;padding:12px 14px!important}
+  .app-shell[data-mode="direct-guide"] .main-content{padding:36px max(13px,env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(13px,env(safe-area-inset-left))!important}
+  .direct-guide-head{grid-template-columns:42px minmax(0,1fr);gap:10px;padding:14px;border-radius:20px}
+  .direct-guide-back{width:42px;height:42px;border-radius:13px}
+  .direct-guide-count{grid-column:2;justify-self:start;margin-top:1px}
+  .direct-guide-heading h1{font-size:31px}
+  .direct-guide-heading p{font-size:13px}
+  .direct-guide-step{grid-template-columns:36px minmax(0,1fr);gap:10px;padding:12px;border-radius:16px}
+  .direct-guide-number{width:34px;height:34px;border-radius:11px}
+  .direct-guide-step p{margin-top:3px;font-size:14px}
+  .direct-guide-choices{grid-template-columns:1fr}
+  .direct-guide-choices button{min-height:110px}
+}
+
+@media(max-width:390px){
+  .direct-guide-heading h1{font-size:28px}
+  .direct-guide-step{grid-template-columns:34px minmax(0,1fr)}
+}

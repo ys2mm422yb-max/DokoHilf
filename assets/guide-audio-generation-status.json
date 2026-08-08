@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "buildId": "20260806-27",
+  "round": 1,
+  "maxAutomaticRounds": 24,
+  "cursor": 12,
+  "total": 93,
+  "completed": 0,
+  "remaining": 93,
+  "complete": false,
+  "attempted": [
+    "assets/audio/guides/000.wav",
+    "assets/audio/guides/001.wav",
+    "assets/audio/guides/002.wav",
+    "assets/audio/guides/003.wav",
+    "assets/audio/guides/004.wav",
+    "assets/audio/guides/005.wav",
+    "assets/audio/guides/006.wav",
+    "assets/audio/guides/007.wav",
+    "assets/audio/guides/008.wav",
+    "assets/audio/guides/009.wav",
+    "assets/audio/guides/010.wav",
+    "assets/audio/guides/011.wav"
+  ],
+  "generated": [],
+  "failures": [
+    {
+      "file": "assets/audio/guides/000.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    },
+    {
+      "file": "assets/audio/guides/001.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    },
+    {
+      "file": "assets/audio/guides/002.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    },
+    {
+      "file": "assets/audio/guides/003.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    },
+    {
+      "file": "assets/audio/guides/004.wav",
+      "error": "TTS HTTP 422: {\"blocked\":true,\"error\":\"Mögliche Echtdaten erkannt. Keine Sprachausgabe erstellt.\"}"
+    },
+    {
+      "file": "assets/audio/guides/005.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    },
+    {
+      "file": "assets/audio/guides/006.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    },
+    {
+      "file": "assets/audio/guides/007.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    },
+    {
+      "file": "assets/audio/guides/008.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    },
+    {
+      "file": "assets/audio/guides/009.wav",
+      "error": "TTS HTTP 422: {\"blocked\":true,\"error\":\"Mögliche Echtdaten erkannt. Keine Sprachausgabe erstellt.\"}"
+    },
+    {
+      "file": "assets/audio/guides/010.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    },
+    {
+      "file": "assets/audio/guides/011.wav",
+      "error": "TTS HTTP 502: {\"error\":\"Die natürliche Stimme ist gerade nicht verfügbar.\"}"
+    }
+  ],
+  "updatedAt": "2026-08-06T17:14:23.520Z"
+}

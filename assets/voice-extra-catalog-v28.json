@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Zusätzliche feste, selbst formulierte Sprachsätze für bestätigte DokoHilf-Dialoge",
+  "entries": [
+    {"text":"Okay. Schau oben in die grüne Reiterleiste. Siehst du Doku-Erweitert?"},
+    {"text":"Suche in Doku-Erweitert nach Vitalwerte. Siehst du Vitalwerte?"},
+    {"text":"Vitalwerte Sammelerfassung ist für mehrere Werte. Siehst du daneben auch Vitalwerte?"},
+    {"text":"Der Menüpunkt ist dort nicht zu sehen. Prüfe den Einstieg noch einmal. Wenn er weiter fehlt, frag kurz eine Kollegin oder einen Kollegen."},
+    {"text":"Bei dir heißt der Punkt anders. Welche Bezeichnung siehst du?"},
+    {"text":"Okay. Was siehst du gerade?"},
+    {"text":"Perfekt. Öffne jetzt Vitalwerte. Wenn die Ansicht offen ist, tippe auf Weiter."},
+    {"text":"Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen."},
+    {"text":"Suche zuerst Doku-Erweitert. Hast du ihn gefunden?"},
+    {"text":"Suche zuerst Vitalwerte. Hast du ihn gefunden?"},
+    {"text":"Suche zuerst Analyse. Hast du ihn gefunden?"},
+    {"text":"Hier werden fachliche Beobachtungen und Ereignisse als Berichtseinträge dokumentiert. Berichte lassen sich außerdem nach Zeitraum, Kategorie und weiteren Kriterien auswerten."},
+    {"text":"Suche zuerst Doku. Hast du es gefunden?"},
+    {"text":"Suche zuerst Berichte. Hast du sie gefunden?"},
+    {"text":"Möchtest du einen einzelnen Wert oder mehrere Werte über die Sammelerfassung eintragen?"},
+    {"text":"Geht es um einen einzelnen Vitalwert oder um mehrere Werte gleichzeitig?"},
+    {"text":"Hier geht es nur ums Nachsehen der Medikation. Ändere nichts."},
+    {"text":"Der Ablauf ist erledigt. Kontrolliere zum Schluss den Eintrag."}
+  ]
+}
