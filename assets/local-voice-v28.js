@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const BUILD_ID = '20260807-28';
+  const BUILD_ID = '20260808-29';
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
   const MODEL_ROOT = 'https://huggingface.co/Supertone/supertonic-3/resolve/main';
   const ONNX_DIR = `${MODEL_ROOT}/onnx`;
@@ -184,7 +184,7 @@
         'Content-Type': 'audio/wav',
         'Cache-Control': 'no-store',
         'X-DokoHilf-Voice': 'Supertonic-F1',
-        'X-DokoHilf-Voice-Mode': 'local-on-device-v28',
+        'X-DokoHilf-Voice-Mode': 'local-on-device-v29',
         'X-DokoHilf-Voice-Backend': backend,
         'X-DokoHilf-TTS-Latency': String(result.latencyMs || 0),
         'X-DokoHilf-TTS-Cache': 'no-generated-audio-storage',
@@ -199,7 +199,7 @@
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-store',
-        'X-DokoHilf-Voice-Mode': 'local-on-device-v28',
+        'X-DokoHilf-Voice-Mode': 'local-on-device-v29',
         'X-DokoHilf-Local-Voice-Error': '1',
       },
     });
