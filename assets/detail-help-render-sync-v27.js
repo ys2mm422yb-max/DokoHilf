@@ -8,17 +8,32 @@
     lost: 'Ich weiß nicht, wo ich bin',
     'target-found': 'Vitalwerte sehe ich',
     'batch-seen': 'Nur Sammelerfassung sichtbar',
-    'target-missing': 'Vitalwerte fehlt',
     'retry-entry': 'Einstieg noch einmal prüfen',
     'human-help': 'Kollegin / Kollegen fragen',
     renamed: 'Bei mir heißt es anders',
   });
 
+  function currentGuideSlug() {
+    return window.DokoHilfDetailHelpV27?.getState?.().guideSlug
+      || window.DokoHilfGuideProgress?.getCurrentGuide?.()?.guideSlug
+      || '';
+  }
+
+  function labelFor(value, guideSlug) {
+    if (value === 'target-missing') {
+      return String(guideSlug || '').startsWith('vitalwerte')
+        ? 'Vitalwerte fehlt'
+        : 'Der Menüpunkt fehlt';
+    }
+    return LABELS[value] || '';
+  }
+
   function compactPanel(panel) {
     if (!panel || panel.hidden) return;
+    const guideSlug = currentGuideSlug();
     for (const button of panel.querySelectorAll('[data-detail-help-value]')) {
       const value = String(button.dataset.detailHelpValue || '');
-      const label = LABELS[value];
+      const label = labelFor(value, guideSlug);
       const span = button.querySelector('span');
       if (label && span && span.textContent !== label) span.textContent = label;
       if (label && button.dataset.detailHelpLabel !== label) button.dataset.detailHelpLabel = label;
@@ -44,6 +59,6 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });
   else install();
 
-  window.DokoHilfDetailHelpRenderSyncV27 = { sync };
+  window.DokoHilfDetailHelpRenderSyncV27 = { sync, labelFor, currentGuideSlug };
   window.__DOKOHILF_DETAIL_HELP_RENDER_SYNC_V27__ = true;
 })();
