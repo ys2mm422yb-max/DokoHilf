@@ -10,17 +10,19 @@ const [index, css, uxCss, experience, diagnostics, localVoice, localGate, ux, ap
   readFile('supabase/migrations/20260806173000_remove_repeated_exercise_notices.sql', 'utf8'),
 ]);
 
+const buildId = JSON.parse(version).buildId;
+const escapedBuildId = buildId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 test('v29 assets are wired consistently', () => {
-  assert.match(index, /dokohilf-build\" content=\"20260808-29/);
-  assert.match(index, /premium-ui-v27\.css\?v=20260808-29/);
-  assert.match(index, /ux-v27\.css\?v=20260808-29/);
-  assert.match(index, /local-voice-v28\.js\?v=20260808-29/);
-  assert.match(index, /local-voice-gate-v28\.js\?v=20260808-29/);
+  assert.match(index, new RegExp(`dokohilf-build\\" content=\\"${escapedBuildId}`));
+  assert.match(index, new RegExp(`premium-ui-v27\\.css\\?v=${escapedBuildId}`));
+  assert.match(index, new RegExp(`ux-v27\\.css\\?v=${escapedBuildId}`));
+  assert.match(index, new RegExp(`local-voice-v28\\.js\\?v=${escapedBuildId}`));
+  assert.match(index, new RegExp(`local-voice-gate-v28\\.js\\?v=${escapedBuildId}`));
   assert.match(index, /KI · v29/);
-  assert.match(serviceWorker, /BUILD_ID = '20260808-29'/);
-  assert.match(serviceWorker, /local-voice-v28\.js\?v=20260808-29/);
-  assert.match(serviceWorker, /local-voice-gate-v28\.js\?v=20260808-29/);
-  assert.equal(JSON.parse(version).buildId, '20260808-29');
+  assert.match(serviceWorker, new RegExp(`BUILD_ID = '${escapedBuildId}'`));
+  assert.match(serviceWorker, new RegExp(`local-voice-v28\\.js\\?v=${escapedBuildId}`));
+  assert.match(serviceWorker, new RegExp(`local-voice-gate-v28\\.js\\?v=${escapedBuildId}`));
 });
 
 test('dark premium home and workflow shortcuts are present', () => {
