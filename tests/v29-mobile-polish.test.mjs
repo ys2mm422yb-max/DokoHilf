@@ -23,11 +23,11 @@ test('start and typed-chat headers cannot float over mobile content', () => {
 });
 
 test('home cards keep icon, copy and arrow on one centered mobile axis', () => {
-  assert.match(polish, /grid-template-columns:54px minmax\(0,1fr\) 34px!important;column-gap:12px!important;align-items:center!important/);
+  assert.match(polish, /grid-template-columns:54px minmax\(0,1fr\) 34px!important;grid-template-rows:1fr!important;column-gap:12px!important;align-items:center!important/);
   assert.match(polish, /min-height:94px!important/);
-  assert.match(polish, /\.mode-icon\{[\s\S]*width:50px!important;height:50px!important;align-self:center!important;justify-self:center!important;margin:0!important;transform:none!important/);
-  assert.match(polish, /\.mode-text\{[\s\S]*align-self:center!important;display:flex!important;flex-direction:column!important;justify-content:center!important/);
-  assert.match(polish, /\.mode-arrow\{[\s\S]*align-self:center!important;justify-self:center!important;margin:0!important/);
+  assert.match(polish, /\.mode-icon\{[\s\S]*grid-column:1!important;grid-row:1!important;place-self:center!important/);
+  assert.match(polish, /\.mode-text\{[\s\S]*grid-column:2!important;grid-row:1!important;align-self:center!important;display:flex!important;flex-direction:column!important;justify-content:center!important/);
+  assert.match(polish, /\.mode-arrow\{[\s\S]*position:static!important;right:auto!important;top:auto!important;grid-column:3!important;grid-row:1!important;place-self:center!important;transform:none!important/);
 });
 
 test('home frequent flows stay compact without breaking touch layout', () => {
