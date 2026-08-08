@@ -1,0 +1,34 @@
+name: Validate context-aware guide help v28
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact repository head
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Typecheck context router
+        run: deno check supabase/functions/dokohilf-chat-router/index.ts
+
+      - name: Validate frontend routing shim
+        run: node --check assets/routing-fix.js
+
+      - name: Run context regressions
+        run: |
+          node --test \
+            tests/greeting-routing.test.mjs \
+            tests/context-aware-guide-help-v28.test.mjs
