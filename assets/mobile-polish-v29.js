@@ -128,8 +128,9 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
 
     const commandRow = document.getElementById('commandRow');
     if (commandRow && mode === 'chat') {
-      commandRow.dataset.v29MobileInitial = String(!activeGuide);
-      commandRow.hidden = !activeGuide;
+      const initialValue = String(!activeGuide);
+      if (commandRow.dataset.v29MobileInitial !== initialValue) commandRow.dataset.v29MobileInitial = initialValue;
+      if (commandRow.hidden !== !activeGuide) commandRow.hidden = !activeGuide;
     }
 
     if (previousMode !== mode) {
