@@ -1,6 +1,6 @@
 const BUILD_ID = '20260808-29';
 const HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1';
-const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-premium-home-1`;
+const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-mobile-polish-2`;
 const LOCAL_VOICE_MODEL_CACHE = 'dokohilf-local-voice-model-v28-1';
 const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1';
 const CORE_FILES = [
@@ -29,6 +29,7 @@ const CORE_FILES = [
   './assets/experience-v27.js?v=20260808-29',
   './assets/ux-v27.js?v=20260808-29',
   './assets/v29-ui.js?v=20260808-29',
+  './assets/mobile-polish-v29.js?v=20260808-29',
   './assets/local-voice-gate-v28.js?v=20260808-29',
   './assets/direct-guides-v27.js?v=20260808-29',
   './assets/direct-guide-copy-v29.js?v=20260808-29',
