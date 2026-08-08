@@ -18,12 +18,6 @@ type GuideRecord = {
   troubleshooting?: Record<string, string>;
   version?: number;
 };
-type Evidence = {
-  kind: 'step' | 'troubleshooting';
-  text: string;
-  score: number;
-  stepIndex?: number;
-};
 
 function normalize(value: unknown): string {
   return String(value || '')
@@ -57,7 +51,7 @@ function jsonResponse(origin: string | null, status: number, body: unknown): Res
     headers: {
       ...corsHeaders(origin),
       'Content-Type': 'application/json; charset=utf-8',
-      'X-DokoHilf-Chat-Router': 'context-aware-v28-3',
+      'X-DokoHilf-Chat-Router': 'context-aware-v29-4',
     },
   });
 }
@@ -115,8 +109,8 @@ function isExplicitHelp(text: string): boolean {
   const n = normalize(text);
   return /\b(wo ist|wo sind|wo finde ich|wie finde ich|wie komme ich|wo muss ich|wo genau|wo soll ich|welcher bereich|welche leiste|welcher reiter|welches menu)\b/.test(n)
     || /\b(finde|sehe|erkenne|entdecke)\b.*\b(nicht|nirgends)\b/.test(n)
-    || /\b(komme nicht weiter|weiss nicht weiter|weiss nicht wo|keine ahnung wo|nicht zurecht|brauche hilfe|hilf mir)\b/.test(n)
-    || /\b(was jetzt|was dann|wie geht es weiter|was muss ich|was soll ich|wo klicken|wo drucken|welchen button|welche taste|was anklicken)\b/.test(n)
+    || /\b(komme nicht weiter|weiss nicht weiter|weiss nicht wo|ich weiss nicht|weiss nicht|keine ahnung wo|keine ahnung|nicht zurecht|brauche hilfe|hilf mir|checke nicht|check nicht|verstehe nicht|versteh nicht|was meinst du|welches davon|und jetzt|was jetzt|hae)\b/.test(n)
+    || /\b(was dann|wie geht es weiter|was muss ich|was soll ich|wo klicken|wo drucken|welchen button|welche taste|was anklicken)\b/.test(n)
     || /\b(bei mir heisst|bei mir steht|sieht anders aus|ist anders|andere ansicht|anderer reiter|anderes menu)\b/.test(n)
     || /\b(ich sehe nur|ich habe nur|da steht nur|bei mir sehe ich)\b/.test(n);
 }
@@ -126,15 +120,6 @@ function looksLikeQuestion(text: string): boolean {
   const n = normalize(raw);
   return raw.includes('?')
     || /^(wo|wie|was|welche|welcher|welches|warum|muss|soll|kann|darf|ist|sind|kommt)\b/.test(n);
-}
-
-function questionTerms(text: string): string[] {
-  const stop = new Set([
-    'wo','ist','sind','finde','finden','ich','wie','komme','kommt','zum','zur','dem','den','der','die','das','hin','genau','soll','muss','kann','darf','welcher','welche','welches','bereich','menu','reiter','leiste','nicht','weiss','keine','ahnung','bin','mich','zurecht','jetzt','dann','weiter','bitte','hilfe','druecken','drucken','klicken','anklicken','button','taste','steht','sehe','sieht','anders','heisst','heist','nur',
-  ]);
-  return normalize(text)
-    .split(' ')
-    .filter(word => word.length >= 4 && !stop.has(word));
 }
 
 function currentStepIndex(guide: GuideRecord, suppliedStep: unknown): number {
@@ -178,41 +163,60 @@ function explicitDifferentGoal(text: string, guide: GuideRecord): boolean {
   return domains.some(domain => n.includes(domain) && !corpus.includes(domain));
 }
 
-function scoreAgainst(haystack: string, terms: string[], bonus = 0): number {
-  let score = bonus;
-  for (const term of terms) {
-    if (haystack.includes(term)) score += term.length >= 9 ? 5 : term.length >= 6 ? 4 : 3;
-  }
-  return score;
+function hasEntryAction(text: string): boolean {
+  const n = normalize(text);
+  return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren)\b/.test(n);
 }
 
-function bestEvidence(guide: GuideRecord, text: string, currentIndex: number): Evidence | null {
-  const terms = questionTerms(text);
-  const candidates: Evidence[] = [];
+function hasNavigationIntent(text: string): boolean {
+  const n = normalize(text);
+  return /\b(suche|such|finde|finden|wo ist|wo sind|wo finde|wie komme|ich will zu|ich mochte zu|offnen|oeffnen|aufrufen|ansehen|anschauen|zeigen)\b/.test(n)
+    || n.split(' ').length <= 5;
+}
 
-  guide.steps.forEach((step, index) => {
-    const haystack = normalize(`${step.text || ''} ${step.check || ''} ${step.stuck || ''}`);
-    const score = scoreAgainst(haystack, terms, index === currentIndex ? 2 : 0);
-    candidates.push({ kind: 'step', text: step.text || '', score, stepIndex: index });
+function inferNavigationGuide(text: string): string {
+  const n = normalize(text);
+  if (!hasNavigationIntent(n) || hasEntryAction(n)) return '';
+  if (/\b(berichtssuche|berichte auswerten|berichte suchen|nach berichten suchen|abfrage)\b/.test(n)) return 'berichtssuche';
+  if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-einzelwert';
+  if (/\b(bericht|berichte|berichtseintrag)\b/.test(n)) return 'bericht-neu';
+  if (/\b(visite|visiten|sprechstunde)\b/.test(n)) return 'visiten-oeffnen';
+  if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n)) return 'medikation-ansehen';
+  if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)) return 'formulare-anlegen';
+  if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n)) return 'anwesenheit';
+  if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabeformular';
+  if (/\b(notfallblatt|notfallbogen)\b/.test(n)) return 'notfallblatt';
+  if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis|durchfuhrung|durchfuehrung)\b/.test(n)) return 'durchfuehrungsnachweis-oeffnen';
+  if (/\b(aufgaben|aktuelles)\b/.test(n)) return 'aufgaben-aktuelles';
+  if (/\b(easy plan|easy-plan|easyplan)\b/.test(n)) return 'easyplan';
+  if (/\b(stammdaten)\b/.test(n)) return 'stammdaten';
+  return '';
+}
+
+function stepResponse(
+  origin: string | null,
+  guide: GuideRecord,
+  index: number,
+  source: string,
+  useStuck = false,
+  extra = '',
+): Response {
+  const step = guide.steps[index] || guide.steps[0] || {};
+  let instruction = String((useStuck ? step.stuck : step.text) || step.text || step.stuck || '').trim();
+  if (extra) instruction = `${instruction} ${extra}`.trim();
+  if (!instruction) instruction = `Bleib im Ablauf „${guide.title}“ beim aktuellen Schritt.`;
+  const check = String(step.check || 'Bist du an dieser Stelle?').trim();
+  return jsonResponse(origin, 200, {
+    reply: `${instruction}\n\n${check}`,
+    spokenText: instruction,
+    guideSlug: guide.slug,
+    guideTitle: guide.title,
+    guideVersion: guide.version || 1,
+    guideStep: index + 1,
+    guideStepCount: guide.steps.length,
+    completed: false,
+    source,
   });
-
-  for (const value of Object.values(guide.troubleshooting || {})) {
-    const haystack = normalize(value);
-    const score = scoreAgainst(haystack, terms, 0);
-    candidates.push({ kind: 'troubleshooting', text: value, score });
-  }
-
-  candidates.sort((a, b) => b.score - a.score);
-  return candidates[0] || null;
-}
-
-function shouldUseContextHelp(text: string, guide: GuideRecord, currentIndex: number): boolean {
-  if (isControlOrConfirmation(text) || explicitDifferentGoal(text, guide)) return false;
-  if (isExplicitHelp(text)) return true;
-
-  const evidence = bestEvidence(guide, text, currentIndex);
-  if (evidence && evidence.score >= 5) return true;
-  return looksLikeQuestion(text);
 }
 
 function contextHelpResponse(
@@ -222,51 +226,12 @@ function contextHelpResponse(
   suppliedStep: unknown,
 ): Response {
   const currentIndex = currentStepIndex(guide, suppliedStep);
-  const currentStep = guide.steps[currentIndex] || guide.steps[0] || {};
-  const evidence = bestEvidence(guide, text, currentIndex);
-  const helpIntent = isExplicitHelp(text);
   const n = normalize(text);
   const asksDifferentLabel = /\b(bei mir heisst|bei mir steht|sieht anders aus|ist anders|andere ansicht|anderer reiter|anderes menu)\b/.test(n);
-
-  let instruction = '';
-  let check = String(currentStep.check || 'Bist du an dieser Stelle?').trim();
-  let evidenceStep: number | null = null;
-
-  if (evidence?.kind === 'troubleshooting' && evidence.score >= 4) {
-    instruction = evidence.text.trim();
-  } else if (evidence?.kind === 'step' && typeof evidence.stepIndex === 'number' && (evidence.score >= 4 || helpIntent)) {
-    const matched = guide.steps[evidence.stepIndex] || currentStep;
-    evidenceStep = evidence.stepIndex + 1;
-    const useStuck = helpIntent && Boolean(matched.stuck);
-    instruction = String((useStuck ? matched.stuck : matched.text) || matched.stuck || '').trim();
-    if (evidence.stepIndex === currentIndex && matched.check) check = String(matched.check).trim();
-  }
-
-  if (!instruction) {
-    instruction = String((helpIntent ? currentStep.stuck : '') || currentStep.text || currentStep.stuck || '').trim();
-    evidenceStep = currentIndex + 1;
-  }
-
-  if (asksDifferentLabel) {
-    instruction = `${instruction} Wenn die Bezeichnung bei dir abweicht, nenne mir nur die sichtbaren Menü- oder Buttonbezeichnungen; dann gleiche ich sie mit dem bestätigten Ablauf ab.`.trim();
-  }
-
-  if (!instruction) {
-    instruction = `Bleib im Ablauf „${guide.title}“. Der aktuell bestätigte Schritt ist noch nicht eindeutig genug beschrieben.`;
-  }
-
-  return jsonResponse(origin, 200, {
-    reply: `${instruction}\n\n${check}`,
-    spokenText: instruction,
-    guideSlug: guide.slug,
-    guideTitle: guide.title,
-    guideVersion: guide.version || 1,
-    guideStep: currentIndex + 1,
-    guideStepCount: guide.steps.length,
-    completed: false,
-    source: 'approved-guide-context-help-v28-3',
-    contextEvidenceStep: evidenceStep,
-  });
+  const extra = asksDifferentLabel
+    ? 'Wenn die Bezeichnung bei dir abweicht, nenne mir nur die sichtbaren Menü- oder Buttonbezeichnungen; ich erfinde keinen alternativen Klickweg.'
+    : '';
+  return stepResponse(origin, guide, currentIndex, 'approved-guide-context-help-v29-4', true, extra);
 }
 
 async function loadGuide(slug: string): Promise<GuideRecord | null> {
@@ -314,7 +279,9 @@ Deno.serve(async (req: Request) => {
 
   const messages = sanitizeMessages(parsed.messages);
   const lastText = [...messages].reverse().find(message => message.role === 'user')?.content || '';
-  const guideSlug = typeof parsed.guideSlug === 'string' ? parsed.guideSlug : '';
+  const guideSlug = typeof parsed.guideSlug === 'string' ? parsed.guideSlug.trim() : '';
+  const selectedGuideSlug = typeof parsed.selectedGuideSlug === 'string' ? parsed.selectedGuideSlug.trim() : '';
+  const smartHelpIntent = parsed.smartHelpIntent === true;
 
   if (!messages.length || !lastText) return forwardToExistingRouter(rawBody, origin);
   if (messages.some(message => message.role === 'user' && containsSensitiveData(message.content))) {
@@ -323,9 +290,19 @@ Deno.serve(async (req: Request) => {
 
   if (guideSlug) {
     const guide = await loadGuide(guideSlug);
-    const index = guide ? currentStepIndex(guide, parsed.guideStep) : 0;
-    if (guide && shouldUseContextHelp(lastText, guide, index)) {
+    if (guide && !isControlOrConfirmation(lastText) && !explicitDifferentGoal(lastText, guide)
+      && (smartHelpIntent || isExplicitHelp(lastText) || looksLikeQuestion(lastText))) {
       return contextHelpResponse(origin, guide, lastText, parsed.guideStep);
+    }
+  }
+
+  if (!guideSlug) {
+    const requestedSlug = selectedGuideSlug || inferNavigationGuide(lastText);
+    if (requestedSlug) {
+      const guide = await loadGuide(requestedSlug);
+      if (guide?.steps?.length) {
+        return stepResponse(origin, guide, 0, 'approved-guide-smart-start-v29-1');
+      }
     }
   }
 
