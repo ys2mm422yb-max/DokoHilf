@@ -29,8 +29,17 @@ test('öffentliche Verarbeitungskette blockiert Echtdaten vor KI; Cloud-Sprachau
   assert.match(tts, /cloud_tts_retired_v28/);
   assert.match(tts, /status: 410/);
   assert.doesNotMatch(tts, /GEMINI_API_KEY|generativelanguage\.googleapis\.com|fetch\(/);
-  assert.match(aiCore, /DATENSCHUTZ UND SICHERHEIT/);
-  assert.match(aiCore, /Bitte niemals um echte Bewohner-/);
+
+  assert.match(aiCore, /containsSensitiveData/);
+  assert.match(aiCore, /Mögliche Echtdaten erkannt/);
+  assert.match(aiCore, /Die Anfrage wurde nicht an Gemini übertragen/);
+  assert.match(aiCore, /status=eq\.approved/);
+  assert.match(aiCore, /Erfinde niemals Klickwege/);
+
+  const privacyGate = aiCore.indexOf("messages.some((message) => message.role === 'user' && containsSensitiveData(message.content))");
+  const geminiKeyLookup = aiCore.indexOf("Deno.env.get('GEMINI_API_KEY')", privacyGate);
+  assert.ok(privacyGate >= 0, 'Core-Echtdatenprüfung fehlt');
+  assert.ok(geminiKeyLookup > privacyGate, 'Core muss mögliche Echtdaten vor dem Gemini-Pfad blockieren');
 });
 
 test('offensichtliche Fantasie-Echtdatenmuster werden erkannt', () => {
