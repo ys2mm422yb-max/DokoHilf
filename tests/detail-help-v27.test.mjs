@@ -33,7 +33,8 @@ test('Vitalwerte bekommen eine detaillierte bestätigte Orientierungsfrage', () 
 });
 
 test('fehlender Menüpunkt führt nicht zu erfundenem Alternativweg', () => {
-  assert.match(confirmed, /Detailhilfe darf nur aus bestätigten lokalen Bezeichnungen und bestätigten Alternativen bestehen/);
+  assert.match(confirmed, /Detailhilfe darf nur aus bestätigten lokalen Bezeichnungen, bestätigten Guide-Schritten und bestätigten Alternativen bestehen/);
+  assert.match(confirmed, /Keine Klickwege oder Feldnamen erfinden/);
   assert.match(help, /habe ich dafür keinen bestätigten Alternativ-Klickweg/);
   assert.match(help, /Bitte nichts raten/);
   assert.match(help, /menschliche Unterstützung/);
@@ -66,11 +67,11 @@ test('Detailhilfe bleibt flüchtig und speichert keine Gesprächsdaten', () => {
   assert.match(help, /const session = \{/);
 });
 
-test('v28-4 Release aktiviert Detailhilfe innerhalb der statischen Supertonic-Revision', () => {
+test('v29 aktiviert Detailhilfe innerhalb der aktuellen statischen Supertonic-Revision', () => {
   assert.match(buildScript, /apply-detail-help-v27\.mjs/);
   assert.match(buildScript, /assets\/detail-help-v27\.js/);
   assert.match(buildScript, /assets\/detail-help-polish-v27\.js/);
-  assert.match(buildScript, /20260807-static-supertonic-guides-v28-4/);
+  assert.match(buildScript, /20260808-context-voice-v29-1/);
   assert.match(applyScript, /detail-help-v27\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyScript, /detail-help-polish-v27\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyScript, /HOTFIX_REVISION = '\$\{REVISION\}'/);
