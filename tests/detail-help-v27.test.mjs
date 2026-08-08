@@ -2,90 +2,58 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [help, polish, renderSync, contextHotfix, confirmed, buildScript, applyScript] = await Promise.all([
+const [help, contextHotfix, confirmed, smart, router] = await Promise.all([
   readFile(new URL('../assets/detail-help-v27.js', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/detail-help-polish-v27.js', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/detail-help-render-sync-v27.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/context-voice-hotfix-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../CONFIRMED_WORKFLOWS.md', import.meta.url), 'utf8'),
-  readFile(new URL('../scripts/build-static-site-v27.sh', import.meta.url), 'utf8'),
-  readFile(new URL('../scripts/apply-detail-help-v27.mjs', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/smart-help-v29.js', import.meta.url), 'utf8'),
+  readFile(new URL('../supabase/functions/dokohilf-chat-router/index.ts', import.meta.url), 'utf8'),
 ]);
 
-test('Problemformulierungen öffnen einen eigenen Hilfemodus statt den Guide blind weiterzuschalten', () => {
+test('v29 erkennt Hilferufe, erzeugt aber keinen lokalen Sonderdialog mehr', () => {
   assert.match(help, /function isProblemSignal\(text\)/);
-  assert.match(help, /finde\|sehe\|erkenne\|entdecke/);
-  assert.match(help, /wo \(ist\|sind\)/);
   assert.match(help, /ich brauche hilfe/);
-  assert.match(help, /helpMode/);
-  assert.match(polish, /Okay\. Schau oben in die grüne Reiterleiste/);
-  assert.doesNotMatch(polish, /Ich markiere noch keinen Schritt als erledigt/);
-  assert.doesNotMatch(help, /sendMessage\('weiter'\)/);
+  assert.match(help, /ich weiss nicht/);
+  assert.match(help, /keine ahnung/);
+  assert.match(help, /__DOKOHILF_CONTEXTUAL_HELP_V29__/);
+  assert.doesNotMatch(help, /helpOptions|helpTitle|syntheticResponse|startSession|handleSession/);
 });
 
-test('Vitalwerte bekommen eine detaillierte bestätigte Orientierungsfrage', () => {
+test('freie Texte und Hilfe-Button landen beim selben Server-Kontextpfad', () => {
+  assert.match(smart, /smartHelpIntent: true/);
+  assert.match(router, /smartHelpIntent/);
+  assert.match(router, /approved-guide-context-help-v29-4/);
+  assert.match(router, /stepResponse\(origin, guide, currentIndex/);
+});
+
+test('Vitalwerte verwenden den bestätigten Einzelwert-Ablauf mit Bewohner als erstem Schritt', () => {
   assert.match(confirmed, /## Einzelnen Vitalwert erfassen/);
-  assert.match(confirmed, /\*\*Doku-Erweitert\*\* öffnen/);
-  assert.match(confirmed, /\*\*Vitalwerte\*\* und \*\*Vitalwerte Sammelerf\.\*\* sind zwei getrennte Menüeinträge/);
-  assert.match(help, /Schau ganz oben in Vivendi in die grüne Reiterleiste und öffne \*\*Doku-Erweitert\*\*/);
-  assert.match(help, /Vitalwerte Sammelerf\.\*\* als zwei getrennte Einträge/);
-  assert.match(polish, /Suche in \*\*Doku-Erweitert\*\* nach \*\*Vitalwerte\*\*/);
-  assert.match(help, /Doku-Erweitert ist offen/);
-  assert.match(help, /„Vitalwerte“ fehlt/);
+  assert.match(confirmed, /1\. Bewohner auswählen\./);
+  assert.match(confirmed, /2\. \*\*Doku-Erweitert\*\* öffnen\./);
+  assert.match(confirmed, /3\. \*\*Vitalwerte\*\* wählen\./);
+  assert.match(smart, /return 'vitalwerte-einzelwert'/);
 });
 
-test('Bericht-Hilfe bleibt im Bericht-Kontext und zeigt niemals den Vitalwerte-Fehlertext', () => {
-  assert.match(help, /'bericht-neu': \{ title: 'Neuen Berichtseintrag erfassen'/);
-  assert.match(help, /'bericht-folgebericht': \{ title: 'Folgebericht erstellen'/);
-  assert.match(contextHotfix, /REPORT_ENTRY_REPLY = 'Suche zuerst \*\*Berichte\*\*\. Hast du sie gefunden\?'/);
-  assert.match(contextHotfix, /isVitalGuide\(slug\) \? 'Vitalwerte fehlt' : 'Der Menüpunkt fehlt'/);
-  assert.match(renderSync, /startsWith\('vitalwerte'\)/);
-  assert.match(renderSync, /'Der Menüpunkt fehlt'/);
-  assert.doesNotMatch(renderSync, /'target-missing': 'Vitalwerte fehlt'/);
+test('Bericht-Hilfe verwendet den bestätigten Einstieg statt Vitalwerte-Fallback', () => {
+  assert.match(contextHotfix, /Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach \*\*Berichte\*\*/);
+  assert.doesNotMatch(router, /Vitalwerte fehlt/);
 });
 
-test('fehlender Menüpunkt führt nicht zu erfundenem Alternativweg', () => {
-  assert.match(confirmed, /Detailhilfe darf nur aus bestätigten lokalen Bezeichnungen und bestätigten Alternativen bestehen/);
-  assert.match(help, /habe ich dafür keinen bestätigten Alternativ-Klickweg/);
-  assert.match(help, /Bitte nichts raten/);
-  assert.match(help, /menschliche Unterstützung/);
-  assert.match(polish, /Prüfe den Einstieg noch einmal/);
-});
-
-test('Chat und Voice verwenden dieselbe Hilfelogik und dieselben Auswahlwerte', () => {
-  assert.match(help, /detail-help-options/);
-  assert.match(help, /voice-detail-help-options/);
-  assert.match(help, /data-detail-help-value/);
-  assert.match(help, /fromVoice: document\.getElementById\('appShell'\)\?\.dataset\.mode === 'voice'/);
-  assert.match(help, /session\.pendingOption/);
-  assert.match(polish, /&& !localVoiceV28\(\)/);
-});
-
-test('Hilfemodus hält Weiter verborgen, bis der Zielpunkt wirklich gefunden wurde', () => {
-  assert.match(help, /data-detail-help="true"\] #commandRow\{display:none!important\}/);
-  assert.match(polish, /\.voice-focus-actions\{display:none!important\}/);
-  assert.match(help, /helpMode: false/);
-  assert.match(polish, /Perfekt\. Öffne jetzt \*\*Vitalwerte\*\*/);
+test('Hilferückfragen verändern den Guide-Schritt nicht', () => {
+  assert.match(router, /const currentIndex = currentStepIndex\(guide, suppliedStep\)/);
+  assert.match(router, /guideStep: index \+ 1/);
+  assert.doesNotMatch(router, /contextEvidenceStep|bestEvidence/);
 });
 
 test('Detailhilfe bleibt flüchtig und speichert keine Gesprächsdaten', () => {
-  for (const source of [help, polish, renderSync, contextHotfix]) {
+  for (const source of [help, contextHotfix, smart]) {
     assert.doesNotMatch(source, /localStorage/);
     assert.doesNotMatch(source, /sessionStorage/);
     assert.doesNotMatch(source, /indexedDB/);
   }
-  assert.match(help, /const session = \{/);
 });
 
-test('v29 aktiviert Kontext-Hotfix vor dem finalen Supertonic-Gate', () => {
-  assert.match(buildScript, /apply-detail-help-v27\.mjs/);
-  assert.match(buildScript, /assets\/detail-help-v27\.js/);
-  assert.match(buildScript, /assets\/detail-help-polish-v27\.js/);
-  assert.match(buildScript, /20260808-context-voice-v29-1/);
-  assert.match(applyScript, /detail-help-v27\.js\?v=\$\{BUILD_ID\}/);
-  assert.match(applyScript, /detail-help-polish-v27\.js\?v=\$\{BUILD_ID\}/);
-  assert.match(applyScript, /context-voice-hotfix-v28\.js\?v=\$\{BUILD_ID\}/);
-  assert.match(applyScript, /HOTFIX_REVISION = '\$\{REVISION\}'/);
-  assert.match(applyScript, /clarificationIndex < helpIndex && helpIndex < progressIndex/);
-  assert.match(applyScript, /syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex/);
+test('iPhone-Synthese wird nach acht Sekunden sauber freigegeben', () => {
+  assert.match(contextHotfix, /IOS_SYNTHESIS_TIMEOUT_MS = 8000/);
+  assert.match(contextHotfix, /local_voice_timeout/);
 });
