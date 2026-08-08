@@ -1,11 +1,11 @@
 # DokoHilf – bestätigte Arbeitsabläufe
 
 **Status:** verbindliche fachliche Quelle  
-**Stand:** 7. August 2026
+**Stand:** 8. August 2026
 
 Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien.
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt.
+Am 8. August 2026 wurden die kontextbezogene Hilfe, die Formulierungen bei An-/Abwesenheit und der abschließende Speicherschritt bei Formularen ergänzt beziehungsweise präzisiert. Die zuvor bestätigten Klickwege bleiben ansonsten unverändert.
 
 ## Allgemeine Regeln
 
@@ -15,27 +15,24 @@ Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durch
 - Eine falsch abgezeichnete Durchführung wird im Durchführungsnachweis storniert.
 - Visiten werden bei euch erst nach erfolgter Durchführung dokumentiert und immer als **durchgeführt** erfasst, niemals als abgeschlossen.
 - Medikation wird in DokoHilf ausschließlich angesehen; DokoHilf leitet dort zu keiner Änderung an.
-- Bei An- und Abwesenheit wird **Von immer** eingetragen. **Bis nur**, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist. Niemals schätzen.
+- Bei An- und Abwesenheit gehört **Von immer** dazu. **Bis** wird nur ausgefüllt, wenn der Endzeitpunkt sicher feststeht. Wenn er noch nicht sicher feststeht, bleibt das Feld leer; es wird nichts geschätzt.
 - Wenn ein Nutzer einen Menüpunkt oder Schritt nicht findet, bleibt der aktuelle Guide-Schritt aktiv. DokoHilf darf nicht so tun, als sei der Schritt erledigt.
-- Detailhilfe darf nur aus bestätigten lokalen Bezeichnungen und bestätigten Alternativen bestehen. Keine Klickwege oder Feldnamen erfinden.
+- Detailhilfe darf nur aus bestätigten lokalen Bezeichnungen, bestätigten Guide-Schritten und bestätigten Alternativen bestehen. Keine Klickwege oder Feldnamen erfinden.
 
-## Detailhilfe bei „Ich brauche Hilfe / Ich finde das nicht“
+## Detailhilfe bei Rückfragen oder wenn jemand nicht weiterkommt
 
-Die Aktion **„Ich brauche Hilfe“** und freie Aussagen wie **„Ich finde das nicht“**, **„Bei mir heißt das anders“**, **„Ich bin auf einer anderen Seite“** oder **„Was muss ich jetzt drücken?“** sollen eine gezielte Hilfeschleife innerhalb des laufenden Guides öffnen.
+Aussagen und Fragen wie **„Ich finde das nicht“**, **„Wo ist das?“**, **„Ich weiß nicht, wo ich bin“**, **„Ich komme nicht weiter“**, **„Bei mir heißt das anders“**, **„Was muss ich jetzt drücken?“** oder normale Rückfragen innerhalb eines laufenden Ablaufs bleiben im aktuellen Guide.
 
 Verbindliche Regeln für diese Hilfeschleife:
 
 1. Aktuelle Absicht und aktueller Guide-Schritt bleiben erhalten.
-2. DokoHilf fragt zuerst nach dem sichtbaren Zustand, statt den Schritt weiterzuschalten.
-3. Sinnvolle bestätigte Hilfekategorien sind:
-   - Menüpunkt fehlt
-   - Bezeichnung sieht anders aus
-   - andere Seite / anderer Reiter sichtbar
-   - Nutzer weiß nicht, wo er sich befindet
-4. Danach nur mit bestätigten Bezeichnungen und bestätigten sicheren Rückwegen weiterhelfen.
-5. Gibt es für den beschriebenen Zustand noch keine bestätigte Anleitung, muss DokoHilf das transparent sagen.
-6. In diesem Fall zum letzten sicheren bestätigten Schritt zurückführen oder menschliche Unterstützung empfehlen.
-7. Sprach- und Schreibmodus verwenden dieselbe fachliche Hilfelogik.
+2. DokoHilf hilft zuerst mit den bestätigten Informationen des aktiven Guides: Schritttext, Prüffrage, `stuck`-Hinweis und Troubleshooting.
+3. Eine Hilferückfrage darf den Guide nicht vor- oder zurückschalten.
+4. Nur wenn die bestätigten Informationen für den beschriebenen Zustand nicht ausreichen, fragt DokoHilf nach den sichtbaren Menü- oder Buttonbezeichnungen beziehungsweise danach, was der Nutzer gerade sieht.
+5. Danach nur mit bestätigten Bezeichnungen und bestätigten sicheren Rückwegen weiterhelfen.
+6. Gibt es für den beschriebenen Zustand keine bestätigte Anleitung, muss DokoHilf das transparent sagen und darf nichts erfinden.
+7. Ein ausdrücklicher Wechsel zu einem anderen Ziel darf den aktuellen Guide verlassen; auch verwandte Abläufe derselben Kategorie müssen sauber wechselbar bleiben.
+8. Sprach- und Schreibmodus verwenden dieselbe fachliche Hilfelogik.
 
 Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` dokumentiert.
 
@@ -130,11 +127,11 @@ Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` 
 3. **An-/Abwesenheiten** wählen.
 4. Oben links **Neu** wählen.
 5. Passenden Status auswählen.
-6. **Von** immer mit Datum und Uhrzeit eintragen.
-7. **Bis** nur eintragen, wenn der genaue Endzeitpunkt zu 100 Prozent sicher bekannt ist.
-8. Ist das Ende unsicher, **Bis leer lassen und niemals schätzen**.
-9. Nur benötigte weitere Angaben wie Ziel, Begleitung oder Grund/Bemerkung ergänzen.
-10. Speichern und Eintrag kontrollieren.
+6. Bei **Von** immer Datum und Uhrzeit eintragen.
+7. Bei **Bis** nur dann Datum und Uhrzeit eintragen, wenn der Endzeitpunkt sicher feststeht.
+8. Wenn der Endzeitpunkt noch nicht sicher feststeht, **Bis einfach leer lassen**. Bitte nicht schätzen.
+9. Nur die Angaben ergänzen, die wirklich gebraucht werden, zum Beispiel Ziel, Begleitung, Grund oder Bemerkung.
+10. Speichern und kurz prüfen, ob der Eintrag in der Übersicht erscheint.
 
 ## Medikation ansehen
 
@@ -154,6 +151,7 @@ Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, er
 5. Im Fenster **Formular anlegen** das benötigte Formular auswählen, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.
 6. Mit OK bestätigen.
 7. Das geöffnete Formular nach der gültigen fachlichen Vorgabe bearbeiten. Nicht bestätigte Felder werden von DokoHilf nicht erfunden.
+8. Wenn das Formular fertig bearbeitet ist, **oben links in der Leiste speichern**.
 
 ## Notfallblatt öffnen
 
