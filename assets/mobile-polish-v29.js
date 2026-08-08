@@ -6,6 +6,7 @@
 html[data-dokohilf-ui="v29"] .app-shell:not([data-mode="start"]) .legal-note{display:none!important}
 html[data-dokohilf-ui="v29"] .message.v29-mobile-welcome{display:none!important}
 html[data-dokohilf-ui="v29"] .app-shell:not([data-v29-guide-active="true"]) .command-row[data-v29-mobile-initial="true"]{display:none!important}
+html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
 
 @media(max-width:700px){
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="start"] .topbar{
@@ -49,7 +50,7 @@ html[data-dokohilf-ui="v29"] .app-shell:not([data-v29-guide-active="true"]) .com
   html[data-dokohilf-ui="v29"] .app-shell:not([data-mode="start"]) .home-button,
   html[data-dokohilf-ui="v29"] .app-shell:not([data-mode="start"]) .new-button{height:38px!important;min-height:38px!important;border-radius:12px!important}
   html[data-dokohilf-ui="v29"] .app-shell:not([data-mode="start"]) .main-content{padding:12px 12px 8px!important}
-  html[data-dokohilf-ui="v29"] .workspace{min-height:calc(100dvh - 176px)!important;display:flex!important;flex-direction:column!important}
+  html[data-dokohilf-ui="v29"] .workspace:not([hidden]){min-height:calc(100dvh - 176px)!important;display:flex!important;flex-direction:column!important}
   html[data-dokohilf-ui="v29"] .mode-switch{margin-bottom:9px!important;min-height:43px!important}
   html[data-dokohilf-ui="v29"] .chat-head{margin-bottom:10px!important;padding:14px 15px!important;border-radius:19px!important}
   html[data-dokohilf-ui="v29"] .chat-head h1{font-size:27px!important;line-height:1.03!important}
@@ -57,6 +58,9 @@ html[data-dokohilf-ui="v29"] .app-shell:not([data-v29-guide-active="true"]) .com
   html[data-dokohilf-ui="v29"] .quick-prompts{margin-top:10px!important;gap:6px!important}
   html[data-dokohilf-ui="v29"] .quick-prompts button{min-height:34px!important;padding:0 11px!important;font-size:11.5px!important;border-radius:11px!important}
   html[data-dokohilf-ui="v29"] .conversation{flex:1 1 auto!important;min-height:0!important;margin-top:0!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"]:not([data-v29-guide-active="true"]) .conversation{
+    border-color:transparent!important;background:transparent!important;box-shadow:none!important;padding-left:0!important;padding-right:0!important;
+  }
   html[data-dokohilf-ui="v29"] .messages{gap:8px!important}
   html[data-dokohilf-ui="v29"] .bubble{padding:12px 14px!important;font-size:14.5px!important;line-height:1.4!important;border-radius:17px!important}
   html[data-dokohilf-ui="v29"] .avatar{width:31px!important;height:31px!important;flex-basis:31px!important;border-radius:10px!important}
@@ -100,7 +104,8 @@ html[data-dokohilf-ui="v29"] .app-shell:not([data-v29-guide-active="true"]) .com
     const messages = document.getElementById('messages');
     if (messages) {
       [...messages.querySelectorAll('.message.assistant')].forEach(message => {
-        const text = (message.textContent || '').replace(/\s+/g, ' ').trim();
+        const bubble = message.querySelector('.bubble');
+        const text = (bubble?.textContent || '').replace(/\s+/g, ' ').trim();
         const isWelcome = /^Hallo!\s*Schreib einfach,?\s*was du in der Dokumentation machen möchtest\.?$/i.test(text);
         message.classList.toggle('v29-mobile-welcome', shell.dataset.mode === 'chat' && isWelcome);
       });
