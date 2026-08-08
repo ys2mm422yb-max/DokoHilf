@@ -77,11 +77,11 @@ test('Detailhilfe bleibt flüchtig und speichert keine Gesprächsdaten', () => {
   assert.match(help, /const session = \{/);
 });
 
-test('v28 Release aktiviert Kontext-Hotfix vor dem finalen Supertonic-Gate', () => {
+test('v29 aktiviert Kontext-Hotfix vor dem finalen Supertonic-Gate', () => {
   assert.match(buildScript, /apply-detail-help-v27\.mjs/);
   assert.match(buildScript, /assets\/detail-help-v27\.js/);
   assert.match(buildScript, /assets\/detail-help-polish-v27\.js/);
-  assert.match(buildScript, /20260807-static-supertonic-guides-v28-4/);
+  assert.match(buildScript, /20260808-context-voice-v29-1/);
   assert.match(applyScript, /detail-help-v27\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyScript, /detail-help-polish-v27\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyScript, /context-voice-hotfix-v28\.js\?v=\$\{BUILD_ID\}/);
