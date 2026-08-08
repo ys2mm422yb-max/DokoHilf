@@ -1,0 +1,48 @@
+name: Validate DokoHilf Core AI v28
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'supabase/functions/dokohilf-ai/**'
+      - 'tests/core-ai-sync-v28.test.mjs'
+      - '.github/workflows/core-ai-sync-v28.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dokohilf-core-ai-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact repository head
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check Supabase core
+        run: deno check supabase/functions/dokohilf-ai/index.ts
+
+      - name: Run Core drift and safety contracts
+        run: node --test tests/core-ai-sync-v28.test.mjs
+
+      - name: Reject obsolete hard-coded core knowledge
+        run: |
+          set -euo pipefail
+          grep -q "approved-knowledge-core-v14" supabase/functions/dokohilf-ai/index.ts
+          grep -q "status=eq.approved" supabase/functions/dokohilf-ai/index.ts
+          grep -q "Mögliche Echtdaten erkannt" supabase/functions/dokohilf-ai/index.ts
+          grep -q "Supertonic F1" supabase/functions/dokohilf-ai/index.ts
+          if grep -Eqi 'Gerätestimme|Geratestimme|Systemstimme|FREIGEGEBENE BEDIENWEGE|EasyPlan|Stammdaten öffnen' supabase/functions/dokohilf-ai/index.ts; then
+            echo 'Veraltete Core-Wissens- oder Voice-Logik gefunden.' >&2
+            exit 1
+          fi
