@@ -53,10 +53,12 @@ jobs:
       - name: Build exact v29 releasable site
         run: |
           set -euo pipefail
+          BUILD_ID="$(node -p "require('./version.json').buildId")"
+          test -n "$BUILD_ID"
           bash scripts/build-static-site-v27.sh _local_voice_site
           grep -q 'KI · v29' _local_voice_site/index.html
-          grep -q 'local-voice-v28.js?v=20260808-29' _local_voice_site/index.html
-          grep -q 'local-voice-gate-v28.js?v=20260808-29' _local_voice_site/index.html
+          grep -Fq "local-voice-v28.js?v=$BUILD_ID" _local_voice_site/index.html
+          grep -Fq "local-voice-gate-v28.js?v=$BUILD_ID" _local_voice_site/index.html
           grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ === true' _local_voice_site/assets/app.js
           grep -q 'IOS_LOCAL_TIMEOUT_MS = 8000' _local_voice_site/assets/local-voice-gate-v28.js
           ! grep -q 'voice-diagnostics.js' _local_voice_site/index.html

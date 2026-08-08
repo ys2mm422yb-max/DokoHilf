@@ -1,188 +1,131 @@
 # DokoHilf – Active Work: v29 PWA refresh
 
-**Status:** aktiv / Releaseblock nicht fertig  
-**Stand:** 9. August 2026, ca. 00:56 CEST  
+**Status:** aktiv / Freigabe erst nach 8 grünen Pflichtworkflows  
+**Stand:** 9. August 2026  
 **PR:** #105 `Force installed PWA to refresh to guide library`  
 **Branch:** `fix/v29-force-pwa-refresh-20260809`  
 **Base:** `main` nach Merge von PR #104 (`8b5048bff4a40a74f05cfae45b949d91d1d30bbe`)
 
-> Diese Datei beschreibt den aktuell offenen Releaseblock. Vor Arbeit immer den tatsächlichen PR-Head und die aktuellen Actions live prüfen; SHA-Angaben hier sind nur Übergabestand.
+> Vor jeder Fortsetzung tatsächlichen PR-Head, Actions, `main` und `gh-pages` live prüfen. SHA- und CI-Angaben in dieser Datei sind nur der zuletzt dokumentierte Stand.
 
-## 1. Warum PR #105 existiert
+## 1. Ursache und Ziel
 
-Nach PR #104 waren die neue Guide-Bibliothek und die fachlichen Änderungen im Repository bzw. in Supabase vorhanden, auf einem real installierten iPhone erschien aber weiterhin die alte Startsektion `HÄUFIGE ABLÄUFE · DIREKT ÖFFNEN`.
+Nach PR #104 waren Guide-Bibliothek und fachliche Änderungen in Repository/Supabase vorhanden, ein real installiertes iPhone zeigte aber weiterhin die alte Startsektion `HÄUFIGE ABLÄUFE · DIREKT ÖFFNEN`.
 
-Die öffentliche Build-ID war über mehrere UI-Releases unverändert `20260808-29`. Eine bereits installierte iOS-PWA konnte deshalb den alten Shell-/Service-Worker-Zustand weiterhin als aktuell behandeln, obwohl neue Dateien bereits auf `gh-pages` lagen.
+Die öffentliche Build-ID war über mehrere UI-Releases unverändert `20260808-29`. Dadurch konnte die installierte iOS-PWA ihren alten Shell-/Service-Worker-Zustand weiterhin als aktuell behandeln.
 
-Ziel von PR #105 ist deshalb ein **echter PWA-Versionswechsel** auf Build `20260809-29`, so dass ein alter installierter Client den Unterschied erkennt, alte DokoHilf-Shell-Caches verlässt und die neue Guide-Bibliothek lädt.
+PR #105 erzwingt deshalb den echten Versionswechsel auf `20260809-29`.
 
-## 2. Erwarteter Zielzustand
+Erwarteter veröffentlichter Zustand:
 
-Nach erfolgreichem Merge und Publish müssen konsistent sein:
-
-- `version.json`: `buildId = 20260809-29`
+- `version.json`: `20260809-29`
 - `index.html`: Meta-Build-ID `20260809-29`
 - `service-worker.js`: `BUILD_ID = '20260809-29'`
-- aktive Asset-URLs: aktuelle Build-ID als Querystring
-- neuer Shell-Cache / neue Cache-Revision
-- Guide-Bibliotheksassets im veröffentlichten Shell
-- bestehende Voice-, Detailhilfe- und Icon-Hotfixes bleiben erhalten
+- aktive Asset-URLs auf derselben Build-ID
+- neue Shell-/Cache-Revision
+- Guide-Bibliothek samt Icons im veröffentlichten Build
+- Voice-, Detailhilfe- und bestehende Hotfixes bleiben erhalten
 
-Das reale iPhone muss danach statt der alten starren Startkarten die neue Struktur zeigen:
+## 2. Dauerhafte Build-ID-Reparatur in #105
 
-- `Häufig genutzt`
-- lokale nutzungsabhängige Sortierung
-- passende unterschiedliche SVG-Icons
-- `Alle Anleitungen anzeigen`
-- vollständige Guide-Bibliothek für alle fertigen Guides
-- Berichtssuche weiterhin nur Draft / später zu überarbeiten
+Der aktuelle Reparaturstand beseitigt nicht nur die eine alte ID, sondern die aktive Mehrfachpflege derselben Datumskonstante:
 
-## 3. Bereits erledigte Teile innerhalb von #105
+- `scripts/apply-detail-help-v27.mjs` liest `buildId` aus `version.json`.
+- `scripts/apply-local-voice-v28.mjs` liest `buildId` aus `version.json`.
+- `scripts/build-static-site-v27.sh` liest `buildId` aus `version.json`.
+- `.github/workflows/pages.yml` liest die Build-ID aus `version.json` und prüft Index + Service Worker dagegen.
+- `.github/workflows/ui-validation-v27.yml` prüft die gebaute Meta-Build-ID dynamisch.
+- `.github/workflows/detail-help-mobile.yml` prüft die Release-Asset-URLs dynamisch.
+- `.github/workflows/local-voice-v28-mobile.yml` prüft die Voice-Asset-URLs dynamisch.
+- `.github/workflows/report-conditional-mobile-v28.yml` prüft das gebaute `version.json` dynamisch.
+- `assets/local-voice-v28.js` liest seine Build-ID aus dem ausgelieferten `dokohilf-build`-Meta-Tag.
+- `assets/local-voice-gate-v28.js` bildet die Revision des statischen Audio-Manifests aus derselben Build-ID.
+- `tests/local-voice-v28.test.mjs` prüft den dynamischen Vertrag, nicht ein festes Release-Datum.
+- `tests/pwa-build-id-sync.test.mjs` sichert die Synchronität von Index, `version.json`, Service Worker und Guide-Library-Revision ab.
 
-Auf dem PR-Branch sind bereits mehrere alte Build-ID-Abhängigkeiten auf den deklarierten Build umgestellt:
+Historische Erwähnungen von `20260808-29` in Fehler-/Übergabedokumentation dürfen bleiben. Revisionsnamen wie `20260808-context-voice-v29-1` und `20260808-smart-help-voice-ui-v29-1` sind eigenständige Hotfix-Revisionskennungen und keine aktuelle Build-ID.
 
-- `version.json` steht auf `20260809-29`
-- `scripts/apply-detail-help-v27.mjs` liest `buildId` dynamisch aus `version.json`
-- `scripts/apply-local-voice-v28.mjs` liest `buildId` dynamisch aus `version.json`
-- `scripts/build-static-site-v27.sh` liest `buildId` dynamisch aus `version.json`
-- mehrere alte Tests wurden auf die aktuelle bzw. deklarierte Build-ID umgestellt
-- `tests/pwa-build-id-sync.test.mjs` sichert die Synchronität von Index, `version.json` und Service Worker ab
+## 3. Letzter analysierter Fehlerstand vor dieser Reparatur
 
-Der Exact-Head-Workflow war auf dem zuletzt geprüften PR-Head erfolgreich.
-
-## 4. Aktuell noch offene technische Blocker
-
-Beim letzten Live-Check des PR-Heads `4baa6ba5c7c0280b474ab6d756cc82e7b6e64820` waren 3 von 8 Workflows grün und 5 rot:
+Auf Head `79cca12c5fb1c813c01678c7170e9628a39ece26` waren nur zwei der acht Pflichtworkflows grün:
 
 **grün:**
-- Validate exact PR head
 - Context and Voice Hotfix v28
 - Validate context-aware guide help v28
 
 **rot:**
+- Validate exact PR head
 - Deploy DokoHilf
 - Validate dark iPhone UI v27
 - Validate detailed help iOS Android
 - Validate local voice v28 iOS Android
 - Validate report conditional iOS Android
 
-Die roten mobilen Workflows sind Folge des noch inkonsistenten Release-/Buildpfads, nicht eine Freigabe zum Mergen.
+Die roten Render-/Releasejobs brachen an alten festen `20260808-29`-Prüfungen ab, obwohl der statische Site-Build bereits `20260809-29` erzeugte.
 
-### 4.1 `.github/workflows/pages.yml`
+Der Exact-Head-Workflow hatte zusätzlich drei Dokumentationsregressionen: etablierte Account-/Test-/Publikationsformulierungen waren beim Handoff-Umbau verkürzt worden. Die Formulierungen wurden wiederhergestellt; die Tests werden dafür nicht abgeschwächt.
 
-Die Release-Pipeline enthält aktuell noch alte hart kodierte Prüfungen auf `20260808-29`, unter anderem:
+## 4. Live-/Supabase-Stand vor Merge
 
-- `grep -q "BUILD_ID = '20260808-29'" assets/local-voice-v28.js`
-- `grep -q '20260808-29' version.json`
+`gh-pages/version.json` lieferte beim letzten Check weiterhin `20260808-29`. Daher ist `20260809-29` vor erfolgreichem Merge/Publish ausdrücklich **nicht live**.
 
-Diese Checks müssen gegen die deklarierte aktuelle Build-ID laufen, idealerweise aus `version.json` ermittelt. Künftige Buildwechsel dürfen nicht wieder manuell viele Workflow-Greps brechen.
+Supabase-Projekt `efifbuqctylsujiauabg` ist fachlich bereits auf dem Stand von PR #104:
 
-### 4.2 `assets/local-voice-v28.js`
+- `bericht-durchstreichen`: approved v7
+- `bericht-folgebericht`: approved v4
+- `visite-anlegen`: approved v8
+- `vitalwerte-einzelwert`: approved v4
+- `vitalwerte-sammelerfassung`: approved v4
+- `berichtssuche`: draft v4
 
-Aktuell steht dort noch:
+Für den PWA-Refresh selbst ist keine neue Supabase-Migration erforderlich.
 
-`const BUILD_ID = '20260808-29';`
+## 5. Fachliche Grenzen für die Abnahme
 
-Das muss mit dem neuen Release synchronisiert werden. Die lokale Supertonic-Logik und der bestehende Modellcache dürfen dabei nicht beschädigt werden.
+- Bericht korrigieren = vorhandenen falschen Bericht durchstreichen; Folgebericht ist keine Korrektur.
+- Folgebericht = neuer ergänzender/fortführender Bericht zu bestehendem Geschehen.
+- Visite Schritt 8: hinterlegten Arzt normal auswählen; Filtersymbol nur als Sonderfall, wenn der Arzt dort fehlt.
+- Visite Schritt 12: Einrichtung / beim Arzt / telefonisch / per Mail.
+- Vitalwerte: Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz, Atemalkohol; Blutdruck mit Systole + Diastole; keine unbestätigten Einheiten erfinden.
+- Berichtssuche / Issue #103 bleibt Draft und wird nicht fachlich ausgebaut.
+- Guide-Header darf auf iOS/Android nicht vom DokoHilf-Header überdeckt werden.
 
-### 4.3 `assets/local-voice-gate-v28.js`
+## 6. Guide-Bibliothek / reales Ziel
 
-Aktuell steht dort noch:
+Nach Publish muss die Startansicht enthalten:
 
-`const STATIC_AUDIO_MANIFEST = './assets/guide-audio-catalog.json?v=20260808-29';`
+- `Häufig genutzt`
+- lokale anonyme Nutzungssortierung
+- individuelle SVG-Icons
+- `Alle Anleitungen anzeigen`
+- vollständige Liste aller fertigen Guides
+- gleiche Anleitung = gleiches Icon in beiden Ansichten
 
-Auch diese Manifest-Referenz muss auf den aktuellen Release abgestimmt werden, damit neuer Textkatalog und statische WAVs nicht mit einer alten Asset-Revision vermischt werden.
+Das reale installierte iPhone ist das abschließende Geräte-Endkriterium. CI und `gh-pages` müssen vorher technisch nachweisen, dass der neue Build tatsächlich ausgeliefert wird.
 
-### 4.4 Gesamtrepository nach alter Build-ID prüfen
+## 7. Voice
 
-Vor dem finalen Head das gesamte aktive Releasepfad-Repository nach `20260808-29` durchsuchen und jeden Treffer klassifizieren:
+- Supertonic F1 bleibt die reguläre kostenlose Stimme.
+- vollständiger Releasebuild: 160 bestätigte statische Sprachsätze
+- kein kostenpflichtiges Cloud-TTS
+- keine System-/Gerätestimme als regulärer Fallback
+- bestehende Live-Voice-/Detailhilfe-Hotfixes beim Publish nicht blind überschreiben
 
-- historische Dokumentation: darf ggf. bleiben
-- aktiver Code/Asset-URL: auf aktuelle Build-ID umstellen
-- Test: möglichst dynamisch gegen `version.json`
-- Workflow: dynamisch gegen `version.json`
-- Buildscript: dynamisch
+## 8. Nächste Freigabeschritte
 
-Ziel ist nicht nur #105 grün zu machen, sondern den Build-ID-Wechsel dauerhaft wartbar zu machen.
+1. den Reparatur-Commit als neuen exakten PR-Head setzen.
+2. alle acht Pflichtworkflows exakt auf diesem Head prüfen.
+3. jeden Fehler an der Ursache beheben und danach wieder einen vollständig neuen Head prüfen.
+4. erst bei 8/8 grün mit `expected_head_sha` mergen.
+5. Main-Workflow vollständig prüfen.
+6. `gh-pages` live verifizieren: `version.json`, Index, Service Worker, Guide-Library-Dateien, Icons, Voice-Assets und relevante Guide-Inhalte.
+7. nur falls automatischer Publish hängt gezielt nachziehen; vorhandene Live-Hotfixes erhalten.
+8. Nutzer danach am real installierten iPhone die neue Startansicht abnehmen lassen.
 
-## 5. Aktueller Live-Zustand
+## 9. Merge-/Live-Regel
 
-`gh-pages/version.json` wurde am 9. August 2026 erneut geprüft und liefert **noch**:
-
-- `buildId = 20260808-29`
-- Release `smart-help-voice-ui-v29`
-
-Das Update `20260809-29` ist daher **noch nicht live**. Dem Nutzer darf bis zur erneuten Live-Verifikation nicht gesagt werden, die neue Guide-Bibliothek sei auf dem realen iPhone ausgeliefert.
-
-## 6. Fachlicher Stand aus PR #104 / Supabase
-
-PR #104 ist bereits gemergt. Die zugehörigen fachlichen Supabase-Änderungen sind produktiv und sollen durch #105 nicht neu erfunden oder zurückgebaut werden.
-
-Am 9. August 2026 live in Supabase geprüft:
-
-- `bericht-durchstreichen`: approved, Version 7
-- `bericht-folgebericht`: approved, Version 4
-- `visite-anlegen`: approved, Version 8
-- `vitalwerte-einzelwert`: approved, Version 4
-- `vitalwerte-sammelerfassung`: approved, Version 4
-- `berichtssuche`: **draft**, Version 4
-
-Fachliche Regeln:
-
-### Bericht korrigieren
-Ein falsch formulierter / verschriebener bestehender Bericht wird durchgestrichen. Ein Folgebericht korrigiert den Text nicht. Bei Bedarf wird danach ein neuer korrekter Bericht angelegt.
-
-### Folgebericht
-Ein neuer Bericht mit Bezug auf ein bereits dokumentiertes Geschehen; ergänzt oder führt dieses fort, verändert den ursprünglichen Bericht aber nicht.
-
-### Visite
-Normaler Schritt: beim Bewohner hinterlegten durchführenden Arzt auswählen. Nur wenn dieser dort fehlt, das kleine Filtersymbol rechts neben der Arztauswahl aktivieren und aus allen systemweit hinterlegten Ärzten wählen. Dieser Fall ist als visueller **Sonderfall** darzustellen. Ortsoptionen: Einrichtung, beim Arzt, telefonisch, per Mail.
-
-### Vitalwerte
-Bestätigte Beispiele: Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz, Atemalkohol. Bei Blutdruck Systole und Diastole. Je nach Vitalwert erscheinen passende Eingabefelder. Keine nicht bestätigten Einheiten oder Zusatzfelder erfinden.
-
-### Berichtssuche
-Issue #103 bleibt offen. Die Anleitung `Analyse → Abfrage` ist nicht final bestätigt und bleibt Draft / `kommt später`. Keine zusätzliche Fachlogik oder Sprache dafür veröffentlichen, bis der Ablauf gemeinsam neu geprüft wurde.
-
-## 7. Guide-Bibliothek / UI-Ziel aus #104
-
-Die neue Bibliothek soll enthalten:
-
-1. `Häufig genutzt` statt nur einer starren Liste; Sortierung lokal anhand anonymer Guide-Nutzungszähler.
-2. `Alle Anleitungen anzeigen` für die vollständige Übersicht aller fertigen Guides.
-3. Eigene fachlich passende Icons je Guide, z. B. Visite = Stethoskop, Vitalwerte = Herz/Puls, Bericht = Dokument, Korrektur = Dokument/Korrektur, Folgebericht = Dokument/Verknüpfung, Medikation = Medikament, Formular = Formular/Liste, Übergabe = Pfeile/Übergabe.
-4. Dasselbe Guide-Icon muss in `Häufig genutzt` und `Alle Anleitungen` identisch sein.
-5. Direktguide-Header/Safe-Area darf auf iPhone und Android Titel, Zurück-Pfeil oder Schritte nicht überdecken.
-
-## 8. Voice / kostenlose Ausgabe
-
-- Supertonic F1 bleibt die einzige reguläre DokoHilf-Stimme.
-- 160 bestätigte statische Sätze werden im vollständigen Release gebaut.
-- Keine kostenpflichtige Cloud-TTS-Lösung einführen.
-- Kein Rückfall auf alte System-/Gerätestimme als normalen Pfad.
-- Bestehende Live-Voice-/Detailhilfe-Hotfixes beim Publish nicht blind überschreiben.
-- Sichtbarer Text und gesprochener Text müssen fachlich identisch und natürlich formuliert sein.
-
-## 9. Nächster ausführbarer Schritt
-
-1. aktuellen PR #105 / aktuellen Head live lesen; niemals von einer alten SHA ausgehen.
-2. alle aktiven `20260808-29`-Treffer im Releasepfad klassifizieren.
-3. `.github/workflows/pages.yml` build-dynamisch machen.
-4. `assets/local-voice-v28.js` mit dem neuen Build synchronisieren.
-5. `assets/local-voice-gate-v28.js` Manifest-Revision synchronisieren.
-6. relevante Render-/Release-Workflows ebenfalls von alten festen Build-ID-Greps befreien.
-7. neuen exakten PR-Head erzeugen.
-8. **alle 8 Workflows auf genau diesem Head** vollständig grün bekommen.
-9. erst dann PR #105 mit erwartetem Head mergen.
-10. Main-Publish beobachten.
-11. `gh-pages` live prüfen: `version.json`, `index.html`, Service Worker, Guide-Bibliothek, Icons, Voice-Assets.
-12. reale Geräteabnahme: installiertes iPhone muss die neue Bibliothek tatsächlich anzeigen.
-
-## 10. Merge-/Live-Regel
-
-- Kein Merge, solange auch nur ein Pflichtworkflow rot oder laufend ist.
-- Tests nicht schwächen, um grün zu werden; Ursache beheben.
-- Nach jeder Codeänderung zählt nur der neue exakte Head.
-- PR-Publish ist nicht mit realem `gh-pages`-Livezustand gleichzusetzen.
-- Nicht `live` behaupten, solange `gh-pages` nicht konkret den neuen Build ausliefert.
-- Wenn automatischer Publish hängt, nur gezielt nachziehen und bestehende Live-Hotfixes erhalten.
+- kein Merge bei rot/laufend
+- Tests nicht schwächen
+- nur derselbe exakte grüne Head zählt
+- PR-Build ist nicht `gh-pages`-Livezustand
+- `live` erst nach konkreter `gh-pages`-Verifikation behaupten

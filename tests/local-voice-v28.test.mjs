@@ -33,8 +33,10 @@ test('v29 nutzt dieselbe kostenlose Supertonic-F1-Stimme statisch für Guides un
   assert.match(runtime, /const LANGUAGE = 'de';/);
   assert.match(runtime, /const IOS_TOTAL_STEPS = 2;/);
   assert.match(runtime, /voice_styles\/F1\.json/);
+  assert.match(runtime, /meta\[name="dokohilf-build"\]/);
   assert.match(gate, /STATIC_VOICE = 'Supertonic-F1'/);
-  assert.match(gate, /STATIC_AUDIO_MANIFEST = '.\/assets\/guide-audio-catalog\.json\?v=20260808-29'/);
+  assert.match(gate, /meta\[name="dokohilf-build"\]/);
+  assert.match(gate, /STATIC_AUDIO_MANIFEST = `\.\/assets\/guide-audio-catalog\.json\?v=\$\{encodeURIComponent\(BUILD_ID\)\}`/);
   assert.match(gate, /static-supertonic-guide-v29/);
   assert.match(gate, /dokohilf-chat-router/);
   assert.match(gate, /loadStaticSupertonicVoice/);

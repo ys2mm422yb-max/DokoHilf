@@ -66,20 +66,22 @@ jobs:
       - name: Build exact releasable site
         run: |
           set -euo pipefail
+          BUILD_ID="$(node -p "require('./version.json').buildId")"
+          test -n "$BUILD_ID"
           bash -n scripts/build-static-site-v27.sh
           bash scripts/build-static-site-v27.sh _detail_site
           grep -q 'KI · v29' _detail_site/index.html
-          grep -q 'assets/detail-help-v27.js?v=20260808-29' _detail_site/index.html
-          grep -q 'assets/detail-help-polish-v27.js?v=20260808-29' _detail_site/index.html
-          grep -q 'assets/detail-help-render-sync-v27.js?v=20260808-29' _detail_site/index.html
-          grep -q 'assets/context-voice-hotfix-v28.js?v=20260808-29' _detail_site/index.html
-          grep -q 'assets/smart-help-v29.js?v=20260808-29' _detail_site/index.html
-          grep -q 'assets/local-voice-v28.js?v=20260808-29' _detail_site/index.html
-          grep -q 'assets/local-voice-gate-v28.js?v=20260808-29' _detail_site/index.html
+          grep -Fq "assets/detail-help-v27.js?v=$BUILD_ID" _detail_site/index.html
+          grep -Fq "assets/detail-help-polish-v27.js?v=$BUILD_ID" _detail_site/index.html
+          grep -Fq "assets/detail-help-render-sync-v27.js?v=$BUILD_ID" _detail_site/index.html
+          grep -Fq "assets/context-voice-hotfix-v28.js?v=$BUILD_ID" _detail_site/index.html
+          grep -Fq "assets/smart-help-v29.js?v=$BUILD_ID" _detail_site/index.html
+          grep -Fq "assets/local-voice-v28.js?v=$BUILD_ID" _detail_site/index.html
+          grep -Fq "assets/local-voice-gate-v28.js?v=$BUILD_ID" _detail_site/index.html
           grep -q "HOTFIX_REVISION = '20260808-context-voice-v29-1'" _detail_site/service-worker.js
-          grep -q 'detail-help-v27.js?v=20260808-29' _detail_site/service-worker.js
-          grep -q 'smart-help-v29.js?v=20260808-29' _detail_site/service-worker.js
-          grep -q 'local-voice-v28.js?v=20260808-29' _detail_site/service-worker.js
+          grep -Fq "detail-help-v27.js?v=$BUILD_ID" _detail_site/service-worker.js
+          grep -Fq "smart-help-v29.js?v=$BUILD_ID" _detail_site/service-worker.js
+          grep -Fq "local-voice-v28.js?v=$BUILD_ID" _detail_site/service-worker.js
 
       - name: Render detail help on iOS and Android
         run: |

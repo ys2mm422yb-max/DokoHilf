@@ -13,10 +13,10 @@
 - Einziges Repository: `ys2mm422yb-max/DokoHilf`.
 - Einziges Supabase-Projekt: `efifbuqctylsujiauabg`, Region `eu-central-1`.
 - DokoHilf ist ausschließlich eine erklärende Schritt-für-Schritt-Bedienhilfe.
-- Keine App-Konten, keine Anmeldung, keine Bewohner-/Mitarbeiterprofile, keine Fallakten und keine personenbezogenen Eingabemasken.
+- DokoHilf besitzt keinerlei Konten oder Anmeldung – einschließlich Redaktions-, Mitarbeiter- oder Administrationskonten –, keine Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken.
 - Keine echten Bewohner-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in App, Repository, Supabase, Tests oder Artefakten.
-- Tests nur mit synthetischen UI-Zuständen, neutralen Platzhaltern und erfundenen Werten.
-- Öffentliche Inhalte nur selbst formuliert, anonymisiert und veröffentlichungsfähig.
+- Tests nur mit synthetischen UI-Zuständen, neutralen Platzhaltern und erfundenen Werten; keine reale Person und kein realer Fall werden nachgebildet.
+- Öffentliche Inhalte nur selbst formuliert, anonymisiert und veröffentlichungsfähig; Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert.
 - Keine erfundenen Klickwege oder Feldnamen. `CONFIRMED_WORKFLOWS.md` ist fachliche Source of Truth.
 - Supertonic F1 bleibt die kostenlose reguläre Stimme. Keine kostenpflichtige Cloud-TTS-Lösung neu einführen.
 
@@ -99,47 +99,40 @@ Ursache: Die öffentliche Build-ID blieb über mehrere Releases `20260808-29`. E
 
 Darum existiert PR #105: `Force installed PWA to refresh to guide library`.
 
-## 7. PR #105 – aktueller Stand
+## 7. PR #105 – aktueller technischer Stand
 
 Branch: `fix/v29-force-pwa-refresh-20260809`  
 Ziel-Build: `20260809-29`
 
-`version.json` im PR steht bereits auf `20260809-29`.
+`version.json`, `index.html` und `service-worker.js` verwenden den neuen Build bereits.
 
-Bereits build-dynamisch gemacht:
+Der aktive Releasepfad wurde am 9. August 2026 so repariert, dass künftige Buildwechsel nicht erneut an derselben Datumskonstante hängen:
 
-- `scripts/apply-detail-help-v27.mjs`
-- `scripts/apply-local-voice-v28.mjs`
-- `scripts/build-static-site-v27.sh`
-- mehrere Regressionstests
-- neuer Build-Synchronitätstest für Index / `version.json` / Service Worker
+- `.github/workflows/pages.yml` liest die deklarierte Build-ID aus `version.json` und prüft Index sowie Service Worker dagegen.
+- `.github/workflows/ui-validation-v27.yml` prüft die gerenderte Meta-Build-ID dynamisch.
+- `.github/workflows/detail-help-mobile.yml` prüft alle Release-Asset-URLs gegen die deklarierte Build-ID.
+- `.github/workflows/local-voice-v28-mobile.yml` prüft Voice-Assets gegen die deklarierte Build-ID.
+- `.github/workflows/report-conditional-mobile-v28.yml` prüft `version.json` dynamisch.
+- `assets/local-voice-v28.js` übernimmt seine Build-ID aus dem ausgelieferten `dokohilf-build`-Meta-Tag.
+- `assets/local-voice-gate-v28.js` erzeugt die Manifest-Revision aus derselben ausgelieferten Build-ID.
+- `scripts/apply-detail-help-v27.mjs`, `scripts/apply-local-voice-v28.mjs` und `scripts/build-static-site-v27.sh` waren bereits auf `version.json` umgestellt und bleiben so erhalten.
+- Die Build-/Voice-Regressionen prüfen den dynamischen Vertrag statt ein neues Datum fest einzubrennen.
+- Die etablierten Account-/Datenschutzformulierungen im Handoff wurden wieder vollständig hergestellt; Tests wurden dafür nicht abgeschwächt.
 
-Die detaillierte technische Übergabe steht in `ACTIVE_WORK_PWA_REFRESH_V29.md`.
+`20260808-29` darf weiterhin in historischen Fehlerbeschreibungen stehen. Benannte Revisionen wie `20260808-context-voice-v29-1` oder `20260808-smart-help-voice-ui-v29-1` sind eigenständige Hotfix-Revisionskennungen und keine aktuelle Build-ID.
 
-### Noch offene Blocker im zuletzt geprüften Stand
+Die Freigabe bleibt blockiert, bis alle acht Pflichtworkflows auf demselben exakten PR-Head grün sind. Erst danach darf gemergt werden.
 
-- `.github/workflows/pages.yml` enthält weiterhin alte Greps auf `20260808-29`.
-- `assets/local-voice-v28.js` enthält weiterhin `const BUILD_ID = '20260808-29';`.
-- `assets/local-voice-gate-v28.js` enthält weiterhin `guide-audio-catalog.json?v=20260808-29`.
-- weitere aktive Release-/Renderpfade müssen nach `20260808-29` durchsucht und dynamisiert werden, soweit der Treffer kein rein historischer Text ist.
+## 8. Aktueller `gh-pages`-Stand vor Freigabe von #105
 
-Auf dem vor der Dokumentationsaktualisierung geprüften PR-Head waren:
-
-**grün:** Exact PR head, Context and Voice Hotfix v28, context-aware guide help v28.  
-**rot:** Deploy, dark iPhone UI, detailed help iOS/Android, local voice iOS/Android, report conditional iOS/Android.
-
-Diese roten Workflows sind Releaseblocker. Nicht mergen.
-
-## 8. Aktueller `gh-pages`-Stand
-
-Am 9. August 2026 erneut live geprüft:
+Am 9. August 2026 vor der finalen Freigabe erneut live geprüft:
 
 `gh-pages/version.json` liefert weiterhin:
 
 - `buildId = 20260808-29`
 - Release `smart-help-voice-ui-v29`
 
-Damit ist der PWA-Refresh-Build `20260809-29` **noch nicht live**.
+Damit ist der PWA-Refresh-Build `20260809-29` vor Merge von #105 **noch nicht live**.
 
 Ein neuer Chat darf nicht behaupten, die neue Guide-Bibliothek sei ausgeliefert, bevor `gh-pages` konkret den neuen Build zeigt und die reale Geräteabnahme erfolgreich war.
 
@@ -164,21 +157,16 @@ Ein neuer Chat darf nicht behaupten, die neue Guide-Bibliothek sei ausgeliefert,
 
 `PROJECT_RULES.md` bleibt hierfür verbindlich.
 
-## 11. Nächster ausführbarer Schritt
+## 11. Freigabeschritte für PR #105
 
-1. PR #105 aktuellen Head live lesen.
-2. gesamtes aktive Releasepfad-Repository nach `20260808-29` durchsuchen.
-3. jeden Treffer klassifizieren; aktive Code-/Workflow-/Assetreferenzen dynamisieren oder auf `20260809-29` synchronisieren.
-4. `.github/workflows/pages.yml` von alten festen Build-Greps befreien.
-5. `assets/local-voice-v28.js` synchronisieren.
-6. `assets/local-voice-gate-v28.js` Manifest-Revision synchronisieren.
-7. Render-/Releaseworkflows ebenfalls robust gegen künftige Buildwechsel machen.
-8. neuen exakten Head erzeugen.
-9. alle 8 Pflichtworkflows auf **genau diesem Head** grün bekommen.
-10. erst dann PR #105 mit erwartetem Head mergen.
-11. Main-Publish beobachten.
-12. `gh-pages` live verifizieren: `version.json`, Index, Service Worker, Guide-Bibliothek, Icons, Voice-Assets.
-13. reales installiertes iPhone prüfen: neue `Häufig genutzt` / `Alle Anleitungen`-Ansicht muss tatsächlich erscheinen.
+1. aktuellen PR-Head nach der Build-ID-Reparatur bestimmen.
+2. alle acht Pflichtworkflows genau auf diesem Head prüfen.
+3. jeden verbleibenden Fehler an der Ursache beheben und anschließend einen neuen exakten Head vollständig neu prüfen.
+4. erst bei acht grünen Pflichtworkflows PR #105 mit `expected_head_sha` mergen.
+5. Main-Workflow vollständig prüfen.
+6. `gh-pages` konkret verifizieren: `version.json`, Index, Service Worker, Guide-Bibliothek, Icons, Voice-Assets und relevante Guide-Inhalte.
+7. nur bei hängendem Publish gezielt Live-Dateien nachziehen; bestehende Live-Hotfixes nicht blind überschreiben.
+8. reales installiertes iPhone prüfen: neue `Häufig genutzt` / `Alle Anleitungen`-Ansicht muss tatsächlich erscheinen.
 
 ## 12. Pflicht für jeden neuen Chat
 
