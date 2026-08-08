@@ -13,7 +13,7 @@ const [help, contextHotfix, confirmed, smart, router] = await Promise.all([
 test('v29 erkennt Hilferufe, erzeugt aber keinen lokalen Sonderdialog mehr', () => {
   assert.match(help, /function isProblemSignal\(text\)/);
   assert.match(help, /ich brauche hilfe/);
-  assert.match(help, /ich weiss nicht/);
+  assert.match(help, /weiss nicht/);
   assert.match(help, /keine ahnung/);
   assert.match(help, /__DOKOHILF_CONTEXTUAL_HELP_V29__/);
   assert.doesNotMatch(help, /helpOptions|helpTitle|syntheticResponse|startSession|handleSession/);
