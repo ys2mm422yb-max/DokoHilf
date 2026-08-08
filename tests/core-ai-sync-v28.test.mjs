@@ -26,6 +26,21 @@ test('Core nennt keine System- oder Gerätestimme als Voice-Fallback', () => {
   assert.match(source, /kostenlose DokoHilf-Stimme Supertonic F1/);
 });
 
+test('Basisantworten sind nicht von der Wissensbasis abhängig', () => {
+  const sensitiveCheck = source.indexOf("messages.some((message) => message.role === 'user' && containsSensitiveData(message.content))");
+  const basicReply = source.indexOf('const basic = quickBasicReply(lastText);', sensitiveCheck);
+  const knowledgeLoad = source.indexOf('knowledge = await loadKnowledge();', sensitiveCheck);
+  assert.ok(basicReply > sensitiveCheck, 'Basisantwort muss nach der Echtdatenprüfung liegen');
+  assert.ok(knowledgeLoad > basicReply, 'Basisantwort muss vor dem Wissensabruf liegen');
+});
+
+test('Wissensabruf besitzt einen kurzen Retry statt Einmalfehler', () => {
+  assert.match(source, /async function fetchKnowledgeJson/);
+  assert.match(source, /for \(let attempt = 0; attempt < 2; attempt \+= 1\)/);
+  assert.match(source, /setTimeout\(resolve, 120\)/);
+  assert.match(source, /AbortSignal\.timeout\(4_000\)/);
+});
+
 test('Core enthält keine alte hart codierte Klickweg-Wissensbasis', () => {
   assert.doesNotMatch(source, /FREIGEGEBENE BEDIENWEGE/);
   assert.doesNotMatch(source, /Neuer Berichtseintrag/);
