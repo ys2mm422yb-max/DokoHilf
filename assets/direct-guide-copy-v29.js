@@ -36,7 +36,7 @@
     if (!list || steps.length < 7) return false;
 
     const lastParagraph = steps[6].querySelector('p');
-    const naturalLast = 'Das geöffnete Formular nach der bei euch gültigen fachlichen Vorgabe bearbeiten. Nicht bestätigte Formularfelder werden von DokoHilf nicht erfunden.';
+    const naturalLast = 'Das geöffnete Formular wie gewohnt ausfüllen.';
     if (lastParagraph && lastParagraph.textContent !== naturalLast) lastParagraph.textContent = naturalLast;
 
     if (!view.querySelector('[data-v29-form-save-step]')) {
@@ -52,8 +52,15 @@
     return true;
   }
 
+  function polishChatHead() {
+    const copy = document.querySelector('.chat-head p');
+    const natural = 'Beschreibe kurz dein Ziel. DokoHilf führt dich Schritt für Schritt.';
+    if (copy && copy.textContent !== natural) copy.textContent = natural;
+  }
+
   function sync() {
     scheduled = false;
+    polishChatHead();
     const view = document.getElementById('directGuideView');
     if (!view || view.hidden) return;
     polishPresence(view);
