@@ -221,26 +221,35 @@ try {
   const orb = page.locator('.voice-focus-stage .voice-orb');
   await orb.waitFor({ state: 'visible' });
 
-  // Die echte Sprachsteuerung darf die optischen QA-Zustände nicht während der Messung zurück auf "listening" setzen.
-  // Zuerst darf die statische Supertonic-Begrüßung anlaufen, danach pausieren wir nur für die deterministische CSS-Prüfung.
+  // Zuerst darf die statische Supertonic-Begrüßung anlaufen. Für die optische QA
+  // messen wir jeden künstlichen Zustand anschließend atomar, bevor die laufende
+  // Sprachsteuerung den Status wieder auf den echten Laufzeitzustand setzen kann.
   await page.waitForTimeout(120);
   await page.evaluate(() => document.getElementById('pauseVoiceButton')?.click());
   await page.waitForTimeout(80);
 
   const visualStates = {};
   for (const voiceState of ['idle', 'listening', 'thinking', 'speaking', 'error']) {
-    await page.evaluate(value => { document.getElementById('appShell').dataset.voiceState = value; }, voiceState);
-    await page.waitForTimeout(40);
-    visualStates[voiceState] = await orb.evaluate(node => ({
-      animation: getComputedStyle(node).animationName,
-      shadow: getComputedStyle(node).boxShadow,
-      filter: getComputedStyle(node).filter,
-    }));
+    visualStates[voiceState] = await page.evaluate(value => {
+      const shell = document.getElementById('appShell');
+      const node = document.querySelector('.voice-focus-stage .voice-orb');
+      shell.dataset.voiceState = value;
+      const style = getComputedStyle(node);
+      const before = getComputedStyle(node, '::before');
+      return {
+        state: shell.dataset.voiceState,
+        animation: style.animationName,
+        shadow: style.boxShadow,
+        filter: style.filter,
+        beforeAnimation: before.animationName,
+        beforeBorder: before.borderColor,
+      };
+    }, voiceState);
   }
-  assert(visualStates.listening.animation.includes('v29ListenBreath'), 'Listening-Animation fehlt.');
-  assert(visualStates.thinking.shadow !== visualStates.listening.shadow, 'Thinking-Zustand ist optisch nicht eigenständig.');
-  assert(visualStates.speaking.animation.includes('v29SpeakPulse'), 'Speaking-Animation fehlt.');
-  assert(visualStates.error.filter !== visualStates.idle.filter, 'Error-Zustand ist optisch nicht eigenständig.');
+  assert(visualStates.listening.state === 'listening' && visualStates.listening.animation.includes('v29ListenBreath'), 'Listening-Animation fehlt.');
+  assert(visualStates.thinking.state === 'thinking' && visualStates.thinking.beforeAnimation.includes('v29ThinkSpin'), 'Thinking-Zustand ist optisch nicht eigenständig.');
+  assert(visualStates.speaking.state === 'speaking' && visualStates.speaking.animation.includes('v29SpeakPulse'), 'Speaking-Animation fehlt.');
+  assert(visualStates.error.state === 'error' && visualStates.error.filter !== visualStates.idle.filter, 'Error-Zustand ist optisch nicht eigenständig.');
   const voiceState = await state();
   assert(voiceState.scrollWidth <= voiceState.viewportWidth + 1, `Sprachmodus hat auf ${PROFILE} horizontalen Überlauf.`);
   await page.evaluate(() => { document.getElementById('appShell').dataset.voiceState = 'speaking'; });
