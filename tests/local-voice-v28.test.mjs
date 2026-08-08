@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [runtime, gate, experience, helper, ux, detail, contextHotfix, renderSync, applyLocal, applyDetail, build, builder, sourceCatalogText, extrasText, version, index, worker] = await Promise.all([
+const [runtime, gate, experience, helper, ux, detail, contextHotfix, renderSync, applyLocal, applyDetail, build, builder, sourceCatalogText, extrasText, releaseText, version, index, worker] = await Promise.all([
   readFile(new URL('../assets/local-voice-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/local-voice-gate-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/experience-v27.js', import.meta.url), 'utf8'),
@@ -17,6 +17,7 @@ const [runtime, gate, experience, helper, ux, detail, contextHotfix, renderSync,
   readFile(new URL('../scripts/build-supertonic-guide-audio-v28.py', import.meta.url), 'utf8'),
   readFile(new URL('../assets/guide-audio-catalog.json', import.meta.url), 'utf8'),
   readFile(new URL('../assets/voice-extra-catalog-v28.json', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/voice-release-catalog-v29.json', import.meta.url), 'utf8'),
   readFile(new URL('../version.json', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
@@ -24,31 +25,35 @@ const [runtime, gate, experience, helper, ux, detail, contextHotfix, renderSync,
 
 const sourceCatalog = JSON.parse(sourceCatalogText);
 const extraCatalog = JSON.parse(extrasText);
+const releaseCatalog = JSON.parse(releaseText);
 
-test('v28 nutzt dieselbe kostenlose Supertonic-F1-Stimme statisch für Guides und lokal nur bei Bedarf', () => {
+test('v29 nutzt dieselbe kostenlose Supertonic-F1-Stimme statisch für Guides und lokal nur bei Bedarf', () => {
   assert.match(runtime, /Supertone\/supertonic-3\/resolve\/main/);
   assert.match(runtime, /const LANGUAGE = 'de';/);
   assert.match(runtime, /const IOS_TOTAL_STEPS = 2;/);
   assert.match(runtime, /voice_styles\/F1\.json/);
   assert.match(gate, /STATIC_VOICE = 'Supertonic-F1'/);
-  assert.match(gate, /STATIC_AUDIO_MANIFEST = '.\/assets\/guide-audio-catalog\.json\?v=20260807-28'/);
-  assert.match(gate, /static-supertonic-guide-v28/);
+  assert.match(gate, /STATIC_AUDIO_MANIFEST = '.\/assets\/guide-audio-catalog\.json\?v=20260808-29'/);
+  assert.match(gate, /static-supertonic-guide-v29/);
+  assert.match(gate, /dokohilf-chat-router/);
   assert.match(gate, /loadStaticSupertonicVoice/);
   assert.match(gate, /DokoHilfLocalVoiceV28\.synthesize/);
   assert.ok(gate.indexOf('loadStaticSupertonicVoice(text)') < gate.indexOf('localFallback(text)'), 'Statisches Supertonic-Audio muss vor lokaler Inferenz geprüft werden.');
   assert.doesNotMatch(gate, /APPROVED_AUDIO_ENDPOINT|dokohilf-guide-audio\?manifest=1|X-DokoHilf-Voice': 'Gacrux/);
 });
 
-test('GitHub-Build erzeugt alle bestätigten statischen Sprachsätze ohne TTS-API mit Supertonic 3', () => {
+test('GitHub-Build erzeugt 160 bestätigte statische Sprachsätze ohne TTS-API mit Supertonic 3', () => {
   assert.match(builder, /from supertonic import TTS/);
   assert.match(builder, /TTS\(auto_download=True\)/);
   assert.match(builder, /lang='de'/);
   assert.match(builder, /voice_name=args\.voice/);
   assert.match(builder, /--extra-catalog/);
+  assert.match(builder, /--release-catalog/);
   assert.match(builder, /merged_entries/);
   assert.match(builder, /BASE_GUIDE_COUNT = 93/);
   assert.match(builder, /EXTRA_SPEECH_COUNT = 18/);
-  assert.match(builder, /STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT \+ EXTRA_SPEECH_COUNT/);
+  assert.match(builder, /RELEASE_SPEECH_COUNT = 49/);
+  assert.match(builder, /STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT \+ EXTRA_SPEECH_COUNT \+ RELEASE_SPEECH_COUNT/);
   assert.match(builder, /--validate-only/);
   assert.match(builder, /supertonic_text/);
   assert.match(builder, /'„': ''/);
@@ -56,14 +61,14 @@ test('GitHub-Build erzeugt alle bestätigten statischen Sprachsätze ohne TTS-AP
   assert.match(build, /Statischer Supertonic-Sprachbestand unvollständig/);
   assert.equal(sourceCatalog.entries.length, 93);
   assert.equal(extraCatalog.entries.length, 18);
-  assert.equal(sourceCatalog.entries.length + extraCatalog.entries.length, 111);
-  const normalized = [...sourceCatalog.entries, ...extraCatalog.entries]
-    .map(entry => String(entry.text || '').toLocaleLowerCase('de-DE').replace(/\s+/g, ' ').trim());
-  assert.equal(new Set(normalized).size, 111);
-  assert.match(extrasText, /Okay\. Schau oben in die grüne Reiterleiste/);
-  assert.match(extrasText, /Die Medikation darf hier nur angesehen werden/);
-  assert.match(extrasText, /Der Ablauf ist erledigt/);
+  assert.equal(releaseCatalog.entries.length, 49);
+  const all = [...sourceCatalog.entries, ...extraCatalog.entries, ...releaseCatalog.entries];
+  assert.equal(all.length, 160);
+  const normalized = all.map(entry => String(entry.text || '').toLocaleLowerCase('de-DE').replace(/\s+/g, ' ').trim());
+  assert.equal(new Set(normalized).size, 160);
   assert.match(extrasText, /Hier werden fachliche Beobachtungen und Ereignisse als Berichtseinträge dokumentiert/);
+  assert.match(releaseText, /Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“/);
+  assert.match(releaseText, /Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste/);
 });
 
 test('Bericht-Detailhilfe bleibt im Bericht-Kontext und übernimmt keine Vitalwerte-Schaltfläche', () => {
@@ -99,27 +104,28 @@ test('Voice-Einstieg startet weiter sofort; das lokale Modell wird erst danach i
   assert.doesNotMatch(contextHotfix, /localStorage|sessionStorage|indexedDB/);
 });
 
-test('iPhone-Inferenz kann nicht endlos drehen und wird im Hotfix früher freigegeben', () => {
-  assert.match(gate, /const IOS_LOCAL_TIMEOUT_MS = 20000;/);
+test('iPhone-Inferenz kann nicht endlos drehen und v29 beendet die lokale Notinferenz nach acht Sekunden', () => {
+  assert.match(gate, /const IOS_LOCAL_TIMEOUT_MS = 8000;/);
   assert.match(gate, /const OTHER_LOCAL_TIMEOUT_MS = 35000;/);
   assert.match(gate, /local_voice_timeout/);
   assert.match(gate, /updateVoiceStatus\('Stimme nicht bereit'/);
   assert.match(contextHotfix, /const IOS_SYNTHESIS_TIMEOUT_MS = 12000;/);
   assert.match(contextHotfix, /new Error\('local_voice_timeout'\)/);
+  assert.ok(gate.indexOf('IOS_LOCAL_TIMEOUT_MS = 8000') >= 0, 'Der finale v29-Gate muss vor dem älteren 12-Sekunden-Hotfix abbrechen.');
 });
 
-test('statische Supertonic-Audios werden separat gecacht und bei diesem Hotfix sauber erneuert', () => {
-  assert.match(gate, /dokohilf-static-supertonic-audio-v28-1/);
+test('statische Supertonic-Audios erhalten einen neuen v29-Cache und der alte v28-Cache wird entfernt', () => {
+  assert.match(gate, /dokohilf-static-supertonic-audio-v29-1/);
   assert.match(gate, /entry\.text/);
   assert.match(gate, /entry\.file/);
   assert.match(gate, /stripExerciseNotice/);
-  assert.match(worker, /STATIC_AUDIO_CACHE/);
-  assert.match(worker, /key !== STATIC_AUDIO_CACHE/);
-  assert.match(worker, /await caches\.delete\(STATIC_AUDIO_CACHE\)/);
+  assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1'/);
+  assert.match(worker, /dokohilf-static-supertonic-audio-v28-1/);
+  assert.match(worker, /caches\.delete\('dokohilf-static-supertonic-audio-v28-1'\)/);
   assert.match(worker, /guide-audio-catalog\.json/);
 });
 
-test('legacy Geräte-Sprachraces bleiben bei v28 deaktiviert', () => {
+test('legacy Geräte-Sprachraces bleiben auch in v29 deaktiviert', () => {
   assert.match(ux, /if \(localVoiceV28\(\)\) return previousFetch\(input, init\);/);
   assert.match(ux, /if \(localVoiceV28\(\)\) return;\n    const synth/);
   assert.match(detail, /&& !localVoiceV28\(\)/);
@@ -133,7 +139,7 @@ test('Systemstimme bleibt blockiert und der bestehende lokale Guard bleibt aktiv
   assert.match(applyLocal, /window\.__DOKOHILF_LOCAL_VOICE_V28__ === true/);
 });
 
-test('v28 lädt keine alte Voice-Diagnostik oder Cloud-TTS-Sprachquelle im Browser', () => {
+test('v29 lädt keine alte Voice-Diagnostik oder Cloud-TTS-Sprachquelle im Releasebuild', () => {
   assert.match(applyLocal, /replace\(`  <script src="assets\/voice-diagnostics\.js/);
   assert.match(applyLocal, /if \(window\.__DOKOHILF_LOCAL_VOICE_V28__ !== true\) loadPrebuiltManifest/);
   assert.match(experience, /if \(window\.__DOKOHILF_LOCAL_VOICE_V28__ === true\) return previousFetch\(input, init\);/);
@@ -145,21 +151,24 @@ test('v28 lädt keine alte Voice-Diagnostik oder Cloud-TTS-Sprachquelle im Brows
   assert.doesNotMatch(gate, /APPROVED_AUDIO_ENDPOINT|Gacrux/);
 });
 
-test('v28 Build-ID, Load-Order, report spokenText und Supertonic-PWA-Revision sind explizit', () => {
-  assert.match(version, /"buildId": "20260807-28"/);
-  assert.match(index, /KI · v28/);
-  const local = index.indexOf('local-voice-v28.js?v=20260807-28');
-  const experience = index.indexOf('experience-v27.js?v=20260807-28');
-  const uxIndex = index.indexOf('ux-v27.js?v=20260807-28');
-  const gateIndex = index.indexOf('local-voice-gate-v28.js?v=20260807-28');
-  const app = index.indexOf('app.js?v=20260807-28');
-  assert(local >= 0 && local < experience && experience < uxIndex && uxIndex < gateIndex && gateIndex < app);
-  assert.match(worker, /HOTFIX_REVISION = '20260807-static-supertonic-guides-v28-4'/);
+test('v29 Build-ID, Load-Order, report spokenText und PWA-Revision sind explizit', () => {
+  assert.match(version, /"buildId": "20260808-29"/);
+  assert.match(index, /KI · v29/);
+  const local = index.indexOf('local-voice-v28.js?v=20260808-29');
+  const experienceIndex = index.indexOf('experience-v27.js?v=20260808-29');
+  const uxIndex = index.indexOf('ux-v27.js?v=20260808-29');
+  const uiIndex = index.indexOf('v29-ui.js?v=20260808-29');
+  const gateIndex = index.indexOf('local-voice-gate-v28.js?v=20260808-29');
+  const copyIndex = index.indexOf('direct-guide-copy-v29.js?v=20260808-29');
+  const app = index.indexOf('app.js?v=20260808-29');
+  assert(local >= 0 && local < experienceIndex && experienceIndex < uxIndex && uxIndex < uiIndex && uiIndex < gateIndex && gateIndex < copyIndex && copyIndex < app);
+  assert.match(worker, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
   assert.match(worker, /LOCAL_VOICE_MODEL_CACHE/);
-  assert.match(worker, /STATIC_AUDIO_CACHE/);
+  assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1'/);
   assert.match(applyDetail, /context-voice-hotfix-v28\.js\?v=\$\{BUILD_ID\}/);
   assert.match(applyDetail, /contextVoiceHotfixIndex < gateIndex/);
-  assert.match(build, /static-supertonic-guide-v28/);
+  assert.match(applyDetail, /20260808-context-voice-v29-1/);
+  assert.match(build, /static-supertonic-guide-v29/);
   assert.match(build, /payload\.spokenText/);
   assert.match(build, /Sonderfall · nur bei 2 Kategorien/);
   assert.match(build, /Sturzprotokoll/);
@@ -168,6 +177,6 @@ test('v28 Build-ID, Load-Order, report spokenText und Supertonic-PWA-Revision si
 test('Modellgewichte werden nicht ins Repository eingebettet; allgemeine statische Sprach-WAVs gehen nur in Pages', () => {
   assert.match(helper, /Model weights are NOT redistributed/);
   assert.doesNotMatch(helper, /data:application\/octet-stream;base64/);
-  assert.match(build, /baseGuideCount/);
-  assert.match(build, /Okay\. Schau oben in die grüne Reiterleiste/);
+  assert.match(build, /releaseSpeechCount/);
+  assert.match(build, /Wähle zuerst den gewünschten Bewohner und suche danach/);
 });
