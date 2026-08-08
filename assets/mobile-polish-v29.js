@@ -97,9 +97,6 @@ html[data-dokohilf-ui="v29"] .app-shell:not([data-v29-guide-active="true"]) .com
     const chatHead = document.getElementById('chatHead');
     if (!shell || !chatHead) return;
 
-    const h1 = chatHead.querySelector('h1');
-    if (shell.dataset.mode === 'chat' && h1 && h1.textContent !== 'Schreiben') h1.textContent = 'Schreiben';
-
     const messages = document.getElementById('messages');
     if (messages) {
       [...messages.querySelectorAll('.message.assistant')].forEach(message => {
