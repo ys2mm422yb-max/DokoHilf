@@ -2,18 +2,21 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [polish, index, sw] = await Promise.all([
+const [polish, axisFix, index, sw] = await Promise.all([
   readFile(new URL('../assets/mobile-polish-v29.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/card-axis-fix-v29.css', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
 ]);
 
-test('mobile polish loads after the premium v29 presentation layer', () => {
+test('mobile polish loads after the premium v29 presentation layer and the critical axis stylesheet is cache-busted', () => {
   const premium = index.indexOf('assets/v29-ui.js?v=20260808-29');
-  const mobile = index.indexOf('assets/mobile-polish-v29.js?v=20260808-29');
+  const mobile = index.indexOf('assets/mobile-polish-v29.js?v=20260808-29-cardaxis1');
   assert.ok(premium >= 0 && mobile > premium);
-  assert.match(sw, /mobile-polish-v29\.js\?v=20260808-29/);
-  assert.match(sw, /mobile-polish-4/);
+  assert.match(index, /assets\/card-axis-fix-v29\.css\?v=20260808-29-cardaxis1/);
+  assert.match(sw, /card-axis-fix-v29\.css\?v=20260808-29-cardaxis1/);
+  assert.match(sw, /mobile-polish-v29\.js\?v=20260808-29-cardaxis1/);
+  assert.match(sw, /mobile-polish-5/);
 });
 
 test('start and typed-chat headers cannot float over mobile content', () => {
@@ -22,12 +25,11 @@ test('start and typed-chat headers cannot float over mobile content', () => {
   assert.match(polish, /data-mode="chat"\] \.workspace:not\(\[hidden\]\)\{min-height:0!important;display:block!important\}/);
 });
 
-test('home cards keep icon, copy and arrow on one centered mobile axis', () => {
-  assert.match(polish, /grid-template-columns:54px minmax\(0,1fr\) 34px!important;grid-template-rows:1fr!important;column-gap:12px!important;align-items:center!important/);
-  assert.match(polish, /min-height:94px!important/);
-  assert.match(polish, /\.mode-icon\{[\s\S]*grid-column:1!important;grid-row:1!important;place-self:center!important/);
-  assert.match(polish, /\.mode-text\{[\s\S]*grid-column:2!important;grid-row:1!important;align-self:center!important;display:flex!important;flex-direction:column!important;justify-content:center!important/);
-  assert.match(polish, /\.mode-arrow\{[\s\S]*position:static!important;right:auto!important;top:auto!important;grid-column:3!important;grid-row:1!important;place-self:center!important;transform:none!important/);
+test('home cards use absolute 50-percent axis centering independent of runtime grid placement', () => {
+  assert.match(axisFix, /#startScreen \.mode-card\{[\s\S]*position:relative!important;[\s\S]*display:block!important/);
+  assert.match(axisFix, /#startScreen \.mode-card \.mode-icon\{[\s\S]*position:absolute!important;[\s\S]*top:50%!important;[\s\S]*transform:translateY\(-50%\)!important/);
+  assert.match(axisFix, /#startScreen \.mode-card \.mode-arrow\{[\s\S]*position:absolute!important;[\s\S]*top:50%!important;[\s\S]*transform:translateY\(-50%\)!important/);
+  assert.match(axisFix, /#startScreen \.mode-card \.mode-text\{[\s\S]*display:flex!important;[\s\S]*justify-content:center!important/);
 });
 
 test('home frequent flows stay compact without breaking touch layout', () => {
