@@ -18,7 +18,6 @@ const CORE_FILES = [
   './assets/v29-ui.css?v=20260808-29',
   './assets/update-manager.js?v=20260808-29',
   './assets/mobile-audio-fix.js?v=20260808-29',
-  './assets/voice-diagnostics.js?v=20260808-29',
   './assets/routing-fix.js?v=20260808-29',
   './assets/conversation-intelligence.js?v=20260808-29',
   './assets/clarification-ui.js?v=20260808-29',
