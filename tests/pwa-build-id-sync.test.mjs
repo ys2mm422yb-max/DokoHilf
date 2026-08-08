@@ -16,7 +16,8 @@ test('installed PWA can detect and force the guide-library release', () => {
   assert.equal(meta[1], version.buildId);
   assert.equal(inline?.[1], version.buildId);
   assert.equal(worker?.[1], version.buildId);
-  assert.match(index, /guide-library-v29\.css\?v=20260808-29-library1/);
-  assert.match(index, /guide-library-v29\.js\?v=20260808-29-library1/);
+  assert.match(index, new RegExp(`guide-library-v29\\.css\\?v=${version.buildId}-library1`));
+  assert.match(index, new RegExp(`guide-library-v29\\.js\\?v=${version.buildId}-library1`));
+  assert.match(sw, new RegExp(`guide-library-v29\\.js\\?v=${version.buildId}-library1`));
   assert.match(sw, /mobile-polish-8/);
 });
