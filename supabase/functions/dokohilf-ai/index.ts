@@ -129,22 +129,34 @@ function containsSensitiveData(text: string): boolean {
   return health && (caseLanguage || /\d/.test(raw));
 }
 
+async function fetchKnowledgeJson(url: string, headers: Record<string, string>): Promise<unknown> {
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const response = await fetch(url, { headers, signal: AbortSignal.timeout(4_000) });
+      if (response.ok) return await response.json();
+      lastError = new Error(`knowledge_http_${response.status}`);
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('knowledge_request_failed');
+    }
+    if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 120));
+  }
+  throw lastError || new Error('knowledge_unavailable');
+}
+
 async function loadKnowledge(): Promise<Knowledge> {
   if (knowledgeCache.value && Date.now() - knowledgeCache.loadedAt < CACHE_MS) return knowledgeCache.value;
   const url = Deno.env.get('SUPABASE_URL');
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!url || !serviceKey) throw new Error('knowledge_unavailable');
   const headers = { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` };
-  const [guideResponse, topicResponse] = await Promise.all([
-    fetch(`${url}/rest/v1/dokohilf_guides?select=slug,title,aliases,steps,troubleshooting,version&status=eq.approved`, { headers }),
-    fetch(`${url}/rest/v1/dokohilf_topics?select=slug,title,aliases,overview,capabilities,approved_guide_slugs,unconfirmed_actions,variant_note&status=eq.approved`, { headers }),
+  const [guides, topics] = await Promise.all([
+    fetchKnowledgeJson(`${url}/rest/v1/dokohilf_guides?select=slug,title,aliases,steps,troubleshooting,version&status=eq.approved`, headers),
+    fetchKnowledgeJson(`${url}/rest/v1/dokohilf_topics?select=slug,title,aliases,overview,capabilities,approved_guide_slugs,unconfirmed_actions,variant_note&status=eq.approved`, headers),
   ]);
-  if (!guideResponse.ok || !topicResponse.ok) throw new Error('knowledge_unavailable');
-  const guides = await guideResponse.json();
-  const topics = await topicResponse.json();
   const value: Knowledge = {
-    guides: Array.isArray(guides) ? guides : [],
-    topics: Array.isArray(topics) ? topics : [],
+    guides: Array.isArray(guides) ? guides as GuideRecord[] : [],
+    topics: Array.isArray(topics) ? topics as TopicRecord[] : [],
   };
   knowledgeCache = { loadedAt: Date.now(), value };
   return value;
@@ -388,6 +400,17 @@ Deno.serve(async (req: Request) => {
     return jsonResponse(origin, 422, { blocked: true, error: 'Mögliche Echtdaten erkannt. Die Anfrage wurde nicht an Gemini übertragen.' });
   }
 
+  const lastText = messages.at(-1)?.content || '';
+  const basic = quickBasicReply(lastText);
+  if (basic) {
+    const suppliedGuideSlug = typeof parsed.guideSlug === 'string' && parsed.guideSlug ? parsed.guideSlug : null;
+    return jsonResponse(origin, 200, {
+      reply: basic.reply,
+      guideSlug: basic.clearGuide ? null : suppliedGuideSlug,
+      source: 'basic-conversation-v14',
+    });
+  }
+
   let knowledge: Knowledge;
   try {
     knowledge = await loadKnowledge();
@@ -395,20 +418,10 @@ Deno.serve(async (req: Request) => {
     return jsonResponse(origin, 503, { error: 'Die freigegebene Wissensbasis ist gerade nicht erreichbar.' });
   }
 
-  const lastText = messages.at(-1)?.content || '';
   const activeGuide = knowledge.guides.find((guide) => guide.slug === String(parsed.guideSlug || '')) || null;
   if (activeGuide) {
     const activeResponse = activeGuideReply(origin, parsed, messages, activeGuide);
     if (activeResponse) return activeResponse;
-  }
-
-  const basic = quickBasicReply(lastText);
-  if (basic) {
-    return jsonResponse(origin, 200, {
-      reply: basic.reply,
-      guideSlug: basic.clearGuide ? null : (activeGuide?.slug || null),
-      source: 'basic-conversation-v14',
-    });
   }
 
   const guide = bestMatch(knowledge.guides, lastText);
