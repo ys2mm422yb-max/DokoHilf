@@ -12,11 +12,23 @@ STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COU
 
 def clean_catalog_text(value: str) -> str:
     text = str(value or '').replace('**', ' ').strip()
+    rewrites = {
+        'Fülle das Formular nach der bei euch gültigen fachlichen Vorgabe aus. DokoHilf erfindet für noch nicht bestätigte Formularfelder keine Angaben.':
+            'Fülle das geöffnete Formular wie gewohnt aus.',
+        'Die Auswahl des Formulars ist bestätigt. Für nicht bestätigte Felder oder fachliche Inhalte wird kein Klickweg erfunden.':
+            'Wenn du bei einem Feld unsicher bist, kläre die fachliche Angabe bitte im Team.',
+        'DokoHilf darf bei diesem Ablauf nicht zu Änderungen an der Medikation anleiten.':
+            'Hier geht es nur um das Ansehen der Medikation. Änderungen klärst du bitte über den dafür vorgesehenen Weg.',
+        'Dafür habe ich keinen bestätigten Weg. Frag bitte kurz eine Kollegin oder einen Kollegen.':
+            'Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen.',
+    }
+    text = rewrites.get(text, text)
     notices = [
         r'\s*In Übungen ausschließlich Fantasiedaten verwenden\.?',
         r'\s*In Übungen nur Fantasiedaten verwenden\.?',
         r'\s*In Übungen nur Fantasiewerte verwenden\.?',
         r'\s*Im öffentlichen Test ausschließlich Fantasiedaten verwenden\.?',
+        r'\s*Im öffentlichen Test nur vollständig erfundene Personen verwenden\.?',
         r'\s*Verwende in Übungen ausschließlich Fantasiedaten\.?',
         r'\s*Verwende dabei nur Fantasiedaten\.?',
     ]
