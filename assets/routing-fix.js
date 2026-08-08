@@ -47,9 +47,14 @@
     return typeof url === 'string' && url.includes('/functions/v1/dokohilf-ai');
   }
 
+  function isLocalUiSurface() {
+    if (typeof window === 'undefined' || !window.location) return false;
+    return /^(localhost|127\.0\.0\.1)$/.test(String(window.location.hostname || ''));
+  }
+
   function rewriteRouterInput(input) {
     const url = requestUrl(input);
-    if (typeof url !== 'string' || !url.includes(LEGACY_ROUTER_MARKER)) return input;
+    if (typeof url !== 'string' || !url.includes(LEGACY_ROUTER_MARKER) || isLocalUiSurface()) return input;
     if (typeof input === 'string') return CHAT_ROUTER_ENDPOINT;
     try { return new Request(CHAT_ROUTER_ENDPOINT, input); }
     catch { return CHAT_ROUTER_ENDPOINT; }
@@ -88,7 +93,7 @@
       });
     };
     window.__DOKOHILF_GREETING_ROUTING_PATCH__ = true;
-    window.__DOKOHILF_CONTEXT_AWARE_CHAT_ROUTER_V28__ = true;
+    window.__DOKOHILF_CONTEXT_AWARE_CHAT_ROUTER_V28__ = !isLocalUiSurface();
   }
 
   root.DokoHilfRouting = {
