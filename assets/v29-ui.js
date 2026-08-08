@@ -69,15 +69,21 @@ html[data-dokohilf-ui="v29"] .mode-card{
 }
 html[data-dokohilf-ui="v29"] .mode-card.voice-card{
   border:1px solid rgba(57,235,159,.47)!important;
-  background:radial-gradient(circle at 9% 44%,rgba(25,198,122,.22),transparent 25%),linear-gradient(115deg,rgba(6,76,58,.82),rgba(4,48,45,.91) 52%,rgba(3,28,34,.97))!important;
+  background:radial-gradient(circle at 8% 48%,rgba(25,198,122,.15),transparent 25%),linear-gradient(115deg,rgba(6,62,49,.90),rgba(4,42,42,.94) 52%,rgba(3,27,34,.98))!important;
   box-shadow:0 20px 58px rgba(0,0,0,.33),inset 0 1px rgba(133,255,206,.08),0 0 40px rgba(35,216,140,.045)!important;
 }
 html[data-dokohilf-ui="v29"] .mode-card.chat-card{
   border:1px solid rgba(61,151,255,.42)!important;
-  background:radial-gradient(circle at 9% 44%,rgba(36,122,239,.20),transparent 25%),linear-gradient(115deg,rgba(7,48,84,.91),rgba(5,35,63,.94) 54%,rgba(3,23,37,.98))!important;
+  background:radial-gradient(circle at 8% 48%,rgba(36,122,239,.14),transparent 25%),linear-gradient(115deg,rgba(7,44,76,.94),rgba(5,32,57,.96) 54%,rgba(3,22,35,.99))!important;
   box-shadow:0 20px 58px rgba(0,0,0,.33),inset 0 1px rgba(142,195,255,.065),0 0 40px rgba(47,132,244,.045)!important;
 }
-html[data-dokohilf-ui="v29"] .mode-card:before{width:280px!important;height:280px!important;right:-110px!important;top:-105px!important;opacity:.74!important}
+html[data-dokohilf-ui="v29"] .mode-card:before{
+  width:210px!important;height:210px!important;right:-78px!important;top:-64px!important;opacity:1!important;
+  background:radial-gradient(circle,rgba(65,234,160,.065) 0%,rgba(65,234,160,.024) 44%,transparent 70%)!important;
+}
+html[data-dokohilf-ui="v29"] .mode-card.chat-card:before{
+  background:radial-gradient(circle,rgba(74,161,255,.075) 0%,rgba(74,161,255,.026) 44%,transparent 70%)!important;
+}
 html[data-dokohilf-ui="v29"] .mode-icon{
   width:82px!important;height:82px!important;margin:0!important;border-radius:50%!important;display:grid!important;place-items:center!important;
   box-shadow:0 16px 42px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.07)!important;
@@ -85,11 +91,11 @@ html[data-dokohilf-ui="v29"] .mode-icon{
 html[data-dokohilf-ui="v29"] .voice-card .mode-icon{background:linear-gradient(145deg,rgba(33,207,130,.24),rgba(9,83,62,.42))!important;border:1px solid rgba(65,235,159,.42)!important}
 html[data-dokohilf-ui="v29"] .chat-card .mode-icon{background:linear-gradient(145deg,rgba(44,136,246,.24),rgba(13,62,112,.45))!important;border:1px solid rgba(76,159,255,.39)!important}
 html[data-dokohilf-ui="v29"] .mode-icon svg{width:43px!important;height:43px!important;stroke-width:2.1!important}
-html[data-dokohilf-ui="v29"] .mode-text{min-width:0!important;align-self:center!important}
+html[data-dokohilf-ui="v29"] .mode-text{min-width:0!important;align-self:center!important;position:relative!important;z-index:2!important}
 html[data-dokohilf-ui="v29"] .mode-text strong{display:block!important;font-size:27px!important;line-height:1.06!important;letter-spacing:-.045em!important;color:#f8fffc!important}
 html[data-dokohilf-ui="v29"] .mode-text small{display:block!important;margin-top:8px!important;max-width:430px!important;color:#9ab2ad!important;font-size:15.5px!important;line-height:1.42!important}
 html[data-dokohilf-ui="v29"] .mode-arrow{
-  width:46px!important;height:46px!important;border-radius:50%!important;font-size:35px!important;line-height:1!important;
+  position:relative!important;z-index:2!important;width:46px!important;height:46px!important;border-radius:50%!important;font-size:35px!important;line-height:1!important;
   border:1px solid rgba(255,255,255,.11)!important;background:rgba(255,255,255,.035)!important;box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
 }
 html[data-dokohilf-ui="v29"] .voice-card .mode-arrow{color:#5bf0a8!important;border-color:rgba(74,232,163,.25)!important;background:rgba(27,153,104,.10)!important}
