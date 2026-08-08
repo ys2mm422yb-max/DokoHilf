@@ -52,6 +52,24 @@
     return true;
   }
 
+  function polishMedication(view) {
+    if (view.querySelector('.direct-guide-heading h1')?.textContent?.trim() !== 'Medikation ansehen') return false;
+    const warning = view.querySelector('.direct-guide-callout.warning p');
+    const natural = 'Hier geht es nur ums Ansehen. Nichts ändern, pausieren, fortsetzen, absetzen, korrigieren, ergänzen oder löschen.';
+    if (warning && warning.textContent !== natural) warning.textContent = natural;
+    view.dataset.v29NaturalMedication = 'true';
+    return true;
+  }
+
+  function polishReport(view) {
+    if (view.querySelector('.direct-guide-heading h1')?.textContent?.trim() !== 'Bericht anlegen') return false;
+    const note = view.querySelector('.direct-guide-callout:not(.warning) p');
+    const natural = 'Bei „Kontakt – alles außer Arzt“ ist das verknüpfte Protokoll ein Fallgespräch. Bei „Sturzereignis“ ist es das Sturzprotokoll.';
+    if (note && note.textContent !== natural) note.textContent = natural;
+    view.dataset.v29NaturalReport = 'true';
+    return true;
+  }
+
   function polishChatHead() {
     const copy = document.querySelector('.chat-head p');
     const natural = 'Beschreibe kurz dein Ziel. DokoHilf führt dich Schritt für Schritt.';
@@ -65,6 +83,8 @@
     if (!view || view.hidden) return;
     polishPresence(view);
     polishForm(view);
+    polishMedication(view);
+    polishReport(view);
   }
 
   function schedule() {
