@@ -41,7 +41,7 @@
     {"text":"Suche in der geöffneten Visite nach der Statusauswahl. Verwende ausschließlich „durchgeführt“ und nicht „abgeschlossen“."},
     {"text":"Suche innerhalb des geöffneten Reiters nach „Vitalwerte“."},
     {"text":"Suche innerhalb von „Doku“ nach „Durchführungsnachweis“."},
-    {"text":"Suche innerhalb von Analyse nach „Abfrage“."},
+    {"text":"Sonderfall: Nur wenn der durchführende Arzt beim Bewohner nicht hinterlegt ist, rechts neben der Arztauswahl das kleine Filtersymbol aktivieren. Danach stehen alle im System hinterlegten Ärzte zur Auswahl. Im Normalfall bleibt das Filtersymbol aus."},
     {"text":"Suche innerhalb von Aufgaben nach „Aktuelles“."},
     {"text":"Suche innerhalb von Doku erweitert nach „Visiten“."},
     {"text":"Suche innerhalb von Planung nach „Easy-Plan“."},

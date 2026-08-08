@@ -35,7 +35,7 @@ test('Systemstimme bleibt gesperrt und geänderte statische Sprachsätze werden 
   assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1'/);
   assert.match(worker, /key !== STATIC_AUDIO_CACHE/);
   assert.match(worker, /await caches\.delete\(STATIC_AUDIO_CACHE\)/);
-  assert.match(worker, /mobile-polish-7/);
+  assert.match(worker, /mobile-polish-8/);
   assert.match(worker, /20260808-smart-help-voice-ui-v29-1/);
 });
 

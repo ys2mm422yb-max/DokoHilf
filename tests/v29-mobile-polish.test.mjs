@@ -16,7 +16,7 @@ test('mobile polish loads after the premium v29 presentation layer and the criti
   assert.match(index, /assets\/card-axis-fix-v29\.css\?v=20260808-29-cardaxis1/);
   assert.match(sw, /card-axis-fix-v29\.css\?v=20260808-29-cardaxis1/);
   assert.match(sw, /mobile-polish-v29\.js\?v=20260808-29-cardaxis1/);
-  assert.match(sw, /mobile-polish-7/);
+  assert.match(sw, /mobile-polish-8/);
 });
 
 test('start and typed-chat headers cannot float over mobile content', () => {

@@ -31,6 +31,8 @@ test('mobile header reserves the iPhone status-bar safe area', () => {
 
 test('premium home refreshes the PWA shell without changing the established v29 release contract', () => {
   assert.match(sw, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
-  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-mobile-polish-7/);
+  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-mobile-polish-8/);
+  assert.match(sw, /guide-library-v29\.js\?v=20260808-29-library1/);
+  assert.match(sw, /guide-library-v29\.css\?v=20260808-29-library1/);
   assert.match(sw, /hardRefresh: true/);
 });

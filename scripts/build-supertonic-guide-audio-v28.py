@@ -22,9 +22,19 @@ def clean_catalog_text(value: str) -> str:
         'Dafür habe ich keinen bestätigten Weg. Frag bitte kurz eine Kollegin oder einen Kollegen.':
             'Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen.',
         'Wähle im Feld „Arzt“ die Ärztin oder den Arzt aus, die beziehungsweise der die Visite durchgeführt hat.':
-            'Den durchführenden Arzt auswählen. Nur wenn er beim Bewohner fehlt, rechts daneben das kleine Filtersymbol aktivieren und aus allen systemweit hinterlegten Ärzten wählen.',
+            'Den beim Bewohner hinterlegten durchführenden Arzt auswählen.',
+        'Den durchführenden Arzt auswählen. Nur wenn er beim Bewohner fehlt, rechts daneben das kleine Filtersymbol aktivieren und aus allen systemweit hinterlegten Ärzten wählen.':
+            'Den beim Bewohner hinterlegten durchführenden Arzt auswählen.',
         'Trage den Grund ein, zum Beispiel „Kontrollbesuch“, und wähle den Ort: Einrichtung, beim Arzt oder telefonisch.':
             'Trage den Grund ein, zum Beispiel „Kontrollbesuch“, und wähle den Ort: Einrichtung, beim Arzt, telefonisch oder per Mail.',
+        'Wähle im Pop-up den Vitalwert aus, den du erfassen möchtest.':
+            'Wähle im Pop-up den Vitalwert aus, den du erfassen möchtest, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.',
+        'Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein. Bei Blutdruck sind beispielsweise Systole und Diastole erforderlich.':
+            'Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein. Je nach ausgewähltem Vitalwert erscheinen die passenden Eingabefelder. Bei Blutdruck sind zum Beispiel Systole und Diastole erforderlich.',
+        'Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein.':
+            'Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein. Je nach ausgewähltem Vitalwert erscheinen die passenden Eingabefelder.',
+        'Kontrolliere, ob der Bericht sichtbar durchgestrichen ist.':
+            'Kontrolliere, ob der Bericht sichtbar durchgestrichen ist. Soll der Inhalt korrekt neu dokumentiert werden, legst du anschließend einen neuen Bericht an. Ein Folgebericht korrigiert den ursprünglichen Bericht nicht.',
     }
     text = rewrites.get(text, text)
     notices = [

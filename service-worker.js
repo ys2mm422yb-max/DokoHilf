@@ -1,6 +1,6 @@
 const BUILD_ID = '20260808-29';
 const HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1';
-const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-mobile-polish-7`;
+const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-mobile-polish-8`;
 const LOCAL_VOICE_MODEL_CACHE = 'dokohilf-local-voice-model-v28-1';
 const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1';
 const CORE_FILES = [
@@ -17,6 +17,7 @@ const CORE_FILES = [
   './assets/direct-guides-chat-v27.css?v=20260808-29',
   './assets/v29-ui.css?v=20260808-29',
   './assets/card-axis-fix-v29.css?v=20260808-29-cardaxis1',
+  './assets/guide-library-v29.css?v=20260808-29-library1',
   './assets/update-manager.js?v=20260808-29',
   './assets/mobile-audio-fix.js?v=20260808-29',
   './assets/routing-fix.js?v=20260808-29',
@@ -34,6 +35,7 @@ const CORE_FILES = [
   './assets/local-voice-gate-v28.js?v=20260808-29',
   './assets/direct-guides-v27.js?v=20260808-29',
   './assets/direct-guide-copy-v29.js?v=20260808-29',
+  './assets/guide-library-v29.js?v=20260808-29-library1',
   './assets/app.js?v=20260808-29',
   './manifest.webmanifest',
   './icon.svg',

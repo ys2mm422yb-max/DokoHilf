@@ -5,19 +5,22 @@
 
 Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien.
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt.
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt.
 
 ## Allgemeine Regeln
 
 - Zuerst immer den richtigen Bewohner auswählen, wenn der Ablauf bewohnerbezogen ist.
 - Keine echten Bewohner-, Gesundheits- oder Mitarbeiterdaten in Tests verwenden.
-- Ein Bericht wird nicht endgültig gelöscht, sondern durchgestrichen.
+- Ein falscher Bericht wird nicht endgültig gelöscht oder durch einen Folgebericht korrigiert, sondern durchgestrichen.
+- Soll der Inhalt danach korrekt neu dokumentiert werden, wird anschließend ein neuer Bericht angelegt.
+- Ein Folgebericht ist ein neuer Bericht, der sich auf ein bereits dokumentiertes Geschehen bezieht und dieses ergänzt oder fortführt. Er verändert den ursprünglichen Bericht nicht.
 - Eine falsch abgezeichnete Durchführung wird im Durchführungsnachweis storniert.
 - Visiten werden bei euch erst nach erfolgter Durchführung dokumentiert und immer als **durchgeführt** erfasst, niemals als abgeschlossen.
 - Medikation wird in DokoHilf ausschließlich angesehen; DokoHilf leitet dort zu keiner Änderung an.
 - Bei An- und Abwesenheit wird **Von immer** eingetragen. **Bis nur**, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist. Niemals schätzen.
 - Wenn ein Nutzer einen Menüpunkt oder Schritt nicht findet, bleibt der aktuelle Guide-Schritt aktiv. DokoHilf darf nicht so tun, als sei der Schritt erledigt.
 - Detailhilfe darf nur aus bestätigten lokalen Bezeichnungen und bestätigten Alternativen bestehen. Keine Klickwege oder Feldnamen erfinden.
+- Die bisherige Anleitung „Berichtssuche / Analyse → Abfrage“ ist **nicht final** und wird später fachlich neu geprüft. Bis dahin nicht als fertige Anleitung ausgeben.
 
 ## Detailhilfe bei „Ich brauche Hilfe / Ich finde das nicht“
 
@@ -54,7 +57,9 @@ Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` 
 11. Berichtstext eintragen.
 12. Mit OK bestätigen und den Eintrag kontrollieren.
 
-## Bericht durchstreichen
+## Bericht korrigieren / durchstreichen
+
+Wenn ein bereits gespeicherter Bericht falsch formuliert ist oder ein Schreibfehler korrigiert werden soll, wird der ursprüngliche Bericht durchgestrichen. Ein Folgebericht ist **keine Korrektur** des ursprünglichen Textes.
 
 1. Berichte öffnen.
 2. Falschen Eintrag mit der rechten Maustaste anklicken.
@@ -64,13 +69,17 @@ Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` 
 6. Mit OK bestätigen.
 7. Sichtbares Durchstreichen kontrollieren.
 
+Soll der Inhalt anschließend korrekt neu dokumentiert werden, danach **einen neuen Bericht anlegen**.
+
 ## Folgebericht erstellen
 
+Ein Folgebericht ist ein **neuer Bericht mit Bezug zu einem bereits dokumentierten Geschehen**. Er dient dazu, dieses Geschehen später zu ergänzen oder fortzuführen. Der ursprüngliche Bericht wird dadurch weder verändert noch korrigiert.
+
 1. Berichte öffnen.
-2. Ursprünglichen Bericht suchen.
+2. Ursprünglichen Bericht suchen, auf dessen Geschehen sich der neue Eintrag beziehen soll.
 3. Bericht mit der rechten Maustaste anklicken.
 4. **Folgebericht erstellen** wählen.
-5. Folgebericht in der geöffneten Maske vervollständigen.
+5. Datum und Uhrzeit prüfen und den neuen ergänzenden beziehungsweise fortführenden Inhalt eintragen.
 6. Mit OK bestätigen und sichtbaren Eintrag kontrollieren.
 
 ## Falsch abgezeichnete Durchführung stornieren
@@ -92,7 +101,7 @@ Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` 
 5. Danach öffnet sich **Neue Visite**.
 6. Oben auf **Durchführen** klicken; dadurch wird die Visite als durchgeführt erfasst.
 7. Datum, Beginn und gegebenenfalls Ende prüfen.
-8. Durchführenden Arzt auswählen. **Nur wenn der Arzt beim Bewohner noch nicht hinterlegt ist**, rechts neben der Arztauswahl das kleine **Filtersymbol** aktivieren. Dann stehen alle im System hinterlegten Ärzte zur Auswahl. Das Filtersymbol nur für diesen Ausnahmefall verwenden.
+8. Den beim Bewohner hinterlegten durchführenden Arzt auswählen.
 9. **Mitarbeiter** bleibt auf **ohne Mitarbeiter** beziehungsweise leer.
 10. Bei **Anforderung** eintragen, wer die Sprechstunde angefordert hat.
 11. Grund eintragen, zum Beispiel Kontrollbesuch.
@@ -100,17 +109,21 @@ Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` 
 13. Rechts in **Bemerkung** Inhalt und Ergebnis der Visite eintragen.
 14. Speichern und prüfen, dass die Visite unter den durchgeführten Visiten erscheint.
 
+**Sonderfall Arztauswahl:** Nur wenn der durchführende Arzt beim Bewohner **nicht** hinterlegt ist, rechts neben der Arztauswahl das kleine **Filtersymbol** aktivieren. Dann stehen alle im System hinterlegten Ärzte zur Auswahl. Im Normalfall bleibt dieses Filtersymbol aus.
+
 ## Einzelnen Vitalwert erfassen
 
 1. Bewohner auswählen.
 2. **Doku-Erweitert** öffnen.
 3. **Vitalwerte** wählen.
 4. Oben links auf das grüne Plus beziehungsweise **Neu** klicken.
-5. Im Pop-up den gewünschten Vitalwert auswählen.
+5. Im Pop-up den gewünschten Vitalwert auswählen. Bei euch sind dort unter anderem **Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz und Atemalkohol** vorhanden.
 6. Datum und Uhrzeit prüfen.
-7. Wert eintragen; bei Blutdruck zum Beispiel Systole und Diastole.
-8. Nur bei Bedarf Messart, Qualität oder Bemerkung ergänzen.
+7. Den gemessenen Wert eintragen. Je nach ausgewähltem Vitalwert erscheinen die dazu passenden Eingabefelder. Bei **Blutdruck** zum Beispiel **Systole und Diastole**.
+8. Nur bei Bedarf vorhandene Zusatzangaben wie Messart, Qualität oder Bemerkung ergänzen.
 9. Mit OK bestätigen und den Wert kontrollieren.
+
+Zusätzliche Felder oder Einheiten nicht pauschal vorgeben, sondern so übernehmen, wie sie in der geöffneten Vivendi-Maske angezeigt werden.
 
 ## Mehrere Vitalwerte erfassen
 
@@ -154,6 +167,7 @@ Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, er
 5. Im Fenster **Formular anlegen** das benötigte Formular auswählen, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.
 6. Mit OK bestätigen.
 7. Das geöffnete Formular wie gewohnt ausfüllen.
+8. Wenn das Formular fertig bearbeitet ist, oben links in der Leiste speichern.
 
 ## Notfallblatt öffnen
 
@@ -179,6 +193,6 @@ In der aufgeklappten Ansicht können unter anderem **durchgeführte Visiten** un
 ## Umgang mit noch nicht bestätigten Details
 
 - Keine Klickwege, Feldnamen oder fachlichen Inhalte erfinden.
-- Bei unbekannten Formularfeldern transparent sagen, dass dafür noch keine bestätigte Anleitung vorliegt.
+- Die Berichtssuche über Analyse/Abfrage wird später fachlich neu geprüft und bleibt bis dahin aus der fertigen Anleitungsbibliothek heraus.
 - Bei Varianten immer die fachlich bestätigten lokalen Bezeichnungen bevorzugen.
 - Öffentlich werden ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Fachinhalte dokumentiert.
