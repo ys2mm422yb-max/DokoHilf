@@ -15,8 +15,10 @@ test('mobile polish loads after the premium v29 presentation layer', () => {
   assert.match(sw, /mobile-polish-v29\.js\?v=20260808-29/);
 });
 
-test('start screen header no longer floats over mobile content', () => {
+test('start screen header no longer floats and hidden workspace stays hidden', () => {
   assert.match(polish, /\.app-shell\[data-mode="start"\] \.topbar\{[\s\S]*position:relative!important;top:auto!important/);
+  assert.match(polish, /\.workspace\[hidden\]\{display:none!important\}/);
+  assert.match(polish, /\.workspace:not\(\[hidden\]\)\{[\s\S]*display:flex!important/);
 });
 
 test('mobile cards and frequent flows are intentionally compact', () => {
@@ -27,8 +29,10 @@ test('mobile cards and frequent flows are intentionally compact', () => {
 });
 
 test('typed chat removes duplicated welcome chrome and compacts the composer', () => {
+  assert.match(polish, /message\.querySelector\('\.bubble'\)/);
   assert.match(polish, /v29-mobile-welcome/);
   assert.match(polish, /\.chat-head p\{display:none!important\}/);
+  assert.match(polish, /data-mode="chat"\]\:not\(\[data-v29-guide-active="true"\]\) \.conversation/);
   assert.match(polish, /\.composer textarea\{min-height:44px!important/);
   assert.match(polish, /\.send-button\{min-width:94px!important;height:44px!important/);
 });
