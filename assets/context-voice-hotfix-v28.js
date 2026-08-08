@@ -26,6 +26,39 @@
       .trim();
   }
 
+  function naturalizeUserCopy(value) {
+    if (typeof value !== 'string') return value;
+    return value
+      .replace(
+        'Fülle das Formular nach der bei euch gültigen fachlichen Vorgabe aus. DokoHilf erfindet für noch nicht bestätigte Formularfelder keine Angaben.',
+        'Fülle das geöffnete Formular wie gewohnt aus.',
+      )
+      .replace(
+        'Das geöffnete Formular nach der bei euch gültigen fachlichen Vorgabe bearbeiten. Nicht bestätigte Formularfelder werden von DokoHilf nicht erfunden.',
+        'Das geöffnete Formular wie gewohnt ausfüllen.',
+      )
+      .replace(
+        'Die Auswahl des Formulars ist bestätigt. Für nicht bestätigte Felder oder fachliche Inhalte wird kein Klickweg erfunden.',
+        'Wenn du bei einem Feld unsicher bist, kläre die fachliche Angabe bitte im Team.',
+      )
+      .replace(
+        'DokoHilf darf bei diesem Ablauf nicht zu Änderungen an der Medikation anleiten.',
+        'Hier geht es nur um das Ansehen der Medikation. Änderungen klärst du bitte über den dafür vorgesehenen Weg.',
+      )
+      .replace('Dafür habe ich keinen bestätigten Weg.', 'Dazu habe ich keine passende Anleitung.')
+      .replace('Hast du den bestätigten Einstieg gefunden?', 'Hast du den Einstieg gefunden?')
+      .replace(
+        'Wenn die Bezeichnung bei dir abweicht, nenne mir nur die sichtbaren Menü- oder Buttonbezeichnungen; ich erfinde keinen alternativen Klickweg.',
+        'Wenn die Bezeichnung bei dir anders ist, sag mir einfach, welche Menü- oder Buttonbezeichnungen du siehst.',
+      )
+      .replace(/\s*Im öffentlichen Test ausschließlich Fantasiedaten verwenden\.?/gi, '')
+      .replace(/\s*Im öffentlichen Test nur vollständig erfundene Personen verwenden\.?/gi, '')
+      .replace(/\s*In Übungen nur Fantasiewerte verwenden\.?/gi, '')
+      .replace(/Werden die gesuchten Fantasie-Einträge angezeigt\?/gi, 'Werden die gesuchten Einträge angezeigt?')
+      .replace(/[ \t]{2,}/g, ' ')
+      .trim();
+  }
+
   function isIOS() {
     const ua = navigator.userAgent || '';
     return /iPad|iPhone|iPod/i.test(ua)
@@ -81,6 +114,7 @@
       const reply = String(payload.reply || '');
       const asksForEntry = title === 'Was trifft bei dir zu?'
         || title === 'Hast du den bestätigten Einstieg gefunden?'
+        || title === 'Hast du den Einstieg gefunden?'
         || /suche zuerst\s+\*\*?berichte/i.test(reply)
         || /was siehst du gerade/i.test(reply);
       if (asksForEntry) {
@@ -91,6 +125,18 @@
           guideSlug: slug,
         };
       }
+    }
+
+    const naturalReply = naturalizeUserCopy(fixed.reply);
+    const naturalSpeech = naturalizeUserCopy(fixed.spokenText);
+    const naturalTitle = naturalizeUserCopy(fixed.helpTitle);
+    if (naturalReply !== fixed.reply || naturalSpeech !== fixed.spokenText || naturalTitle !== fixed.helpTitle) {
+      fixed = {
+        ...fixed,
+        ...(typeof naturalReply === 'string' ? { reply: naturalReply } : {}),
+        ...(typeof naturalSpeech === 'string' ? { spokenText: naturalSpeech } : {}),
+        ...(typeof naturalTitle === 'string' ? { helpTitle: naturalTitle } : {}),
+      };
     }
 
     return fixed;
@@ -104,7 +150,7 @@
     if (fixed === payload) return response;
     const headers = new Headers(response.headers);
     headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers.set('X-DokoHilf-Context-Hotfix', 'report-help-v29-1');
+    headers.set('X-DokoHilf-Context-Hotfix', 'natural-copy-v29-1');
     return new Response(JSON.stringify(fixed), {
       status: response.status,
       statusText: response.statusText,
@@ -198,6 +244,7 @@
     fixPayload,
     fixHelpOptions,
     contextualOptionLabel,
+    naturalizeUserCopy,
     reportSpeech: REPORT_ENTRY_SPEECH,
     iosSynthesisTimeoutMs: IOS_SYNTHESIS_TIMEOUT_MS,
     voiceWarmDelayMs: VOICE_WARM_DELAY_MS,
