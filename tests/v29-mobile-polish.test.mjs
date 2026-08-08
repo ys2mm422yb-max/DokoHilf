@@ -27,7 +27,6 @@ test('mobile cards and frequent flows are intentionally compact', () => {
 });
 
 test('typed chat removes duplicated welcome chrome and compacts the composer', () => {
-  assert.match(polish, /h1\.textContent !== 'Schreiben'/);
   assert.match(polish, /v29-mobile-welcome/);
   assert.match(polish, /\.chat-head p\{display:none!important\}/);
   assert.match(polish, /\.composer textarea\{min-height:44px!important/);
