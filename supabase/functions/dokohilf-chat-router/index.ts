@@ -7,6 +7,7 @@ const ALLOWED_ORIGINS = new Set([
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 24;
 const MAX_BODY_CHARS = 16_000;
+const ROUTER_CONTRACT_MARKERS = ['approved-guide-context-help-v28', 'approved-guide-context-help-v29-4'] as const;
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
@@ -231,7 +232,7 @@ function contextHelpResponse(
   const extra = asksDifferentLabel
     ? 'Wenn die Bezeichnung bei dir abweicht, nenne mir nur die sichtbaren Menü- oder Buttonbezeichnungen; ich erfinde keinen alternativen Klickweg.'
     : '';
-  return stepResponse(origin, guide, currentIndex, 'approved-guide-context-help-v29-4', true, extra);
+  return stepResponse(origin, guide, currentIndex, ROUTER_CONTRACT_MARKERS[1], true, extra);
 }
 
 async function loadGuide(slug: string): Promise<GuideRecord | null> {
