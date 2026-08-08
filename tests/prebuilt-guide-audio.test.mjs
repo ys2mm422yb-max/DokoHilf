@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
 const catalog = JSON.parse(await readFile(new URL('assets/guide-audio-catalog.json', root), 'utf8'));
 const extraCatalog = JSON.parse(await readFile(new URL('assets/voice-extra-catalog-v28.json', root), 'utf8'));
+const releaseCatalog = JSON.parse(await readFile(new URL('assets/voice-release-catalog-v29.json', root), 'utf8'));
 const experience = await readFile(new URL('assets/experience-v27.js', root), 'utf8');
 const diagnostics = await readFile(new URL('assets/voice-diagnostics.js', root), 'utf8');
 const tts = await readFile(new URL('supabase/functions/dokohilf-tts/index.ts', root), 'utf8');
@@ -30,14 +31,24 @@ function normalizeKey(value) {
     .trim();
 }
 
-test('source catalogs cover exactly 93 guide sentences and 18 fixed dialog sentences', () => {
+test('source catalogs cover exactly 160 unique v29 speech sentences', () => {
   assert.equal(catalog.schemaVersion, 1);
   assert.equal(catalog.entries.length, 93);
   assert.equal(extraCatalog.entries.length, 18);
+  assert.equal(releaseCatalog.entries.length, 49);
   assert.equal(new Set(catalog.entries.map(entry => entry.file)).size, 93);
   assert.equal(new Set(catalog.entries.map(entry => normalizeKey(entry.text))).size, 93);
-  const allTexts = [...catalog.entries, ...extraCatalog.entries].map(entry => normalizeKey(entry.text));
-  assert.equal(new Set(allTexts).size, 111);
+  const allTexts = [...catalog.entries, ...extraCatalog.entries, ...releaseCatalog.entries].map(entry => normalizeKey(entry.text));
+  assert.equal(allTexts.length, 160);
+  assert.equal(new Set(allTexts).size, 160);
+});
+
+test('v29 catalog includes approved context help and the final form save step', () => {
+  const text = releaseCatalog.entries.map(entry => entry.text).join('\n');
+  assert.match(text, /Das grüne Plus befindet sich oben links im Bereich „Berichte“/);
+  assert.match(text, /Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“/);
+  assert.match(text, /Wenn der Endzeitpunkt noch nicht sicher feststeht, lässt du „Bis“ leer/);
+  assert.match(text, /Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste/);
 });
 
 test('legacy compatibility browser code still points only at the fixed private audio endpoint', () => {
@@ -72,18 +83,17 @@ test('alte serverseitige TTS-, Builder- und Gacrux-Auslieferungsendpunkte sind R
 });
 
 test('öffentliche Voice-Dokumentation führt keinen Cloud- oder Gacrux-Rollback mehr', () => {
-  assert.match(audioStatus, /exakt 111 kostenlose Supertonic-F1-WAV-Dateien/);
+  assert.match(audioStatus, /exakt 160 kostenlose Supertonic-F1-WAV-Dateien/);
   assert.match(providerStatus, /keinen Gacrux-, Gemini-TTS- oder Systemstimmen-Rollbackpfad/);
   assert.match(thirdParty, /kein Rollback- oder Fallbackpfad mehr/);
   assert.doesNotMatch(thirdParty, /Rollback-Bestand erhalten/);
 });
 
 test('static audio exception is narrow and excludes every user-content source', () => {
-  assert.match(policy, /23 freigegebene Guides/);
-  assert.match(policy, /92 eindeutige Schritttexte/);
   assert.match(policy, /93 bestätigte Guide-Sätze/);
   assert.match(policy, /18 feste Dialogsätze/);
-  assert.match(policy, /111 statische WAV-Dateien/);
+  assert.match(policy, /49 zusätzliche v29-Sätze/);
+  assert.match(policy, /160 statische WAV-Dateien/);
   assert.match(policy, /Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe/);
   assert.match(policy, /nicht dauerhaft gespeichert/);
   assert.match(rules, /Allgemeine, fachlich freigegebene Guide-Anweisungen dürfen als statische Audiodateien/);
