@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: dokohilf-detail-help-${{ github.event.pull_request.number || github.ref }}
+  group: dokohilf-detail-help-v29-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -28,6 +28,8 @@ jobs:
           test -s assets/detail-help-v27.js
           test -s assets/detail-help-polish-v27.js
           test -s assets/detail-help-render-sync-v27.js
+          test -s assets/context-voice-hotfix-v28.js
+          test -s assets/smart-help-v29.js
           test -s assets/local-voice-v28.js
           test -s assets/local-voice-gate-v28.js
           test -s scripts/apply-detail-help-v27.mjs
@@ -41,42 +43,50 @@ jobs:
           node --check assets/detail-help-v27.js
           node --check assets/detail-help-polish-v27.js
           node --check assets/detail-help-render-sync-v27.js
+          node --check assets/context-voice-hotfix-v28.js
+          node --check assets/smart-help-v29.js
           node --check assets/local-voice-v28.js
           node --check assets/local-voice-gate-v28.js
           node --check scripts/apply-detail-help-v27.mjs
           node --check scripts/apply-local-voice-v28.mjs
           node --check scripts/detail-help-render-v27.mjs
-          node --test tests/detail-help-v27.test.mjs tests/detail-help-polish-v27.test.mjs tests/local-voice-v28.test.mjs tests/public-documentation-boundary.test.mjs
+          node --test tests/detail-help-v27.test.mjs tests/detail-help-polish-v27.test.mjs tests/local-voice-v28.test.mjs tests/public-documentation-boundary.test.mjs tests/v29-smart-help-ui.test.mjs
           grep -q '__DOKOHILF_DETAIL_HELP_V27__' assets/detail-help-v27.js
           grep -q '__DOKOHILF_DETAIL_HELP_POLISH_V27__' assets/detail-help-polish-v27.js
           grep -q '__DOKOHILF_DETAIL_HELP_RENDER_SYNC_V27__' assets/detail-help-render-sync-v27.js
+          grep -q '__DOKOHILF_SMART_HELP_V29__' assets/smart-help-v29.js
           grep -q '__DOKOHILF_LOCAL_VOICE_V28__' assets/local-voice-v28.js
           grep -q '__DOKOHILF_LOCAL_VOICE_GATE_V28__' assets/local-voice-gate-v28.js
           grep -q 'Vitalwerte Sammelerf.' assets/detail-help-v27.js
           grep -q 'iOS und Android' ACTIVE_WORK_DETAIL_HELP.md
           grep -q 'localStorage\|sessionStorage\|indexedDB' assets/local-voice-v28.js && exit 1 || true
+          grep -q 'localStorage\|sessionStorage\|indexedDB' assets/smart-help-v29.js && exit 1 || true
 
       - name: Build exact releasable site
         run: |
           set -euo pipefail
           bash -n scripts/build-static-site-v27.sh
           bash scripts/build-static-site-v27.sh _detail_site
-          grep -q 'assets/detail-help-v27.js?v=20260807-28' _detail_site/index.html
-          grep -q 'assets/detail-help-polish-v27.js?v=20260807-28' _detail_site/index.html
-          grep -q 'assets/detail-help-render-sync-v27.js?v=20260807-28' _detail_site/index.html
-          grep -q 'assets/local-voice-v28.js?v=20260807-28' _detail_site/index.html
-          grep -q 'assets/local-voice-gate-v28.js?v=20260807-28' _detail_site/index.html
-          grep -q "HOTFIX_REVISION = '20260807-static-supertonic-guides-v28-4'" _detail_site/service-worker.js
-          grep -q 'detail-help-v27.js?v=20260807-28' _detail_site/service-worker.js
-          grep -q 'local-voice-v28.js?v=20260807-28' _detail_site/service-worker.js
+          grep -q 'KI · v29' _detail_site/index.html
+          grep -q 'assets/detail-help-v27.js?v=20260808-29' _detail_site/index.html
+          grep -q 'assets/detail-help-polish-v27.js?v=20260808-29' _detail_site/index.html
+          grep -q 'assets/detail-help-render-sync-v27.js?v=20260808-29' _detail_site/index.html
+          grep -q 'assets/context-voice-hotfix-v28.js?v=20260808-29' _detail_site/index.html
+          grep -q 'assets/smart-help-v29.js?v=20260808-29' _detail_site/index.html
+          grep -q 'assets/local-voice-v28.js?v=20260808-29' _detail_site/index.html
+          grep -q 'assets/local-voice-gate-v28.js?v=20260808-29' _detail_site/index.html
+          grep -q "HOTFIX_REVISION = '20260808-context-voice-v29-1'" _detail_site/service-worker.js
+          grep -q 'detail-help-v27.js?v=20260808-29' _detail_site/service-worker.js
+          grep -q 'smart-help-v29.js?v=20260808-29' _detail_site/service-worker.js
+          grep -q 'local-voice-v28.js?v=20260808-29' _detail_site/service-worker.js
 
       - name: Render detail help on iOS and Android
         run: |
           set -euo pipefail
-          mkdir -p artifacts/detail-help-v27/ios artifacts/detail-help-v27/android
+          mkdir -p artifacts/detail-help-v29/ios artifacts/detail-help-v29/android
           npm install --no-save --package-lock=false playwright@1.54.2
           npx playwright install --with-deps chromium
-          python3 -m http.server 4173 --directory _detail_site >artifacts/detail-help-v27-server.log 2>&1 &
+          python3 -m http.server 4173 --directory _detail_site >artifacts/detail-help-v29-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 30); do
@@ -89,7 +99,7 @@ jobs:
           DOKOHILF_VIEWPORT_HEIGHT=852 \
           DOKOHILF_DEVICE_SCALE_FACTOR=2 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
-          DOKOHILF_RENDER_OUTPUT=artifacts/detail-help-v27/ios \
+          DOKOHILF_RENDER_OUTPUT=artifacts/detail-help-v29/ios \
           node scripts/detail-help-render-v27.mjs
 
           DOKOHILF_MOBILE_PROFILE=android \
@@ -97,14 +107,14 @@ jobs:
           DOKOHILF_VIEWPORT_HEIGHT=915 \
           DOKOHILF_DEVICE_SCALE_FACTOR=2 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
-          DOKOHILF_RENDER_OUTPUT=artifacts/detail-help-v27/android \
+          DOKOHILF_RENDER_OUTPUT=artifacts/detail-help-v29/android \
           node scripts/detail-help-render-v27.mjs
 
       - name: Upload detail-help evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dokohilf-detail-help-${{ github.run_number }}
+          name: dokohilf-detail-help-v29-${{ github.run_number }}
           path: artifacts/
           if-no-files-found: warn
           retention-days: 30
