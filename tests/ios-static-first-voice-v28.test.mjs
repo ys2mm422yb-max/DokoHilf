@@ -19,22 +19,22 @@ test('statisches Supertonic-Audio wird zwingend vor lokaler Supertonic-Inferenz 
   const staticIndex = gate.indexOf('loadStaticSupertonicVoice(text)');
   const localIndex = gate.indexOf('localFallback(text)');
   assert(staticIndex >= 0 && localIndex > staticIndex);
-  assert.match(gate, /static-supertonic-guide-v28/);
+  assert.match(gate, /static-supertonic-guide-v29/);
   assert.match(gate, /STATIC_VOICE = 'Supertonic-F1'/);
 });
 
 test('lokale iOS-Folgeantwort hat schnellere Inferenz und eine harte Zeitgrenze', () => {
   assert.match(runtime, /const IOS_TOTAL_STEPS = 2;/);
-  assert.match(gate, /const IOS_LOCAL_TIMEOUT_MS = 20000;/);
+  assert.match(gate, /const IOS_LOCAL_TIMEOUT_MS = 8000;/);
   assert.match(gate, /local_voice_timeout/);
 });
 
 test('Systemstimme bleibt gesperrt und statischer Supertonic-Cache überlebt normalen PWA-Aktivierer', () => {
   assert.match(gate, /blockSystemSpeech/);
   assert.match(gate, /__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__/);
-  assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v28-1'/);
+  assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1'/);
   assert.match(worker, /key !== STATIC_AUDIO_CACHE/);
-  assert.match(worker, /20260807-static-supertonic-guides-v28-4/);
+  assert.match(worker, /20260808-smart-help-voice-ui-v29-1/);
 });
 
 test('Hotfix bleibt für iOS und Android mit neutraler öffentlicher Dokumentation abgesichert', () => {
