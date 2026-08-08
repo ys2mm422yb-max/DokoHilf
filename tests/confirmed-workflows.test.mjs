@@ -6,6 +6,12 @@ const migration = await readFile(
   new URL('../supabase/migrations/20260806153000_confirmed_workflows_blocks_1_4.sql', import.meta.url),
   'utf8',
 );
+const v29 = await readFile(
+  new URL('../supabase/migrations/20260808091000_natural_presence_and_form_save_v29.sql', import.meta.url),
+  'utf8',
+);
+const confirmed = await readFile(new URL('../CONFIRMED_WORKFLOWS.md', import.meta.url), 'utf8');
+const directCopy = await readFile(new URL('../assets/direct-guide-copy-v29.js', import.meta.url), 'utf8');
 
 test('Berichtskategorie wird vor der Eingabemaske gewählt', () => {
   assert.match(migration, /Auswahl der Berichtskategorie/);
@@ -37,10 +43,22 @@ test('Vitalwerte unterscheiden bestätigte Einzel- und Sammelerfassung', () => {
   assert.match(migration, /zwei getrennte Einträge/);
 });
 
-test('An- und Abwesenheit verbietet geschätzte Bis-Zeitpunkte', () => {
-  assert.match(migration, /„Von“ immer vollständig/);
-  assert.match(migration, /zu 100 Prozent bekannt/);
-  assert.match(migration, /lasse „Bis“ leer und schätze niemals/);
+test('v29 formuliert Von/Bis natürlicher, ohne die Nicht-schätzen-Regel zu ändern', () => {
+  assert.match(v29, /Trage bei „Von“ immer Datum und Uhrzeit ein/);
+  assert.match(v29, /Endzeitpunkt sicher feststeht/);
+  assert.match(v29, /lässt du „Bis“ einfach leer/);
+  assert.match(v29, /Bitte nicht schätzen/);
+  assert.doesNotMatch(v29, /100 Prozent/);
+  assert.match(directCopy, /v29NaturalPresence/);
+  assert.doesNotMatch(directCopy, /100 Prozent/);
+});
+
+test('v29 ergänzt nach dem Bearbeiten eines Formulars den bestätigten Speicherschritt oben links', () => {
+  assert.match(v29, /Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste/);
+  assert.match(v29, /Wurde das Formular gespeichert/);
+  assert.match(directCopy, /data-v29-form-save-step/);
+  assert.match(directCopy, /8 Schritte/);
+  assert.match(confirmed, /oben links in der Leiste speichern/);
 });
 
 test('Medikation ist ein harter Nur-Lese-Ablauf', () => {
@@ -57,7 +75,7 @@ test('Formulare, Notfallblatt und Übergabe verwenden die bestätigten Bezeichnu
   assert.match(migration, /„Alles ausklappen“/);
 });
 
-test('Migration speichert ausschließlich anonymisierte Textwege', () => {
+test('Migrationen speichern ausschließlich anonymisierte Textwege', () => {
   assert.match(migration, /No screenshots, names, resident data/);
-  assert.doesNotMatch(migration, /\.jpe?g|\.png|IMG_|F85660|E490DC|70614E/i);
+  assert.doesNotMatch(`${migration}\n${v29}`, /\.jpe?g|\.png|IMG_|F85660|E490DC|70614E/i);
 });
