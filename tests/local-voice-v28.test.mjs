@@ -26,6 +26,7 @@ const [runtime, gate, experience, helper, ux, detail, contextHotfix, renderSync,
 const sourceCatalog = JSON.parse(sourceCatalogText);
 const extraCatalog = JSON.parse(extrasText);
 const releaseCatalog = JSON.parse(releaseText);
+const buildId = JSON.parse(version).buildId;
 
 test('v29 nutzt dieselbe kostenlose Supertonic-F1-Stimme statisch für Guides und lokal nur bei Bedarf', () => {
   assert.match(runtime, /Supertone\/supertonic-3\/resolve\/main/);
@@ -152,15 +153,15 @@ test('v29 lädt keine alte Voice-Diagnostik oder Cloud-TTS-Sprachquelle im Relea
 });
 
 test('v29 Build-ID, Load-Order, report spokenText und PWA-Revision sind explizit', () => {
-  assert.match(version, /"buildId": "20260808-29"/);
+  assert.match(version, new RegExp(`"buildId": "${buildId}"`));
   assert.match(index, /KI · v29/);
-  const local = index.indexOf('local-voice-v28.js?v=20260808-29');
-  const experienceIndex = index.indexOf('experience-v27.js?v=20260808-29');
-  const uxIndex = index.indexOf('ux-v27.js?v=20260808-29');
-  const uiIndex = index.indexOf('v29-ui.js?v=20260808-29');
-  const gateIndex = index.indexOf('local-voice-gate-v28.js?v=20260808-29');
-  const copyIndex = index.indexOf('direct-guide-copy-v29.js?v=20260808-29');
-  const app = index.indexOf('app.js?v=20260808-29');
+  const local = index.indexOf(`local-voice-v28.js?v=${buildId}`);
+  const experienceIndex = index.indexOf(`experience-v27.js?v=${buildId}`);
+  const uxIndex = index.indexOf(`ux-v27.js?v=${buildId}`);
+  const uiIndex = index.indexOf(`v29-ui.js?v=${buildId}`);
+  const gateIndex = index.indexOf(`local-voice-gate-v28.js?v=${buildId}`);
+  const copyIndex = index.indexOf(`direct-guide-copy-v29.js?v=${buildId}`);
+  const app = index.indexOf(`app.js?v=${buildId}`);
   assert(local >= 0 && local < experienceIndex && experienceIndex < uxIndex && uxIndex < uiIndex && uiIndex < gateIndex && gateIndex < copyIndex && copyIndex < app);
   assert.match(worker, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
   assert.match(worker, /LOCAL_VOICE_MODEL_CACHE/);
