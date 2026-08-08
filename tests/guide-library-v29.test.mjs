@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [library, css, copy, migration, confirmed, voiceBuild, voiceRelease, sw] = await Promise.all([
+const [library, css, copy, migration, confirmed, voiceBuild, voiceRelease, sw, index] = await Promise.all([
   readFile(new URL('../assets/guide-library-v29.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/guide-library-v29.css', import.meta.url), 'utf8'),
   readFile(new URL('../assets/direct-guide-copy-v29.js', import.meta.url), 'utf8'),
@@ -11,6 +11,7 @@ const [library, css, copy, migration, confirmed, voiceBuild, voiceRelease, sw] =
   readFile(new URL('../scripts/build-supertonic-guide-audio-v28.py', import.meta.url), 'utf8'),
   readFile(new URL('../assets/voice-release-catalog-v29.json', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
+  readFile(new URL('../index.html', import.meta.url), 'utf8'),
 ]);
 
 test('Bericht korrigieren ist klar vom Folgebericht getrennt', () => {
@@ -66,12 +67,23 @@ test('Hauptmenü nutzt lokale Häufigkeit, passende Icons und eine vollständige
   assert.match(library, /handover: '<path/);
 });
 
+test('Guide-Bibliothek wird deterministisch beim App-Start geladen und nicht erst nach einem dynamischen Nachladen', () => {
+  const cssIndex = index.indexOf('assets/guide-library-v29.css?v=20260808-29-library1');
+  const copyIndex = index.indexOf('assets/direct-guide-copy-v29.js?v=20260808-29');
+  const libraryIndex = index.indexOf('assets/guide-library-v29.js?v=20260808-29-library1');
+  const appIndex = index.indexOf('assets/app.js?v=20260808-29');
+  assert.ok(cssIndex >= 0);
+  assert.ok(copyIndex >= 0 && libraryIndex > copyIndex && appIndex > libraryIndex);
+  assert.match(index, /data-dokohilf-guide-library-v29/);
+});
+
 test('Direktanleitungen respektieren die mobile Safe Area und werden als PWA-Core geladen', () => {
   assert.match(css, /app-shell\[data-mode="direct-guide"\] > \.topbar/);
   assert.match(css, /env\(safe-area-inset-top\)/);
   assert.match(css, /position:relative!important;top:auto!important/);
   assert.match(css, /padding-top:12px!important/);
   assert.match(copy, /ensureGuideLibraryAssets/);
+  assert.match(copy, /ensureLegacyCloseContract/);
   assert.match(copy, /guide-library-v29\.js\?v=20260808-29-library1/);
   assert.match(copy, /guide-library-v29\.css\?v=20260808-29-library1/);
   assert.match(sw, /mobile-polish-8/);
