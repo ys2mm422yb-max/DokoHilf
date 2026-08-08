@@ -26,9 +26,12 @@ test('Detailhilfe zeigt kurze nutzernahe Texte statt interner Zustandsformulieru
   assert.doesNotMatch(source, /Ich markiere noch keinen Schritt als erledigt/);
 });
 
-test('Bereits gerenderte Detailhilfe-Buttons werden wirklich und idempotent auf kurze Labels synchronisiert', () => {
+test('Bereits gerenderte Detailhilfe-Buttons werden kontextabhängig und idempotent synchronisiert', () => {
   assert.match(syncSource, /'area-open': 'Doku-Erweitert offen'/);
   assert.match(syncSource, /'other-page': 'Anderer Reiter \/ andere Seite'/);
+  assert.match(syncSource, /startsWith\('vitalwerte'\)/);
+  assert.match(syncSource, /'Der Menüpunkt fehlt'/);
+  assert.doesNotMatch(syncSource, /'target-missing': 'Vitalwerte fehlt'/);
   assert.match(syncSource, /span\.textContent !== label/);
   assert.match(syncSource, /button\.dataset\.detailHelpLabel !== label/);
   assert.match(syncSource, /if \(small\) small\.remove\(\)/);
@@ -44,11 +47,12 @@ test('Voice-Detailhilfe ist kompakt und blendet konkurrierende Aktionen aus', ()
   assert.match(source, /\.pause-button\{display:none!important\}/);
 });
 
-test('Release keeps detail help around the v28-4 static Supertonic voice load order', () => {
-  assert.match(apply, /localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < gateIndex/);
+test('Release keeps context hotfix between detail help and the final v28 Supertonic gate', () => {
+  assert.match(apply, /localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex/);
   assert.match(apply, /20260807-static-supertonic-guides-v28-4/);
   assert.match(apply, /detail-help-polish-v27\.js/);
   assert.match(apply, /detail-help-render-sync-v27\.js/);
+  assert.match(apply, /context-voice-hotfix-v28\.js/);
   assert.match(build, /detail-help-polish-v27\.js/);
   assert.match(build, /detail-help-render-sync-v27\.js/);
   assert.match(build, /20260807-static-supertonic-guides-v28-4/);

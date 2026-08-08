@@ -2,13 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [runtime, gate, experience, helper, ux, detail, applyLocal, applyDetail, build, builder, sourceCatalogText, extrasText, version, index, worker] = await Promise.all([
+const [runtime, gate, experience, helper, ux, detail, contextHotfix, renderSync, applyLocal, applyDetail, build, builder, sourceCatalogText, extrasText, version, index, worker] = await Promise.all([
   readFile(new URL('../assets/local-voice-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/local-voice-gate-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/experience-v27.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/vendor/supertonic-web-v28.mjs', import.meta.url), 'utf8'),
   readFile(new URL('../assets/ux-v27.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/detail-help-polish-v27.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/context-voice-hotfix-v28.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/detail-help-render-sync-v27.js', import.meta.url), 'utf8'),
   readFile(new URL('../scripts/apply-local-voice-v28.mjs', import.meta.url), 'utf8'),
   readFile(new URL('../scripts/apply-detail-help-v27.mjs', import.meta.url), 'utf8'),
   readFile(new URL('../scripts/build-static-site-v27.sh', import.meta.url), 'utf8'),
@@ -61,6 +63,17 @@ test('GitHub-Build erzeugt alle bestätigten statischen Sprachsätze ohne TTS-AP
   assert.match(extrasText, /Okay\. Schau oben in die grüne Reiterleiste/);
   assert.match(extrasText, /Die Medikation darf hier nur angesehen werden/);
   assert.match(extrasText, /Der Ablauf ist erledigt/);
+  assert.match(extrasText, /Hier werden fachliche Beobachtungen und Ereignisse als Berichtseinträge dokumentiert/);
+});
+
+test('Bericht-Detailhilfe bleibt im Bericht-Kontext und übernimmt keine Vitalwerte-Schaltfläche', () => {
+  assert.match(contextHotfix, /'bericht-neu'/);
+  assert.match(contextHotfix, /'bericht-folgebericht'/);
+  assert.match(contextHotfix, /REPORT_ENTRY_SPEECH = 'Suche zuerst Berichte\. Hast du sie gefunden\?'/);
+  assert.match(contextHotfix, /isVitalGuide\(slug\) \? 'Vitalwerte fehlt' : 'Der Menüpunkt fehlt'/);
+  assert.match(renderSync, /startsWith\('vitalwerte'\)/);
+  assert.match(renderSync, /: 'Der Menüpunkt fehlt'/);
+  assert.doesNotMatch(renderSync, /'target-missing': 'Vitalwerte fehlt'/);
 });
 
 test('iOS nutzt WASM mit schnellerer lokaler Notinferenz, Android kann WebGPU bevorzugen', () => {
@@ -72,31 +85,37 @@ test('iOS nutzt WASM mit schnellerer lokaler Notinferenz, Android kann WebGPU be
   assert.match(helper, /onnxruntime-web@1\.27\.0/);
 });
 
-test('Voice-Einstieg lädt das große lokale Modell nicht vorab', () => {
+test('Voice-Einstieg startet weiter sofort; das lokale Modell wird erst danach im Hintergrund vorgewärmt', () => {
   assert.match(runtime, /let armed = false;/);
   assert.match(runtime, /function arm\(\)/);
   assert.match(runtime, /function armAndPrepare\(\)/);
   assert.match(runtime, /if \(voiceEntry\) arm\(\);/);
-  assert.doesNotMatch(runtime, /if \(voiceEntry\) armAndPrepare\(\)/);
+  assert.match(contextHotfix, /const VOICE_WARM_DELAY_MS = 1200;/);
+  assert.match(contextHotfix, /api\.armAndPrepare\(\)/);
+  assert.match(contextHotfix, /window\.setTimeout\(warmLocalVoice, VOICE_WARM_DELAY_MS\)/);
   assert.match(runtime, /dokohilf-local-voice-model-v28-1/);
   assert.match(runtime, /no-generated-audio-storage/);
   assert.doesNotMatch(runtime, /localStorage|sessionStorage|indexedDB/);
+  assert.doesNotMatch(contextHotfix, /localStorage|sessionStorage|indexedDB/);
 });
 
-test('iPhone-Inferenz kann nicht endlos drehen', () => {
+test('iPhone-Inferenz kann nicht endlos drehen und wird im Hotfix früher freigegeben', () => {
   assert.match(gate, /const IOS_LOCAL_TIMEOUT_MS = 20000;/);
   assert.match(gate, /const OTHER_LOCAL_TIMEOUT_MS = 35000;/);
   assert.match(gate, /local_voice_timeout/);
   assert.match(gate, /updateVoiceStatus\('Stimme nicht bereit'/);
+  assert.match(contextHotfix, /const IOS_SYNTHESIS_TIMEOUT_MS = 12000;/);
+  assert.match(contextHotfix, /new Error\('local_voice_timeout'\)/);
 });
 
-test('statische Supertonic-Audios werden separat gecacht und enthalten nur Katalogtexte', () => {
+test('statische Supertonic-Audios werden separat gecacht und bei diesem Hotfix sauber erneuert', () => {
   assert.match(gate, /dokohilf-static-supertonic-audio-v28-1/);
   assert.match(gate, /entry\.text/);
   assert.match(gate, /entry\.file/);
   assert.match(gate, /stripExerciseNotice/);
   assert.match(worker, /STATIC_AUDIO_CACHE/);
   assert.match(worker, /key !== STATIC_AUDIO_CACHE/);
+  assert.match(worker, /await caches\.delete\(STATIC_AUDIO_CACHE\)/);
   assert.match(worker, /guide-audio-catalog\.json/);
 });
 
@@ -138,7 +157,8 @@ test('v28 Build-ID, Load-Order, report spokenText und Supertonic-PWA-Revision si
   assert.match(worker, /HOTFIX_REVISION = '20260807-static-supertonic-guides-v28-4'/);
   assert.match(worker, /LOCAL_VOICE_MODEL_CACHE/);
   assert.match(worker, /STATIC_AUDIO_CACHE/);
-  assert.match(applyDetail, /20260807-static-supertonic-guides-v28-4/);
+  assert.match(applyDetail, /context-voice-hotfix-v28\.js\?v=\$\{BUILD_ID\}/);
+  assert.match(applyDetail, /contextVoiceHotfixIndex < gateIndex/);
   assert.match(build, /static-supertonic-guide-v28/);
   assert.match(build, /payload\.spokenText/);
   assert.match(build, /Sonderfall · nur bei 2 Kategorien/);
