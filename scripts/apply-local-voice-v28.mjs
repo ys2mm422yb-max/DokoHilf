@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const BUILD_ID = '20260807-28';
+const BUILD_ID = '20260808-29';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const appPath = resolve(root, 'assets/app.js');
@@ -16,9 +16,9 @@ const uxIndex = html.indexOf(`assets/ux-v27.js?v=${BUILD_ID}`);
 const gateIndex = html.indexOf(`assets/local-voice-gate-v28.js?v=${BUILD_ID}`);
 const appIndex = html.indexOf(`assets/app.js?v=${BUILD_ID}`);
 if (!(localIndex >= 0 && localIndex < experienceIndex && experienceIndex < uxIndex && uxIndex < gateIndex && gateIndex < appIndex)) {
-  throw new Error('v28 local voice load order is invalid.');
+  throw new Error('v29 local voice load order is invalid.');
 }
-if (html.includes('voice-diagnostics.js')) throw new Error('v28 release still loads legacy Gacrux voice diagnostics.');
+if (html.includes('voice-diagnostics.js')) throw new Error('v29 release still loads legacy Gacrux voice diagnostics.');
 await writeFile(htmlPath, html);
 
 let app = await readFile(appPath, 'utf8');
@@ -54,4 +54,4 @@ if (!experience.includes(initLocal)) {
 }
 await writeFile(experiencePath, experience);
 
-console.log('DokoHilf v28 local-only voice release guards applied');
+console.log('DokoHilf v29 local-only voice release guards applied');
