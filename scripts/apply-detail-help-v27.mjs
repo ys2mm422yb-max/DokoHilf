@@ -31,6 +31,13 @@ if (!html.includes('assets/detail-help-render-sync-v27.js')) {
 }
 if (!html.includes(syncScriptTag.trim())) throw new Error('Detailhilfe-Render-Sync konnte nicht in index.html aktiviert werden.');
 
+const contextVoiceHotfixTag = `  <script src="assets/context-voice-hotfix-v28.js?v=${BUILD_ID}"></script>`;
+if (!html.includes('assets/context-voice-hotfix-v28.js')) {
+  if (!html.includes(syncScriptTag)) throw new Error('Render-Sync marker fehlt in index.html');
+  html = html.replace(syncScriptTag, `${syncScriptTag}\n${contextVoiceHotfixTag}`);
+}
+if (!html.includes(contextVoiceHotfixTag.trim())) throw new Error('Kontext-/Voice-Hotfix konnte nicht in index.html aktiviert werden.');
+
 const clarificationIndex = html.indexOf(`assets/clarification-ui.js?v=${BUILD_ID}`);
 const helpIndex = html.indexOf(`assets/detail-help-v27.js?v=${BUILD_ID}`);
 const progressIndex = html.indexOf(`assets/guide-progress.js?v=${BUILD_ID}`);
@@ -38,9 +45,10 @@ const localVoiceIndex = html.indexOf(`assets/local-voice-v28.js?v=${BUILD_ID}`);
 const experienceIndex = html.indexOf(`assets/experience-v27.js?v=${BUILD_ID}`);
 const polishIndex = html.indexOf(`assets/detail-help-polish-v27.js?v=${BUILD_ID}`);
 const syncIndex = html.indexOf(`assets/detail-help-render-sync-v27.js?v=${BUILD_ID}`);
+const contextVoiceHotfixIndex = html.indexOf(`assets/context-voice-hotfix-v28.js?v=${BUILD_ID}`);
 const gateIndex = html.indexOf(`assets/local-voice-gate-v28.js?v=${BUILD_ID}`);
 if (!(clarificationIndex >= 0 && clarificationIndex < helpIndex && helpIndex < progressIndex)) throw new Error('Detailhilfe muss nach Clarification und vor Guide-Progress geladen werden.');
-if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < gateIndex)) throw new Error('Lokale Stimme, Experience, Detailhilfe-Polish, Render-Sync und finaler Voice-Gate sind falsch sortiert.');
+if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex)) throw new Error('Lokale Stimme, Experience, Detailhilfe, Kontext-Hotfix und finaler Voice-Gate sind falsch sortiert.');
 await writeFile(htmlPath, html);
 
 let worker = await readFile(workerPath, 'utf8');
@@ -63,7 +71,12 @@ if (!worker.includes(syncAssetLine)) {
   if (!worker.includes(polishAssetLine)) throw new Error('Polish asset marker fehlt im Service Worker');
   worker = worker.replace(polishAssetLine, `${polishAssetLine}\n${syncAssetLine}`);
 }
-if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(helpAssetLine) || !worker.includes(polishAssetLine) || !worker.includes(syncAssetLine)) throw new Error('Detailhilfe, Voice-Polish und Render-Sync konnten nicht in den Service Worker aufgenommen werden.');
+const contextVoiceHotfixAssetLine = `  './assets/context-voice-hotfix-v28.js?v=${BUILD_ID}',`;
+if (!worker.includes(contextVoiceHotfixAssetLine)) {
+  if (!worker.includes(syncAssetLine)) throw new Error('Render-Sync asset marker fehlt im Service Worker');
+  worker = worker.replace(syncAssetLine, `${syncAssetLine}\n${contextVoiceHotfixAssetLine}`);
+}
+if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(helpAssetLine) || !worker.includes(polishAssetLine) || !worker.includes(syncAssetLine) || !worker.includes(contextVoiceHotfixAssetLine)) throw new Error('Detailhilfe, Kontext-/Voice-Hotfix und Render-Sync konnten nicht in den Service Worker aufgenommen werden.');
 await writeFile(workerPath, worker);
 
-console.log(`DokoHilf detail help + static Supertonic release applied: ${REVISION}`);
+console.log(`DokoHilf detail help + context/iPhone voice hotfix applied: ${REVISION}`);
