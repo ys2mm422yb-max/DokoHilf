@@ -18,7 +18,16 @@ troubleshooting = jsonb_build_object(
 ),
 version = greatest(version, 4),
 updated_at = now()
-where slug='anwesenheit' and status='approved';
+where slug='anwesenheit' and status='approved'
+  and (
+    version < 4
+    or coalesce(steps->4->>'text','') <> 'Trage bei „Von“ immer Datum und Uhrzeit ein.'
+    or coalesce(steps->5->>'text','') <> 'Trage bei „Bis“ nur dann Datum und Uhrzeit ein, wenn der Endzeitpunkt sicher feststeht. Wenn du den Endzeitpunkt noch nicht sicher kennst, lässt du „Bis“ einfach leer. Bitte nicht schätzen.'
+    or coalesce(steps->6->>'text','') <> 'Ergänze nur die Angaben, die du wirklich brauchst, zum Beispiel Ziel, Begleitung, Grund oder Bemerkung.'
+    or coalesce(steps->7->>'text','') <> 'Speichere den Eintrag und prüfe kurz, ob er in der Übersicht erscheint.'
+    or coalesce(troubleshooting->>'von_pflicht','') <> 'Bei „Von“ gehören Datum und Uhrzeit immer dazu.'
+    or coalesce(troubleshooting->>'bis_unsicher','') <> 'Wenn der Endzeitpunkt noch nicht sicher feststeht, lässt du „Bis“ leer. Bitte nicht schätzen.'
+  );
 
 update public.dokohilf_guides
 set steps = steps || jsonb_build_array(
