@@ -2,20 +2,23 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [polish, axisFix, index, sw] = await Promise.all([
+const [polish, axisFix, index, sw, version] = await Promise.all([
   readFile(new URL('../assets/mobile-polish-v29.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/card-axis-fix-v29.css', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
+  readFile(new URL('../version.json', import.meta.url), 'utf8'),
 ]);
 
+const buildId = JSON.parse(version).buildId;
+
 test('mobile polish loads after the premium v29 presentation layer and the critical axis stylesheet is cache-busted', () => {
-  const premium = index.indexOf('assets/v29-ui.js?v=20260808-29');
-  const mobile = index.indexOf('assets/mobile-polish-v29.js?v=20260808-29-cardaxis1');
+  const premium = index.indexOf(`assets/v29-ui.js?v=${buildId}`);
+  const mobile = index.indexOf(`assets/mobile-polish-v29.js?v=${buildId}-cardaxis1`);
   assert.ok(premium >= 0 && mobile > premium);
-  assert.match(index, /assets\/card-axis-fix-v29\.css\?v=20260808-29-cardaxis1/);
-  assert.match(sw, /card-axis-fix-v29\.css\?v=20260808-29-cardaxis1/);
-  assert.match(sw, /mobile-polish-v29\.js\?v=20260808-29-cardaxis1/);
+  assert.match(index, new RegExp(`assets/card-axis-fix-v29\\.css\\?v=${buildId}-cardaxis1`));
+  assert.match(sw, new RegExp(`card-axis-fix-v29\\.css\\?v=${buildId}-cardaxis1`));
+  assert.match(sw, new RegExp(`mobile-polish-v29\\.js\\?v=${buildId}-cardaxis1`));
   assert.match(sw, /mobile-polish-8/);
 });
 
