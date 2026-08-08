@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DokoHilf">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="dokohilf-build" content="20260808-29">
+  <meta name="dokohilf-build" content="20260809-29">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>DokoHilf – KI-Bedienungshilfe</title>
   <link rel="manifest" href="manifest.webmanifest">
@@ -27,7 +27,7 @@
   <script>
     (() => {
       'use strict';
-      const BUILD_ID = '20260808-29';
+      const BUILD_ID = '20260809-29';
       const ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router';
       const CORE_ENDPOINT_MARKER = '/functions/v1/dokohilf-ai';
       const nativeFetch = window.fetch.bind(window);
@@ -86,14 +86,14 @@
   </script>
 </head>
 <body>
-  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260808-29">
+  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260809-29">
     <header class="topbar">
       <div class="brand" aria-label="DokoHilf">
         <img src="icon.svg" alt="" width="48" height="48">
         <span><strong>DokoHilf</strong><small>KI-Bedienungshilfe</small></span>
       </div>
       <div class="top-actions">
-        <button class="build-pill" id="buildPill" type="button" aria-label="Version 20260808-29 und Updateprüfung">KI · v29</button>
+        <button class="build-pill" id="buildPill" type="button" aria-label="Version 20260809-29 und Updateprüfung">KI · v29</button>
         <button class="home-button" id="homeButton" type="button" hidden aria-label="Zum Hauptmenü">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></svg>
           <span>Hauptmenü</span>
@@ -225,7 +225,7 @@
   <script>
     document.getElementById('buildPill')?.addEventListener('click', () => {
       if (window.DokoHilfUpdate?.checkForUpdate) window.DokoHilfUpdate.checkForUpdate('manual');
-      else window.DokoHilfHardRefresh?.('20260808-29');
+      else window.DokoHilfHardRefresh?.('20260809-29');
     });
   </script>
 </body>
