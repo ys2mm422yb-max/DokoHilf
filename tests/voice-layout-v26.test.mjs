@@ -11,6 +11,8 @@ const localVoice = await readFile(new URL('../assets/local-voice-v28.js', import
 const ux = await readFile(new URL('../assets/ux-v27.js', import.meta.url), 'utf8');
 const worker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+const version = await readFile(new URL('../version.json', import.meta.url), 'utf8');
+const buildId = JSON.parse(version).buildId;
 
 test('bewährte Trennung von Anweisung und Mikrofon bleibt erhalten', () => {
   assert.match(legacyCss, /voice-focus-main/);
@@ -64,20 +66,20 @@ test('v29 deaktiviert weiterhin den alten 180-ms-Gerätestimmenpfad und nutzt lo
 
 test('Service Worker erzwingt die v29-Revision ohne die Voice-Balance zu verlieren', () => {
   assert.match(worker, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
-  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260808-29/);
-  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260808-29/);
-  assert.match(worker, /local-voice-v28\.js\?v=20260808-29/);
+  assert.match(worker, new RegExp(`voice-stage-balance-v27\\.css\\?v=${buildId}`));
+  assert.match(worker, new RegExp(`direct-guides-chat-v27\\.css\\?v=${buildId}`));
+  assert.match(worker, new RegExp(`local-voice-v28\\.js\\?v=${buildId}`));
   assert.match(worker, /hotfixRevision: HOTFIX_REVISION/);
 });
 
 test('Build 29 lädt Voice-Balance, Direkt-Guide-Schicht und lokale Voice in konsistenter Revision', () => {
-  assert.match(html, /premium-ui-v26\.css\?v=20260808-29/);
-  assert.match(html, /premium-ui-v27\.css\?v=20260808-29/);
-  assert.match(html, /ux-v27\.css\?v=20260808-29[\s\S]*voice-stage-balance-v27\.css\?v=20260808-29[\s\S]*direct-guides-chat-v27\.css\?v=20260808-29/);
-  assert.match(html, /local-voice-v28\.js\?v=20260808-29/);
-  assert.match(worker, /premium-ui-v26\.css\?v=20260808-29/);
-  assert.match(worker, /premium-ui-v27\.css\?v=20260808-29/);
-  assert.match(worker, /ux-v27\.css\?v=20260808-29/);
-  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260808-29/);
-  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260808-29/);
+  assert.match(html, new RegExp(`premium-ui-v26\\.css\\?v=${buildId}`));
+  assert.match(html, new RegExp(`premium-ui-v27\\.css\\?v=${buildId}`));
+  assert.match(html, new RegExp(`ux-v27\\.css\\?v=${buildId}[\\s\\S]*voice-stage-balance-v27\\.css\\?v=${buildId}[\\s\\S]*direct-guides-chat-v27\\.css\\?v=${buildId}`));
+  assert.match(html, new RegExp(`local-voice-v28\\.js\\?v=${buildId}`));
+  assert.match(worker, new RegExp(`premium-ui-v26\\.css\\?v=${buildId}`));
+  assert.match(worker, new RegExp(`premium-ui-v27\\.css\\?v=${buildId}`));
+  assert.match(worker, new RegExp(`ux-v27\\.css\\?v=${buildId}`));
+  assert.match(worker, new RegExp(`voice-stage-balance-v27\\.css\\?v=${buildId}`));
+  assert.match(worker, new RegExp(`direct-guides-chat-v27\\.css\\?v=${buildId}`));
 });
