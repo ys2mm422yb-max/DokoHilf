@@ -58,7 +58,7 @@ test('v29 deaktiviert weiterhin den alten 180-ms-Gerätestimmenpfad und nutzt lo
   assert.match(ux, /if \(localVoiceV28\(\)\) return previousFetch\(input, init\);/);
   assert.match(ux, /if \(localVoiceV28\(\)\) return;/);
   assert.match(ux, /__DOKOHILF_LOCAL_VOICE_ONLY_V28__/);
-  assert.match(localVoice, /local-on-device-v28/);
+  assert.match(localVoice, /local-on-device-v29/);
   assert.match(localVoice, /const MODEL_CACHE = 'dokohilf-local-voice-model-v28-1'/);
 });
 
