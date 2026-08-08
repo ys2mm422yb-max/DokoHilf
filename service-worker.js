@@ -47,6 +47,7 @@ self.addEventListener('activate', event => {
     await Promise.all(keys
       .filter(key => key.startsWith('dokohilf-') && key !== CACHE_NAME && key !== LOCAL_VOICE_MODEL_CACHE && key !== STATIC_AUDIO_CACHE)
       .map(key => caches.delete(key)));
+    await caches.delete(STATIC_AUDIO_CACHE);
     if (self.registration.navigationPreload) await self.registration.navigationPreload.enable().catch(() => {});
     await self.clients.claim();
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
