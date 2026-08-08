@@ -57,7 +57,7 @@ function jsonResponse(origin: string | null, status: number, body: unknown): Res
     headers: {
       ...corsHeaders(origin),
       'Content-Type': 'application/json; charset=utf-8',
-      'X-DokoHilf-Chat-Router': 'context-aware-v28-2',
+      'X-DokoHilf-Chat-Router': 'context-aware-v28-3',
     },
   });
 }
@@ -156,9 +156,20 @@ function guideCorpus(guide: GuideRecord): string {
 
 function explicitDifferentGoal(text: string, guide: GuideRecord): boolean {
   const n = normalize(text);
+  const active = normalize(`${guide.slug} ${guide.title}`);
   if (/\b(neuer ablauf|anderer ablauf|anderes thema|stattdessen|wechseln zu|jetzt lieber)\b/.test(n)) return true;
-  if (!/\b(ich mochte|ich will|wie lege ich|wie erfasse ich|wie offne ich|wie kann ich)\b/.test(n)) return false;
 
+  const relatedGuideSwitches: Array<[RegExp, RegExp]> = [
+    [/\b(durchstreichen|bericht loschen|bericht korrigieren)\b/, /bericht-durchstreichen|durchstreichen/],
+    [/\bfolgebericht\b/, /bericht-folgebericht|folgebericht/],
+    [/\b(berichtssuche|berichte suchen|bericht suchen|nach berichten suchen)\b/, /berichtssuche|berichte suchen/],
+    [/\b(neuen bericht|bericht anlegen|bericht schreiben|bericht erfassen)\b/, /bericht-neu|neuen bericht/],
+    [/\b(sammelerfassung|mehrere vitalwerte|vitalwerte zusammen)\b/, /sammelerfassung/],
+    [/\b(einzelwert|einzelnen vitalwert|einen vitalwert)\b/, /einzelwert/],
+  ];
+  if (relatedGuideSwitches.some(([intent, target]) => intent.test(n) && !target.test(active))) return true;
+
+  if (!/\b(ich mochte|ich will|wie lege ich|wie erfasse ich|wie offne ich|wie kann ich)\b/.test(n)) return false;
   const domains = [
     'bericht', 'visite', 'vital', 'medikation', 'formular', 'ubergabe', 'anwesenheit',
     'notfallblatt', 'stammdaten', 'easy plan', 'durchfuhrung', 'aufgaben',
@@ -253,7 +264,7 @@ function contextHelpResponse(
     guideStep: currentIndex + 1,
     guideStepCount: guide.steps.length,
     completed: false,
-    source: 'approved-guide-context-help-v28-2',
+    source: 'approved-guide-context-help-v28-3',
     contextEvidenceStep: evidenceStep,
   });
 }
