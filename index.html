@@ -54,15 +54,15 @@
         try {
           if (sessionStorage.getItem(key) === 'running') return;
           sessionStorage.setItem(key, 'running');
-        } catch { /* Reload funktioniert auch ohne Session Storage. */ }
+        } catch { }
         try {
           const registrations = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistrations() : [];
           await Promise.all(registrations.map(registration => registration.unregister().catch(() => false)));
-        } catch { /* no-op */ }
+        } catch { }
         try {
           const keys = 'caches' in window ? await caches.keys() : [];
           await Promise.all(keys.filter(name => name.startsWith('dokohilf-') && !name.startsWith('dokohilf-local-voice-model-')).map(name => caches.delete(name)));
-        } catch { /* no-op */ }
+        } catch { }
         window.location.reload();
       }
 
@@ -72,7 +72,7 @@
           if (!response.ok) return;
           const payload = await response.json();
           if (payload?.buildId && payload.buildId !== BUILD_ID) await hardRefresh(payload.buildId);
-        } catch { /* Offline bleibt die installierte Fassung benutzbar. */ }
+        } catch { }
       }
 
       window.DokoHilfHardRefresh = hardRefresh;
@@ -214,6 +214,7 @@
   <script src="assets/experience-v27.js?v=20260808-29"></script>
   <script src="assets/ux-v27.js?v=20260808-29"></script>
   <script src="assets/v29-ui.js?v=20260808-29"></script>
+  <script src="assets/mobile-polish-v29.js?v=20260808-29"></script>
   <script src="assets/local-voice-gate-v28.js?v=20260808-29"></script>
   <script src="assets/direct-guides-v27.js?v=20260808-29"></script>
   <script src="assets/direct-guide-copy-v29.js?v=20260808-29"></script>
