@@ -70,6 +70,19 @@
     return true;
   }
 
+  function polishVisit(view) {
+    if (view.querySelector('.direct-guide-heading h1')?.textContent?.trim() !== 'Visite anlegen') return false;
+    const paragraphs = stepParagraphs(view);
+    if (paragraphs.length < 14) return false;
+    const doctor = 'Den durchführenden Arzt auswählen. Nur wenn er beim Bewohner fehlt, rechts daneben das kleine Filtersymbol aktivieren und aus allen systemweit hinterlegten Ärzten wählen.';
+    const place = 'Den Ort auswählen: Einrichtung, beim Arzt, telefonisch oder per Mail.';
+    if (paragraphs[7] && paragraphs[7].textContent !== doctor) paragraphs[7].textContent = doctor;
+    if (paragraphs[11] && paragraphs[11].textContent !== place) paragraphs[11].textContent = place;
+    view.dataset.v29VisitDoctorFilter = 'true';
+    view.dataset.v29VisitMailLocation = 'true';
+    return true;
+  }
+
   function polishChatHead() {
     const copy = document.querySelector('.chat-head p');
     const natural = 'Beschreibe kurz dein Ziel. DokoHilf führt dich Schritt für Schritt.';
@@ -85,6 +98,7 @@
     polishForm(view);
     polishMedication(view);
     polishReport(view);
+    polishVisit(view);
   }
 
   function schedule() {
