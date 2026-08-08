@@ -1,7 +1,10 @@
 (() => {
   'use strict';
 
-  const AI_MARKER = '/functions/v1/dokohilf-ai';
+  const AI_MARKERS = [
+    '/functions/v1/dokohilf-ai',
+    '/functions/v1/dokohilf-chat-router',
+  ];
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -22,7 +25,7 @@
   function isAiRequest(input, init = {}) {
     const url = requestUrl(input);
     const method = String(init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
-    return typeof url === 'string' && url.includes(AI_MARKER) && method === 'POST';
+    return typeof url === 'string' && AI_MARKERS.some(marker => url.includes(marker)) && method === 'POST';
   }
 
   function parseBody(body) {
@@ -37,11 +40,10 @@
 
   function helpLike(text) {
     const n = normalize(text);
-    return /\b(ich brauche hilfe|brauch hilfe|hilf mir|kannst du mir helfen|komme nicht weiter|weiss nicht weiter|weis nicht weiter|weiss nicht wo|weis nicht wo|keine ahnung|wo bin ich|ich bin verloren|verlaufen|blick nicht durch|blicke nicht durch|checke nicht|check nicht|verstehe nicht|versteh nicht|kapier nicht|raffe nicht|raff nicht)\b/.test(n)
+    return /\b(ich brauche hilfe|brauch hilfe|hilf mir|kannst du mir helfen|komme nicht weiter|weiss nicht weiter|weis nicht weiter|ich weiss nicht|ich weis nicht|weiss nicht|weis nicht|keine ahnung|wo bin ich|ich bin verloren|verlaufen|blick nicht durch|blicke nicht durch|checke nicht|check nicht|verstehe nicht|versteh nicht|kapier nicht|raffe nicht|raff nicht|was meinst du|welches davon|und jetzt|was jetzt|hä|hae)\b/.test(n)
       || /\b(finde|sehe|erkenne|entdecke)\b.*\b(nicht|nirgends)\b/.test(n)
       || /\b(wo ist|wo sind|wo finde ich|wie finde ich|wo muss ich|wo soll ich|wo klicken|wo drucken|wo druecken|was muss ich klicken|was soll ich klicken|welchen knopf|welchen button|welche taste)\b/.test(n)
       || /\b(das gibt es bei mir nicht|das gibt s bei mir nicht|hab ich nicht|habe ich nicht|steht bei mir nicht|sieht bei mir anders aus|bei mir ist es anders)\b/.test(n)
-      || /\b(hä|hae|huh|was meinst du|welches davon|und jetzt|was jetzt)\b/.test(n)
       || /\b(kannst du|kannst mir)\b.*\b(genauer|zeigen|helfen|sagen wo)\b/.test(n);
   }
 
@@ -61,7 +63,7 @@
     if (!hasNavigationIntent(n) || hasEntryAction(n)) return '';
 
     if (/\b(berichtssuche|berichte auswerten|berichte suchen|nach berichten suchen|abfrage)\b/.test(n)) return 'berichtssuche';
-    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte';
+    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-einzelwert';
     if (/\b(bericht|berichte|berichtseintrag)\b/.test(n)) return 'bericht-neu';
     if (/\b(visite|visiten|sprechstunde)\b/.test(n)) return 'visiten-oeffnen';
     if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n)) return 'medikation-ansehen';
@@ -76,22 +78,10 @@
     return '';
   }
 
-  function rewriteLatestUser(parsed, replacement) {
-    if (!Array.isArray(parsed?.messages)) return null;
-    const messages = parsed.messages.map(message => ({ ...message }));
-    for (let index = messages.length - 1; index >= 0; index -= 1) {
-      if (messages[index]?.role !== 'user') continue;
-      messages[index].content = replacement;
-      return { ...parsed, messages };
-    }
-    return null;
-  }
-
   function preparedBody(parsed, userText) {
     const activeGuide = String(parsed.guideSlug || '').trim();
     if (activeGuide && helpLike(userText)) {
-      const rewritten = rewriteLatestUser(parsed, 'ich finde das nicht');
-      if (rewritten) return JSON.stringify({ ...rewritten, smartHelpIntent: true });
+      return JSON.stringify({ ...parsed, smartHelpIntent: true });
     }
 
     if (!activeGuide && !parsed.selectedGuideSlug) {
