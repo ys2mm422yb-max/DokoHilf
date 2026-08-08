@@ -37,8 +37,8 @@ type TopicRecord = {
 };
 type Knowledge = { guides: GuideRecord[]; topics: TopicRecord[] };
 type RouteDecision =
-  | { kind: 'guide'; slug: string }
-  | { kind: 'topic'; slug: string }
+  | { kind: 'guide'; slug: string; reply?: string }
+  | { kind: 'topic'; slug: string; reply?: string }
   | { kind: 'basic'; reply: string }
   | { kind: 'clarify'; reply: string };
 
