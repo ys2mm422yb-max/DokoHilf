@@ -44,12 +44,12 @@ test('Voice-Detailhilfe ist kompakt und blendet konkurrierende Aktionen aus', ()
   assert.match(source, /\.pause-button\{display:none!important\}/);
 });
 
-test('Release keeps detail help around the v28-4 static Supertonic voice load order', () => {
+test('v29 keeps detail help inside the current static Supertonic load order', () => {
   assert.match(apply, /localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < gateIndex/);
-  assert.match(apply, /20260807-static-supertonic-guides-v28-4/);
+  assert.match(apply, /20260808-context-voice-v29-1/);
   assert.match(apply, /detail-help-polish-v27\.js/);
   assert.match(apply, /detail-help-render-sync-v27\.js/);
   assert.match(build, /detail-help-polish-v27\.js/);
   assert.match(build, /detail-help-render-sync-v27\.js/);
-  assert.match(build, /20260807-static-supertonic-guides-v28-4/);
+  assert.match(build, /20260808-context-voice-v29-1/);
 });
