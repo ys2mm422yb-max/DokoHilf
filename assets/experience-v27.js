@@ -330,18 +330,24 @@
     installObservers();
     polishVoiceStatus();
     cleanAssistantMessages();
-    loadPrebuiltManifest().then(() => warmGreeting()).catch(() => {});
 
-    const voiceCard = document.querySelector('[data-select-mode="voice"]');
-    voiceCard?.addEventListener('pointerdown', warmGreeting, { passive: true });
-    voiceCard?.addEventListener('touchstart', warmGreeting, { passive: true });
-    document.addEventListener('pointerdown', event => {
-      const promptButton = event.target.closest('[data-prompt]');
-      if (promptButton) prefetchForPrompt(promptButton);
-    }, { passive: true });
+    // v29 uses only the static/local Supertonic path. The legacy v27 prefetch is
+    // kept for compatibility tests, but must not make manifest or cloud requests
+    // when the local voice runtime owns speech.
+    if (window.__DOKOHILF_LOCAL_VOICE_V28__ !== true) {
+      loadPrebuiltManifest().then(() => warmGreeting()).catch(() => {});
 
-    if ('requestIdleCallback' in window) requestIdleCallback(warmGreeting, { timeout: 850 });
-    else setTimeout(warmGreeting, 250);
+      const voiceCard = document.querySelector('[data-select-mode="voice"]');
+      voiceCard?.addEventListener('pointerdown', warmGreeting, { passive: true });
+      voiceCard?.addEventListener('touchstart', warmGreeting, { passive: true });
+      document.addEventListener('pointerdown', event => {
+        const promptButton = event.target.closest('[data-prompt]');
+        if (promptButton) prefetchForPrompt(promptButton);
+      }, { passive: true });
+
+      if ('requestIdleCallback' in window) requestIdleCallback(warmGreeting, { timeout: 850 });
+      else setTimeout(warmGreeting, 250);
+    }
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true });

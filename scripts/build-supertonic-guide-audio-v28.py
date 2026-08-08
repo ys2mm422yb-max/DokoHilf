@@ -6,7 +6,8 @@ from pathlib import Path
 
 BASE_GUIDE_COUNT = 93
 EXTRA_SPEECH_COUNT = 18
-STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT
+RELEASE_SPEECH_COUNT = 49
+STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COUNT
 
 
 def clean_catalog_text(value: str) -> str:
@@ -45,11 +46,11 @@ def supertonic_text(value: str) -> str:
     return re.sub(r'\s{2,}', ' ', text).strip()
 
 
-def merged_entries(base_catalog: dict, extra_catalog: dict) -> list[dict]:
+def merged_entries(*catalogs: dict) -> list[dict]:
     merged: list[dict] = []
     seen: set[str] = set()
-    for source in [base_catalog.get('entries') or [], extra_catalog.get('entries') or []]:
-        for raw in source:
+    for catalog in catalogs:
+        for raw in catalog.get('entries') or []:
             if not isinstance(raw, dict):
                 continue
             text = clean_catalog_text(raw.get('text', ''))
@@ -65,6 +66,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--catalog', default='assets/guide-audio-catalog.json')
     parser.add_argument('--extra-catalog', default='assets/voice-extra-catalog-v28.json')
+    parser.add_argument('--release-catalog', default='assets/voice-release-catalog-v29.json')
     parser.add_argument('--output-root', default='assets/audio/guides')
     parser.add_argument('--voice', default='F1')
     parser.add_argument('--steps', type=int, default=8)
@@ -76,19 +78,24 @@ def main() -> None:
     catalog_path = Path(args.catalog)
     base_catalog = json.loads(catalog_path.read_text(encoding='utf-8'))
     extra_catalog = json.loads(Path(args.extra_catalog).read_text(encoding='utf-8'))
+    release_catalog = json.loads(Path(args.release_catalog).read_text(encoding='utf-8'))
     base_entries = base_catalog.get('entries') or []
     extra_entries = extra_catalog.get('entries') or []
+    release_entries = release_catalog.get('entries') or []
     if len(base_entries) != BASE_GUIDE_COUNT:
         raise SystemExit(f'expected {BASE_GUIDE_COUNT} base guide sentences, found {len(base_entries)}')
     if len(extra_entries) != EXTRA_SPEECH_COUNT:
         raise SystemExit(f'expected {EXTRA_SPEECH_COUNT} fixed dialog sentences, found {len(extra_entries)}')
-    entries = merged_entries(base_catalog, extra_catalog)
+    if len(release_entries) != RELEASE_SPEECH_COUNT:
+        raise SystemExit(f'expected {RELEASE_SPEECH_COUNT} v29 release sentences, found {len(release_entries)}')
+    entries = merged_entries(base_catalog, extra_catalog, release_catalog)
     if len(entries) != STATIC_SPEECH_COUNT:
         raise SystemExit(f'expected {STATIC_SPEECH_COUNT} unique static speech sentences, found {len(entries)}')
     if args.validate_only:
         print(
             f'Validated {BASE_GUIDE_COUNT} base guide sentences + '
-            f'{EXTRA_SPEECH_COUNT} fixed dialog sentences = {STATIC_SPEECH_COUNT} static sentences'
+            f'{EXTRA_SPEECH_COUNT} fixed dialog sentences + '
+            f'{RELEASE_SPEECH_COUNT} v29 guide/help sentences = {STATIC_SPEECH_COUNT} static sentences'
         )
         return
     if args.limit > 0:
@@ -142,6 +149,7 @@ def main() -> None:
         'generatedWith': 'Supertonic 3 static GitHub build',
         'baseGuideCount': BASE_GUIDE_COUNT,
         'extraSpeechCount': EXTRA_SPEECH_COUNT,
+        'releaseSpeechCount': RELEASE_SPEECH_COUNT,
         'staticSpeechCount': len(published_entries),
         'entries': published_entries,
     }
@@ -156,6 +164,7 @@ def main() -> None:
             'speed': args.speed,
             'baseGuideCount': BASE_GUIDE_COUNT,
             'extraSpeechCount': EXTRA_SPEECH_COUNT,
+            'releaseSpeechCount': RELEASE_SPEECH_COUNT,
             'staticSpeechCount': len(generated),
             'count': len(generated),
             'entries': generated,

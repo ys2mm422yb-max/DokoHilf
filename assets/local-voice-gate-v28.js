@@ -2,13 +2,13 @@
   'use strict';
 
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
-  const AI_MARKERS = ['/functions/v1/dokohilf-ai-router', '/functions/v1/dokohilf-ai'];
-  const STATIC_AUDIO_MANIFEST = './assets/guide-audio-catalog.json?v=20260807-28';
-  const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v28-1';
+  const AI_MARKERS = ['/functions/v1/dokohilf-chat-router', '/functions/v1/dokohilf-ai-router', '/functions/v1/dokohilf-ai'];
+  const STATIC_AUDIO_MANIFEST = './assets/guide-audio-catalog.json?v=20260808-29';
+  const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1';
   const STATIC_VOICE = 'Supertonic-F1';
   const MANIFEST_TIMEOUT_MS = 2500;
   const AUDIO_TIMEOUT_MS = 6500;
-  const IOS_LOCAL_TIMEOUT_MS = 20000;
+  const IOS_LOCAL_TIMEOUT_MS = 8000;
   const OTHER_LOCAL_TIMEOUT_MS = 35000;
   const previousFetch = window.fetch.bind(window);
 
@@ -53,7 +53,7 @@
     const spoken = stripExerciseNotice(String(payload.spokenText || '').replace(/\*\*/g, ' '));
     if (!replyKey || !spoken) return;
     spokenByReply.set(replyKey, spoken);
-    if (spokenByReply.size > 24) spokenByReply.delete(spokenByReply.keys().next().value);
+    if (spokenByReply.size > 32) spokenByReply.delete(spokenByReply.keys().next().value);
   }
 
   function mappedSpokenText(text) {
@@ -141,24 +141,24 @@
     lastStaticHit = String(entry.file);
     lastStaticError = '';
     updateVoiceStatus('DokoHilf spricht …', 'Kostenlose Stimme wird direkt abgespielt.');
-    return new Response(bytes, { status: 200, headers: { 'Content-Type': 'audio/wav', 'Cache-Control': 'no-store', 'X-DokoHilf-Voice': STATIC_VOICE, 'X-DokoHilf-TTS-Model': 'supertonic-3-static-guide', 'X-DokoHilf-Voice-Mode': 'static-supertonic-guide-v28', 'X-DokoHilf-TTS-Cache': 'static-supertonic-cache-v28' } });
+    return new Response(bytes, { status: 200, headers: { 'Content-Type': 'audio/wav', 'Cache-Control': 'no-store', 'X-DokoHilf-Voice': STATIC_VOICE, 'X-DokoHilf-TTS-Model': 'supertonic-3-static-guide', 'X-DokoHilf-Voice-Mode': 'static-supertonic-guide-v29', 'X-DokoHilf-TTS-Cache': 'static-supertonic-cache-v29' } });
   }
 
   function localResponse(result) {
     const state = window.DokoHilfLocalVoiceV28?.getState?.() || {};
-    return new Response(result.wav, { status: 200, headers: { 'Content-Type': 'audio/wav', 'Cache-Control': 'no-store', 'X-DokoHilf-Voice': STATIC_VOICE, 'X-DokoHilf-Voice-Mode': 'local-on-device-v28', 'X-DokoHilf-Voice-Backend': String(state.backend || 'local'), 'X-DokoHilf-TTS-Latency': String(result.latencyMs || 0), 'X-DokoHilf-TTS-Cache': 'no-generated-audio-storage' } });
+    return new Response(result.wav, { status: 200, headers: { 'Content-Type': 'audio/wav', 'Cache-Control': 'no-store', 'X-DokoHilf-Voice': STATIC_VOICE, 'X-DokoHilf-Voice-Mode': 'local-on-device-v29', 'X-DokoHilf-Voice-Backend': String(state.backend || 'local'), 'X-DokoHilf-TTS-Latency': String(result.latencyMs || 0), 'X-DokoHilf-TTS-Cache': 'no-generated-audio-storage' } });
   }
 
   function localError(error) {
     const message = error instanceof Error ? error.message : String(error || 'local_voice_failed');
     if (message === 'local_voice_timeout') localTimeouts += 1;
-    return new Response(JSON.stringify({ error: 'Die kostenlose Stimme ist auf diesem Gerät gerade nicht bereit.', detail: message }), { status: 503, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-DokoHilf-Voice-Mode': 'local-on-device-v28', 'X-DokoHilf-Local-Voice-Error': '1' } });
+    return new Response(JSON.stringify({ error: 'Die kostenlose Stimme ist auf diesem Gerät gerade nicht bereit.', detail: message }), { status: 503, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-DokoHilf-Voice-Mode': 'local-on-device-v29', 'X-DokoHilf-Local-Voice-Error': '1' } });
   }
 
   async function localFallback(text) {
     if (!window.DokoHilfLocalVoiceV28) throw new Error('local_voice_runtime_missing');
     window.DokoHilfLocalVoiceV28.arm?.();
-    updateVoiceStatus('Kostenlose Stimme erzeugt Antwort …', 'Nur dieser noch nicht vorbereitete Satz wird auf dem Gerät erzeugt.');
+    updateVoiceStatus('Stimme wird vorbereitet …', 'Noch nicht vorbereitete Antwort wird direkt auf diesem Gerät erzeugt.');
     return timed(window.DokoHilfLocalVoiceV28.synthesize(text), isIOS() ? IOS_LOCAL_TIMEOUT_MS : OTHER_LOCAL_TIMEOUT_MS, 'local_voice_timeout');
   }
 
@@ -175,7 +175,7 @@
     try { const staticVoice = await loadStaticSupertonicVoice(text); if (staticVoice) return staticVoice; }
     catch (error) { lastStaticError = error instanceof Error ? error.message : String(error || 'static_audio_failed'); }
     try { return localResponse(await localFallback(text)); }
-    catch (error) { updateVoiceStatus('Stimme nicht bereit', 'Diese Antwort konnte auf dem Gerät nicht erzeugt werden.'); return localError(error); }
+    catch (error) { updateVoiceStatus('Stimme nicht bereit', 'Tippe erneut auf das Mikrofon. Der Ablauf bleibt an derselben Stelle.'); return localError(error); }
   };
 
   function ensureReportConditionStyle() {

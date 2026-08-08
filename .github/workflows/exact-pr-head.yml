@@ -1,0 +1,38 @@
+name: Validate exact PR head
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dokohilf-exact-head-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  exact-head:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Prove exact head and run core regressions
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          node --check assets/app.js
+          node --check assets/smart-help-v29.js
+          node --check assets/local-voice-v28.js
+          node --check assets/local-voice-gate-v28.js
+          node --check scripts/mobile-render-v27.mjs
+          node scripts/run-behavior-regressions.mjs
+          node --test tests/*.test.mjs
+          python3 scripts/build-supertonic-guide-audio-v28.py --validate-only

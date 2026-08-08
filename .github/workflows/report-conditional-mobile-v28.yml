@@ -29,7 +29,8 @@ jobs:
           set -euo pipefail
           bash scripts/build-static-site-v27.sh _report_site
           test -s _report_site/assets/local-voice-gate-v28.js
-          grep -q 'KI · v28' _report_site/index.html
+          grep -q 'KI · v29' _report_site/index.html
+          grep -q '20260808-29' _report_site/version.json
 
       - name: Render and verify iOS and Android
         shell: bash
@@ -49,19 +50,19 @@ jobs:
           DOKOHILF_VIEWPORT_WIDTH=393 \
           DOKOHILF_VIEWPORT_HEIGHT=852 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
-          DOKOHILF_RENDER_OUTPUT=artifacts/report-conditional-v28/ios \
+          DOKOHILF_RENDER_OUTPUT=artifacts/report-conditional-v29/ios \
           node scripts/report-conditional-render-v28.mjs
 
           DOKOHILF_MOBILE_PROFILE=android \
           DOKOHILF_VIEWPORT_WIDTH=412 \
           DOKOHILF_VIEWPORT_HEIGHT=915 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
-          DOKOHILF_RENDER_OUTPUT=artifacts/report-conditional-v28/android \
+          DOKOHILF_RENDER_OUTPUT=artifacts/report-conditional-v29/android \
           node scripts/report-conditional-render-v28.mjs
 
       - name: Upload synthetic render evidence
         uses: actions/upload-artifact@v4
         with:
-          name: report-conditional-${{ github.run_number }}
-          path: artifacts/report-conditional-v28/
+          name: report-conditional-v29-${{ github.run_number }}
+          path: artifacts/report-conditional-v29/
           retention-days: 14

@@ -16,11 +16,11 @@ const [html, worker, version, router, localVoice, premiumCss25, premiumCss26, pr
   readFile(new URL('../PROJECT_RULES.md', import.meta.url), 'utf8'),
 ]);
 
-test('Build 28 ist in HTML, Versionsdatei und Service Worker identisch', () => {
-  assert.match(html, /dokohilf-build" content="20260807-28/);
-  assert.equal(JSON.parse(version).buildId, '20260807-28');
-  assert.match(worker, /BUILD_ID = '20260807-28'/);
-  assert.match(html, /KI · v28/);
+test('Build 29 ist in HTML, Versionsdatei und Service Worker identisch', () => {
+  assert.match(html, /dokohilf-build\" content=\"20260808-29/);
+  assert.equal(JSON.parse(version).buildId, '20260808-29');
+  assert.match(worker, /BUILD_ID = '20260808-29'/);
+  assert.match(html, /KI · v29/);
 });
 
 test('die App leitet KI-Anfragen schon vor dem Hauptskript direkt an den bestätigten Router', () => {
@@ -39,13 +39,13 @@ test('Mobile PWA kann alte Shell-Caches entfernen und den lokalen v28-Modellcach
   assert.match(worker, /key !== LOCAL_VOICE_MODEL_CACHE/);
 });
 
-test('Build 28 lädt Premium-Basisschichten, Voice-Balance und lokale Stimme gemeinsam', () => {
-  assert.match(html, /premium-ui-v25\.css\?v=20260807-28/);
-  assert.match(html, /premium-ui-v26\.css\?v=20260807-28/);
-  assert.match(html, /premium-ui-v27\.css\?v=20260807-28/);
-  assert.match(html, /voice-stage-balance-v27\.css\?v=20260807-28/);
-  assert.match(html, /local-voice-v28\.js\?v=20260807-28/);
-  assert.match(html, /local-voice-gate-v28\.js\?v=20260807-28/);
+test('Build 29 lädt Premium-Basisschichten, Voice-Balance und lokale Stimme gemeinsam', () => {
+  assert.match(html, /premium-ui-v25\.css\?v=20260808-29/);
+  assert.match(html, /premium-ui-v26\.css\?v=20260808-29/);
+  assert.match(html, /premium-ui-v27\.css\?v=20260808-29/);
+  assert.match(html, /voice-stage-balance-v27\.css\?v=20260808-29/);
+  assert.match(html, /local-voice-v28\.js\?v=20260808-29/);
+  assert.match(html, /local-voice-gate-v28\.js\?v=20260808-29/);
   assert.match(premiumCss25, /--dh-deep/);
   assert.match(premiumCss26, /grid-template-rows:minmax\(92px,auto\) minmax\(0,1fr\)/);
   assert.match(premiumCss26, /voice-copy strong:after\{content:none/);
@@ -53,7 +53,7 @@ test('Build 28 lädt Premium-Basisschichten, Voice-Balance und lokale Stimme gem
   assert.doesNotMatch(html, /notfallblattButton/);
 });
 
-test('v28 erzeugt Sprache lokal und speichert nur Modellressourcen dauerhaft', () => {
+test('v29 erzeugt Sprache lokal und speichert nur Modellressourcen dauerhaft', () => {
   assert.match(localVoice, /Supertone\/supertonic-3\/resolve\/main/);
   assert.match(localVoice, /MODEL_CACHE = 'dokohilf-local-voice-model-v28-1'/);
   assert.match(localVoice, /no-generated-audio-storage/);
@@ -71,7 +71,7 @@ test('Router v9 hält Ziele, erkennt neue Ziele und schützt Medikation', () => 
   assert.match(router, /Vitalwerte Sammelerf\./);
 });
 
-test('dauerhafte Fach-, Mobile- und Veröffentlichungsgrenzen bleiben im v28-Block dokumentiert', () => {
+test('dauerhafte Fach-, Mobile- und Veröffentlichungsgrenzen bleiben dokumentiert', () => {
   assert.match(activeVoice, /iOS \*\*und\*\* Android/);
   assert.match(activeVoice, /iOS 393×852/);
   assert.match(activeVoice, /Android 412×915/);

@@ -5,7 +5,7 @@ const PROFILE = process.env.DOKOHILF_MOBILE_PROFILE || 'ios';
 const WIDTH = Number(process.env.DOKOHILF_VIEWPORT_WIDTH || (PROFILE === 'android' ? 412 : 393));
 const HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE === 'android' ? 915 : 852));
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
-const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/report-conditional-v28/${PROFILE}`;
+const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/report-conditional-v29/${PROFILE}`;
 
 function assert(condition, message) { if (!condition) throw new Error(message); }
 
@@ -27,13 +27,13 @@ const spokenReply = 'Öffne „Doku-Erweitert“ und wähle „Visiten“. Bist 
 const spokenText = 'Öffne „Doku-Erweitert“ und wähle „Visiten“.';
 let rawTtsRequests = 0;
 let staticAudioRequests = 0;
+const aiPayload = JSON.stringify({ reply: spokenReply, spokenText, guideSlug: 'visiten-oeffnen', guideStep: 1, guideStepCount: 2 });
 
-await page.route('**/functions/v1/dokohilf-ai-router', async route => {
-  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ reply: spokenReply, spokenText, guideSlug: 'visite', guideStep: 1, guideStepCount: 2 }) });
-});
-await page.route('**/functions/v1/dokohilf-ai', async route => {
-  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ reply: spokenReply, spokenText, guideSlug: 'visite', guideStep: 1, guideStepCount: 2 }) });
-});
+for (const pattern of ['**/functions/v1/dokohilf-chat-router', '**/functions/v1/dokohilf-ai-router', '**/functions/v1/dokohilf-ai']) {
+  await page.route(pattern, async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: aiPayload });
+  });
+}
 await page.route('**/assets/guide-audio-catalog.json*', async route => {
   await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ voice: 'Supertonic-F1', entries: [{ index: 33, text: spokenText, file: 'assets/audio/guides/033.wav' }] }) });
 });
@@ -43,12 +43,12 @@ await page.route('**/assets/audio/guides/033.wav', async route => {
 });
 await page.route('**/functions/v1/dokohilf-tts', async route => {
   rawTtsRequests += 1;
-  await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'tts_network_must_not_be_called_in_v28' }) });
+  await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'tts_network_must_not_be_called_in_v29' }) });
 });
 
 try {
   await page.goto(BASE_URL, { waitUntil: 'networkidle' });
-  assert((await page.locator('#buildPill').innerText()).includes('v28'), 'Test läuft nicht auf v28.');
+  assert((await page.locator('#buildPill').innerText()).includes('v29'), 'Test läuft nicht auf v29.');
 
   await page.locator('[data-direct-guide="bericht"]').click();
   const view = page.locator('#directGuideView');
@@ -94,7 +94,7 @@ try {
   const voiceResult = await page.evaluate(() => window.__REPORT_VOICE_RESULT__);
   assert(voiceResult?.ok === true, 'Gemappter spokenText liefert kein statisches Audio.');
   assert(voiceResult?.voice === 'Supertonic-F1', `Falsche Stimme: ${voiceResult?.voice}`);
-  assert(voiceResult?.mode === 'static-supertonic-guide-v28', `Falscher Voice-Modus: ${voiceResult?.mode}`);
+  assert(voiceResult?.mode === 'static-supertonic-guide-v29', `Falscher Voice-Modus: ${voiceResult?.mode}`);
   assert(voiceResult?.state?.lastSpokenMapping === spokenText, 'Router-spokenText wurde nicht als Audioquelle übernommen.');
   assert(staticAudioRequests === 1, `Statisches Supertonic-Audio wurde ${staticAudioRequests}x geladen.`);
   assert(rawTtsRequests === 0, `TTS-Netzwerkpfad wurde ${rawTtsRequests}x erreicht.`);

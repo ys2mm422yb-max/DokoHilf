@@ -1,34 +1,38 @@
-const BUILD_ID = '20260807-28';
-const HOTFIX_REVISION = '20260807-static-supertonic-guides-v28-4';
+const BUILD_ID = '20260808-29';
+const HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1';
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}`;
 const LOCAL_VOICE_MODEL_CACHE = 'dokohilf-local-voice-model-v28-1';
-const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v28-1';
+const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1';
 const CORE_FILES = [
   './',
   './index.html',
   './version.json',
-  './assets/guide-audio-catalog.json?v=20260807-28',
-  './assets/styles.css?v=20260807-28',
-  './assets/premium-ui-v25.css?v=20260807-28',
-  './assets/premium-ui-v26.css?v=20260807-28',
-  './assets/premium-ui-v27.css?v=20260807-28',
-  './assets/ux-v27.css?v=20260807-28',
-  './assets/voice-stage-balance-v27.css?v=20260807-28',
-  './assets/direct-guides-chat-v27.css?v=20260807-28',
-  './assets/update-manager.js?v=20260807-28',
-  './assets/mobile-audio-fix.js?v=20260807-28',
-  './assets/routing-fix.js?v=20260807-28',
-  './assets/conversation-intelligence.js?v=20260807-28',
-  './assets/clarification-ui.js?v=20260807-28',
-  './assets/guide-progress.js?v=20260807-28',
-  './assets/voice-focus-mode.js?v=20260807-28',
-  './assets/local-voice-v28.js?v=20260807-28',
-  './assets/vendor/supertonic-web-v28.mjs?v=20260807-28',
-  './assets/experience-v27.js?v=20260807-28',
-  './assets/ux-v27.js?v=20260807-28',
-  './assets/local-voice-gate-v28.js?v=20260807-28',
-  './assets/direct-guides-v27.js?v=20260807-28',
-  './assets/app.js?v=20260807-28',
+  './assets/guide-audio-catalog.json?v=20260808-29',
+  './assets/styles.css?v=20260808-29',
+  './assets/premium-ui-v25.css?v=20260808-29',
+  './assets/premium-ui-v26.css?v=20260808-29',
+  './assets/premium-ui-v27.css?v=20260808-29',
+  './assets/ux-v27.css?v=20260808-29',
+  './assets/voice-stage-balance-v27.css?v=20260808-29',
+  './assets/direct-guides-chat-v27.css?v=20260808-29',
+  './assets/v29-ui.css?v=20260808-29',
+  './assets/update-manager.js?v=20260808-29',
+  './assets/mobile-audio-fix.js?v=20260808-29',
+  './assets/routing-fix.js?v=20260808-29',
+  './assets/conversation-intelligence.js?v=20260808-29',
+  './assets/clarification-ui.js?v=20260808-29',
+  './assets/smart-help-v29.js?v=20260808-29',
+  './assets/guide-progress.js?v=20260808-29',
+  './assets/voice-focus-mode.js?v=20260808-29',
+  './assets/local-voice-v28.js?v=20260808-29',
+  './assets/vendor/supertonic-web-v28.mjs?v=20260808-29',
+  './assets/experience-v27.js?v=20260808-29',
+  './assets/ux-v27.js?v=20260808-29',
+  './assets/v29-ui.js?v=20260808-29',
+  './assets/local-voice-gate-v28.js?v=20260808-29',
+  './assets/direct-guides-v27.js?v=20260808-29',
+  './assets/direct-guide-copy-v29.js?v=20260808-29',
+  './assets/app.js?v=20260808-29',
   './manifest.webmanifest',
   './icon.svg',
 ];
@@ -47,7 +51,7 @@ self.addEventListener('activate', event => {
     await Promise.all(keys
       .filter(key => key.startsWith('dokohilf-') && key !== CACHE_NAME && key !== LOCAL_VOICE_MODEL_CACHE && key !== STATIC_AUDIO_CACHE)
       .map(key => caches.delete(key)));
-    await caches.delete(STATIC_AUDIO_CACHE);
+    await caches.delete('dokohilf-static-supertonic-audio-v28-1');
     if (self.registration.navigationPreload) await self.registration.navigationPreload.enable().catch(() => {});
     await self.clients.claim();
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
@@ -61,7 +65,7 @@ self.addEventListener('message', event => {
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
     event.waitUntil((async () => {
       const keys = await caches.keys();
-      await Promise.all(keys.filter(key => key.startsWith('dokohilf-')).map(key => caches.delete(key)));
+      await Promise.all(keys.filter(key => key.startsWith('dokohilf-') && key !== LOCAL_VOICE_MODEL_CACHE).map(key => caches.delete(key)));
       event.ports?.[0]?.postMessage({ cleared: true, buildId: BUILD_ID, hotfixRevision: HOTFIX_REVISION });
     })());
   }

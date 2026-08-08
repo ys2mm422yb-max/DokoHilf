@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router';
+const CHAT_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-chat-router';
 const ORIGIN = 'https://ys2mm422yb-max.github.io';
 
 const choiceSource = payload => String(payload.source || '').startsWith('vital-entry-mode-choice');
@@ -117,11 +118,36 @@ const cases = [
   },
 ];
 
-async function request(body) {
+const chatRouterCases = [
+  {
+    name: 'v29 Blutdruck-Suche startet kurz direkt im Einzelwert-Guide',
+    body: { messages: [{ role: 'user', content: 'Hallo ich suche den Blutdruck' }] },
+    validate: payload => payload.guideSlug === 'vitalwerte-einzelwert'
+      && Number(payload.guideStep) === 1
+      && payload.source === 'approved-guide-smart-start-v29-1'
+      && String(payload.reply || '').length < 350,
+  },
+  {
+    name: 'v29 Ich-weiß-nicht bleibt exakt auf dem aktuellen Bericht-Schritt',
+    body: {
+      guideSlug: 'bericht-folgebericht',
+      guideStep: 1,
+      guideStateVersion: 2,
+      smartHelpIntent: true,
+      messages: [{ role: 'user', content: 'ich weiß nicht' }],
+    },
+    validate: payload => payload.guideSlug === 'bericht-folgebericht'
+      && Number(payload.guideStep) === 1
+      && payload.source === 'approved-guide-context-help-v29-4'
+      && !Array.isArray(payload.helpOptions),
+  },
+];
+
+async function request(body, endpoint = ENDPOINT) {
   let lastError;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      const response = await fetch(ENDPOINT, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
         body: JSON.stringify({
@@ -150,13 +176,31 @@ for (const testCase of cases) {
     const payload = await request(testCase.body);
     results.push({
       name: testCase.name,
+      endpoint: 'dokohilf-ai-router',
       guideSlug: payload.guideSlug || null,
       source: payload.source || null,
       guideStep: payload.guideStep || null,
       passed: Boolean(testCase.validate(payload)),
     });
   } catch (error) {
-    results.push({ name: testCase.name, error: String(error?.message || error), passed: false });
+    results.push({ name: testCase.name, endpoint: 'dokohilf-ai-router', error: String(error?.message || error), passed: false });
+  }
+}
+
+for (const testCase of chatRouterCases) {
+  try {
+    const payload = await request(testCase.body, CHAT_ENDPOINT);
+    results.push({
+      name: testCase.name,
+      endpoint: 'dokohilf-chat-router',
+      guideSlug: payload.guideSlug || null,
+      source: payload.source || null,
+      guideStep: payload.guideStep || null,
+      replyLength: String(payload.reply || '').length,
+      passed: Boolean(testCase.validate(payload)),
+    });
+  } catch (error) {
+    results.push({ name: testCase.name, endpoint: 'dokohilf-chat-router', error: String(error?.message || error), passed: false });
   }
 }
 

@@ -54,30 +54,30 @@ test('kleine und niedrige Mobilgeräte behalten die verdichtete Sprachanzeige', 
   assert.match(balanceCss, /width:118px!important/);
 });
 
-test('v28 deaktiviert den alten 180-ms-Gerätestimmenpfad und nutzt lokale Ausgabe', () => {
+test('v29 deaktiviert weiterhin den alten 180-ms-Gerätestimmenpfad und nutzt lokale Ausgabe', () => {
   assert.match(ux, /if \(localVoiceV28\(\)\) return previousFetch\(input, init\);/);
   assert.match(ux, /if \(localVoiceV28\(\)\) return;/);
   assert.match(ux, /__DOKOHILF_LOCAL_VOICE_ONLY_V28__/);
-  assert.match(localVoice, /local-on-device-v28/);
+  assert.match(localVoice, /local-on-device-v29/);
   assert.match(localVoice, /const MODEL_CACHE = 'dokohilf-local-voice-model-v28-1'/);
 });
 
-test('Service Worker erzwingt die v28-4-Supertonic-Revision ohne die Voice-Balance zu verlieren', () => {
-  assert.match(worker, /HOTFIX_REVISION = '20260807-static-supertonic-guides-v28-4'/);
-  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260807-28/);
-  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260807-28/);
-  assert.match(worker, /local-voice-v28\.js\?v=20260807-28/);
+test('Service Worker erzwingt die v29-Revision ohne die Voice-Balance zu verlieren', () => {
+  assert.match(worker, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
+  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260808-29/);
+  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260808-29/);
+  assert.match(worker, /local-voice-v28\.js\?v=20260808-29/);
   assert.match(worker, /hotfixRevision: HOTFIX_REVISION/);
 });
 
-test('Build 28 lädt Voice-Balance, Direkt-Guide-Schicht und lokale Voice in konsistenter Revision', () => {
-  assert.match(html, /premium-ui-v26\.css\?v=20260807-28/);
-  assert.match(html, /premium-ui-v27\.css\?v=20260807-28/);
-  assert.match(html, /ux-v27\.css\?v=20260807-28[\s\S]*voice-stage-balance-v27\.css\?v=20260807-28[\s\S]*direct-guides-chat-v27\.css\?v=20260807-28/);
-  assert.match(html, /local-voice-v28\.js\?v=20260807-28/);
-  assert.match(worker, /premium-ui-v26\.css\?v=20260807-28/);
-  assert.match(worker, /premium-ui-v27\.css\?v=20260807-28/);
-  assert.match(worker, /ux-v27\.css\?v=20260807-28/);
-  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260807-28/);
-  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260807-28/);
+test('Build 29 lädt Voice-Balance, Direkt-Guide-Schicht und lokale Voice in konsistenter Revision', () => {
+  assert.match(html, /premium-ui-v26\.css\?v=20260808-29/);
+  assert.match(html, /premium-ui-v27\.css\?v=20260808-29/);
+  assert.match(html, /ux-v27\.css\?v=20260808-29[\s\S]*voice-stage-balance-v27\.css\?v=20260808-29[\s\S]*direct-guides-chat-v27\.css\?v=20260808-29/);
+  assert.match(html, /local-voice-v28\.js\?v=20260808-29/);
+  assert.match(worker, /premium-ui-v26\.css\?v=20260808-29/);
+  assert.match(worker, /premium-ui-v27\.css\?v=20260808-29/);
+  assert.match(worker, /ux-v27\.css\?v=20260808-29/);
+  assert.match(worker, /voice-stage-balance-v27\.css\?v=20260808-29/);
+  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260808-29/);
 });

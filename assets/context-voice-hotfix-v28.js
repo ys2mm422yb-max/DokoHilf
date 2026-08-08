@@ -8,9 +8,9 @@
     'bericht-folgebericht',
     'berichtssuche',
   ]);
-  const REPORT_ENTRY_REPLY = 'Suche zuerst **Berichte**. Hast du sie gefunden?';
-  const REPORT_ENTRY_SPEECH = 'Suche zuerst Berichte. Hast du sie gefunden?';
-  const IOS_SYNTHESIS_TIMEOUT_MS = 12000;
+  const REPORT_ENTRY_REPLY = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach **Berichte**. Siehst du **Berichte**?';
+  const REPORT_ENTRY_SPEECH = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach Berichte. Siehst du Berichte?';
+  const IOS_SYNTHESIS_TIMEOUT_MS = 8000;
   const VOICE_WARM_DELAY_MS = 1200;
   const previousFetch = window.fetch.bind(window);
   let warmTimer = null;
@@ -104,7 +104,7 @@
     if (fixed === payload) return response;
     const headers = new Headers(response.headers);
     headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers.set('X-DokoHilf-Context-Hotfix', 'report-help-v28-1');
+    headers.set('X-DokoHilf-Context-Hotfix', 'report-help-v29-1');
     return new Response(JSON.stringify(fixed), {
       status: response.status,
       statusText: response.statusText,

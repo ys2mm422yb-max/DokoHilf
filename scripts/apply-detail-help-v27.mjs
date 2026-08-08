@@ -1,8 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const BUILD_ID = '20260807-28';
-const REVISION = '20260807-static-supertonic-guides-v28-4';
+const BUILD_ID = '20260808-29';
+const REVISION = '20260808-context-voice-v29-1';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');

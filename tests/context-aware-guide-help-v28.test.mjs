@@ -20,20 +20,29 @@ test('fremde Requests bleiben unangetastet', () => {
   assert.equal(rewriteRouterInput(url), url);
 });
 
-test('laufender Guide beantwortet allgemeine Orientierung und Festhängen aus freigegebenem Wissen', () => {
+test('laufender Guide beantwortet natürliche Hilferufe aus dem aktuell freigegebenen Schritt', () => {
   assert.match(router, /isExplicitHelp/);
-  assert.match(router, /komme nicht weiter/);
-  assert.match(router, /was muss ich/);
-  assert.match(router, /bei mir heisst/);
-  assert.match(router, /ich sehe nur/);
-  assert.match(router, /looksLikeQuestion/);
-  assert.match(router, /Object\.values\(guide\.troubleshooting/);
+  assert.match(router, /ich weiss nicht/);
+  assert.match(router, /keine ahnung/);
+  assert.match(router, /was meinst du/);
+  assert.match(router, /smartHelpIntent/);
+  assert.match(router, /step\.stuck/);
   assert.match(router, /status=eq\.approved/);
 });
 
-test('Hilferückfragen verändern den eigentlichen Guide-Fortschritt nicht', () => {
-  assert.match(router, /guideStep: currentIndex \+ 1/);
-  assert.match(router, /contextEvidenceStep/);
+test('Hilferückfragen bleiben exakt auf dem aktuellen Guide-Schritt', () => {
+  assert.match(router, /const currentIndex = currentStepIndex\(guide, suppliedStep\)/);
+  assert.match(router, /stepResponse\(origin, guide, currentIndex/);
+  assert.match(router, /guideStep: index \+ 1/);
+  assert.doesNotMatch(router, /contextEvidenceStep|bestEvidence|questionTerms/);
+});
+
+test('kurze Suchfragen starten direkt einen freigegebenen Guide statt einer langen Übersicht', () => {
+  assert.match(router, /inferNavigationGuide/);
+  assert.match(router, /blutdruck\|puls\|temperatur/);
+  assert.match(router, /return 'vitalwerte-einzelwert'/);
+  assert.match(router, /selectedGuideSlug/);
+  assert.match(router, /approved-guide-smart-start-v29-1/);
 });
 
 test('Bestätigungen und echte Themenwechsel bleiben beim bestehenden Stateful-Router', () => {
@@ -54,4 +63,5 @@ test('auch Wechsel zwischen verwandten Guides derselben Kategorie werden nicht a
 test('der Kontext-Router enthält keine fachfremden Vitalwerte-Fallbackkarten', () => {
   assert.doesNotMatch(router, /Vitalwerte fehlt/);
   assert.doesNotMatch(router, /Anderer Reiter \/ andere Seite/);
+  assert.doesNotMatch(router, /helpOptions|helpTitle/);
 });
