@@ -43,6 +43,14 @@ test('Bestätigungen und echte Themenwechsel bleiben beim bestehenden Stateful-R
   assert.match(router, /dokohilf-ai-router/);
 });
 
+test('auch Wechsel zwischen verwandten Guides derselben Kategorie werden nicht als Hilfe verschluckt', () => {
+  assert.match(router, /durchstreichen\|bericht loschen\|bericht korrigieren/);
+  assert.match(router, /folgebericht/);
+  assert.match(router, /berichtssuche/);
+  assert.match(router, /sammelerfassung/);
+  assert.match(router, /einzelwert/);
+});
+
 test('der Kontext-Router enthält keine fachfremden Vitalwerte-Fallbackkarten', () => {
   assert.doesNotMatch(router, /Vitalwerte fehlt/);
   assert.doesNotMatch(router, /Anderer Reiter \/ andere Seite/);
