@@ -1,11 +1,11 @@
 # DokoHilf – bestätigte Arbeitsabläufe
 
 **Status:** verbindliche fachliche Quelle  
-**Stand:** 7. August 2026
+**Stand:** 8. August 2026
 
 Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien.
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt.
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt.
 
 ## Allgemeine Regeln
 
@@ -92,11 +92,11 @@ Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` 
 5. Danach öffnet sich **Neue Visite**.
 6. Oben auf **Durchführen** klicken; dadurch wird die Visite als durchgeführt erfasst.
 7. Datum, Beginn und gegebenenfalls Ende prüfen.
-8. Durchführenden Arzt auswählen.
+8. Durchführenden Arzt auswählen. **Nur wenn der Arzt beim Bewohner noch nicht hinterlegt ist**, rechts neben der Arztauswahl das kleine **Filtersymbol** aktivieren. Dann stehen alle im System hinterlegten Ärzte zur Auswahl. Das Filtersymbol nur für diesen Ausnahmefall verwenden.
 9. **Mitarbeiter** bleibt auf **ohne Mitarbeiter** beziehungsweise leer.
 10. Bei **Anforderung** eintragen, wer die Sprechstunde angefordert hat.
 11. Grund eintragen, zum Beispiel Kontrollbesuch.
-12. Ort auswählen: Einrichtung, beim Arzt oder telefonisch.
+12. Ort auswählen: **Einrichtung, beim Arzt, telefonisch oder per Mail**.
 13. Rechts in **Bemerkung** Inhalt und Ergebnis der Visite eintragen.
 14. Speichern und prüfen, dass die Visite unter den durchgeführten Visiten erscheint.
 
@@ -153,7 +153,7 @@ Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, er
 4. Oben links **Neu** klicken.
 5. Im Fenster **Formular anlegen** das benötigte Formular auswählen, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.
 6. Mit OK bestätigen.
-7. Das geöffnete Formular nach der gültigen fachlichen Vorgabe bearbeiten. Nicht bestätigte Felder werden von DokoHilf nicht erfunden.
+7. Das geöffnete Formular wie gewohnt ausfüllen.
 
 ## Notfallblatt öffnen
 
