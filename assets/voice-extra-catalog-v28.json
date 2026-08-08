@@ -9,7 +9,7 @@
     {"text":"Bei dir heißt der Punkt anders. Welche Bezeichnung siehst du?"},
     {"text":"Okay. Was siehst du gerade?"},
     {"text":"Perfekt. Öffne jetzt Vitalwerte. Wenn die Ansicht offen ist, tippe auf Weiter."},
-    {"text":"Dafür habe ich keinen bestätigten Weg. Frag bitte kurz eine Kollegin oder einen Kollegen."},
+    {"text":"Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen."},
     {"text":"Suche zuerst Doku-Erweitert. Hast du ihn gefunden?"},
     {"text":"Suche zuerst Vitalwerte. Hast du ihn gefunden?"},
     {"text":"Suche zuerst Analyse. Hast du ihn gefunden?"},
@@ -18,7 +18,7 @@
     {"text":"Suche zuerst Berichte. Hast du sie gefunden?"},
     {"text":"Möchtest du einen einzelnen Wert oder mehrere Werte über die Sammelerfassung eintragen?"},
     {"text":"Geht es um einen einzelnen Vitalwert oder um mehrere Werte gleichzeitig?"},
-    {"text":"Die Medikation darf hier nur angesehen werden. Änderungen werden nicht angeleitet."},
+    {"text":"Hier geht es nur ums Nachsehen der Medikation. Ändere nichts."},
     {"text":"Der Ablauf ist erledigt. Kontrolliere zum Schluss den Eintrag."}
   ]
 }
