@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [library, css, copy, migration, confirmed, voiceBuild, voiceRelease, sw, index] = await Promise.all([
+const [library, css, copy, migration, confirmed, voiceBuild, voiceRelease, sw, index, version] = await Promise.all([
   readFile(new URL('../assets/guide-library-v29.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/guide-library-v29.css', import.meta.url), 'utf8'),
   readFile(new URL('../assets/direct-guide-copy-v29.js', import.meta.url), 'utf8'),
@@ -12,7 +12,10 @@ const [library, css, copy, migration, confirmed, voiceBuild, voiceRelease, sw, i
   readFile(new URL('../assets/voice-release-catalog-v29.json', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
+  readFile(new URL('../version.json', import.meta.url), 'utf8'),
 ]);
+
+const buildId = JSON.parse(version).buildId;
 
 test('Bericht korrigieren ist klar vom Folgebericht getrennt', () => {
   assert.match(library, /title: 'Bericht korrigieren'/);
@@ -68,10 +71,10 @@ test('Hauptmenü nutzt lokale Häufigkeit, passende Icons und eine vollständige
 });
 
 test('Guide-Bibliothek wird deterministisch beim App-Start geladen und nicht erst nach einem dynamischen Nachladen', () => {
-  const cssIndex = index.indexOf('assets/guide-library-v29.css?v=20260808-29-library1');
-  const copyIndex = index.indexOf('assets/direct-guide-copy-v29.js?v=20260808-29');
-  const libraryIndex = index.indexOf('assets/guide-library-v29.js?v=20260808-29-library1');
-  const appIndex = index.indexOf('assets/app.js?v=20260808-29');
+  const cssIndex = index.indexOf(`assets/guide-library-v29.css?v=${buildId}-library1`);
+  const copyIndex = index.indexOf(`assets/direct-guide-copy-v29.js?v=${buildId}`);
+  const libraryIndex = index.indexOf(`assets/guide-library-v29.js?v=${buildId}-library1`);
+  const appIndex = index.indexOf(`assets/app.js?v=${buildId}`);
   assert.ok(cssIndex >= 0);
   assert.ok(copyIndex >= 0 && libraryIndex > copyIndex && appIndex > libraryIndex);
   assert.match(index, /data-dokohilf-guide-library-v29/);
@@ -84,9 +87,9 @@ test('Direktanleitungen respektieren die mobile Safe Area und werden als PWA-Cor
   assert.match(css, /padding-top:12px!important/);
   assert.match(copy, /ensureGuideLibraryAssets/);
   assert.match(copy, /ensureLegacyCloseContract/);
-  assert.match(copy, /guide-library-v29\.js\?v=20260808-29-library1/);
-  assert.match(copy, /guide-library-v29\.css\?v=20260808-29-library1/);
+  assert.match(copy, new RegExp(`guide-library-v29\\.js\\?v=${buildId}-library1`));
+  assert.match(copy, new RegExp(`guide-library-v29\\.css\\?v=${buildId}-library1`));
   assert.match(sw, /mobile-polish-8/);
-  assert.match(sw, /guide-library-v29\.js\?v=20260808-29-library1/);
-  assert.match(sw, /guide-library-v29\.css\?v=20260808-29-library1/);
+  assert.match(sw, new RegExp(`guide-library-v29\\.js\\?v=${buildId}-library1`));
+  assert.match(sw, new RegExp(`guide-library-v29\\.css\\?v=${buildId}-library1`));
 });

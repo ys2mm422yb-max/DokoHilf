@@ -1,11 +1,13 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const BUILD_ID = '20260808-29';
 const REVISION = '20260808-context-voice-v29-1';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');
+const versionPath = resolve(root, 'version.json');
+const BUILD_ID = JSON.parse(await readFile(versionPath, 'utf8')).buildId;
+if (!BUILD_ID) throw new Error('buildId fehlt in version.json');
 
 let html = await readFile(htmlPath, 'utf8');
 const helpScriptTag = `  <script src="assets/detail-help-v27.js?v=${BUILD_ID}"></script>`;

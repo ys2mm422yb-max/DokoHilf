@@ -1,11 +1,13 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const BUILD_ID = '20260808-29';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const appPath = resolve(root, 'assets/app.js');
 const experiencePath = resolve(root, 'assets/experience-v27.js');
+const versionPath = resolve(root, 'version.json');
+const BUILD_ID = JSON.parse(await readFile(versionPath, 'utf8')).buildId;
+if (!BUILD_ID) throw new Error('buildId fehlt in version.json');
 
 let html = await readFile(htmlPath, 'utf8');
 html = html.replace(`  <script src="assets/voice-diagnostics.js?v=${BUILD_ID}"></script>\n`, '');
@@ -54,4 +56,4 @@ if (!experience.includes(initLocal)) {
 }
 await writeFile(experiencePath, experience);
 
-console.log('DokoHilf v29 local-only voice release guards applied');
+console.log(`DokoHilf ${BUILD_ID} local-only voice release guards applied`);

@@ -26,6 +26,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts
+          BUILD_ID="$(node -p "require('./version.json').buildId")"
+          test -n "$BUILD_ID"
 
           for file in \
             README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md \
@@ -88,7 +90,9 @@ jobs:
           grep -q '__DOKOHILF_STATIC_SUPERTONIC_V28__' assets/local-voice-gate-v28.js
           grep -q "STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1'" assets/local-voice-gate-v28.js
           grep -q 'IOS_LOCAL_TIMEOUT_MS = 8000' assets/local-voice-gate-v28.js
-          grep -q "BUILD_ID = '20260808-29'" assets/local-voice-v28.js
+          grep -Fq 'meta[name="dokohilf-build"]' assets/local-voice-v28.js
+          grep -Fq 'meta[name="dokohilf-build"]' assets/local-voice-gate-v28.js
+          grep -Fq 'encodeURIComponent(BUILD_ID)' assets/local-voice-gate-v28.js
           grep -q '__DOKOHILF_SMART_HELP_V29__' assets/smart-help-v29.js
           grep -q '__DOKOHILF_UI_V29__' assets/v29-ui.js
           grep -q 'data-voice-state="thinking"' assets/v29-ui.css
@@ -100,7 +104,9 @@ jobs:
           grep -q 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“' assets/voice-release-catalog-v29.json
           grep -q 'Wenn der Endzeitpunkt noch nicht sicher feststeht' assets/voice-release-catalog-v29.json
           grep -q 'KI · v29' index.html
-          grep -q '20260808-29' version.json
+          grep -Fq "\"buildId\": \"$BUILD_ID\"" version.json
+          grep -Fq "dokohilf-build\" content=\"$BUILD_ID" index.html
+          grep -Fq "const BUILD_ID = '$BUILD_ID';" service-worker.js
           grep -q 'git push --force origin HEAD:gh-pages' .github/workflows/pages.yml
           if grep -q '[a]ctions/deploy-pages' .github/workflows/pages.yml; then
             echo "Pages wird über den geschützten gh-pages-Branch veröffentlicht; ein zusätzlicher API-Deployjob ist unzulässig." >&2

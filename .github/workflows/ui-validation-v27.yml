@@ -34,10 +34,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts/mobile-v29
+          BUILD_ID="$(node -p "require('./version.json').buildId")"
+          test -n "$BUILD_ID"
           bash scripts/build-static-site-v27.sh _ui_site
           test -s _ui_site/index.html
           grep -q 'KI · v29' _ui_site/index.html
-          grep -q 'dokohilf-build" content="20260808-29' _ui_site/index.html
+          grep -Fq "dokohilf-build\" content=\"$BUILD_ID" _ui_site/index.html
           grep -q -- '--v27-bg:#020c12' _ui_site/assets/premium-ui-v27.css
           grep -q -- '--v29-bg:#020a10' _ui_site/assets/v29-ui.css
           grep -q '__DOKOHILF_UI_V29__' _ui_site/assets/v29-ui.js

@@ -3,7 +3,8 @@
 
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
   const AI_MARKERS = ['/functions/v1/dokohilf-chat-router', '/functions/v1/dokohilf-ai-router', '/functions/v1/dokohilf-ai'];
-  const STATIC_AUDIO_MANIFEST = './assets/guide-audio-catalog.json?v=20260808-29';
+  const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
+  const STATIC_AUDIO_MANIFEST = `./assets/guide-audio-catalog.json?v=${encodeURIComponent(BUILD_ID)}`;
   const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1';
   const STATIC_VOICE = 'Supertonic-F1';
   const MANIFEST_TIMEOUT_MS = 2500;

@@ -2,11 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [ui, axisCss, sw] = await Promise.all([
+const [ui, axisCss, sw, version] = await Promise.all([
   readFile(new URL('../assets/v29-ui.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/card-axis-fix-v29.css', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
+  readFile(new URL('../version.json', import.meta.url), 'utf8'),
 ]);
+
+const buildId = JSON.parse(version).buildId;
 
 test('v29 premium home keeps the start screen free of the composer', () => {
   assert.match(ui, /\.app-shell\[data-mode="start"\] \.composer-wrap\{display:none!important\}/);
@@ -32,7 +35,7 @@ test('mobile header reserves the iPhone status-bar safe area', () => {
 test('premium home refreshes the PWA shell without changing the established v29 release contract', () => {
   assert.match(sw, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
   assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-mobile-polish-8/);
-  assert.match(sw, /guide-library-v29\.js\?v=20260808-29-library1/);
-  assert.match(sw, /guide-library-v29\.css\?v=20260808-29-library1/);
+  assert.match(sw, new RegExp(`guide-library-v29\\.js\\?v=${buildId}-library1`));
+  assert.match(sw, new RegExp(`guide-library-v29\\.css\\?v=${buildId}-library1`));
   assert.match(sw, /hardRefresh: true/);
 });

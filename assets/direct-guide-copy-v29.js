@@ -7,13 +7,13 @@
     if (!document.querySelector('link[data-dokohilf-guide-library-v29]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'assets/guide-library-v29.css?v=20260808-29-library1';
+      link.href = 'assets/guide-library-v29.css?v=20260809-29-library1';
       link.dataset.dokohilfGuideLibraryV29 = 'true';
       document.head.append(link);
     }
     if (!document.querySelector('script[data-dokohilf-guide-library-v29]')) {
       const script = document.createElement('script');
-      script.src = 'assets/guide-library-v29.js?v=20260808-29-library1';
+      script.src = 'assets/guide-library-v29.js?v=20260809-29-library1';
       script.dataset.dokohilfGuideLibraryV29 = 'true';
       document.body.append(script);
     }

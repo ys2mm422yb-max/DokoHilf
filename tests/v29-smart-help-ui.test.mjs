@@ -8,12 +8,15 @@ test('v29 is visible and cache-busted consistently', async () => {
   const [html, version, worker, localVoice, gate] = await Promise.all([
     read('index.html'), read('version.json'), read('service-worker.js'), read('assets/local-voice-v28.js'), read('assets/local-voice-gate-v28.js'),
   ]);
+  const buildId = JSON.parse(version).buildId;
   assert.match(html, /KI · v29/);
-  assert.match(html, /20260808-29/);
-  assert.equal(JSON.parse(version).buildId, '20260808-29');
-  assert.match(worker, /BUILD_ID = '20260808-29'/);
-  assert.match(localVoice, /BUILD_ID = '20260808-29'/);
-  assert.match(gate, /guide-audio-catalog\.json\?v=20260808-29/);
+  assert.match(html, new RegExp(`dokohilf-build" content="${buildId}`));
+  assert.match(html, new RegExp(`v29-ui\\.js\\?v=${buildId}`));
+  assert.match(worker, new RegExp(`BUILD_ID = '${buildId}'`));
+  assert.match(localVoice, /Supertone\/supertonic-3/);
+  assert.match(localVoice, /meta\[name="dokohilf-build"\]/);
+  assert.match(gate, /meta\[name="dokohilf-build"\]/);
+  assert.match(gate, /guide-audio-catalog\.json\?v=\$\{encodeURIComponent\(BUILD_ID\)\}/);
   assert.match(gate, /dokohilf-static-supertonic-audio-v29-1/);
   assert.match(gate, /IOS_LOCAL_TIMEOUT_MS = 8000/);
 });
@@ -52,10 +55,11 @@ test('Hallo ich suche den Blutdruck starts the approved single-value guide inste
 });
 
 test('v29 redesign covers home, written chat and distinct voice states', async () => {
-  const [css, ui, html] = await Promise.all([read('assets/v29-ui.css'), read('assets/v29-ui.js'), read('index.html')]);
-  assert.match(html, /assets\/v29-ui\.css\?v=20260808-29/);
-  assert.match(html, /assets\/smart-help-v29\.js\?v=20260808-29/);
-  assert.match(html, /assets\/v29-ui\.js\?v=20260808-29/);
+  const [css, ui, html, version] = await Promise.all([read('assets/v29-ui.css'), read('assets/v29-ui.js'), read('index.html'), read('version.json')]);
+  const buildId = JSON.parse(version).buildId;
+  assert.match(html, new RegExp(`assets\\/v29-ui\\.css\\?v=${buildId}`));
+  assert.match(html, new RegExp(`assets\\/smart-help-v29\\.js\\?v=${buildId}`));
+  assert.match(html, new RegExp(`assets\\/v29-ui\\.js\\?v=${buildId}`));
   assert.match(css, /\.start-copy:before/);
   assert.match(css, /\.mode-card:before/);
   assert.match(css, /\.chat-head:after/);

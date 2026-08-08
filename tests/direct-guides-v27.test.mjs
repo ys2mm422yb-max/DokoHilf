@@ -2,14 +2,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [html, guides, css, worker, confirmed, mobileRule] = await Promise.all([
+const [html, guides, css, worker, confirmed, mobileRule, version] = await Promise.all([
   readFile('index.html', 'utf8'),
   readFile('assets/direct-guides-v27.js', 'utf8'),
   readFile('assets/direct-guides-chat-v27.css', 'utf8'),
   readFile('service-worker.js', 'utf8'),
   readFile('CONFIRMED_WORKFLOWS.md', 'utf8'),
   readFile('ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md', 'utf8'),
+  readFile('version.json', 'utf8'),
 ]);
+
+const buildId = JSON.parse(version).buildId;
 
 test('häufige Abläufe werden als sieben robuste Direktanleitungen übernommen', () => {
   const staticButtons = [...html.matchAll(/data-direct-guide="([^"]+)"/g)].map(match => match[1]);
@@ -19,7 +22,7 @@ test('häufige Abläufe werden als sieben robuste Direktanleitungen übernommen'
   assert.match(guides, /new MutationObserver/);
   assert.match(guides, /requestAnimationFrame\(syncPresentation\)/);
   assert.match(guides, /\['uebergabe', 'Übergabe anzeigen'\]/);
-  assert.match(html, /direct-guides-v27\.js\?v=20260808-29/);
+  assert.match(html, new RegExp(`direct-guides-v27\\.js\\?v=${buildId}`));
 });
 
 test('direkte Bericht- und Visitenanleitungen entsprechen der bestätigten Fachquelle', () => {
@@ -89,6 +92,6 @@ test('iOS und Android sind für diese mobile Änderung gleichberechtigte Freigab
 
 test('PWA cached die Direkt-Guide-Logik innerhalb der aktuellen v29-Revision', () => {
   assert.match(worker, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
-  assert.match(worker, /direct-guides-v27\.js\?v=20260808-29/);
-  assert.match(worker, /direct-guides-chat-v27\.css\?v=20260808-29/);
+  assert.match(worker, new RegExp(`direct-guides-v27\\.js\\?v=${buildId}`));
+  assert.match(worker, new RegExp(`direct-guides-chat-v27\\.css\\?v=${buildId}`));
 });

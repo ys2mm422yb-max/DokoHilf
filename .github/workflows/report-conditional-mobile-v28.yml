@@ -27,10 +27,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          BUILD_ID="$(node -p "require('./version.json').buildId")"
+          test -n "$BUILD_ID"
           bash scripts/build-static-site-v27.sh _report_site
           test -s _report_site/assets/local-voice-gate-v28.js
           grep -q 'KI · v29' _report_site/index.html
-          grep -q '20260808-29' _report_site/version.json
+          grep -Fq "\"buildId\": \"$BUILD_ID\"" _report_site/version.json
 
       - name: Render and verify iOS and Android
         shell: bash

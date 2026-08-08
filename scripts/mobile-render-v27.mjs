@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
@@ -8,7 +8,8 @@ const PROFILE = process.env.DOKOHILF_MOBILE_PROFILE || 'ios';
 const VIEWPORT_WIDTH = Number(process.env.DOKOHILF_VIEWPORT_WIDTH || (PROFILE === 'android' ? 412 : 393));
 const VIEWPORT_HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE === 'android' ? 915 : 852));
 const DEVICE_SCALE_FACTOR = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
-const BUILD_ID = '20260808-29';
+const BUILD_ID = JSON.parse(await readFile(new URL('../version.json', import.meta.url), 'utf8')).buildId;
+if (!BUILD_ID) throw new Error('buildId fehlt in version.json');
 const GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
 const VISIT_REPLY = 'Öffne „Doku erweitert“. Bist du in Doku erweitert?';
 const VISIT_SPEECH = 'Öffne Doku erweitert.';

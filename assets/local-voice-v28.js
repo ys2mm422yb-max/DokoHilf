@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const BUILD_ID = '20260808-29';
+  const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
   const TTS_MARKER = '/functions/v1/dokohilf-tts';
   const MODEL_ROOT = 'https://huggingface.co/Supertone/supertonic-3/resolve/main';
   const ONNX_DIR = `${MODEL_ROOT}/onnx`;
