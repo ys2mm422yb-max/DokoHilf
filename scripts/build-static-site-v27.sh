@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BUILD_ID="20260808-29"
+BUILD_ID="$(python -c 'import json; print(json.load(open("version.json", encoding="utf-8"))["buildId"])')"
 SITE_DIR="${1:-_site}"
 REQUIRE_STATIC_SUPERTONIC="${DOKOHILF_REQUIRE_STATIC_SUPERTONIC:-0}"
 
