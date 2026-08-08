@@ -29,11 +29,13 @@ test('lokale iOS-Folgeantwort hat schnellere Inferenz und eine harte Zeitgrenze'
   assert.match(gate, /local_voice_timeout/);
 });
 
-test('Systemstimme bleibt gesperrt und statischer Supertonic-Cache überlebt normalen PWA-Aktivierer', () => {
+test('Systemstimme bleibt gesperrt und geänderte statische Sprachsätze werden einmalig frisch geladen', () => {
   assert.match(gate, /blockSystemSpeech/);
   assert.match(gate, /__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__/);
   assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1'/);
   assert.match(worker, /key !== STATIC_AUDIO_CACHE/);
+  assert.match(worker, /await caches\.delete\(STATIC_AUDIO_CACHE\)/);
+  assert.match(worker, /mobile-polish-7/);
   assert.match(worker, /20260808-smart-help-voice-ui-v29-1/);
 });
 
