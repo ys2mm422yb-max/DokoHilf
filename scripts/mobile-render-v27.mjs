@@ -218,6 +218,12 @@ try {
   const orb = page.locator('.voice-focus-stage .voice-orb');
   await orb.waitFor({ state: 'visible' });
 
+  // Die echte Sprachsteuerung darf die optischen QA-Zustände nicht während der Messung zurück auf "listening" setzen.
+  // Zuerst darf die statische Supertonic-Begrüßung anlaufen, danach pausieren wir nur für die deterministische CSS-Prüfung.
+  await page.waitForTimeout(120);
+  await page.evaluate(() => document.getElementById('pauseVoiceButton')?.click());
+  await page.waitForTimeout(80);
+
   const visualStates = {};
   for (const voiceState of ['idle', 'listening', 'thinking', 'speaking', 'error']) {
     await page.evaluate(value => { document.getElementById('appShell').dataset.voiceState = value; }, voiceState);
