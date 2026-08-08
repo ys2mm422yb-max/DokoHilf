@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: dokohilf-local-voice-v28-${{ github.event.pull_request.number || github.ref }}
+  group: dokohilf-local-voice-v29-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -50,24 +50,25 @@ jobs:
           grep -q '"tts_version"' /tmp/supertonic-tts.json
           grep -q '"style_ttl"' /tmp/supertonic-f1.json
 
-      - name: Build exact v28 releasable site
+      - name: Build exact v29 releasable site
         run: |
           set -euo pipefail
           bash scripts/build-static-site-v27.sh _local_voice_site
-          grep -q 'KI · v28' _local_voice_site/index.html
-          grep -q 'local-voice-v28.js?v=20260807-28' _local_voice_site/index.html
-          grep -q 'local-voice-gate-v28.js?v=20260807-28' _local_voice_site/index.html
+          grep -q 'KI · v29' _local_voice_site/index.html
+          grep -q 'local-voice-v28.js?v=20260808-29' _local_voice_site/index.html
+          grep -q 'local-voice-gate-v28.js?v=20260808-29' _local_voice_site/index.html
           grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ === true' _local_voice_site/assets/app.js
+          grep -q 'IOS_LOCAL_TIMEOUT_MS = 8000' _local_voice_site/assets/local-voice-gate-v28.js
           ! grep -q 'voice-diagnostics.js' _local_voice_site/index.html
           ! grep -q 'dokohilf-guide-audio?manifest=' _local_voice_site/service-worker.js
 
       - name: Render local voice on iOS and Android
         run: |
           set -euo pipefail
-          mkdir -p artifacts/local-voice-v28/ios artifacts/local-voice-v28/android
+          mkdir -p artifacts/local-voice-v29/ios artifacts/local-voice-v29/android
           npm install --no-save --package-lock=false playwright@1.54.2
           npx playwright install --with-deps chromium
-          python3 -m http.server 4173 --directory _local_voice_site >artifacts/local-voice-v28-server.log 2>&1 &
+          python3 -m http.server 4173 --directory _local_voice_site >artifacts/local-voice-v29-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 30); do
@@ -79,21 +80,21 @@ jobs:
           DOKOHILF_VIEWPORT_WIDTH=393 \
           DOKOHILF_VIEWPORT_HEIGHT=852 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
-          DOKOHILF_RENDER_OUTPUT=artifacts/local-voice-v28/ios \
+          DOKOHILF_RENDER_OUTPUT=artifacts/local-voice-v29/ios \
           node scripts/local-voice-render-v28.mjs
 
           DOKOHILF_MOBILE_PROFILE=android \
           DOKOHILF_VIEWPORT_WIDTH=412 \
           DOKOHILF_VIEWPORT_HEIGHT=915 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
-          DOKOHILF_RENDER_OUTPUT=artifacts/local-voice-v28/android \
+          DOKOHILF_RENDER_OUTPUT=artifacts/local-voice-v29/android \
           node scripts/local-voice-render-v28.mjs
 
-      - name: Upload v28 voice evidence
+      - name: Upload v29 voice evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dokohilf-local-voice-v28-${{ github.run_number }}
+          name: dokohilf-local-voice-v29-${{ github.run_number }}
           path: artifacts/
           if-no-files-found: warn
           retention-days: 30
