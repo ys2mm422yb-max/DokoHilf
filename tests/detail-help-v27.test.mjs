@@ -29,8 +29,8 @@ test('freie Texte und Hilfe-Button landen beim selben Server-Kontextpfad', () =>
 test('Vitalwerte verwenden den bestätigten Einzelwert-Ablauf mit Bewohner als erstem Schritt', () => {
   assert.match(confirmed, /## Einzelnen Vitalwert erfassen/);
   assert.match(confirmed, /1\. Bewohner auswählen\./);
-  assert.match(confirmed, /2\. \*\*Doku-Erweitert\*\* öffnen\./);
-  assert.match(confirmed, /3\. \*\*Vitalwerte\*\* wählen\./);
+  assert.match(confirmed, /2\. Ganz oben in der festen grünen Leiste \*\*Doku-Erweitert\*\* öffnen\./);
+  assert.match(confirmed, /3\. Darunter \*\*Vitalwerte\*\* wählen\./);
   assert.match(smart, /return 'vitalwerte-einzelwert'/);
 });
 
@@ -53,7 +53,7 @@ test('Detailhilfe bleibt flüchtig und speichert keine Gesprächsdaten', () => {
   }
 });
 
-test('iPhone-Synthese wird nach acht Sekunden sauber freigegeben', () => {
-  assert.match(contextHotfix, /IOS_SYNTHESIS_TIMEOUT_MS = 8000/);
-  assert.match(contextHotfix, /local_voice_timeout/);
+test('Detailhilfe nutzt keinen lokalen Synthese-Timeout mehr', () => {
+  assert.doesNotMatch(contextHotfix, /IOS_SYNTHESIS_TIMEOUT_MS|local_voice_timeout|warmLocalVoice|armAndPrepare/);
+  assert.match(contextHotfix, /voiceMode: 'static-supertonic-only'/);
 });
