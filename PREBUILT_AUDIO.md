@@ -1,58 +1,62 @@
 # DokoHilf – statische Supertonic-Sprachausgabe
 
-**Stand:** 7. August 2026
-**Ziel-Build:** `20260807-28` / PWA-Revision `20260807-static-supertonic-guides-v28-4`
+**Stand:** 9. August 2026  
+**Ziel-Build:** `20260809-34` / v29
 
 ## Zweck
 
-Bestätigte DokoHilf-Anweisungen werden im geprüften GitHub-Releasebuild einmalig mit der kostenlosen Sprachengine **Supertonic 3**, Stimme **F1**, Deutsch erzeugt. Die veröffentlichte PWA spielt diese statischen WAV-Dateien ab und ruft dafür weder im Browser noch über Supabase eine Cloud-TTS-API auf.
+Alle hörbaren DokoHilf-Sätze werden im geprüften GitHub-Releasebuild einmalig mit der kostenlosen Sprachengine **Supertonic 3**, Stimme **F1**, Deutsch erzeugt. Die veröffentlichte PWA spielt ausschließlich diese statischen WAV-Dateien ab.
 
-## Vollständiger statischer Bestand
+Es gibt **keinen** Browser-, Geräte-, Systemstimmen-, WebGPU-/WASM- oder Cloud-TTS-Notweg. Wenn ein frei formulierter sichtbarer Antworttext nicht exakt als statischer Sprachsatz vorbereitet ist, spricht DokoHilf nur einen ebenfalls vorab erzeugten neutralen Fallbacksatz; der vollständige Text bleibt im Chat sichtbar.
 
-- 23 freigegebene Guides
-- 108 Guide-Schritte
-- 92 eindeutige Schritttexte plus eine allgemeine Begrüßung
-- damit 93 bestätigte Guide-Sätze aus `assets/guide-audio-catalog.json`
-- zusätzlich 18 feste Dialogsätze aus `assets/voice-extra-catalog-v28.json`
-- insgesamt exakt **111 statische WAV-Dateien**
+## Aktueller statischer Quellenbestand
 
-Der Build bricht ab, wenn die Quellen nicht exakt 93 + 18 eindeutige Sätze enthalten, wenn nicht exakt 111 WAV-Dateien erzeugt wurden oder wenn Katalog und Build-Zusammenfassung nicht `Supertonic-F1` ausweisen.
+Der Basiskatalog ist ein versionierter Snapshot aller aktuell freigegebenen Guide-Schritte:
 
-## Aktiver Sprachpfad
+- **40** freigegebene Guides in Supabase
+- **129** eindeutige freigegebene Schritttexte
+- plus eine allgemeine Begrüßungsquelle = **130 Basissätze** in `assets/guide-audio-catalog.json`
+- zusätzlich **33** feste Dialogsätze
+- **49** Release-/UI-Sätze
+- **39** Durchführungssätze
+- **1** kurzer Sprachstartsatz
+- **17** Navigationssätze
+- **10** Kontext-Hilfesätze
 
-1. Ein passender bestätigter Satz wird aus dem veröffentlichten Supertonic-F1-Katalog abgespielt.
-2. Nur für einen noch nicht vorbereiteten freien Satz darf ein zeitlich begrenzter technischer Notweg lokal im Browser dieselbe Supertonic-F1-Stimme erzeugen.
-3. Das lokal erzeugte Audio bleibt flüchtig und wird nicht dauerhaft gespeichert.
-4. Eine System-/Gerätestimme und Cloud-TTS sind keine regulären Fallbacks.
+Der Releasebuilder führt diese Quellen zusammen, entfernt Dubletten und leitet die endgültige Zahl der statischen WAV-Dateien **dynamisch** aus dem zusammengeführten Katalog ab. Eine alte fest verdrahtete Gesamtzahl ist ausdrücklich nicht mehr zulässig.
+
+## Verbindliche Regeln
+
+- Der Basiskatalog darf keine veralteten Wege wie `Doku erweitert`, `Aufgaben → Aktuelles` oder einen erfundenen direkten Easy-Plan-Schritt enthalten.
+- `Doku-Erweitert` wird nur mit der bestätigten Schreibweise und Hierarchie verwendet.
+- Textänderung = vollständige Audio-Neuerzeugung im Releasebuild.
+- Der Build bricht ab, wenn erwartete Quellen fehlen, alte verbotene Basissätze wieder auftauchen oder Katalog/WAV-Zahl/Build-Zusammenfassung nicht übereinstimmen.
+- Die veröffentlichte Stimme bleibt ausschließlich **Supertonic-F1**.
+- Der kurze Sprachstart lautet **„Hey! Wobei brauchst du Hilfe?“**.
 
 Repositoryquellen:
 
-- `assets/guide-audio-catalog.json`: 93 bestätigte Guide-Sätze
-- `assets/voice-extra-catalog-v28.json`: 18 feste Dialogsätze
-- `scripts/build-supertonic-guide-audio-v28.py`: eindeutige Validierung und statische Erzeugung
-- `assets/local-voice-gate-v28.js`: statischer Supertonic-Pfad und lokaler Notweg
+- `assets/guide-audio-catalog.json`: Snapshot aller aktuell freigegebenen Guide-Schritte plus Begrüßungsquelle
+- `assets/voice-extra-catalog-v28.json`: feste Dialogsätze
+- `assets/voice-release-catalog-v29.json`: Release-Sätze
+- `assets/voice-durchfuehrung-catalog-v29.json`: Durchführungssätze
+- `assets/voice-ui-catalog-v29.json`: kurzer Sprachstart
+- `assets/voice-navigation-catalog-v29.json`: bestätigte Navigation
+- `assets/voice-context-help-catalog-v29.json`: Kontext-Hilfe
+- `scripts/build-supertonic-guide-audio-v28.py`: Validierung, Deduplizierung und statische Erzeugung
+- `assets/local-voice-gate-v28.js`: ausschließlich statische Wiedergabe; System-/Gerätestimmen bleiben blockiert
 - `.github/workflows/pages.yml`: vollständiger Releasebuild und Veröffentlichung desselben `_site`-Artefakts
-- `scripts/build-static-site-v27.sh`: strenger 111-Dateien-Vertrag
 
-## Stillgelegter alter Cloud-Aufbau
+## Stillgelegter alter Cloud-/Lokalinferenz-Aufbau
 
-Der frühere Gacrux-/Gemini-Aufbau ist vollständig aus dem erzeugenden Pfad entfernt:
-
-- `dokohilf-tts` antwortet nur noch als nicht-generierender Ruhestandsendpunkt mit `410 Gone`.
-- `dokohilf-guide-audio-build` antwortet nur noch als nicht-generierender Ruhestandsendpunkt mit `410 Gone`.
-- `dokohilf-guide-audio` liefert die alten Gacrux-Dateien nicht mehr aus und antwortet ebenfalls nur noch mit `410 Gone`.
-- Für alle drei Funktionen ist `verify_jwt = true` gesetzt.
-- Der interne Build-Schalter bleibt deaktiviert.
-- Der frühere Cron `dokohilf-static-guide-audio-v27` wird per Migration entfernt.
-
-Historische private Dateien oder Registryzeilen sind kein aktiver Audio-, Browser-, Auslieferungs- oder Erzeugungspfad und werden von v28-4 nicht geladen.
+Die früheren TTS-, Builder- und Gacrux-Auslieferungsfunktionen sind reine Ruhestandsendpunkte. Browsercode lädt keine Supertonic-Modellgewichte und erzeugt kein Audio lokal. Historische private Dateien oder Registryzeilen sind kein aktiver Audio-, Browser-, Auslieferungs- oder Erzeugungspfad.
 
 ## Datenschutz- und Produktgrenze
 
-Die statischen Audios enthalten nur allgemeine, selbst formulierte und freigegebene Bedienanweisungen. **Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe**, Namen, Bewohner-, Mitarbeiter-, Gesundheits- und Falldaten sind ausgeschlossen und werden nicht dauerhaft gespeichert.
+Die statischen Audios enthalten ausschließlich allgemeine freigegebene Bedienanweisungen. **Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe**, Namen, Bewohner-, Mitarbeiter-, Gesundheits- und Falldaten sind als Audioquelle ausgeschlossen und werden nicht dauerhaft gespeichert.
 
-DokoHilf ist nur eine erklärende Bedienhilfe. Es gibt keine Endnutzerkonten, Personenprofile, Fallakten oder personenbezogenen Eingabemasken; solche Funktionen werden auch später nicht eingeplant. Tests verwenden ausschließlich synthetische UI-Zustände, neutrale Platzhalter und erfundene technische Werte und bilden keine reale Person oder realen Fall nach.
+DokoHilf ist eine öffentliche erklärende Bedienhilfe ohne Endnutzerkonten, Personenprofile oder Fallakten.
 
 ## Aktualisierung
 
-Ändert sich ein bestätigter Satz, wird der vollständige statische Bestand im nächsten Releasebuild neu erzeugt. Veröffentlicht wird nur, wenn Quellkataloge, 111 WAV-Dateien, Build-Zusammenfassung, mobile QA und der exakt geprüfte Git-Head übereinstimmen.
+Ändert sich ein freigegebener Guide-Schritt, wird der Basiskatalog aktualisiert, die Build-ID erhöht und der vollständige statische Sprachbestand im nächsten Release neu erzeugt. Veröffentlicht wird nur, wenn Quellkataloge, WAV-Dateien, Build-Zusammenfassung, mobile QA und der exakt geprüfte Git-Head übereinstimmen.
