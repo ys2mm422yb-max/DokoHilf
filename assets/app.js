@@ -103,7 +103,7 @@
     state.voicePaused = false;
     el.pauseVoice.textContent = 'Gespräch pausieren';
     if (greet && !state.history.length) {
-      const greeting = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
+      const greeting = 'Hey! Wobei brauchst du Hilfe?';
       addMessage('assistant', greeting);
       state.shouldListenAfterSpeech = true;
       speak(greeting);
