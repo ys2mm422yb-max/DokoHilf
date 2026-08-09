@@ -12,9 +12,10 @@
     style.id = 'releasePolishV29Styles';
     style.textContent = `
       .topbar .build-pill{display:none!important}
-      .footer-version-wrap{display:flex;justify-content:center;margin:7px auto 0;padding:0 12px calc(8px + env(safe-area-inset-bottom))}
+      .footer-version-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin:7px auto 0;padding:0 12px calc(8px + env(safe-area-inset-bottom))}
       .footer-version-button{display:inline-flex!important;align-items:center;justify-content:center;min-height:28px;padding:0 9px;border:1px solid rgba(130,170,159,.10);border-radius:999px;background:rgba(255,255,255,.025);color:#58736c;font-size:9.5px;font-weight:700;letter-spacing:.025em;opacity:.72}
       .footer-version-button:active{opacity:1}
+      .footer-credit{font-size:9px;font-weight:600;letter-spacing:.035em;color:#46615a;opacity:.56;line-height:1.2;text-align:center}
       .update-toast{max-width:calc(100% - 28px);text-align:center;white-space:normal;transition:opacity .2s ease,transform .2s ease}
       .app-shell[data-mode="chat"] .update-toast{bottom:calc(96px + env(safe-area-inset-bottom))}
     `;
@@ -34,7 +35,10 @@
     pill.classList.remove('build-pill');
     pill.textContent = `DokoHilf ${VERSION_LABEL} · Build ${BUILD_ID}`;
     pill.setAttribute('aria-label', `DokoHilf ${VERSION_LABEL}, Build ${BUILD_ID}. Auf Update prüfen.`);
-    wrap.append(pill);
+    const credit = document.createElement('span');
+    credit.className = 'footer-credit';
+    credit.textContent = 'Konzept & Umsetzung · MT';
+    wrap.append(pill, credit);
     const buildStatus = document.getElementById('buildStatus');
     const legal = document.querySelector('.legal-note');
     if (buildStatus?.parentElement) buildStatus.insertAdjacentElement('afterend', wrap);
