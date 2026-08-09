@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [library, css, copy, v29Ui, mobileRender, migration, confirmed, voiceBuild, voiceRelease, sw, index, version] = await Promise.all([
-  readFile(new URL('../assets/guide-library-v29.js', import.meta.url), 'utf8'), readFile(new URL('../assets/guide-library-v29.css', import.meta.url), 'utf8'), readFile(new URL('../assets/direct-guide-copy-v29.js', import.meta.url), 'utf8'), readFile(new URL('../assets/v29-ui.js', import.meta.url), 'utf8'), readFile(new URL('../scripts/mobile-render-v27.mjs', import.meta.url), 'utf8'), readFile(new URL('../supabase/migrations/20260808234500_workflow_library_polish_v29.sql', import.meta.url), 'utf8'), readFile(new URL('../CONFIRMED_WORKFLOWS.md', import.meta.url), 'utf8'), readFile(new URL('../scripts/build-supertonic-guide-audio-v28.py', import.meta.url), 'utf8'), readFile(new URL('../assets/voice-release-catalog-v29.json', import.meta.url), 'utf8'), readFile(new URL('../service-worker.js', import.meta.url), 'utf8'), readFile(new URL('../index.html', import.meta.url), 'utf8'), readFile(new URL('../version.json', import.meta.url), 'utf8'),
+const [library, css, copy, v29Ui, directGuides, mobileRender, migration, confirmed, voiceBuild, voiceRelease, sw, index, version] = await Promise.all([
+  readFile(new URL('../assets/guide-library-v29.js', import.meta.url), 'utf8'), readFile(new URL('../assets/guide-library-v29.css', import.meta.url), 'utf8'), readFile(new URL('../assets/direct-guide-copy-v29.js', import.meta.url), 'utf8'), readFile(new URL('../assets/v29-ui.js', import.meta.url), 'utf8'), readFile(new URL('../assets/direct-guides-v27.js', import.meta.url), 'utf8'), readFile(new URL('../scripts/mobile-render-v27.mjs', import.meta.url), 'utf8'), readFile(new URL('../supabase/migrations/20260808234500_workflow_library_polish_v29.sql', import.meta.url), 'utf8'), readFile(new URL('../CONFIRMED_WORKFLOWS.md', import.meta.url), 'utf8'), readFile(new URL('../scripts/build-supertonic-guide-audio-v28.py', import.meta.url), 'utf8'), readFile(new URL('../assets/voice-release-catalog-v29.json', import.meta.url), 'utf8'), readFile(new URL('../service-worker.js', import.meta.url), 'utf8'), readFile(new URL('../index.html', import.meta.url), 'utf8'), readFile(new URL('../version.json', import.meta.url), 'utf8'),
 ]);
 const buildId = JSON.parse(version).buildId;
 
@@ -32,7 +32,8 @@ test('Guide-Bibliothek initialisiert einmal, rendert echte DOM-Karten und heilt 
 });
 
 test('genau ein Besitzer bleibt für Startbibliothek und Chatkopf', () => {
-  assert.match(index, /__DOKOHILF_LEGACY_DIRECT_GUIDES_OBSERVER_GUARD_V29__/); assert.match(index, /class DokoHilfLegacyDirectGuidesObserver/); assert.match(index, /super\(\(\) => \{\}\)/);
+  assert.doesNotMatch(index, /DokoHilfLegacyDirectGuidesObserver|__DOKOHILF_LEGACY_DIRECT_GUIDES_OBSERVER_GUARD_V29__|window\.MutationObserver\s*=/);
+  assert.match(directGuides, /function v29OwnsGuideLibrary\(examples\)/); assert.match(directGuides, /examples\?\.dataset\.v29GuideLibrary === 'true'/); assert.match(directGuides, /owner === true \|\| owner === 'initializing'/); assert.match(directGuides, /function v29OwnsChatCopy\(\)/); assert.match(directGuides, /document\.documentElement\.dataset\.dokohilfUi === 'v29'/); assert.match(directGuides, /if \(!examples \|\| v29OwnsGuideLibrary\(examples\) \|\| desiredButtonsPresent\(examples\)\) return false/); assert.match(directGuides, /if \(v29OwnsChatCopy\(\)\) return false/);
   assert.doesNotMatch(copy, /guideLibrarySnapshot|polishChatHead|ensureGuideLibraryAssets/); assert.match(copy, /ensureGuideLibraryOwnershipStyle/); assert.match(copy, /const view = document\.getElementById\('directGuideView'\)/);
   assert.match(v29Ui, /guideLibraryOwnsHome/); assert.match(v29Ui, /guideLibraryOwnsHome \? 'Häufig genutzt' : 'Häufige Abläufe · direkt öffnen'/); assert.match(v29Ui, /querySelectorAll\('button\[data-direct-guide\]'\)/);
 });
