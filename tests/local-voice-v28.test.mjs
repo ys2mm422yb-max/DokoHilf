@@ -101,11 +101,17 @@ test('GitHub-Build leitet die Gesamtzahl aus allen kontrollierten Sprachkataloge
   assert.doesNotMatch(build, /exakt 233|expected_count" != 233/);
 });
 
-test('Sprachstart wird kurz und beginnt mit Hey', () => {
+test('Sprachstart wird kurz und der veröffentlichte Katalog verwendet denselben Schlüssel', () => {
   assert.match(applyLocal, /const newGreeting = 'Hey! Wobei brauchst du Hilfe\?'/);
   assert.match(applyLocal, /const oldGreeting = 'Hallo! Sag mir einfach/);
   assert.match(uiSpeechText, /Hey! Wobei brauchst du Hilfe\?/);
   assert.match(build, /Hey! Wobei brauchst du Hilfe/);
+  assert.match(builder, /def canonical_catalog_text\(value: str\)/);
+  assert.match(builder, /if text == LONG_VOICE_GREETING:\s+return SHORT_VOICE_GREETING/s);
+  assert.match(builder, /text = canonical_catalog_text\(raw\.get\('text', ''\)\)/);
+  assert.match(builder, /SHORT_VOICE_GREETING not in published_texts/);
+  assert.match(builder, /LONG_VOICE_GREETING in published_texts/);
+  assert.match(builder, /legacy long voice greeting must not remain a published static catalog key/);
 });
 
 test('Kontext-Hilfe spricht nur den statisch katalogisierten Basissatz', () => {
