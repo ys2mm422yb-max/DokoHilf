@@ -34,13 +34,13 @@
     {"text":"Im Durchführungsnachweis findest du „Bedarfsmedikation“. Klicke auf den kleinen Pfeil links daneben, um die Bedarfsmedikation des ausgewählten Bewohners zu öffnen."},
     {"text":"Zum vorgesehenen Zeitpunkt findest du dort die automatisch angelegte Wirksamkeitskontrolle zur zuvor dokumentierten Bedarfsmedikation."},
     {"text":"Die Wirksamkeitskontrolle erscheint erst zum vorgesehenen Zeitpunkt im Durchführungsnachweis. DokoHilf nennt keine erfundene Wartezeit."},
-    {"text":"Öffne im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“."},
-    {"text":"Bleibe im Durchführungsnachweis und suche dort „Maßnahmen ohne Zeitangabe“."},
+    {"text":"Suche im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ und klicke auf den kleinen Pfeil links daneben."},
+    {"text":"Bleibe im Durchführungsnachweis und suche dort „Maßnahmen ohne Zeitangabe“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen."},
     {"text":"Wähle die gewünschte Maßnahme aus, zum Beispiel „Klienten-Team Sitzung“ oder „Krise“."},
     {"text":"Prüfe im Pop-up-Fenster Datum und Uhrzeit. Ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht."},
     {"text":"Wähle die passende Kategorie aus."},
     {"text":"Wenn die Maßnahme für die nächste Schicht wichtig ist, hake „Wichtig für Schichtübergabe“ an. Wenn nicht, lässt du den Haken frei. In das große Textfeld darunter schreibst du kurz, was passiert ist und was du gemacht beziehungsweise durchgeführt hast."},
     {"text":"Falls du zusätzlich eine Zeitangabe brauchst, kannst du sie oben rechts im Pop-up-Fenster ergänzen."},
-    {"text":"Im Durchführungsnachweis findest du den Bereich „Maßnahmen ohne Zeitangabe“."}
+    {"text":"Im Durchführungsnachweis findest du „Maßnahmen ohne Zeitangabe“. Klicke auf den kleinen Pfeil links daneben, um den Bereich zu öffnen."}
   ]
 }

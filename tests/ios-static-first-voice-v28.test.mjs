@@ -41,7 +41,8 @@ test('Systemstimme bleibt gesperrt und statische Sprachdateien werden mit aktuel
   assert.match(worker, /dokohilf-local-voice-model-v28-1/);
   assert.match(worker, /dokohilf-static-supertonic-audio-v29-1/);
   assert.match(worker, /await caches\.delete\(STATIC_AUDIO_CACHE\)/);
-  assert.match(worker, /HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-2'/);
+  assert.match(worker, /HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3'/);
+  assert.match(worker, /url\.pathname\.includes\('\/assets\/audio\/guides\/'\)[\s\S]*cache: 'no-store'/);
 });
 
 test('Hotfix bleibt für iOS und Android mit neutraler öffentlicher Dokumentation abgesichert', () => {

@@ -61,7 +61,7 @@
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du Bedarfsmedikation. Klicke auf den kleinen Pfeil links daneben, um sie zu öffnen.';
     }
     if (/\b(massnahmen ohne zeitangabe|massnahme ohne zeitangabe)\b/.test(n)) {
-      return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du den Bereich Maßnahmen ohne Zeitangabe.';
+      return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du den Bereich Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um ihn zu öffnen.';
     }
     if (/\b(doku erweitert|doku-erweitert)\b/.test(n)) {
       return 'Doku-Erweitert ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku. Die feste Leiste ist ganz oben und grün; dort stehen außerdem Planung und Analyse. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.';
