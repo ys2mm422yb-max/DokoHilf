@@ -10,11 +10,7 @@
   ]);
   const REPORT_ENTRY_REPLY = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach **Berichte**. Siehst du **Berichte**?';
   const REPORT_ENTRY_SPEECH = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach Berichte. Siehst du Berichte?';
-  const IOS_SYNTHESIS_TIMEOUT_MS = 8000;
-  const VOICE_WARM_DELAY_MS = 1200;
   const previousFetch = window.fetch.bind(window);
-  let warmTimer = null;
-  let synthesisWrapped = false;
 
   function normalize(value) {
     return String(value || '')
@@ -57,12 +53,6 @@
       .replace(/Werden die gesuchten Fantasie-Einträge angezeigt\?/gi, 'Werden die gesuchten Einträge angezeigt?')
       .replace(/[ \t]{2,}/g, ' ')
       .trim();
-  }
-
-  function isIOS() {
-    const ua = navigator.userAgent || '';
-    return /iPad|iPhone|iPod/i.test(ua)
-      || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   }
 
   function isAiRequest(input, init = {}) {
@@ -150,7 +140,7 @@
     if (fixed === payload) return response;
     const headers = new Headers(response.headers);
     headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers.set('X-DokoHilf-Context-Hotfix', 'natural-copy-v29-1');
+    headers.set('X-DokoHilf-Context-Hotfix', 'natural-copy-static-voice-v29-2');
     return new Response(JSON.stringify(fixed), {
       status: response.status,
       statusText: response.statusText,
@@ -162,41 +152,6 @@
     const response = await previousFetch(input, init);
     return isAiRequest(input, init) ? rewriteAiResponse(response) : response;
   };
-
-  function installIOSBoundedSynthesis() {
-    if (!isIOS() || synthesisWrapped) return;
-    const api = window.DokoHilfLocalVoiceV28;
-    if (!api || typeof api.synthesize !== 'function') return;
-    const nativeSynthesize = api.synthesize.bind(api);
-    api.synthesize = text => {
-      let timer = null;
-      const timeout = new Promise((_, reject) => {
-        timer = window.setTimeout(() => reject(new Error('local_voice_timeout')), IOS_SYNTHESIS_TIMEOUT_MS);
-      });
-      const synthesis = Promise.resolve(nativeSynthesize(text));
-      synthesis.catch(() => {});
-      return Promise.race([synthesis, timeout]).finally(() => window.clearTimeout(timer));
-    };
-    synthesisWrapped = true;
-  }
-
-  function warmLocalVoice() {
-    installIOSBoundedSynthesis();
-    const api = window.DokoHilfLocalVoiceV28;
-    if (!api?.armAndPrepare) return;
-    api.arm?.();
-    Promise.resolve(api.armAndPrepare()).catch(() => {});
-  }
-
-  function scheduleVoiceWarmup() {
-    window.clearTimeout(warmTimer);
-    warmTimer = window.setTimeout(warmLocalVoice, VOICE_WARM_DELAY_MS);
-  }
-
-  document.addEventListener('click', event => {
-    const voiceEntry = event.target.closest?.('[data-select-mode="voice"], [data-switch-mode="voice"], #voiceButton');
-    if (voiceEntry) scheduleVoiceWarmup();
-  }, { capture: true });
 
   function syncRenderedLabels() {
     const slug = currentGuideSlug();
@@ -231,12 +186,8 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      installIOSBoundedSynthesis();
-      installRenderSync();
-    }, { once: true });
+    document.addEventListener('DOMContentLoaded', installRenderSync, { once: true });
   } else {
-    installIOSBoundedSynthesis();
     installRenderSync();
   }
 
@@ -246,8 +197,7 @@
     contextualOptionLabel,
     naturalizeUserCopy,
     reportSpeech: REPORT_ENTRY_SPEECH,
-    iosSynthesisTimeoutMs: IOS_SYNTHESIS_TIMEOUT_MS,
-    voiceWarmDelayMs: VOICE_WARM_DELAY_MS,
+    voiceMode: 'static-supertonic-only',
   };
   window.__DOKOHILF_CONTEXT_VOICE_HOTFIX_V28__ = true;
 })();
