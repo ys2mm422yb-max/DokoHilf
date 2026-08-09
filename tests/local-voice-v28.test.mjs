@@ -167,7 +167,7 @@ test('Versionsplakette ist oben verborgen und nur unten dezent verfügbar', () =
 });
 
 test('Build-ID, PWA und neue Assets sind konsistent', () => {
-  assert.equal(buildId, '20260809-32');
+  assert.equal(buildId, '20260809-33');
   assert.match(index, new RegExp(`dokohilf-build" content="${buildId}`));
   assert.match(index, new RegExp(`orientation-help-v29\\.js\\?v=${buildId}`));
   assert.match(index, new RegExp(`release-polish-v29\\.js\\?v=${buildId}`));
