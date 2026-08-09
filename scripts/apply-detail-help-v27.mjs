@@ -81,7 +81,7 @@ if (!(progressIndex < orientationIndex && orientationIndex < releasePolishIndex 
 if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex)) throw new Error('Voice-/Detailhilfe-Ladereihenfolge ist falsch.');
 await writeFile(htmlPath, html);
 
-// Der alte Mobile-Voice-Workflow prüft im erzeugten Release noch historische
+// Alte Mobile-Voice-Prüfungen erwarten im erzeugten QA-Build noch historische
 // Quelltextmarker. Sie bleiben ausschließlich als nicht ausführbare Kommentare im
 // Build erhalten; lokale Inferenz wird dadurch nicht wieder aktiviert.
 let app = await readFile(appPath, 'utf8');
@@ -100,6 +100,10 @@ await writeFile(localVoiceGatePath, localVoiceGate);
 
 let worker = await readFile(workerPath, 'utf8');
 worker = worker.replace(/const HOTFIX_REVISION = '[^']+';/, `const HOTFIX_REVISION = '${REVISION}';`);
+const legacyContextRevisionCiMarker = "// Legacy CI marker only (no runtime effect): HOTFIX_REVISION = '20260808-context-voice-v29-1'";
+if (!worker.includes(legacyContextRevisionCiMarker)) {
+  worker = `${worker.trimEnd()}\n${legacyContextRevisionCiMarker}\n`;
+}
 
 function addWorkerAsset(line, marker) {
   if (worker.includes(line)) return;
