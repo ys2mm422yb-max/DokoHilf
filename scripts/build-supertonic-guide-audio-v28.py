@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 BASE_GUIDE_COUNT = 93
-EXTRA_SPEECH_COUNT = 18
+EXTRA_SPEECH_COUNT = 33
 RELEASE_SPEECH_COUNT = 49
 STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COUNT
 
@@ -13,6 +13,8 @@ STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COU
 def clean_catalog_text(value: str) -> str:
     text = str(value or '').replace('**', ' ').strip()
     rewrites = {
+        'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.':
+            'Hey! Wobei brauchst du Hilfe?',
         'Fülle das Formular nach der bei euch gültigen fachlichen Vorgabe aus. DokoHilf erfindet für noch nicht bestätigte Formularfelder keine Angaben.':
             'Fülle das geöffnete Formular wie gewohnt aus.',
         'Die Auswahl des Formulars ist bestätigt. Für nicht bestätigte Felder oder fachliche Inhalte wird kein Klickweg erfunden.':
