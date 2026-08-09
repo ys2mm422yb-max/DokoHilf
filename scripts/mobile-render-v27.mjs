@@ -252,7 +252,7 @@ try {
   await page.locator('.v29-all-guides-trigger').click();
   await page.locator('.v29-library-head h1').waitFor({ state: 'visible' });
   const fullLibrary = await page.evaluate(() => {
-    const active = [...document.querySelectorAll('.v29-library-card[data-v29-open-guide]')];
+    const active = [...document.querySelectorAll('.v29-library-card[data-v29-open-guide], .v29-library-card[data-v29-open-durchfuehrung-guide]')];
     const later = [...document.querySelectorAll('.v29-library-card.is-later')];
     return {
       title: document.querySelector('.v29-library-head h1')?.textContent?.trim(),
