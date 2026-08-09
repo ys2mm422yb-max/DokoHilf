@@ -15,14 +15,14 @@ test('Voice verwendet den vom Router vorgesehenen spokenText statt des langen si
   assert.match(gate, /lastSpokenMapping = mapped/);
 });
 
-test('bestätigte Supertonic-Sätze werden vor lokaler Inferenz statisch getroffen', () => {
+test('bestätigte Supertonic-Sätze werden ausschließlich aus dem statischen Katalog abgespielt', () => {
   assert.match(gate, /approvedText\.length < 16/);
   assert.match(gate, /key\.includes\(approvedText\)/);
   assert.match(gate, /STATIC_VOICE = 'Supertonic-F1'/);
-  assert.match(gate, /static-supertonic-guide-v29/);
-  assert.match(gate, /static-supertonic-cache-v29/);
-  assert.ok(gate.indexOf('loadStaticSupertonicVoice(text)') < gate.indexOf('localFallback(text)'));
-  assert.doesNotMatch(gate, /Gacrux|dokohilf-guide-audio\?manifest=1/);
+  assert.match(gate, /static-supertonic-only-v29/);
+  assert.match(gate, /static-supertonic-cache-v29-2/);
+  assert.match(gate, /loadStaticSupertonicVoice\(text\)/);
+  assert.doesNotMatch(gate, /localFallback|DokoHilfLocalVoiceV28\.synthesize|Gacrux|dokohilf-guide-audio\?manifest=1/);
 });
 
 test('Bericht zeigt Schritte 6 bis 9 als klaren Sonderfall für genau zwei Kategorien', () => {
