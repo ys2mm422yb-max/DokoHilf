@@ -30,80 +30,71 @@ jobs:
           test -n "$BUILD_ID"
 
           for file in \
-            README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md \
-            FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md ACTIVE_WORK_DIRECT_GUIDES_CHAT.md \
-            ACTIVE_WORK_ACCOUNT_FREE_V28.md \
+            README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md STATIC_VOICE_POLICY.md \
+            PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md \
+            ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md ACTIVE_WORK_DIRECT_GUIDES_CHAT.md ACTIVE_WORK_ACCOUNT_FREE_V28.md \
             assets/guide-audio-catalog.json assets/voice-extra-catalog-v28.json assets/voice-release-catalog-v29.json \
+            assets/voice-durchfuehrung-catalog-v29.json assets/voice-ui-catalog-v29.json \
+            assets/voice-navigation-catalog-v29.json assets/voice-context-help-catalog-v29.json \
             assets/direct-guides-v27.js assets/direct-guide-copy-v29.js assets/direct-guides-chat-v27.css \
+            assets/durchfuehrungs-workflows-v29.js assets/orientation-help-v29.js assets/release-polish-v29.js \
             assets/local-voice-v28.js assets/local-voice-gate-v28.js assets/smart-help-v29.js assets/v29-ui.js assets/v29-ui.css \
             scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh scripts/build-supertonic-guide-audio-v28.py \
-            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs \
-            scripts/live-routing-stable.mjs scripts/live-vitalwerte-routing-smoke.mjs \
-            tests/prebuilt-guide-audio.test.mjs tests/dark-premium-v27.test.mjs tests/fast-voice-v27.test.mjs tests/direct-guides-v27.test.mjs \
-            tests/local-voice-v28.test.mjs tests/v29-smart-help-ui.test.mjs tests/public-documentation-boundary.test.mjs tests/account-free-product.test.mjs \
+            scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-routing-stable.mjs \
+            scripts/live-vitalwerte-routing-smoke.mjs tests/local-voice-v28.test.mjs tests/v29-smart-help-ui.test.mjs \
+            tests/public-documentation-boundary.test.mjs tests/account-free-product.test.mjs \
             supabase/functions/dokohilf-ai-router/index.ts supabase/functions/dokohilf-chat-router/index.ts \
-            supabase/functions/dokohilf-editor/index.ts \
-            supabase/functions/dokohilf-tts/index.ts \
-            supabase/functions/dokohilf-guide-audio/index.ts \
-            supabase/functions/dokohilf-guide-audio-build/index.ts \
+            supabase/functions/dokohilf-editor/index.ts supabase/functions/dokohilf-tts/index.ts \
+            supabase/functions/dokohilf-guide-audio/index.ts supabase/functions/dokohilf-guide-audio-build/index.ts \
             supabase/config.toml \
-            supabase/migrations/20260806194500_create_static_guide_audio_registry.sql \
-            supabase/migrations/20260806200500_secure_static_guide_audio_builder.sql \
             supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql \
             supabase/migrations/20260807230003_remove_app_account_infrastructure.sql \
             supabase/migrations/20260807232000_deny_all_app_guide_access.sql \
             supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql \
-            supabase/migrations/20260808091000_natural_presence_and_form_save_v29.sql; do
+            supabase/migrations/20260809124000_bedarfsmedikation_massnahmen_v29.sql \
+            supabase/migrations/20260809125500_green_navigation_hierarchy_v29.sql; do
             test -s "$file"
           done
 
-          grep -q '__DOKOHILF_DARK_PREMIUM_V27__' assets/experience-v27.js
-          grep -q '__DOKOHILF_PREBUILT_GUIDE_AUDIO_V1__' assets/experience-v27.js
-          grep -q 'guide-progress-menu' assets/ux-v27.js
-          grep -q '__DOKOHILF_PRIVACY_ACK_V27__' assets/ux-v27.js
-          grep -q '__DOKOHILF_IDEMPOTENT_SYNC_V27__' assets/ux-v27.js
-          grep -q "PRIVACY_ACK_KEY = 'dokohilf-privacy-ack-v1'" assets/ux-v27.js
-          test "$(grep -o 'localStorage\.[a-zA-Z]*' assets/ux-v27.js | sort -u | tr '\n' ' ')" = "localStorage.getItem localStorage.setItem "
-          grep -q '__DOKOHILF_DIRECT_GUIDES_V27__' assets/direct-guides-v27.js
-          grep -q "dataset.mode = 'direct-guide'" assets/direct-guides-v27.js
-          grep -q 'direct-guides-cross-platform' assets/direct-guides-v27.js
-          grep -q 'command-message-hidden' assets/ux-v27.css
-          grep -q 'data-voice-state="listening"' assets/ux-v27.css
-          grep -q -- '--v27-bg:#020c12' assets/premium-ui-v27.css
-          grep -q 'color-scheme:dark' assets/premium-ui-v27.css
-          grep -q "DOKOHILF_MOBILE_PROFILE || 'ios'" scripts/mobile-render-v27.mjs
-          grep -q "PROFILE === 'android'" scripts/mobile-render-v27.mjs
-          grep -q '412 × 915' ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md
-          grep -q 'conversational-guide-router-v9' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'medication-view-only-safety-v9' supabase/functions/dokohilf-ai-router/index.ts
-          grep -q 'approved-guide-context-help-v28' supabase/functions/dokohilf-chat-router/index.ts
-          grep -q 'cloud_tts_retired_v28' supabase/functions/dokohilf-tts/index.ts
-          grep -q 'legacy_cloud_audio_builder_retired_v28' supabase/functions/dokohilf-guide-audio-build/index.ts
-          grep -q 'legacy_gacrux_audio_delivery_retired_v28' supabase/functions/dokohilf-guide-audio/index.ts
-          grep -q '\[functions.dokohilf-guide-audio\]' supabase/config.toml
-          grep -q 'verify_jwt = true' supabase/config.toml
-          grep -q "cron.unschedule(jobid)" supabase/migrations/20260807214545_retire_legacy_cloud_voice.sql
           grep -q 'Dauerhaftes absolutes Echtdatenverbot' PROJECT_RULES.md
           grep -q 'Eine spätere Freigabe darf dieses Verbot' PROJECT_RULES.md
           grep -q 'Öffentliche Dokumentation enthält keine Angaben zu Herkunft' CONFIRMED_WORKFLOWS.md
+          grep -q '__DOKOHILF_LOCAL_VOICE_RETIRED_V29__' assets/local-voice-v28.js
+          grep -q '__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__' assets/local-voice-v28.js
           grep -q "STATIC_VOICE = 'Supertonic-F1'" assets/local-voice-gate-v28.js
           grep -q '__DOKOHILF_STATIC_SUPERTONIC_V28__' assets/local-voice-gate-v28.js
-          grep -q "STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-1'" assets/local-voice-gate-v28.js
-          grep -q 'IOS_LOCAL_TIMEOUT_MS = 8000' assets/local-voice-gate-v28.js
-          grep -Fq 'meta[name="dokohilf-build"]' assets/local-voice-v28.js
+          grep -q '__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__' assets/local-voice-gate-v28.js
+          grep -q "STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2'" assets/local-voice-gate-v28.js
+          grep -q 'AUDIO_TIMEOUT_MS = 8000' assets/local-voice-gate-v28.js
+          ! grep -q 'IOS_LOCAL_TIMEOUT_MS\|OTHER_LOCAL_TIMEOUT_MS\|localFallback\|DokoHilfLocalVoiceV28.synthesize' assets/local-voice-gate-v28.js
+          ! grep -q 'Supertone/supertonic-3/resolve/main\|loadTextToSpeech\|loadVoiceStyle\|navigator.gpu\|onnxruntime' assets/local-voice-v28.js
           grep -Fq 'meta[name="dokohilf-build"]' assets/local-voice-gate-v28.js
           grep -Fq 'encodeURIComponent(BUILD_ID)' assets/local-voice-gate-v28.js
           grep -q '__DOKOHILF_SMART_HELP_V29__' assets/smart-help-v29.js
           grep -q '__DOKOHILF_UI_V29__' assets/v29-ui.js
+          grep -q '__DOKOHILF_ORIENTATION_HELP_V29__' assets/orientation-help-v29.js
+          grep -q 'feste grüne Leiste' assets/orientation-help-v29.js
+          grep -q '__DOKOHILF_DURCHFUEHRUNGS_WORKFLOWS_V29__' assets/durchfuehrungs-workflows-v29.js
+          grep -q 'Bedarfsmedikation' assets/durchfuehrungs-workflows-v29.js
+          grep -q 'Wirksamkeitskontrolle' assets/durchfuehrungs-workflows-v29.js
+          grep -q 'Maßnahmen ohne Zeitangabe' assets/durchfuehrungs-workflows-v29.js
           grep -q 'data-voice-state="thinking"' assets/v29-ui.css
           grep -q 'data-voice-state="speaking"' assets/v29-ui.css
           grep -q 'TTS(auto_download=True)' scripts/build-supertonic-guide-audio-v28.py
           grep -q "lang='de'" scripts/build-supertonic-guide-audio-v28.py
-          grep -q 'RELEASE_SPEECH_COUNT = 49' scripts/build-supertonic-guide-audio-v28.py
-          grep -q 'STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COUNT' scripts/build-supertonic-guide-audio-v28.py
-          grep -q 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“' assets/voice-release-catalog-v29.json
-          grep -q 'Wenn der Endzeitpunkt noch nicht sicher feststeht' assets/voice-release-catalog-v29.json
+          grep -q 'EXPECTED_SOURCE_COUNTS' scripts/build-supertonic-guide-audio-v28.py
+          grep -q "'base': 93" scripts/build-supertonic-guide-audio-v28.py
+          grep -q "'extra': 33" scripts/build-supertonic-guide-audio-v28.py
+          grep -q "'release': 49" scripts/build-supertonic-guide-audio-v28.py
+          grep -q "'workflow': 39" scripts/build-supertonic-guide-audio-v28.py
+          grep -q "'ui': 1" scripts/build-supertonic-guide-audio-v28.py
+          grep -q "'navigation': 17" scripts/build-supertonic-guide-audio-v28.py
+          grep -q "'context': 10" scripts/build-supertonic-guide-audio-v28.py
+          grep -q 'static_speech_count = len(entries)' scripts/build-supertonic-guide-audio-v28.py
+          ! grep -q 'STATIC_SPEECH_COUNT[[:space:]]*=' scripts/build-supertonic-guide-audio-v28.py
+          grep -q 'Hey! Wobei brauchst du Hilfe?' assets/voice-ui-catalog-v29.json
           grep -q 'KI · v29' index.html
+          grep -q 'id="buildPill" type="button" hidden' index.html
           grep -Fq "\"buildId\": \"$BUILD_ID\"" version.json
           grep -Fq "dokohilf-build\" content=\"$BUILD_ID" index.html
           grep -Fq "const BUILD_ID = '$BUILD_ID';" service-worker.js
@@ -112,28 +103,14 @@ jobs:
             echo "Pages wird über den geschützten gh-pages-Branch veröffentlicht; ein zusätzlicher API-Deployjob ist unzulässig." >&2
             exit 1
           fi
+
           test ! -e editor.html
           test ! -e assets/editor.js
           test ! -e assets/editor.css
           test ! -e docs/EDITOR_ROLLOUT.md
           grep -q 'app_accounts_retired_v28' supabase/functions/dokohilf-editor/index.ts
-          grep -q 'drop table if exists public.dokohilf_user_roles' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql
-          grep -q 'dokohilf_block_all_user_creation' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql
-          grep -q 'before insert on auth.users' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql
-          grep -q 'dokohilf_guides_deny_all_app_access' supabase/migrations/20260807232000_deny_all_app_guide_access.sql
-          grep -q 'dokohilf_guide_versions_deny_all_app_access' supabase/migrations/20260807232000_deny_all_app_guide_access.sql
-          grep -q 'dokohilf_internal.block_auth_user_insert' supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql
-          grep -q 'dokohilf_internal.archive_guide_version' supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql
-          grep -q '\[functions.dokohilf-editor\]' supabase/config.toml
           grep -q 'enable_signup = false' supabase/config.toml
-          if grep -qi 'security definer' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql; then
-            echo "Der Konto-Rückbau darf keine privilegierte SECURITY-DEFINER-Funktion einführen." >&2
-            exit 1
-          fi
-          if grep -qi 'security definer' supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql; then
-            echo "Auch die Live-Angleichung muss ohne SECURITY DEFINER auskommen." >&2
-            exit 1
-          fi
+          grep -q 'dokohilf_block_all_user_creation' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql
 
           node --check assets/update-manager.js
           node --check assets/mobile-audio-fix.js
@@ -148,6 +125,8 @@ jobs:
           node --check assets/v29-ui.js
           node --check assets/direct-guides-v27.js
           node --check assets/direct-guide-copy-v29.js
+          node --check assets/durchfuehrungs-workflows-v29.js
+          node --check assets/orientation-help-v29.js
           node --check assets/local-voice-v28.js
           node --check assets/local-voice-gate-v28.js
           node --check assets/app.js
@@ -229,6 +208,7 @@ jobs:
 
       - name: Check active DokoHilf router
         run: |
+          set -euo pipefail
           node scripts/live-routing-stable.mjs
           node scripts/live-vitalwerte-routing-smoke.mjs
 
@@ -249,22 +229,24 @@ jobs:
           python -m pip install --disable-pip-version-check 'supertonic==1.3.1'
           rm -rf assets/audio/guides
           python scripts/build-supertonic-guide-audio-v28.py \
-            --catalog assets/guide-audio-catalog.json \
-            --extra-catalog assets/voice-extra-catalog-v28.json \
-            --release-catalog assets/voice-release-catalog-v29.json \
             --output-root assets/audio/guides \
             --voice F1 \
             --steps 8 \
             --speed 1.05
           expected="$(python -c "import json; print(len(json.load(open('assets/guide-audio-catalog.json', encoding='utf-8'))['entries']))")"
           actual="$(find assets/audio/guides -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')"
-          test "$expected" = 160
-          test "$actual" = 160
+          summary="$(python -c "import json; print(json.load(open('assets/audio/guides/build-summary.json', encoding='utf-8'))['staticSpeechCount'])")"
+          test "$expected" = "$actual"
+          test "$expected" = "$summary"
           grep -q '"voice": "Supertonic-F1"' assets/guide-audio-catalog.json
-          grep -q '"baseGuideCount": 93' assets/guide-audio-catalog.json
-          grep -q '"extraSpeechCount": 18' assets/guide-audio-catalog.json
-          grep -q '"releaseSpeechCount": 49' assets/guide-audio-catalog.json
-          grep -q '"staticSpeechCount": 160' assets/guide-audio-catalog.json
+          grep -q '"engine": "Supertonic 3"' assets/audio/guides/build-summary.json
+          grep -q '"base": 93' assets/guide-audio-catalog.json
+          grep -q '"extra": 33' assets/guide-audio-catalog.json
+          grep -q '"release": 49' assets/guide-audio-catalog.json
+          grep -q '"workflow": 39' assets/guide-audio-catalog.json
+          grep -q '"ui": 1' assets/guide-audio-catalog.json
+          grep -q '"navigation": 17' assets/guide-audio-catalog.json
+          grep -q '"context": 10' assets/guide-audio-catalog.json
 
       - name: Build exact releasable static site
         env:

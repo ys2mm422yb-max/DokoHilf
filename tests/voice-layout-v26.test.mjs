@@ -8,6 +8,7 @@ const currentUxCss = await readFile(new URL('../assets/ux-v27.css', import.meta.
 const balanceCss = await readFile(new URL('../assets/voice-stage-balance-v27.css', import.meta.url), 'utf8');
 const directCss = await readFile(new URL('../assets/direct-guides-chat-v27.css', import.meta.url), 'utf8');
 const localVoice = await readFile(new URL('../assets/local-voice-v28.js', import.meta.url), 'utf8');
+const localGate = await readFile(new URL('../assets/local-voice-gate-v28.js', import.meta.url), 'utf8');
 const ux = await readFile(new URL('../assets/ux-v27.js', import.meta.url), 'utf8');
 const worker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
@@ -56,16 +57,18 @@ test('kleine und niedrige Mobilgeräte behalten die verdichtete Sprachanzeige', 
   assert.match(balanceCss, /width:118px!important/);
 });
 
-test('v29 deaktiviert weiterhin den alten 180-ms-Gerätestimmenpfad und nutzt lokale Ausgabe', () => {
-  assert.match(ux, /if \(localVoiceV28\(\)\) return previousFetch\(input, init\);/);
-  assert.match(ux, /if \(localVoiceV28\(\)\) return;/);
+test('Voice-Layout bleibt erhalten, während v29 nur statische Supertonic-F1-Ausgabe zulässt', () => {
   assert.match(ux, /__DOKOHILF_LOCAL_VOICE_ONLY_V28__/);
-  assert.match(localVoice, /local-on-device-v29/);
-  assert.match(localVoice, /const MODEL_CACHE = 'dokohilf-local-voice-model-v28-1'/);
+  assert.match(localVoice, /__DOKOHILF_LOCAL_VOICE_RETIRED_V29__/);
+  assert.match(localVoice, /__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__/);
+  assert.doesNotMatch(localVoice, /local-on-device-v29|MODEL_CACHE|loadTextToSpeech|navigator\.gpu/);
+  assert.match(localGate, /STATIC_VOICE = 'Supertonic-F1'/);
+  assert.match(localGate, /static-supertonic-only-v29/);
+  assert.doesNotMatch(localGate, /localFallback|DokoHilfLocalVoiceV28\.synthesize/);
 });
 
 test('Service Worker erzwingt die v29-Revision ohne die Voice-Balance zu verlieren', () => {
-  assert.match(worker, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
+  assert.match(worker, /HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-2'/);
   assert.match(worker, new RegExp(`voice-stage-balance-v27\\.css\\?v=${buildId}`));
   assert.match(worker, new RegExp(`direct-guides-chat-v27\\.css\\?v=${buildId}`));
   assert.match(worker, new RegExp(`local-voice-v28\\.js\\?v=${buildId}`));

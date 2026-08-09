@@ -1,11 +1,11 @@
 # DokoHilf – bestätigte Arbeitsabläufe
 
 **Status:** verbindliche fachliche Quelle  
-**Stand:** 8. August 2026
+**Stand:** 9. August 2026
 
 Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien.
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt.
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt.
 
 ## Allgemeine Regeln
 
@@ -16,11 +16,23 @@ Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durch
 - Ein Folgebericht ist ein neuer Bericht, der sich auf ein bereits dokumentiertes Geschehen bezieht und dieses ergänzt oder fortführt. Er verändert den ursprünglichen Bericht nicht.
 - Eine falsch abgezeichnete Durchführung wird im Durchführungsnachweis storniert.
 - Visiten werden bei euch erst nach erfolgter Durchführung dokumentiert und immer als **durchgeführt** erfasst, niemals als abgeschlossen.
-- Medikation wird in DokoHilf ausschließlich angesehen; DokoHilf leitet dort zu keiner Änderung an.
+- Die normale Medikationsübersicht unter **Doku-Erweitert → Medikation** wird in DokoHilf ausschließlich angesehen; DokoHilf leitet dort zu keiner Änderung an.
+- Die **Bedarfsmedikationsgabe** ist davon getrennt: Sie wird als eigener bestätigter Dokumentationsablauf im **Durchführungsnachweis** erfasst. Dabei wird nur die tatsächlich verwendete Bedarfsmenge dokumentiert; die Verordnung selbst wird nicht verändert.
 - Bei An- und Abwesenheit wird **Von immer** eingetragen. **Bis nur**, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist. Niemals schätzen.
 - Wenn ein Nutzer einen Menüpunkt oder Schritt nicht findet, bleibt der aktuelle Guide-Schritt aktiv. DokoHilf darf nicht so tun, als sei der Schritt erledigt.
 - Detailhilfe darf nur aus bestätigten lokalen Bezeichnungen und bestätigten Alternativen bestehen. Keine Klickwege oder Feldnamen erfinden.
 - Die bisherige Anleitung „Berichtssuche / Analyse → Abfrage“ ist **nicht final** und wird später fachlich neu geprüft. Bis dahin nicht als fertige Anleitung ausgeben.
+
+## Bestätigte Navigationsstruktur
+
+- Ganz oben befindet sich eine **feste grüne Hauptleiste**.
+- In dieser festen grünen Hauptleiste befinden sich unter anderem die Hauptbereiche **Doku**, **Doku-Erweitert**, **Planung** und **Analyse**.
+- Nach Auswahl eines Hauptbereichs erscheinen **direkt darunter die zu diesem Bereich gehörenden Symbole beziehungsweise Funktionen**.
+- Unter **Doku-Erweitert** befinden sich die bestätigten Bereiche **Vitalwerte**, **Visiten**, **Medikation**, **Formulare** und **An-/Abwesenheiten**.
+- Unter **Doku** befindet sich der bestätigte Bereich **Durchführungsnachweis**.
+- Unter **Analyse** befindet sich der bestätigte Einstieg **Was war los?** für die Übergabeansicht.
+- **Planung** selbst ist als Hauptbereich in der festen grünen Leiste bestätigt. Der genaue Ablauf von **Easy-Plan** bleibt weiterhin fachlich offen und wird nicht erfunden.
+- Wenn ein Nutzer einen Unterbereich nicht findet, erklärt DokoHilf deshalb zuerst den übergeordneten Hauptbereich in der grünen Leiste und anschließend die darunter erscheinende Funktion.
 
 ## Detailhilfe bei „Ich brauche Hilfe / Ich finde das nicht“
 
@@ -39,6 +51,15 @@ Verbindliche Regeln für diese Hilfeschleife:
 5. Gibt es für den beschriebenen Zustand noch keine bestätigte Anleitung, muss DokoHilf das transparent sagen.
 6. In diesem Fall zum letzten sicheren bestätigten Schritt zurückführen oder menschliche Unterstützung empfehlen.
 7. Sprach- und Schreibmodus verwenden dieselbe fachliche Hilfelogik.
+
+Bestätigte Orientierungsanker:
+
+- **Doku, Doku-Erweitert, Planung und Analyse** sind Hauptbereiche ganz oben in der festen grünen Leiste.
+- Nach Auswahl eines Hauptbereichs erscheinen direkt darunter die dazugehörigen Symbole beziehungsweise Funktionen.
+- **Durchführungsnachweis** liegt unter **Doku**.
+- **Vitalwerte, Visiten, Medikation, Formulare und An-/Abwesenheiten** liegen unter **Doku-Erweitert**.
+- **Bedarfsmedikation** und **Maßnahmen ohne Zeitangabe** werden im **Durchführungsnachweis** gefunden.
+- Die Wirksamkeitskontrolle einer Bedarfsmedikation wird nach der dafür vorgesehenen Zeit automatisch im **Durchführungsnachweis** fällig.
 
 Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` dokumentiert.
 
@@ -84,18 +105,58 @@ Ein Folgebericht ist ein **neuer Bericht mit Bezug zu einem bereits dokumentiert
 
 ## Falsch abgezeichnete Durchführung stornieren
 
-1. **Doku** öffnen.
-2. **Durchführungsnachweis** öffnen.
+1. **Doku** ganz oben in der festen grünen Leiste öffnen.
+2. Darunter **Durchführungsnachweis** öffnen.
 3. Falsch abgezeichnete Durchführung suchen.
 4. Rechtsklick auf den Eintrag.
 5. **Durchführung stornieren** wählen.
 6. Stornogrund eintragen und mit OK bestätigen.
 7. Stornokennzeichnung kontrollieren.
 
+## Bedarfsmedikationsgabe dokumentieren
+
+Dieser Ablauf ist von der reinen Medikationsansicht getrennt und findet im **Durchführungsnachweis** statt.
+
+1. Beim gewünschten Bewohner ganz oben in der festen grünen Leiste **Doku** öffnen.
+2. Darunter **Durchführungsnachweis** öffnen.
+3. Im Durchführungsnachweis **Bedarfsmedikation** suchen und auf den kleinen Pfeil links daneben klicken.
+4. Das gewünschte Bedarfsmedikament auswählen und rechts im kleinen Kästchen den Haken setzen.
+5. Im geöffneten Pop-up die Uhrzeit prüfen und nur auf den tatsächlichen Zeitpunkt der Gabe ergänzen beziehungsweise korrigieren.
+6. Unten im Pop-up kurz den Anlass beziehungsweise warum die Bedarfsmedikation gegeben wurde dokumentieren.
+7. Wurde tatsächlich eine geringere Bedarfsmenge eingenommen beziehungsweise gegeben, rechts im Pop-up die tatsächlich verwendete Menge dokumentieren. **Die Verordnung selbst wird dabei nicht verändert.**
+8. Das Pop-up unten mit **OK** bestätigen.
+9. Nach der Bedarfsmedikationsgabe wird automatisch eine **Wirksamkeitskontrolle** erzeugt.
+10. Nach der dafür vorgesehenen Zeit die fällige Wirksamkeitskontrolle im **Durchführungsnachweis** öffnen und abhaken.
+11. Dokumentieren, **ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat**.
+12. Die Wirksamkeitskontrolle unten mit **OK** bestätigen.
+
+## Wirksamkeitskontrolle der Bedarfsmedikation
+
+Wenn direkt nach der später fälligen Wirksamkeitskontrolle gefragt wird, muss DokoHilf nicht noch einmal bei der ursprünglichen Medikamentengabe beginnen.
+
+1. Beim gewünschten Bewohner ganz oben in der festen grünen Leiste **Doku** öffnen.
+2. Darunter **Durchführungsnachweis** öffnen.
+3. Nach der dafür vorgesehenen Zeit die automatisch erzeugte Wirksamkeitskontrolle zur zuvor dokumentierten Bedarfsmedikation suchen.
+4. Wirksamkeitskontrolle öffnen und abhaken.
+5. Dokumentieren, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.
+6. Unten mit **OK** bestätigen.
+
+## Maßnahmen ohne Zeitangabe dokumentieren
+
+1. Beim gewünschten Bewohner ganz oben in der festen grünen Leiste **Doku** öffnen.
+2. Darunter **Durchführungsnachweis** öffnen.
+3. Im Durchführungsnachweis **Maßnahmen ohne Zeitangabe** öffnen.
+4. Gewünschte Maßnahme auswählen, zum Beispiel **Klienten-Team Sitzung** oder **Krise**.
+5. Im Pop-up Datum und Uhrzeit prüfen und nur ändern, wenn der tatsächliche Dokumentationszeitpunkt abweicht.
+6. Passende Kategorie auswählen.
+7. Unter **Was war** dokumentieren, was bei der Maßnahme relevant war.
+8. Falls gewünscht, oben rechts im Pop-up eine zusätzliche Zeitangabe ergänzen. Diese zusätzliche Zeitangabe ist optional.
+9. Das Pop-up unten mit **OK** bestätigen.
+
 ## Visite oder Sprechstunde dokumentieren
 
-1. **Doku-Erweitert** öffnen.
-2. **Visiten** wählen.
+1. Ganz oben in der festen grünen Leiste **Doku-Erweitert** öffnen.
+2. Darunter **Visiten** wählen.
 3. Oben links auf das grüne Plus beziehungsweise **Neu** klicken.
 4. Im Fenster **Klienten auswählen** den Bewohner auswählen.
 5. Danach öffnet sich **Neue Visite**.
@@ -114,8 +175,8 @@ Ein Folgebericht ist ein **neuer Bericht mit Bezug zu einem bereits dokumentiert
 ## Einzelnen Vitalwert erfassen
 
 1. Bewohner auswählen.
-2. **Doku-Erweitert** öffnen.
-3. **Vitalwerte** wählen.
+2. Ganz oben in der festen grünen Leiste **Doku-Erweitert** öffnen.
+3. Darunter **Vitalwerte** wählen.
 4. Oben links auf das grüne Plus beziehungsweise **Neu** klicken.
 5. Im Pop-up den gewünschten Vitalwert auswählen. Bei euch sind dort unter anderem **Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz und Atemalkohol** vorhanden.
 6. Datum und Uhrzeit prüfen.
@@ -128,8 +189,8 @@ Zusätzliche Felder oder Einheiten nicht pauschal vorgeben, sondern so übernehm
 ## Mehrere Vitalwerte erfassen
 
 1. Bewohner auswählen.
-2. **Doku-Erweitert** öffnen.
-3. Direkt **Vitalwerte Sammelerf.** wählen.
+2. Ganz oben in der festen grünen Leiste **Doku-Erweitert** öffnen.
+3. Darunter direkt **Vitalwerte Sammelerf.** wählen.
 4. Benötigte Vitalwerte auswählen.
 5. Datum, Uhrzeit und Werte eintragen.
 6. Speichern und kontrollieren.
@@ -139,8 +200,8 @@ Zusätzliche Felder oder Einheiten nicht pauschal vorgeben, sondern so übernehm
 ## An- und Abwesenheit erfassen
 
 1. Bewohner auswählen.
-2. **Doku-Erweitert** öffnen.
-3. **An-/Abwesenheiten** wählen.
+2. Ganz oben in der festen grünen Leiste **Doku-Erweitert** öffnen.
+3. Darunter **An-/Abwesenheiten** wählen.
 4. Oben links **Neu** wählen.
 5. Passenden Status auswählen.
 6. **Von** immer mit Datum und Uhrzeit eintragen.
@@ -152,8 +213,8 @@ Zusätzliche Felder oder Einheiten nicht pauschal vorgeben, sondern so übernehm
 ## Medikation ansehen
 
 1. Bewohner auswählen.
-2. **Doku-Erweitert** öffnen.
-3. **Medikation** wählen.
+2. Ganz oben in der festen grünen Leiste **Doku-Erweitert** öffnen.
+3. Darunter **Medikation** wählen.
 4. Medikamentenübersicht ausschließlich ansehen.
 
 Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, ergänzen oder löschen.
@@ -161,8 +222,8 @@ Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, er
 ## Formular anlegen
 
 1. Bewohner auswählen.
-2. **Doku-Erweitert** öffnen.
-3. **Formulare** wählen.
+2. Ganz oben in der festen grünen Leiste **Doku-Erweitert** öffnen.
+3. Darunter **Formulare** wählen.
 4. Oben links **Neu** klicken.
 5. Im Fenster **Formular anlegen** das benötigte Formular auswählen, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.
 6. Mit OK bestätigen.
@@ -182,8 +243,8 @@ Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, er
 
 ## Übergabe anzeigen
 
-1. **Analyse** öffnen.
-2. **Was war los?** wählen.
+1. Ganz oben in der festen grünen Leiste **Analyse** öffnen.
+2. Darunter **Was war los?** wählen.
 3. Oben links **Alle anzeigen** anklicken.
 4. **Alles ausklappen** wählen.
 5. Zeitraum nur bei Bedarf ändern und Anzeige aktualisieren.
@@ -194,5 +255,6 @@ In der aufgeklappten Ansicht können unter anderem **durchgeführte Visiten** un
 
 - Keine Klickwege, Feldnamen oder fachlichen Inhalte erfinden.
 - Die Berichtssuche über Analyse/Abfrage wird später fachlich neu geprüft und bleibt bis dahin aus der fertigen Anleitungsbibliothek heraus.
+- **Planung** ist als Hauptbereich in der festen grünen Leiste bestätigt; der genaue Easy-Plan-Ablauf bleibt aber fachlich offen.
 - Bei Varianten immer die fachlich bestätigten lokalen Bezeichnungen bevorzugen.
 - Öffentlich werden ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Fachinhalte dokumentiert.

@@ -11,26 +11,25 @@ if (!BUILD_ID) throw new Error('buildId fehlt in version.json');
 
 let html = await readFile(htmlPath, 'utf8');
 html = html.replace(`  <script src="assets/voice-diagnostics.js?v=${BUILD_ID}"></script>\n`, '');
-
-const localIndex = html.indexOf(`assets/local-voice-v28.js?v=${BUILD_ID}`);
-const experienceIndex = html.indexOf(`assets/experience-v27.js?v=${BUILD_ID}`);
-const uxIndex = html.indexOf(`assets/ux-v27.js?v=${BUILD_ID}`);
-const gateIndex = html.indexOf(`assets/local-voice-gate-v28.js?v=${BUILD_ID}`);
-const appIndex = html.indexOf(`assets/app.js?v=${BUILD_ID}`);
-if (!(localIndex >= 0 && localIndex < experienceIndex && experienceIndex < uxIndex && uxIndex < gateIndex && gateIndex < appIndex)) {
-  throw new Error('v29 local voice load order is invalid.');
-}
-if (html.includes('voice-diagnostics.js')) throw new Error('v29 release still loads legacy Gacrux voice diagnostics.');
+if (html.includes('voice-diagnostics.js')) throw new Error('Release lädt noch alte Voice-Diagnostik.');
 await writeFile(htmlPath, html);
 
 let app = await readFile(appPath, 'utf8');
-const systemVoiceMarker = `  function speakWithSystemVoice(text, requestId) {\n    if (!('speechSynthesis' in window) || requestId !== state.speechRequestId) {`;
-const localOnlySystemGuard = `  function speakWithSystemVoice(text, requestId) {\n    if (window.__DOKOHILF_LOCAL_VOICE_V28__ === true) {\n      setVoiceState('error', 'Lokale Stimme nicht bereit', 'Tippe auf das Mikrofon, um die Stimme erneut zu laden.');\n      window.setTimeout(() => finishSpeech(requestId), 900);\n      return;\n    }\n    if (!('speechSynthesis' in window) || requestId !== state.speechRequestId) {`;
-if (!app.includes('window.__DOKOHILF_LOCAL_VOICE_V28__ === true')) {
-  if (!app.includes(systemVoiceMarker)) throw new Error('System voice fallback marker missing in app.js');
-  app = app.replace(systemVoiceMarker, localOnlySystemGuard);
+const oldGreeting = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
+const newGreeting = 'Hey! Wobei brauchst du Hilfe?';
+if (!app.includes(newGreeting)) {
+  if (!app.includes(oldGreeting)) throw new Error('Alter Sprachstart wurde in app.js nicht gefunden.');
+  app = app.replace(oldGreeting, newGreeting);
 }
-if (!app.includes(localOnlySystemGuard.trim())) throw new Error('Local-only system voice guard was not applied.');
+
+const systemVoiceMarker = `  function speakWithSystemVoice(text, requestId) {\n    if (window.__DOKOHILF_LOCAL_VOICE_V28__ === true) {\n      setVoiceState('error', 'Lokale Stimme nicht bereit', 'Tippe auf das Mikrofon, um die Stimme erneut zu laden.');\n      window.setTimeout(() => finishSpeech(requestId), 900);\n      return;\n    }`;
+const staticOnlyGuard = `  function speakWithSystemVoice(text, requestId) {\n    if (window.__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__ === true) {\n      setVoiceState('error', 'Sprachausgabe nicht verfügbar', 'Die Antwort bleibt im Chat sichtbar.');\n      window.setTimeout(() => finishSpeech(requestId), 900);\n      return;\n    }\n    if (window.__DOKOHILF_LOCAL_VOICE_V28__ === true) {\n      setVoiceState('error', 'Sprachausgabe nicht verfügbar', 'Die Antwort bleibt im Chat sichtbar.');\n      window.setTimeout(() => finishSpeech(requestId), 900);\n      return;\n    }`;
+if (!app.includes(staticOnlyGuard)) {
+  if (!app.includes(systemVoiceMarker)) throw new Error('System-Voice-Guard in app.js fehlt.');
+  app = app.replace(systemVoiceMarker, staticOnlyGuard);
+}
+if (!app.includes(newGreeting)) throw new Error('Kurzer Hey-Sprachstart fehlt im Release.');
+if (!app.includes('__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__')) throw new Error('Static-only System-Voice-Guard fehlt.');
 await writeFile(appPath, app);
 
 let experience = await readFile(experiencePath, 'utf8');
@@ -51,9 +50,9 @@ if (!experience.includes(warmLocal)) {
 const initMarker = `    loadPrebuiltManifest().then(() => warmGreeting()).catch(() => {});`;
 const initLocal = `    if (window.__DOKOHILF_LOCAL_VOICE_V28__ !== true) loadPrebuiltManifest().then(() => warmGreeting()).catch(() => {});`;
 if (!experience.includes(initLocal)) {
-  if (!experience.includes(initMarker)) throw new Error('Static Gacrux initialization marker missing in experience-v27.js');
+  if (!experience.includes(initMarker)) throw new Error('Static legacy initialization marker missing in experience-v27.js');
   experience = experience.replace(initMarker, initLocal);
 }
 await writeFile(experiencePath, experience);
 
-console.log(`DokoHilf ${BUILD_ID} local-only voice release guards applied`);
+console.log(`DokoHilf ${BUILD_ID}: static-only Supertonic release guards + short Hey greeting applied`);

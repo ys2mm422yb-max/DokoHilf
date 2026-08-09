@@ -102,7 +102,7 @@ try {
   const voiceResult = await page.evaluate(() => window.__REPORT_VOICE_RESULT__);
   assert(voiceResult?.ok === true, 'Gemappter spokenText liefert kein statisches Audio.');
   assert(voiceResult?.voice === 'Supertonic-F1', `Falsche Stimme: ${voiceResult?.voice}`);
-  assert(voiceResult?.mode === 'static-supertonic-guide-v29', `Falscher Voice-Modus: ${voiceResult?.mode}`);
+  assert(voiceResult?.mode === 'static-supertonic-only-v29', `Falscher Voice-Modus: ${voiceResult?.mode}`);
   assert(voiceResult?.state?.lastSpokenMapping === spokenText, 'Router-spokenText wurde nicht als Audioquelle übernommen.');
   assert(staticAudioRequests === 1, `Statisches Supertonic-Audio wurde ${staticAudioRequests}x geladen.`);
   assert(rawTtsRequests === 0, `TTS-Netzwerkpfad wurde ${rawTtsRequests}x erreicht.`);

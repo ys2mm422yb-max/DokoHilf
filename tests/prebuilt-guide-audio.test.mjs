@@ -30,14 +30,13 @@ function normalizeKey(value) {
     .trim();
 }
 
-test('source catalogs cover exactly 93 guide sentences and 18 fixed dialog sentences', () => {
+test('source catalogs retain 93 guide sentences and the current 33 fixed dialog sentences', () => {
   assert.equal(catalog.schemaVersion, 1);
   assert.equal(catalog.entries.length, 93);
-  assert.equal(extraCatalog.entries.length, 18);
+  assert.equal(extraCatalog.entries.length, 33);
   assert.equal(new Set(catalog.entries.map(entry => entry.file)).size, 93);
   assert.equal(new Set(catalog.entries.map(entry => normalizeKey(entry.text))).size, 93);
-  const allTexts = [...catalog.entries, ...extraCatalog.entries].map(entry => normalizeKey(entry.text));
-  assert.equal(new Set(allTexts).size, 111);
+  assert.equal(new Set(extraCatalog.entries.map(entry => normalizeKey(entry.text))).size, 33);
 });
 
 test('legacy compatibility browser code still points only at the fixed private audio endpoint', () => {

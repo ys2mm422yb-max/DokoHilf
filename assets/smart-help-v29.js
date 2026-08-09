@@ -49,7 +49,7 @@
 
   function hasEntryAction(text) {
     const n = normalize(text);
-    return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren)\b/.test(n);
+    return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren|geben|gabe|abhaken|kontrollieren)\b/.test(n);
   }
 
   function hasNavigationIntent(text) {
@@ -65,18 +65,36 @@
       || /\b(kann|konnte)\b.*\b(nicht finden|nicht sehen|nicht offnen)\b/.test(n);
   }
 
+  function inferTaskGuide(text) {
+    const n = normalize(text);
+    if (!n || isLocationQuestion(n)) return '';
+    if (/\b(wirksamkeitskontrolle|wirksamkeit)\b.*\b(bedarf|bedarfsmedikation|medikation)\b|\b(bedarf|bedarfsmedikation)\b.*\b(wirksamkeitskontrolle|wirksamkeit)\b/.test(n)) {
+      return 'bedarfsmedikation-wirksamkeitskontrolle';
+    }
+    if (/\b(bedarfsmedikation|bedarfsgabe|bedarfsmedikament|bedarf medikament)\b/.test(n)
+      && /\b(geben|gabe|dokumentieren|eintragen|erfassen|abhaken|machen|wie)\b/.test(n)) {
+      return 'bedarfsmedikation-gabe';
+    }
+    if (/\b(massnahmen ohne zeitangabe|massnahme ohne zeitangabe)\b/.test(n)
+      && /\b(dokumentieren|eintragen|erfassen|offnen|machen|wie)\b/.test(n)) {
+      return 'massnahmen-ohne-zeitangabe';
+    }
+    return '';
+  }
+
   function inferNavigationGuide(text) {
     const n = normalize(text);
     if (!hasNavigationIntent(n) || hasEntryAction(n)) return '';
 
-    // Unfinished areas intentionally stay out of navigation routing:
-    // Berichtssuche, Aufgaben · Aktuelles and Easy-Plan come later.
     if (/\b(berichtssuche|berichte auswerten|berichte suchen|nach berichten suchen|abfrage)\b/.test(n)) return '';
     if (/\b(aufgaben|aktuelles|easy plan|easy-plan|easyplan)\b/.test(n)) return '';
 
-    // Existing intent contract: a short request such as "ich suche den Blutdruck"
-    // starts the single-value workflow. Explicit "where is it?" wording uses
-    // the dedicated area-finding guide instead.
+    if (/\b(wirksamkeitskontrolle|wirksamkeit)\b.*\b(bedarf|bedarfsmedikation|medikation)\b|\b(bedarf|bedarfsmedikation)\b.*\b(wirksamkeitskontrolle|wirksamkeit)\b/.test(n)) {
+      return 'bedarfsmedikation-wirksamkeitskontrolle-finden';
+    }
+    if (/\b(bedarfsmedikation|bedarfsgabe|bedarfsmedikament|bedarf medikament)\b/.test(n)) return 'bedarfsmedikation-finden';
+    if (/\b(massnahmen ohne zeitangabe|massnahme ohne zeitangabe)\b/.test(n)) return 'massnahmen-ohne-zeitangabe-finden';
+
     if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(n) && !isLocationQuestion(n)) return 'vitalwerte-einzelwert';
 
     if (/\b(doku erweitert|doku-erweitert)\b/.test(n)) return 'doku-erweitert-finden';
@@ -90,6 +108,7 @@
     if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabe-finden';
     if (/\b(notfallblatt|notfallbogen)\b/.test(n)) return 'notfallblatt-finden';
     if (/\b(stammdaten|bewohnerubersicht|bewohneruebersicht)\b/.test(n)) return 'stammdaten-finden';
+    if (/\bplanung\b/.test(n)) return 'planung-finden';
     if (/\banalyse\b/.test(n)) return 'analyse-finden';
     if (/\bdoku\b/.test(n)) return 'doku-finden';
     return '';
@@ -102,6 +121,14 @@
     }
 
     if (!activeGuide && !parsed.selectedGuideSlug) {
+      const taskGuideSlug = inferTaskGuide(userText);
+      if (taskGuideSlug) {
+        return JSON.stringify({
+          ...parsed,
+          selectedGuideSlug: taskGuideSlug,
+          smartTaskIntent: true,
+        });
+      }
       const selectedGuideSlug = inferNavigationGuide(userText);
       if (selectedGuideSlug) {
         return JSON.stringify({
@@ -127,6 +154,7 @@
     normalize,
     helpLike,
     isLocationQuestion,
+    inferTaskGuide,
     inferNavigationGuide,
     preparedBody,
   };

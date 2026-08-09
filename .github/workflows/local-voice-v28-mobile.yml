@@ -1,4 +1,4 @@
-name: Validate local voice v28 iOS Android
+name: Validate static voice iOS Android
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: dokohilf-local-voice-v29-${{ github.event.pull_request.number || github.ref }}
+  group: dokohilf-static-voice-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -22,23 +22,27 @@ jobs:
       - name: Checkout exact repository head
         uses: actions/checkout@v4
 
-      - name: Validate local voice contracts
+      - name: Validate static voice contracts
         run: |
           set -euo pipefail
           test -s assets/local-voice-v28.js
           test -s assets/local-voice-gate-v28.js
-          test -s assets/vendor/supertonic-web-v28.mjs
           test -s scripts/apply-local-voice-v28.mjs
           test -s scripts/local-voice-render-v28.mjs
           test -s tests/local-voice-v28.test.mjs
           node --check assets/local-voice-v28.js
           node --check assets/local-voice-gate-v28.js
-          node --check assets/vendor/supertonic-web-v28.mjs
           node --check scripts/apply-local-voice-v28.mjs
           node --check scripts/local-voice-render-v28.mjs
-          node --test tests/local-voice-v28.test.mjs
+          node --test tests/local-voice-v28.test.mjs tests/ios-static-first-voice-v28.test.mjs
+          grep -q '__DOKOHILF_LOCAL_VOICE_RETIRED_V29__' assets/local-voice-v28.js
+          grep -q '__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__' assets/local-voice-v28.js
+          grep -q "STATIC_VOICE = 'Supertonic-F1'" assets/local-voice-gate-v28.js
+          grep -q 'static-supertonic-only-v29' assets/local-voice-gate-v28.js
+          ! grep -q 'IOS_LOCAL_TIMEOUT_MS\|OTHER_LOCAL_TIMEOUT_MS\|local_voice_timeout' assets/local-voice-gate-v28.js
+          ! grep -q 'loadTextToSpeech\|loadVoiceStyle\|navigator.gpu\|onnxruntime' assets/local-voice-v28.js
 
-      - name: Verify upstream model metadata without downloading weights
+      - name: Verify build-time Supertonic metadata
         run: |
           set -euo pipefail
           curl -fsSL --retry 2 --connect-timeout 10 --max-time 30 \
@@ -50,7 +54,7 @@ jobs:
           grep -q '"tts_version"' /tmp/supertonic-tts.json
           grep -q '"style_ttl"' /tmp/supertonic-f1.json
 
-      - name: Build exact v29 releasable site
+      - name: Build exact releasable site
         run: |
           set -euo pipefail
           BUILD_ID="$(node -p "require('./version.json').buildId")"
@@ -59,18 +63,20 @@ jobs:
           grep -q 'KI · v29' _local_voice_site/index.html
           grep -Fq "local-voice-v28.js?v=$BUILD_ID" _local_voice_site/index.html
           grep -Fq "local-voice-gate-v28.js?v=$BUILD_ID" _local_voice_site/index.html
-          grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ === true' _local_voice_site/assets/app.js
-          grep -q 'IOS_LOCAL_TIMEOUT_MS = 8000' _local_voice_site/assets/local-voice-gate-v28.js
+          grep -q '__DOKOHILF_LOCAL_VOICE_RETIRED_V29__' _local_voice_site/assets/local-voice-v28.js
+          grep -q "STATIC_VOICE = 'Supertonic-F1'" _local_voice_site/assets/local-voice-gate-v28.js
+          grep -q 'static-supertonic-only-v29' _local_voice_site/assets/local-voice-gate-v28.js
+          ! grep -q 'IOS_LOCAL_TIMEOUT_MS\|OTHER_LOCAL_TIMEOUT_MS\|local_voice_timeout' _local_voice_site/assets/local-voice-gate-v28.js
           ! grep -q 'voice-diagnostics.js' _local_voice_site/index.html
           ! grep -q 'dokohilf-guide-audio?manifest=' _local_voice_site/service-worker.js
 
-      - name: Render local voice on iOS and Android
+      - name: Render static voice on iOS and Android
         run: |
           set -euo pipefail
-          mkdir -p artifacts/local-voice-v29/ios artifacts/local-voice-v29/android
+          mkdir -p artifacts/static-voice/ios artifacts/static-voice/android
           npm install --no-save --package-lock=false playwright@1.54.2
           npx playwright install --with-deps chromium
-          python3 -m http.server 4173 --directory _local_voice_site >artifacts/local-voice-v29-server.log 2>&1 &
+          python3 -m http.server 4173 --directory _local_voice_site >artifacts/static-voice-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 30); do
@@ -82,21 +88,21 @@ jobs:
           DOKOHILF_VIEWPORT_WIDTH=393 \
           DOKOHILF_VIEWPORT_HEIGHT=852 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
-          DOKOHILF_RENDER_OUTPUT=artifacts/local-voice-v29/ios \
+          DOKOHILF_RENDER_OUTPUT=artifacts/static-voice/ios \
           node scripts/local-voice-render-v28.mjs
 
           DOKOHILF_MOBILE_PROFILE=android \
           DOKOHILF_VIEWPORT_WIDTH=412 \
           DOKOHILF_VIEWPORT_HEIGHT=915 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
-          DOKOHILF_RENDER_OUTPUT=artifacts/local-voice-v29/android \
+          DOKOHILF_RENDER_OUTPUT=artifacts/static-voice/android \
           node scripts/local-voice-render-v28.mjs
 
-      - name: Upload v29 voice evidence
+      - name: Upload static voice evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dokohilf-local-voice-v29-${{ github.run_number }}
+          name: dokohilf-static-voice-${{ github.run_number }}
           path: artifacts/
           if-no-files-found: warn
           retention-days: 30

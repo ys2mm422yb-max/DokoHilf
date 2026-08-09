@@ -10,9 +10,9 @@ const VIEWPORT_HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE 
 const DEVICE_SCALE_FACTOR = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
 const BUILD_ID = JSON.parse(await readFile(new URL('../version.json', import.meta.url), 'utf8')).buildId;
 if (!BUILD_ID) throw new Error('buildId fehlt in version.json');
-const GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
-const VISIT_REPLY = 'Öffne „Doku erweitert“. Bist du in Doku erweitert?';
-const VISIT_SPEECH = 'Öffne Doku erweitert.';
+const GREETING = 'Hey! Wobei brauchst du Hilfe?';
+const VISIT_REPLY = 'Öffne „Doku-Erweitert“. Bist du in Doku-Erweitert?';
+const VISIT_SPEECH = 'Öffne Doku-Erweitert.';
 const USER_AGENT = PROFILE === 'android'
   ? 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'
   : 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1';
@@ -212,7 +212,7 @@ try {
     bg: getComputedStyle(document.body).backgroundImage,
   }));
   assert(identity.build === BUILD_ID, `Gerenderte Seite hat nicht Build v29: ${identity.build}`);
-  assert(identity.version === 'KI · v29', `Falscher sichtbarer Marker: ${identity.version}`);
+  assert(identity.version === `DokoHilf v29 · Build ${BUILD_ID}`, `Falscher sichtbarer Marker: ${identity.version}`);
   assert(identity.ui === 'v29', `v29-UI-Layer fehlt: ${identity.ui}`);
   assert(identity.bg !== 'none', 'Dunkle v29-Hintergrundgestaltung fehlt.');
 
@@ -251,8 +251,15 @@ try {
 
   await page.locator('.v29-all-guides-trigger').click();
   await page.locator('.v29-library-head h1').waitFor({ state: 'visible' });
+  await page.waitForFunction(() => {
+    const view = document.getElementById('directGuideView');
+    const grid = view?.querySelector('.v29-library-grid');
+    return Boolean(grid)
+      && grid.querySelectorAll('.v29-library-card[data-v29-open-durchfuehrung-guide]').length === 3
+      && view?.getAttribute('data-v29-library-guide-count') === '18';
+  }, null, { timeout: 8_000 });
   const fullLibrary = await page.evaluate(() => {
-    const active = [...document.querySelectorAll('.v29-library-card[data-v29-open-guide]')];
+    const active = [...document.querySelectorAll('.v29-library-card[data-v29-open-guide], .v29-library-card[data-v29-open-durchfuehrung-guide]')];
     const later = [...document.querySelectorAll('.v29-library-card.is-later')];
     return {
       title: document.querySelector('.v29-library-head h1')?.textContent?.trim(),
@@ -263,7 +270,7 @@ try {
     };
   });
   assert(fullLibrary.title === 'Alle Anleitungen', `Bibliothekstitel falsch: ${fullLibrary.title}`);
-  assert(fullLibrary.guideCount === 15, `Es müssen 15 fertige Guides anklickbar sein: ${fullLibrary.guideCount}`);
+  assert(fullLibrary.guideCount === 18, `Es müssen 18 fertige Guides anklickbar sein: ${fullLibrary.guideCount}`);
   assert(fullLibrary.laterCount === 3, `Es müssen genau drei Später-Karten sichtbar sein: ${fullLibrary.laterCount}`);
   for (const expected of ['Aufgaben · Aktuelles', 'Easy-Plan öffnen', 'Berichtssuche']) {
     assert(fullLibrary.laterTexts.some(text => text.includes(expected) && text.includes('kommt später')), `${expected} ist nicht korrekt als später markiert.`);
@@ -306,7 +313,7 @@ try {
   const newAssistantBubble = assistantBubbles.nth(assistantCountBeforeSend);
   await newAssistantBubble.waitFor({ state: 'visible', timeout: 15_000 });
   const assistantText = await newAssistantBubble.innerText();
-  assert(assistantText.includes('Doku erweitert'), `Kontextantwort fehlt: ${assistantText}`);
+  assert(assistantText.includes('Doku-Erweitert'), `Kontextantwort fehlt: ${assistantText}`);
   await page.locator('.guide-progress').waitFor({ state: 'visible', timeout: 8_000 });
   await page.screenshot({ path: `${OUTPUT_DIR}/03-chat-v29-${PROFILE}.png`, fullPage: true });
 
@@ -357,7 +364,6 @@ try {
   }
   assert(consoleErrors.length === 0, `Console-Fehler: ${consoleErrors.join(' | ')}`);
   assert(pageErrors.length === 0, `Page-Fehler: ${pageErrors.join(' | ')}`);
-
   await writeFile(`${OUTPUT_DIR}/summary.json`, JSON.stringify({
     profile: PROFILE,
     viewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT },

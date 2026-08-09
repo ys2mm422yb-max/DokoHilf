@@ -32,9 +32,9 @@ test('mobile header reserves the iPhone status-bar safe area', () => {
   assert.match(axisCss, /\.app-shell\[data-mode="chat"\] > \.topbar/);
 });
 
-test('premium home refreshes the PWA shell without changing the established v29 release contract', () => {
-  assert.match(sw, /HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'/);
-  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-mobile-polish-8/);
+test('premium home refreshes the PWA shell on the current static Supertonic release', () => {
+  assert.match(sw, /HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-2'/);
+  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-static-supertonic-1/);
   assert.match(sw, new RegExp(`guide-library-v29\\.js\\?v=${buildId}-library1`));
   assert.match(sw, new RegExp(`guide-library-v29\\.css\\?v=${buildId}-library1`));
   assert.match(sw, /hardRefresh: true/);

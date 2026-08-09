@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "voice": "Supertonic-F1",
+  "purpose": "Vorab erzeugte Sprachsätze für Hilfe innerhalb laufender Anleitungen",
+  "entries": [
+    {"text":"„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Visiten“."},
+    {"text":"„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „An-/Abwesenheiten“."},
+    {"text":"„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Medikation“."},
+    {"text":"„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Formulare“."},
+    {"text":"„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Vitalwerte“."},
+    {"text":"„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. „Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge; wähle für mehrere Werte „Vitalwerte Sammelerf.“."},
+    {"text":"„Doku“ ist ganz oben in der festen grünen Leiste. Wähle dort „Doku“; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole."},
+    {"text":"Wähle ganz oben in der festen grünen Leiste zuerst „Doku“. Danach erscheint darunter „Durchführungsnachweis“."},
+    {"text":"„Analyse“ ist ganz oben in der festen grünen Leiste. Wähle dort „Analyse“; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole."},
+    {"text":"Wähle ganz oben in der festen grünen Leiste zuerst „Analyse“. Danach erscheint darunter „Was war los?“."}
+  ]
+}

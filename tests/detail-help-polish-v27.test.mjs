@@ -47,13 +47,13 @@ test('Voice-Detailhilfe ist kompakt und blendet konkurrierende Aktionen aus', ()
   assert.match(source, /\.pause-button\{display:none!important\}/);
 });
 
-test('v29 hält den Kontext-Hotfix zwischen Detailhilfe und finalem Supertonic-Gate', () => {
+test('Kontext-Hotfix bleibt zwischen Detailhilfe und finalem statischen Supertonic-Gate', () => {
   assert.match(apply, /localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex/);
-  assert.match(apply, /20260808-context-voice-v29-1/);
+  assert.match(apply, /20260809-static-supertonic-orientation-ui-v29-3/);
   assert.match(apply, /detail-help-polish-v27\.js/);
   assert.match(apply, /detail-help-render-sync-v27\.js/);
   assert.match(apply, /context-voice-hotfix-v28\.js/);
   assert.match(build, /detail-help-polish-v27\.js/);
   assert.match(build, /detail-help-render-sync-v27\.js/);
-  assert.match(build, /20260808-context-voice-v29-1/);
+  assert.match(build, /20260809-static-supertonic-orientation-ui-v29-3/);
 });
