@@ -30,13 +30,21 @@ function normalizeKey(value) {
     .trim();
 }
 
-test('source catalogs retain 93 guide sentences and the current 33 fixed dialog sentences', () => {
+test('base speech catalog mirrors the current approved guide snapshot', () => {
   assert.equal(catalog.schemaVersion, 1);
-  assert.equal(catalog.entries.length, 93);
+  assert.equal(catalog.voice, 'Supertonic-F1');
+  assert.equal(catalog.entries.length, 130);
   assert.equal(extraCatalog.entries.length, 33);
-  assert.equal(new Set(catalog.entries.map(entry => entry.file)).size, 93);
-  assert.equal(new Set(catalog.entries.map(entry => normalizeKey(entry.text))).size, 93);
+  assert.equal(new Set(catalog.entries.map(entry => normalizeKey(entry.text))).size, 130);
   assert.equal(new Set(extraCatalog.entries.map(entry => normalizeKey(entry.text))).size, 33);
+  assert.match(catalog.generatedFrom, /40 approved dokohilf_guides/);
+  assert.match(catalog.generatedFrom, /129 unique approved step texts plus greeting/);
+  const sourceText = catalog.entries.map(entry => entry.text).join('\n');
+  assert.doesNotMatch(sourceText, /Doku erweitert|Öffne oben den Reiter „Aufgaben“|Wähle darunter „Aktuelles“|^Wähle „Easy-Plan“\.$/m);
+  assert.match(sourceText, /„Planung“ findest du ganz oben in der festen grünen Hauptleiste/);
+  assert.match(sourceText, /Wichtig für Schichtübergabe.*Bedarfsmedikation/s);
+  assert.match(sourceText, /Öffne beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“/);
+  assert.match(sourceText, /große Textfeld darunter/);
 });
 
 test('legacy compatibility browser code still points only at the fixed private audio endpoint', () => {
@@ -70,19 +78,20 @@ test('alte serverseitige TTS-, Builder- und Gacrux-Auslieferungsendpunkte sind R
   assert.doesNotMatch(legacyAudio, /SUPABASE_SERVICE_ROLE_KEY|createClient|storage|fetch\(/i);
 });
 
-test('öffentliche Voice-Dokumentation führt keinen Cloud- oder Gacrux-Rollback mehr', () => {
-  assert.match(audioStatus, /exakt 111 kostenlose Supertonic-F1-WAV-Dateien/);
+test('öffentliche Voice-Dokumentation beschreibt nur noch statische Supertonic-Ausgabe', () => {
+  assert.match(audioStatus, /130 Basiseinträge/);
+  assert.match(audioStatus, /keine lokale Inferenz/i);
   assert.match(providerStatus, /keinen Gacrux-, Gemini-TTS- oder Systemstimmen-Rollbackpfad/);
   assert.match(thirdParty, /kein Rollback- oder Fallbackpfad mehr/);
   assert.doesNotMatch(thirdParty, /Rollback-Bestand erhalten/);
+  assert.match(policy, /40.*freigegebene Guides/s);
+  assert.match(policy, /129.*Schritttexte/s);
+  assert.match(policy, /130 Basissätze/);
+  assert.match(policy, /33.*Dialog/s);
+  assert.match(policy, /keinen.*Browser.*Geräte.*Systemstimmen.*WebGPU.*WASM.*Cloud-TTS/s);
 });
 
 test('static audio exception is narrow and excludes every user-content source', () => {
-  assert.match(policy, /23 freigegebene Guides/);
-  assert.match(policy, /92 eindeutige Schritttexte/);
-  assert.match(policy, /93 bestätigte Guide-Sätze/);
-  assert.match(policy, /18 feste Dialogsätze/);
-  assert.match(policy, /111 statische WAV-Dateien/);
   assert.match(policy, /Nutzerstimmen, Diktate, freie Antworten, Gesprächsverläufe/);
   assert.match(policy, /nicht dauerhaft gespeichert/);
   assert.match(rules, /Allgemeine, fachlich freigegebene Guide-Anweisungen dürfen als statische Audiodateien/);

@@ -83,7 +83,7 @@ jobs:
           grep -q 'TTS(auto_download=True)' scripts/build-supertonic-guide-audio-v28.py
           grep -q "lang='de'" scripts/build-supertonic-guide-audio-v28.py
           grep -q 'EXPECTED_SOURCE_COUNTS' scripts/build-supertonic-guide-audio-v28.py
-          grep -q "'base': 93" scripts/build-supertonic-guide-audio-v28.py
+          grep -q "'base': 130" scripts/build-supertonic-guide-audio-v28.py
           grep -q "'extra': 33" scripts/build-supertonic-guide-audio-v28.py
           grep -q "'release': 49" scripts/build-supertonic-guide-audio-v28.py
           grep -q "'workflow': 39" scripts/build-supertonic-guide-audio-v28.py
@@ -92,6 +92,8 @@ jobs:
           grep -q "'context': 10" scripts/build-supertonic-guide-audio-v28.py
           grep -q 'static_speech_count = len(entries)' scripts/build-supertonic-guide-audio-v28.py
           ! grep -q 'STATIC_SPEECH_COUNT[[:space:]]*=' scripts/build-supertonic-guide-audio-v28.py
+          grep -q '40 approved dokohilf_guides / 129 unique approved step texts plus greeting' assets/guide-audio-catalog.json
+          ! grep -q 'Doku erweitert\|Öffne oben den Reiter „Aufgaben“\|Wähle darunter „Aktuelles“' assets/guide-audio-catalog.json
           grep -q 'Hey! Wobei brauchst du Hilfe?' assets/voice-ui-catalog-v29.json
           grep -q 'KI · v29' index.html
           grep -q 'id="buildPill" type="button" hidden' index.html
@@ -240,7 +242,7 @@ jobs:
           test "$expected" = "$summary"
           grep -q '"voice": "Supertonic-F1"' assets/guide-audio-catalog.json
           grep -q '"engine": "Supertonic 3"' assets/audio/guides/build-summary.json
-          grep -q '"base": 93' assets/guide-audio-catalog.json
+          grep -q '"base": 130' assets/guide-audio-catalog.json
           grep -q '"extra": 33' assets/guide-audio-catalog.json
           grep -q '"release": 49' assets/guide-audio-catalog.json
           grep -q '"workflow": 39' assets/guide-audio-catalog.json
