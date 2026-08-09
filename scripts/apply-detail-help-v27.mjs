@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const REVISION = '20260809-static-supertonic-orientation-ui-v29-2';
+const REVISION = '20260809-static-supertonic-orientation-ui-v29-3';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');
@@ -55,11 +55,19 @@ if (!html.includes('assets/release-polish-v29.js')) {
 }
 if (!html.includes(releasePolishTag.trim())) throw new Error('Release-Polish konnte nicht in index.html aktiviert werden.');
 
+const durchfuehrungWorkflowsTag = `  <script src="assets/durchfuehrungs-workflows-v29.js?v=${BUILD_ID}"></script>`;
+if (!html.includes('assets/durchfuehrungs-workflows-v29.js')) {
+  if (!html.includes(releasePolishTag)) throw new Error('Release-Polish-Marker fehlt in index.html');
+  html = html.replace(releasePolishTag, `${releasePolishTag}\n${durchfuehrungWorkflowsTag}`);
+}
+if (!html.includes(durchfuehrungWorkflowsTag.trim())) throw new Error('Durchführungs-Workflows konnten nicht in index.html aktiviert werden.');
+
 const clarificationIndex = html.indexOf(`assets/clarification-ui.js?v=${BUILD_ID}`);
 const helpIndex = html.indexOf(`assets/detail-help-v27.js?v=${BUILD_ID}`);
 const progressIndex = html.indexOf(`assets/guide-progress.js?v=${BUILD_ID}`);
 const orientationIndex = html.indexOf(`assets/orientation-help-v29.js?v=${BUILD_ID}`);
 const releasePolishIndex = html.indexOf(`assets/release-polish-v29.js?v=${BUILD_ID}`);
+const durchfuehrungWorkflowsIndex = html.indexOf(`assets/durchfuehrungs-workflows-v29.js?v=${BUILD_ID}`);
 const localVoiceIndex = html.indexOf(`assets/local-voice-v28.js?v=${BUILD_ID}`);
 const experienceIndex = html.indexOf(`assets/experience-v27.js?v=${BUILD_ID}`);
 const polishIndex = html.indexOf(`assets/detail-help-polish-v27.js?v=${BUILD_ID}`);
@@ -67,7 +75,7 @@ const syncIndex = html.indexOf(`assets/detail-help-render-sync-v27.js?v=${BUILD_
 const contextVoiceHotfixIndex = html.indexOf(`assets/context-voice-hotfix-v28.js?v=${BUILD_ID}`);
 const gateIndex = html.indexOf(`assets/local-voice-gate-v28.js?v=${BUILD_ID}`);
 if (!(clarificationIndex >= 0 && clarificationIndex < helpIndex && helpIndex < progressIndex)) throw new Error('Detailhilfe muss nach Clarification und vor Guide-Progress geladen werden.');
-if (!(progressIndex < orientationIndex && orientationIndex < releasePolishIndex && releasePolishIndex < localVoiceIndex)) throw new Error('Orientierung und Release-Polish müssen vor dem statischen Voice-Gate geladen werden.');
+if (!(progressIndex < orientationIndex && orientationIndex < releasePolishIndex && releasePolishIndex < durchfuehrungWorkflowsIndex && durchfuehrungWorkflowsIndex < localVoiceIndex)) throw new Error('Orientierung, Release-Polish und Durchführungs-Workflows müssen vor dem statischen Voice-Gate geladen werden.');
 if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex)) throw new Error('Voice-/Detailhilfe-Ladereihenfolge ist falsch.');
 await writeFile(htmlPath, html);
 
@@ -92,6 +100,8 @@ const orientationAssetLine = `  './assets/orientation-help-v29.js?v=${BUILD_ID}'
 addWorkerAsset(orientationAssetLine, `  './assets/guide-progress.js?v=${BUILD_ID}',`);
 const releasePolishAssetLine = `  './assets/release-polish-v29.js?v=${BUILD_ID}',`;
 addWorkerAsset(releasePolishAssetLine, orientationAssetLine);
+const durchfuehrungWorkflowsAssetLine = `  './assets/durchfuehrungs-workflows-v29.js?v=${BUILD_ID}',`;
+addWorkerAsset(durchfuehrungWorkflowsAssetLine, releasePolishAssetLine);
 
 if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`)
   || !worker.includes(helpAssetLine)
@@ -99,9 +109,10 @@ if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`)
   || !worker.includes(syncAssetLine)
   || !worker.includes(contextVoiceHotfixAssetLine)
   || !worker.includes(orientationAssetLine)
-  || !worker.includes(releasePolishAssetLine)) {
-  throw new Error('Neue Detailhilfe-/Orientierungsassets konnten nicht vollständig in den Service Worker aufgenommen werden.');
+  || !worker.includes(releasePolishAssetLine)
+  || !worker.includes(durchfuehrungWorkflowsAssetLine)) {
+  throw new Error('Neue Detailhilfe-/Orientierungs-/Durchführungsassets konnten nicht vollständig in den Service Worker aufgenommen werden.');
 }
 await writeFile(workerPath, worker);
 
-console.log(`DokoHilf detail help + orientation + static voice UI polish applied: ${REVISION}`);
+console.log(`DokoHilf detail help + orientation + Durchführung + static voice UI polish applied: ${REVISION}`);
