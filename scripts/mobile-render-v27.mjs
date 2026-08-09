@@ -212,7 +212,7 @@ try {
     bg: getComputedStyle(document.body).backgroundImage,
   }));
   assert(identity.build === BUILD_ID, `Gerenderte Seite hat nicht Build v29: ${identity.build}`);
-  assert(identity.version === 'KI · v29', `Falscher sichtbarer Marker: ${identity.version}`);
+  assert(identity.version === `DokoHilf v29 · Build ${BUILD_ID}`, `Falscher sichtbarer Marker: ${identity.version}`);
   assert(identity.ui === 'v29', `v29-UI-Layer fehlt: ${identity.ui}`);
   assert(identity.bg !== 'none', 'Dunkle v29-Hintergrundgestaltung fehlt.');
 
