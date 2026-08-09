@@ -42,14 +42,18 @@ test('mobile synchronization is idempotent and cannot feed its own mutation obse
   assert.doesNotMatch(ux, /new MutationObserver\(sync\)/); assert.match(ux, /__DOKOHILF_IDEMPOTENT_SYNC_V27__/);
 });
 
-test('published v29 voice is local-only while the old cloud/device paths remain inactive compatibility code', () => {
-  assert.match(localVoice, /Supertone\/supertonic-3/); assert.match(localVoice, /const LANGUAGE = 'de'/);
-  assert.match(localVoice, /if \(!isIOS\(\) && navigator\.gpu\)/); assert.match(localVoice, /loaded = await load\('wasm'\)/);
-  assert.match(localGate, /DokoHilfLocalVoiceV28\.synthesize/); assert.match(localGate, /blockSystemSpeech/);
-  assert.match(ux, /if \(localVoiceV28\(\)\) return previousFetch\(input, init\)/); assert.match(ux, /__DOKOHILF_LOCAL_VOICE_ONLY_V28__/);
+test('published voice is static Supertonic-F1 only and legacy synthesis paths stay retired', () => {
+  assert.match(localVoice, /__DOKOHILF_LOCAL_VOICE_RETIRED_V29__/);
+  assert.match(localVoice, /__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__/);
+  assert.doesNotMatch(localVoice, /Supertone\/supertonic-3\/resolve\/main|loadTextToSpeech|loadVoiceStyle|navigator\.gpu|onnxruntime/);
+  assert.match(localGate, /STATIC_VOICE = 'Supertonic-F1'/);
+  assert.match(localGate, /loadStaticSupertonicVoice/);
+  assert.match(localGate, /blockSystemSpeech/);
+  assert.match(localGate, /static-supertonic-only-v29/);
+  assert.doesNotMatch(localGate, /DokoHilfLocalVoiceV28\.synthesize|localFallback|IOS_LOCAL_TIMEOUT_MS|OTHER_LOCAL_TIMEOUT_MS/);
+  assert.match(ux, /__DOKOHILF_LOCAL_VOICE_ONLY_V28__/);
   assert.match(app, /function speakWithSystemVoice/);
-  assert.match(experience, /FAST_FALLBACK_MS = 2400/);
-  assert.match(diagnostics, /dokohilf-guide-audio/);
+  assert.match(experience, /window\.__DOKOHILF_LOCAL_VOICE_V28__ !== true/);
   assert.match(uxCss, /data-voice-state=\"listening\"/); assert.match(uxCss, /width:92px!important/);
   assert.doesNotMatch(serviceWorker, /dokohilf-guide-audio\?manifest=/);
 });
