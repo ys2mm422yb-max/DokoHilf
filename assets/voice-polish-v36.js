@@ -22,6 +22,43 @@
     try { return window.DokoHilfGuideProgress?.getCurrentGuide?.() || null; } catch { return null; }
   }
 
+  function ensureFineTuneStyles() {
+    if (document.getElementById('voicePolishFineTuneV36')) return;
+    const style = document.createElement('style');
+    style.id = 'voicePolishFineTuneV36';
+    style.textContent = `
+      html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"]:not(.v36-no-guide) .voice-focus-main{
+        justify-content:flex-start!important;
+        padding-top:clamp(18px,3.2vh,30px)!important;
+      }
+      html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"].v36-no-guide .voice-focus-main{
+        justify-content:center!important;
+      }
+      @media(max-width:620px){
+        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"] .voice-focus-stage .voice-orb{
+          width:160px!important;height:160px!important;flex-basis:160px!important;
+        }
+        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="listening"] .voice-focus-stage .voice-orb{
+          width:170px!important;height:170px!important;flex-basis:170px!important;
+        }
+        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .voice-orb{
+          width:150px!important;height:150px!important;flex-basis:150px!important;
+        }
+        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-focus-stage .voice-orb{
+          width:180px!important;height:180px!important;flex-basis:180px!important;
+        }
+        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"] .v36-voice-state{display:none!important}
+        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"].v36-no-guide .v36-voice-state{display:inline-flex!important}
+      }
+      @media(max-height:760px){
+        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"]:not(.v36-no-guide) .voice-focus-main{
+          padding-top:12px!important;
+        }
+      }
+    `;
+    document.head.append(style);
+  }
+
   function ensureChatButton() {
     const button = document.querySelector('#voiceFocusStage .voice-focus-toolbar [data-switch-mode="chat"]');
     if (!button || button.dataset.v36Ready === 'true') return button;
@@ -62,6 +99,14 @@
     }
   }
 
+  function polishInstructionSpacing() {
+    const text = document.getElementById('voiceFocusText');
+    if (!text) return;
+    const current = text.textContent || '';
+    const polished = current.replace(/([.!?])(?=[A-ZÄÖÜ])/g, '$1 ');
+    setText(text, polished);
+  }
+
   function polishVoiceCopy() {
     const shell = document.getElementById('appShell');
     const status = document.getElementById('voiceStatus');
@@ -76,6 +121,10 @@
       setText(status, 'DokoHilf spricht …');
       setText(hint, 'Danach höre ich automatisch wieder zu.');
     }
+
+    if (shell.dataset.voiceState === 'speaking' && /supertonic(?:-f1)?\s+wird\s+abgespielt/i.test(hint.textContent || '')) {
+      setText(hint, 'Danach höre ich automatisch wieder zu.');
+    }
   }
 
   function updateStateChip() {
@@ -87,8 +136,10 @@
 
   function sync() {
     scheduled = false;
+    ensureFineTuneStyles();
     ensureChatButton();
     polishContext();
+    polishInstructionSpacing();
     polishVoiceCopy();
     updateStateChip();
   }
@@ -112,5 +163,11 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
 
-  window.DokoHilfVoicePolishV36 = { sync, polishContext, polishVoiceCopy, updateStateChip };
+  window.DokoHilfVoicePolishV36 = {
+    sync,
+    polishContext,
+    polishInstructionSpacing,
+    polishVoiceCopy,
+    updateStateChip,
+  };
 })();
