@@ -1,8 +1,8 @@
 const BUILD_ID = '20260809-36';
-const HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-2';
+const HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
-const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-1`;
+const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
 const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2';
 const CORE_FILES = [
   './',
@@ -123,7 +123,7 @@ self.addEventListener('fetch', event => {
   }
 
   if (url.pathname.includes('/assets/audio/guides/')) {
-    event.respondWith(fetch(request, { cache: 'force-cache' }).catch(() => caches.match(request)));
+    event.respondWith(fetch(request, { cache: 'no-store' }).catch(() => caches.match(request)));
     return;
   }
 
