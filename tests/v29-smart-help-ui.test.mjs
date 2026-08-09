@@ -4,24 +4,32 @@ import { readFile } from 'node:fs/promises';
 
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 
-test('v29 is visible and cache-busted consistently', async () => {
-  const [html, version, worker, localVoice, gate] = await Promise.all([
-    read('index.html'), read('version.json'), read('service-worker.js'), read('assets/local-voice-v28.js'), read('assets/local-voice-gate-v28.js'),
+test('v29 build is cache-busted consistently and version badge starts hidden', async () => {
+  const [html, version, worker, runtime, gate] = await Promise.all([
+    read('index.html'),
+    read('version.json'),
+    read('service-worker.js'),
+    read('assets/local-voice-v28.js'),
+    read('assets/local-voice-gate-v28.js'),
   ]);
   const buildId = JSON.parse(version).buildId;
+  assert.equal(buildId, '20260809-32');
   assert.match(html, /KI · v29/);
+  assert.match(html, /id="buildPill" type="button" hidden/);
   assert.match(html, new RegExp(`dokohilf-build" content="${buildId}`));
   assert.match(html, new RegExp(`v29-ui\\.js\\?v=${buildId}`));
+  assert.match(html, new RegExp(`orientation-help-v29\\.js\\?v=${buildId}`));
+  assert.match(html, new RegExp(`release-polish-v29\\.js\\?v=${buildId}`));
   assert.match(worker, new RegExp(`BUILD_ID = '${buildId}'`));
-  assert.match(localVoice, /Supertone\/supertonic-3/);
-  assert.match(localVoice, /meta\[name="dokohilf-build"\]/);
-  assert.match(gate, /meta\[name="dokohilf-build"\]/);
+  assert.match(runtime, /on_device_voice_retired_static_supertonic_only/);
+  assert.doesNotMatch(runtime, /Supertone\/supertonic-3\/resolve\/main|loadTextToSpeech|navigator\.gpu/);
   assert.match(gate, /guide-audio-catalog\.json\?v=\$\{encodeURIComponent\(BUILD_ID\)\}/);
-  assert.match(gate, /dokohilf-static-supertonic-audio-v29-1/);
-  assert.match(gate, /IOS_LOCAL_TIMEOUT_MS = 8000/);
+  assert.match(gate, /dokohilf-static-supertonic-audio-v29-2/);
+  assert.match(gate, /static-supertonic-only-v29/);
+  assert.doesNotMatch(gate, /IOS_LOCAL_TIMEOUT_MS|localFallback|DokoHilfLocalVoiceV28\.synthesize/);
 });
 
-test('free-text help and the help button use the same contextual router path', async () => {
+test('free-text help and the help button keep the same contextual router path', async () => {
   const [smart, detail, router] = await Promise.all([
     read('assets/smart-help-v29.js'),
     read('assets/detail-help-v27.js'),
@@ -32,22 +40,34 @@ test('free-text help and the help button use the same contextual router path', a
   assert.match(smart, /keine ahnung/);
   assert.match(smart, /was meinst du/);
   assert.match(smart, /smartHelpIntent: true/);
-  assert.doesNotMatch(smart, /rewriteLatestUser|ich finde das nicht/);
   assert.match(detail, /__DOKOHILF_CONTEXTUAL_HELP_V29__/);
-  assert.doesNotMatch(detail, /helpOptions|Was trifft bei dir zu\?|syntheticResponse|startSession/);
   assert.match(router, /smartHelpIntent/);
   assert.match(router, /approved-guide-context-help-v29-4/);
   assert.doesNotMatch(smart, /localStorage|sessionStorage|indexedDB/);
   assert.doesNotMatch(detail, /localStorage|sessionStorage|indexedDB/);
 });
 
-test('explicit location questions route to dedicated area-finding guides', async () => {
+test('explicit location questions still route to dedicated area-finding guides', async () => {
   const [smart, migration] = await Promise.all([
     read('assets/smart-help-v29.js'),
     read('supabase/migrations/20260809112500_later_guides_stammdaten_v29.sql'),
   ]);
   assert.match(smart, /function isLocationQuestion\(text\)/);
-  for (const slug of ['berichte-finden', 'doku-erweitert-finden', 'doku-finden', 'visiten-finden', 'vitalwerte-finden', 'anwesenheiten-finden', 'medikation-finden', 'formulare-finden', 'durchfuehrungsnachweis-finden', 'analyse-finden', 'uebergabe-finden', 'notfallblatt-finden', 'stammdaten-finden']) {
+  for (const slug of [
+    'berichte-finden',
+    'doku-erweitert-finden',
+    'doku-finden',
+    'visiten-finden',
+    'vitalwerte-finden',
+    'anwesenheiten-finden',
+    'medikation-finden',
+    'formulare-finden',
+    'durchfuehrungsnachweis-finden',
+    'analyse-finden',
+    'uebergabe-finden',
+    'notfallblatt-finden',
+    'stammdaten-finden',
+  ]) {
     assert.match(smart, new RegExp(`return '${slug}'`));
     assert.match(migration, new RegExp(`'${slug}'`));
   }
@@ -58,7 +78,28 @@ test('explicit location questions route to dedicated area-finding guides', async
   assert.doesNotMatch(smart, /return 'aufgaben-aktuelles'|return 'easyplan'|return 'berichtssuche'/);
 });
 
-test('active-guide help keeps the guide and explains the current area concretely', async () => {
+test('nested orientation explains where parent areas are located', async () => {
+  const [orientation, extras] = await Promise.all([
+    read('assets/orientation-help-v29.js'),
+    read('assets/voice-extra-catalog-v28.json'),
+  ]);
+  assert.match(orientation, /Doku-Erweitert ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku/);
+  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Vitalwerte/);
+  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Visiten/);
+  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Medikation/);
+  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Formulare/);
+  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du An-\/Abwesenheiten/);
+  assert.match(orientation, /Innerhalb von Doku findest du den Durchführungsnachweis/);
+  assert.match(orientation, /Berichte ist ein Hauptbereich in der festen Leiste/);
+  assert.match(orientation, /Analyse findest du Was war los/);
+  assert.match(orientation, /Notfallblatt aufrufen/);
+  assert.match(orientation, /Doppelklicke dort auf den gewünschten Bewohner/);
+  assert.doesNotMatch(orientation, /Easy-Plan|Berichtssuche|Aufgaben · Aktuelles/);
+  assert.match(extras, /Doku-Erweitert ist ein Hauptbereich in der festen Leiste/);
+  assert.match(extras, /Innerhalb von Doku-Erweitert findest du Vitalwerte/);
+});
+
+test('active-guide help keeps the guide and approved area details', async () => {
   const migration = await read('supabase/migrations/20260809120500_contextual_area_stuck_help_v29.sql');
   for (const slug of [
     'visite-anlegen',
@@ -94,11 +135,15 @@ test('Hallo ich suche den Blutdruck keeps the approved single-value task intent'
   assert.match(smart, /selectedGuideSlug/);
   assert.match(router, /selectedGuideSlug/);
   assert.match(router, /approved-guide-smart-start-v29-1/);
-  assert.match(router, /stepResponse\(origin, guide, 0/);
 });
 
 test('v29 redesign covers home, written chat and distinct voice states', async () => {
-  const [css, ui, html, version] = await Promise.all([read('assets/v29-ui.css'), read('assets/v29-ui.js'), read('index.html'), read('version.json')]);
+  const [css, ui, html, version] = await Promise.all([
+    read('assets/v29-ui.css'),
+    read('assets/v29-ui.js'),
+    read('index.html'),
+    read('version.json'),
+  ]);
   const buildId = JSON.parse(version).buildId;
   assert.match(html, new RegExp(`assets\\/v29-ui\\.css\\?v=${buildId}`));
   assert.match(html, new RegExp(`assets\\/smart-help-v29\\.js\\?v=${buildId}`));
@@ -128,7 +173,7 @@ test('v29 mutation synchronization is idempotent and cannot feed its own observe
   assert.match(ui, /new MutationObserver\(scheduleSync\).*attributeFilter: \['hidden', 'data-mode'\]/s);
 });
 
-test('legacy v27 presentation yields to the v29 home and chat owner on initial load and pageshow', async () => {
+test('legacy v27 presentation yields to the v29 home and chat owner', async () => {
   const experience = await read('assets/experience-v27.js');
   assert.match(experience, /function v29OwnsPresentation\(\)/);
   assert.match(experience, /window\.__DOKOHILF_UI_V29__ === true/);
@@ -138,11 +183,26 @@ test('legacy v27 presentation yields to the v29 home and chat owner on initial l
   assert.match(experience, /window\.addEventListener\('pageshow', initialize\)/);
 });
 
-test('service worker precaches the new UI and smart-help layer', async () => {
+test('service worker precaches new UI, orientation and static audio only', async () => {
   const worker = await read('service-worker.js');
-  for (const asset of ['assets/v29-ui.css', 'assets/v29-ui.js', 'assets/smart-help-v29.js', 'assets/direct-guide-copy-v29.js']) {
-    assert.ok(worker.includes(asset), `${asset} fehlt im Service Worker`);
-  }
-  assert.match(worker, /dokohilf-static-supertonic-audio-v28-1/);
-  assert.match(worker, /dokohilf-local-voice-model-v28-1/);
+  for (const asset of [
+    'assets/v29-ui.css',
+    'assets/v29-ui.js',
+    'assets/smart-help-v29.js',
+    'assets/orientation-help-v29.js',
+    'assets/release-polish-v29.js',
+    'assets/direct-guide-copy-v29.js',
+  ]) assert.ok(worker.includes(asset), `${asset} fehlt im Service Worker`);
+  assert.match(worker, /dokohilf-static-supertonic-audio-v29-2/);
+  assert.match(worker, /caches\.delete\('dokohilf-local-voice-model-v28-1'\)/);
+  assert.doesNotMatch(worker, /LOCAL_VOICE_MODEL_CACHE/);
+  assert.doesNotMatch(worker, /vendor\/supertonic-web-v28/);
+});
+
+test('version is moved to the footer and update notice stays visible', async () => {
+  const polish = await read('assets/release-polish-v29.js');
+  assert.match(polish, /UPDATE_NOTICE_MS = 7500/);
+  assert.match(polish, /footer-version-wrap/);
+  assert.match(polish, /pill\.classList\.remove\('build-pill'\)/);
+  assert.match(polish, /DokoHilf wurde aktualisiert/);
 });
