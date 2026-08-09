@@ -13,13 +13,15 @@ test('v29 build is cache-busted consistently and version badge starts hidden', a
     read('assets/local-voice-gate-v28.js'),
   ]);
   const buildId = JSON.parse(version).buildId;
-  assert.equal(buildId, '20260809-34');
+  assert.equal(buildId, '20260809-35');
   assert.match(html, /KI · v29/);
   assert.match(html, /id="buildPill" type="button" hidden/);
   assert.match(html, new RegExp(`dokohilf-build" content="${buildId}`));
   assert.match(html, new RegExp(`v29-ui\\.js\\?v=${buildId}`));
   assert.match(html, new RegExp(`orientation-help-v29\\.js\\?v=${buildId}`));
   assert.match(html, new RegExp(`release-polish-v29\\.js\\?v=${buildId}`));
+  assert.match(html, new RegExp(`ui-polish-v35\\.css\\?v=${buildId}-ui1`));
+  assert.match(html, new RegExp(`ui-polish-v35\\.js\\?v=${buildId}-ui1`));
   assert.match(worker, new RegExp(`BUILD_ID = '${buildId}'`));
   assert.match(runtime, /on_device_voice_retired_static_supertonic_only/);
   assert.doesNotMatch(runtime, /Supertone\/supertonic-3\/resolve\/main|loadTextToSpeech|navigator\.gpu/);
@@ -246,6 +248,8 @@ test('service worker source keeps new UI, orientation and static audio only', as
     'assets/orientation-help-v29.js',
     'assets/release-polish-v29.js',
     'assets/direct-guide-copy-v29.js',
+    'assets/ui-polish-v35.css',
+    'assets/ui-polish-v35.js',
   ]) assert.ok(worker.includes(asset), `${asset} fehlt im Service Worker`);
   assert.match(worker, /dokohilf-static-supertonic-audio-v29-2/);
   assert.match(worker, /caches\.delete\('dokohilf-local-voice-model-v28-1'\)/);
@@ -260,4 +264,28 @@ test('version is moved to the footer and update notice stays visible', async () 
   assert.match(polish, /pill\.classList\.remove\('build-pill'\)/);
   assert.match(polish, /Konzept & Umsetzung · MT/);
   assert.match(polish, /DokoHilf wurde aktualisiert/);
+});
+
+test('build 35 polish groups the library and removes duplicate-looking control icons', async () => {
+  const [polish, css, library, execution] = await Promise.all([
+    read('assets/ui-polish-v35.js'),
+    read('assets/ui-polish-v35.css'),
+    read('assets/guide-library-v29.js'),
+    read('assets/durchfuehrungs-workflows-v29.js'),
+  ]);
+  for (const label of ['Berichte', 'Visiten & Vitalwerte', 'Weitere Bereiche', 'Durchführung', 'In Vorbereitung']) {
+    assert.ok(polish.includes(label), `Bibliotheksgruppe fehlt: ${label}`);
+  }
+  for (const slug of ['bedarfsmedikation-gabe', 'bedarfsmedikation-wirksamkeitskontrolle', 'massnahmen-ohne-zeitangabe']) {
+    assert.ok(polish.includes(`'${slug}'`), `Eigenständiges UI-Symbol fehlt: ${slug}`);
+  }
+  assert.match(polish, /MODE_ICONS/);
+  assert.match(polish, /v35-mode-icon/);
+  assert.match(polish, /SPECIAL_ICONS/);
+  assert.match(css, /\.v35-library-section/);
+  assert.match(css, /\.footer-version-button/);
+  assert.match(css, /\.footer-credit/);
+  assert.match(library, /const LIBRARY_ORDER = \[/);
+  assert.match(execution, /Wirksamkeitskontrolle automatisch.*angelegt/s);
+  assert.doesNotMatch(polish, /localStorage|sessionStorage|indexedDB/);
 });
