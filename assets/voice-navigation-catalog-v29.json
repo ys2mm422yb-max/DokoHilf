@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "voice": "Supertonic-F1",
   "purpose": "Vorab erzeugte Sprachsätze für die bestätigte grüne Hauptleiste und verschachtelte Orientierung",
+  "compatibilityPhrase": "Ganz oben in der festen grünen Leiste",
   "entries": [
     {"text":"Die feste grüne Leiste ist ganz oben. Dort findest du die Hauptbereiche Berichte, Doku-Erweitert, Doku, Planung und Analyse. Wenn du einen Hauptbereich auswählst, erscheinen direkt darunter die dazugehörigen Unterpunkte beziehungsweise Symbole."},
     {"text":"Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation."},
