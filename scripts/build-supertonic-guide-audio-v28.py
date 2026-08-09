@@ -9,7 +9,8 @@ EXTRA_SPEECH_COUNT = 33
 RELEASE_SPEECH_COUNT = 49
 WORKFLOW_SPEECH_COUNT = 40
 UI_SPEECH_COUNT = 1
-STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COUNT + WORKFLOW_SPEECH_COUNT + UI_SPEECH_COUNT
+NAVIGATION_SPEECH_COUNT = 17
+STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COUNT + WORKFLOW_SPEECH_COUNT + UI_SPEECH_COUNT + NAVIGATION_SPEECH_COUNT
 
 LONG_VOICE_GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.'
 SHORT_VOICE_GREETING = 'Hey! Wobei brauchst du Hilfe?'
@@ -102,6 +103,7 @@ def main() -> None:
     parser.add_argument('--release-catalog', default='assets/voice-release-catalog-v29.json')
     parser.add_argument('--workflow-catalog', default='assets/voice-durchfuehrung-catalog-v29.json')
     parser.add_argument('--ui-catalog', default='assets/voice-ui-catalog-v29.json')
+    parser.add_argument('--navigation-catalog', default='assets/voice-navigation-catalog-v29.json')
     parser.add_argument('--output-root', default='assets/audio/guides')
     parser.add_argument('--voice', default='F1')
     parser.add_argument('--steps', type=int, default=8)
@@ -116,11 +118,13 @@ def main() -> None:
     release_catalog = json.loads(Path(args.release_catalog).read_text(encoding='utf-8'))
     workflow_catalog = json.loads(Path(args.workflow_catalog).read_text(encoding='utf-8'))
     ui_catalog = json.loads(Path(args.ui_catalog).read_text(encoding='utf-8'))
+    navigation_catalog = json.loads(Path(args.navigation_catalog).read_text(encoding='utf-8'))
     base_entries = base_catalog.get('entries') or []
     extra_entries = extra_catalog.get('entries') or []
     release_entries = release_catalog.get('entries') or []
     workflow_entries = workflow_catalog.get('entries') or []
     ui_entries = ui_catalog.get('entries') or []
+    navigation_entries = navigation_catalog.get('entries') or []
     if len(base_entries) != BASE_GUIDE_COUNT:
         raise SystemExit(f'expected {BASE_GUIDE_COUNT} base guide sentences, found {len(base_entries)}')
     if len(extra_entries) != EXTRA_SPEECH_COUNT:
@@ -131,7 +135,9 @@ def main() -> None:
         raise SystemExit(f'expected {WORKFLOW_SPEECH_COUNT} Durchführung workflow sentences, found {len(workflow_entries)}')
     if len(ui_entries) != UI_SPEECH_COUNT:
         raise SystemExit(f'expected {UI_SPEECH_COUNT} UI speech sentence, found {len(ui_entries)}')
-    entries = merged_entries(base_catalog, extra_catalog, release_catalog, workflow_catalog, ui_catalog)
+    if len(navigation_entries) != NAVIGATION_SPEECH_COUNT:
+        raise SystemExit(f'expected {NAVIGATION_SPEECH_COUNT} navigation speech sentences, found {len(navigation_entries)}')
+    entries = merged_entries(base_catalog, extra_catalog, release_catalog, workflow_catalog, ui_catalog, navigation_catalog)
     if len(entries) != STATIC_SPEECH_COUNT:
         raise SystemExit(f'expected {STATIC_SPEECH_COUNT} unique static speech sentences, found {len(entries)}')
     if args.validate_only:
@@ -140,7 +146,8 @@ def main() -> None:
             f'{EXTRA_SPEECH_COUNT} fixed dialog sentences + '
             f'{RELEASE_SPEECH_COUNT} v29 guide/help sentences + '
             f'{WORKFLOW_SPEECH_COUNT} Durchführung workflow sentences + '
-            f'{UI_SPEECH_COUNT} UI speech sentence = {STATIC_SPEECH_COUNT} static sentences'
+            f'{UI_SPEECH_COUNT} UI speech sentence + '
+            f'{NAVIGATION_SPEECH_COUNT} navigation speech sentences = {STATIC_SPEECH_COUNT} static sentences'
         )
         return
     if args.limit > 0:
@@ -197,6 +204,7 @@ def main() -> None:
         'releaseSpeechCount': RELEASE_SPEECH_COUNT,
         'workflowSpeechCount': WORKFLOW_SPEECH_COUNT,
         'uiSpeechCount': UI_SPEECH_COUNT,
+        'navigationSpeechCount': NAVIGATION_SPEECH_COUNT,
         'staticSpeechCount': len(published_entries),
         'entries': published_entries,
     }
@@ -214,6 +222,7 @@ def main() -> None:
             'releaseSpeechCount': RELEASE_SPEECH_COUNT,
             'workflowSpeechCount': WORKFLOW_SPEECH_COUNT,
             'uiSpeechCount': UI_SPEECH_COUNT,
+            'navigationSpeechCount': NAVIGATION_SPEECH_COUNT,
             'staticSpeechCount': len(generated),
             'count': len(generated),
             'entries': generated,
