@@ -2,10 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [library, css, copy, migration, confirmed, voiceBuild, voiceRelease, sw, index, version] = await Promise.all([
+const [library, css, copy, v29Ui, mobileRender, migration, confirmed, voiceBuild, voiceRelease, sw, index, version] = await Promise.all([
   readFile(new URL('../assets/guide-library-v29.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/guide-library-v29.css', import.meta.url), 'utf8'),
   readFile(new URL('../assets/direct-guide-copy-v29.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/v29-ui.js', import.meta.url), 'utf8'),
+  readFile(new URL('../scripts/mobile-render-v27.mjs', import.meta.url), 'utf8'),
   readFile(new URL('../supabase/migrations/20260808234500_workflow_library_polish_v29.sql', import.meta.url), 'utf8'),
   readFile(new URL('../CONFIRMED_WORKFLOWS.md', import.meta.url), 'utf8'),
   readFile(new URL('../scripts/build-supertonic-guide-audio-v28.py', import.meta.url), 'utf8'),
@@ -70,14 +72,34 @@ test('Hauptmenü nutzt lokale Häufigkeit, passende Icons und eine vollständige
   assert.match(library, /handover: '<path/);
 });
 
-test('Guide-Bibliothek wird deterministisch beim App-Start geladen und nicht erst nach einem dynamischen Nachladen', () => {
+test('Guide-Bibliothek wird deterministisch beim App-Start geladen und der Legacy-Fallback ist vollständig stabil', () => {
   const cssIndex = index.indexOf(`assets/guide-library-v29.css?v=${buildId}-library1`);
   const copyIndex = index.indexOf(`assets/direct-guide-copy-v29.js?v=${buildId}`);
   const libraryIndex = index.indexOf(`assets/guide-library-v29.js?v=${buildId}-library1`);
   const appIndex = index.indexOf(`assets/app.js?v=${buildId}`);
+  const staticButtons = [...index.matchAll(/data-direct-guide="([^"]+)"/g)].map(match => match[1]);
   assert.ok(cssIndex >= 0);
   assert.ok(copyIndex >= 0 && libraryIndex > copyIndex && appIndex > libraryIndex);
   assert.match(index, /data-dokohilf-guide-library-v29/);
+  assert.match(index, /data-v27-ready="direct-guides-cross-platform"/);
+  assert.deepEqual(staticButtons, ['bericht', 'visite', 'vitalwerte', 'anwesenheit', 'medikation', 'formular', 'uebergabe']);
+});
+
+test('Premium-v29 respektiert die Guide-Bibliothek als Besitzer des Bereichs Häufig genutzt', () => {
+  assert.match(v29Ui, /guideLibraryOwnsHome/);
+  assert.match(v29Ui, /guideLibraryOwnsHome \? 'Häufig genutzt' : 'Häufige Abläufe · direkt öffnen'/);
+  assert.match(v29Ui, /querySelectorAll\('button\[data-direct-guide\]'\)/);
+  assert.match(v29Ui, /\.examples button\[data-direct-guide\]\{/);
+  assert.doesNotMatch(v29Ui, /\.examples button\{\n  position:relative/);
+});
+
+test('Mobile Renderfreigabe prüft die sichtbare Bibliothek statt nur Legacy-Buttons im DOM', () => {
+  assert.match(mobileRender, /window\.__DOKOHILF_GUIDE_LIBRARY_V29__ === true/);
+  assert.match(mobileRender, /label === 'Häufig genutzt'/);
+  assert.match(mobileRender, /\.v29-frequent-guide/);
+  assert.match(mobileRender, /legacyHidden/);
+  assert.match(mobileRender, /Alle Anleitungen/);
+  assert.match(mobileRender, /Berichtssuche/);
 });
 
 test('Direktanleitungen respektieren die mobile Safe Area und werden als PWA-Core geladen', () => {
@@ -87,8 +109,10 @@ test('Direktanleitungen respektieren die mobile Safe Area und werden als PWA-Cor
   assert.match(css, /padding-top:12px!important/);
   assert.match(copy, /ensureGuideLibraryAssets/);
   assert.match(copy, /ensureLegacyCloseContract/);
-  assert.match(copy, new RegExp(`guide-library-v29\\.js\\?v=${buildId}-library1`));
-  assert.match(copy, new RegExp(`guide-library-v29\\.css\\?v=${buildId}-library1`));
+  assert.match(copy, /meta\[name="dokohilf-build"\]/);
+  assert.match(copy, /GUIDE_LIBRARY_REVISION = 'library1'/);
+  assert.match(copy, /encodeURIComponent\(BUILD_ID\)/);
+  assert.doesNotMatch(copy, /guide-library-v29\.(?:js|css)\?v=20260809-29/);
   assert.match(sw, /mobile-polish-8/);
   assert.match(sw, new RegExp(`guide-library-v29\\.js\\?v=${buildId}-library1`));
   assert.match(sw, new RegExp(`guide-library-v29\\.css\\?v=${buildId}-library1`));

@@ -110,20 +110,20 @@ html[data-dokohilf-ui="v29"] .examples{
 html[data-dokohilf-ui="v29"] .examples>span{
   grid-column:1/-1!important;margin:0 2px 4px!important;color:#819c95!important;font-size:10.5px!important;font-weight:900!important;letter-spacing:.13em!important;text-transform:uppercase!important;
 }
-html[data-dokohilf-ui="v29"] .examples button{
+html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]{
   position:relative!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;
   min-width:0!important;min-height:86px!important;padding:12px 12px 12px 68px!important;border:1px solid rgba(125,211,186,.13)!important;border-radius:18px!important;
   background:linear-gradient(145deg,rgba(8,31,38,.96),rgba(5,22,30,.96))!important;color:#f5fbf9!important;
   font-size:15.5px!important;font-weight:820!important;line-height:1.16!important;text-align:left!important;letter-spacing:-.015em!important;
   box-shadow:inset 0 1px rgba(255,255,255,.025),0 10px 25px rgba(0,0,0,.13)!important;
 }
-html[data-dokohilf-ui="v29"] .examples button:before{
+html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]:before{
   content:attr(data-home-symbol);position:absolute;left:13px;top:50%;transform:translateY(-50%);width:42px;height:42px;display:grid;place-items:center;
   border:1px solid rgba(62,230,156,.26);border-radius:50%;background:linear-gradient(145deg,rgba(32,181,119,.26),rgba(8,78,58,.34));
   color:#55eda5;font-size:20px;font-weight:800;line-height:1;box-shadow:inset 0 1px rgba(255,255,255,.055),0 8px 22px rgba(0,0,0,.18);
 }
-html[data-dokohilf-ui="v29"] .examples button:after{content:'Anleitung ›';display:block;margin-top:7px;color:#7f9d95;font-size:11.5px;font-weight:720;line-height:1;letter-spacing:0}
-html[data-dokohilf-ui="v29"] .examples button:hover{border-color:rgba(70,231,160,.28)!important;background:linear-gradient(145deg,rgba(10,39,44,.98),rgba(6,26,33,.98))!important}
+html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]:after{content:'Anleitung ›';display:block;margin-top:7px;color:#7f9d95;font-size:11.5px;font-weight:720;line-height:1;letter-spacing:0}
+html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]:hover{border-color:rgba(70,231,160,.28)!important;background:linear-gradient(145deg,rgba(10,39,44,.98),rgba(6,26,33,.98))!important}
 html[data-dokohilf-ui="v29"] #startScreen .safety-note{display:none!important}
 html[data-dokohilf-ui="v29"] .legal-note{max-width:680px!important;margin:17px auto 0!important;padding:0 18px calc(13px + env(safe-area-inset-bottom))!important;color:#607b75!important;font-size:11.5px!important;line-height:1.5!important;text-align:center!important}
 html[data-dokohilf-ui="v29"] .app-shell[data-mode="start"] .composer-wrap{display:none!important}
@@ -164,9 +164,9 @@ html[data-dokohilf-ui="v29"] .composer-wrap{border-top-color:rgba(78,230,160,.15
   html[data-dokohilf-ui="v29"] .mode-text small{margin-top:6px!important;font-size:14px!important;line-height:1.38!important}
   html[data-dokohilf-ui="v29"] .mode-arrow{width:40px!important;height:40px!important;font-size:30px!important}
   html[data-dokohilf-ui="v29"] .examples{padding:12px!important;gap:9px!important;border-radius:23px!important}
-  html[data-dokohilf-ui="v29"] .examples button{min-height:82px!important;padding:11px 10px 11px 60px!important;border-radius:17px!important;font-size:14.5px!important}
-  html[data-dokohilf-ui="v29"] .examples button:before{left:11px;width:39px;height:39px;font-size:18px}
-  html[data-dokohilf-ui="v29"] .examples button:after{margin-top:6px;font-size:11px}
+  html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]{min-height:82px!important;padding:11px 10px 11px 60px!important;border-radius:17px!important;font-size:14.5px!important}
+  html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]:before{left:11px;width:39px;height:39px;font-size:18px}
+  html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]:after{margin-top:6px;font-size:11px}
 }
 @media(max-width:420px){
   html[data-dokohilf-ui="v29"] .brand{gap:9px!important}
@@ -188,9 +188,9 @@ html[data-dokohilf-ui="v29"] .composer-wrap{border-top-color:rgba(78,230,160,.15
   html[data-dokohilf-ui="v29"] .mode-arrow{width:37px!important;height:37px!important;font-size:27px!important}
   html[data-dokohilf-ui="v29"] .examples{gap:8px!important;padding:10px!important}
   html[data-dokohilf-ui="v29"] .examples>span{font-size:9.4px!important;letter-spacing:.105em!important}
-  html[data-dokohilf-ui="v29"] .examples button{min-height:80px!important;padding:10px 8px 10px 55px!important;font-size:13.7px!important}
-  html[data-dokohilf-ui="v29"] .examples button:before{left:9px;width:36px;height:36px;font-size:16px}
-  html[data-dokohilf-ui="v29"] .examples button:after{font-size:10.5px}
+  html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]{min-height:80px!important;padding:10px 8px 10px 55px!important;font-size:13.7px!important}
+  html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]:before{left:9px;width:36px;height:36px;font-size:16px}
+  html[data-dokohilf-ui="v29"] .examples button[data-direct-guide]:after{font-size:10.5px}
   html[data-dokohilf-ui="v29"] .chat-head{padding:16px!important}
   html[data-dokohilf-ui="v29"] .chat-head h1{font-size:31px!important}
 }
@@ -235,13 +235,15 @@ html[data-dokohilf-ui="v29"] .composer-wrap{border-top-color:rgba(78,230,160,.15
     }
     const examples = document.querySelector('.examples');
     const examplesLabel = examples?.querySelector(':scope > span');
-    if (examplesLabel && examplesLabel.textContent !== 'Häufige Abläufe · direkt öffnen') {
-      examplesLabel.textContent = 'Häufige Abläufe · direkt öffnen';
+    const guideLibraryOwnsHome = examples?.dataset.v29GuideLibrary === 'true' || window.__DOKOHILF_GUIDE_LIBRARY_V29__ === true;
+    const desiredLabel = guideLibraryOwnsHome ? 'Häufig genutzt' : 'Häufige Abläufe · direkt öffnen';
+    if (examplesLabel && examplesLabel.textContent !== desiredLabel) {
+      examplesLabel.textContent = desiredLabel;
     }
-    for (const button of examples?.querySelectorAll('button') || []) {
+    for (const button of examples?.querySelectorAll('button[data-direct-guide]') || []) {
       button.dataset.homeSymbol = symbolForButton(button);
     }
-    document.documentElement.dataset.dokohilfHome = 'premium-v29-1';
+    document.documentElement.dataset.dokohilfHome = guideLibraryOwnsHome ? 'guide-library-v29' : 'premium-v29-1';
   }
 
   function ensureHistoryToggle() {

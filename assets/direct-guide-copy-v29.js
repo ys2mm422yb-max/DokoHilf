@@ -1,19 +1,25 @@
 (() => {
   'use strict';
 
+  const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
+  const GUIDE_LIBRARY_REVISION = 'library1';
   let scheduled = false;
+
+  function guideLibraryAsset(name) {
+    return `assets/${name}?v=${encodeURIComponent(BUILD_ID)}-${GUIDE_LIBRARY_REVISION}`;
+  }
 
   function ensureGuideLibraryAssets() {
     if (!document.querySelector('link[data-dokohilf-guide-library-v29]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'assets/guide-library-v29.css?v=20260809-29-library1';
+      link.href = guideLibraryAsset('guide-library-v29.css');
       link.dataset.dokohilfGuideLibraryV29 = 'true';
       document.head.append(link);
     }
     if (!document.querySelector('script[data-dokohilf-guide-library-v29]')) {
       const script = document.createElement('script');
-      script.src = 'assets/guide-library-v29.js?v=20260809-29-library1';
+      script.src = guideLibraryAsset('guide-library-v29.js');
       script.dataset.dokohilfGuideLibraryV29 = 'true';
       document.body.append(script);
     }

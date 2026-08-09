@@ -16,7 +16,8 @@ const buildId = JSON.parse(version).buildId;
 
 test('häufige Abläufe werden als sieben robuste Direktanleitungen übernommen', () => {
   const staticButtons = [...html.matchAll(/data-direct-guide="([^"]+)"/g)].map(match => match[1]);
-  assert.deepEqual(staticButtons, ['bericht', 'visite', 'vitalwerte', 'anwesenheit', 'medikation', 'formular']);
+  assert.deepEqual(staticButtons, ['bericht', 'visite', 'vitalwerte', 'anwesenheit', 'medikation', 'formular', 'uebergabe']);
+  assert.match(html, /data-v27-ready="direct-guides-cross-platform"/);
   assert.match(guides, /function ensureDirectWorkflowButtons\(\)/);
   assert.match(guides, /direct-guides-cross-platform/);
   assert.match(guides, /new MutationObserver/);
