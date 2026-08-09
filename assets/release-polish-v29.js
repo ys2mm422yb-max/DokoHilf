@@ -3,7 +3,7 @@
 
   const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
   const VERSION_LABEL = 'v29';
-  const UPDATE_NOTICE_MS = 7500;
+  const UPDATE_NOTICE_MS = 10000;
   const RELOAD_KEY = 'dokohilf-build-reload';
 
   function installStyles() {
