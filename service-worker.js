@@ -42,6 +42,7 @@ const CORE_FILES = [
   './assets/direct-guides-v27.js?v=20260809-32',
   './assets/direct-guide-copy-v29.js?v=20260809-32',
   './assets/guide-library-v29.js?v=20260809-32-library1',
+  './assets/durchfuehrungs-workflows-v29.js?v=20260809-32',
   './assets/app.js?v=20260809-32',
   './manifest.webmanifest',
   './icon.svg',
