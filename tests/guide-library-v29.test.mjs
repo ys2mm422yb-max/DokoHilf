@@ -93,6 +93,19 @@ test('Premium-v29 respektiert die Guide-Bibliothek als Besitzer des Bereichs Hä
   assert.doesNotMatch(v29Ui, /\.examples button\{\n  position:relative/);
 });
 
+test('Guide-Bibliotheksbesitz repariert einen späteren Legacy-DOM-Reset ohne eigene Guide-Daten zu duplizieren', () => {
+  assert.match(copy, /let guideLibrarySnapshot = ''/);
+  assert.match(copy, /function guideLibraryHomeValid\(examples\)/);
+  assert.match(copy, /label === 'Häufig genutzt'/);
+  assert.match(copy, /examples\.querySelectorAll\('\.v29-frequent-guide'\)\.length === 6/);
+  assert.match(copy, /legacy\.length === 7/);
+  assert.match(copy, /legacy\.every\(button => button\.hidden\)/);
+  assert.match(copy, /guideLibrarySnapshot = examples\.innerHTML/);
+  assert.match(copy, /examples\.innerHTML = guideLibrarySnapshot/);
+  assert.match(copy, /ensureGuideLibraryOwnershipStyle/);
+  assert.doesNotMatch(copy, /const META|const GUIDES|LIBRARY_ORDER/);
+});
+
 test('Mobile Renderfreigabe prüft die sichtbare Bibliothek statt nur Legacy-Buttons im DOM', () => {
   assert.match(mobileRender, /window\.__DOKOHILF_GUIDE_LIBRARY_V29__ === true/);
   assert.match(mobileRender, /label === 'Häufig genutzt'/);

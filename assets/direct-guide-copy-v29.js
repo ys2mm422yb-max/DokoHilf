@@ -4,6 +4,8 @@
   const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
   const GUIDE_LIBRARY_REVISION = 'library1';
   let scheduled = false;
+  let libraryOwnershipScheduled = false;
+  let guideLibrarySnapshot = '';
 
   function guideLibraryAsset(name) {
     return `assets/${name}?v=${encodeURIComponent(BUILD_ID)}-${GUIDE_LIBRARY_REVISION}`;
@@ -23,6 +25,57 @@
       script.dataset.dokohilfGuideLibraryV29 = 'true';
       document.body.append(script);
     }
+  }
+
+  function ensureGuideLibraryOwnershipStyle() {
+    if (document.getElementById('v29GuideLibraryOwnershipStyle')) return;
+    const style = document.createElement('style');
+    style.id = 'v29GuideLibraryOwnershipStyle';
+    style.textContent = `
+html[data-dokohilf-ui="v29"] .examples .v29-frequent-guide,
+html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger{padding:12px 13px!important}
+html[data-dokohilf-ui="v29"] .examples .v29-frequent-guide:before,
+html[data-dokohilf-ui="v29"] .examples .v29-frequent-guide:after,
+html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:before,
+html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:none!important;display:none!important}
+@media(max-width:700px){
+  html[data-dokohilf-ui="v29"] .examples .v29-frequent-guide{min-height:68px!important;padding:9px 11px!important;font-size:13px!important}
+  html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger{min-height:50px!important;padding:10px 12px!important;font-size:12.5px!important}
+}
+`;
+    document.head.append(style);
+  }
+
+  function guideLibraryHomeValid(examples) {
+    if (!examples) return false;
+    const label = examples.querySelector(':scope > span')?.textContent?.trim();
+    const legacy = [...examples.querySelectorAll('button[data-direct-guide]')];
+    return examples.dataset.v29GuideLibrary === 'true'
+      && label === 'Häufig genutzt'
+      && examples.querySelectorAll('.v29-frequent-guide').length === 6
+      && Boolean(examples.querySelector('.v29-all-guides-trigger'))
+      && legacy.length === 7
+      && legacy.every(button => button.hidden);
+  }
+
+  function syncGuideLibraryOwnership() {
+    libraryOwnershipScheduled = false;
+    const examples = document.querySelector('.examples');
+    if (!examples) return;
+    if (guideLibraryHomeValid(examples)) {
+      guideLibrarySnapshot = examples.innerHTML;
+      return;
+    }
+    if (!guideLibrarySnapshot) return;
+    if (window.__DOKOHILF_GUIDE_LIBRARY_V29__ !== true && examples.dataset.v29GuideLibrary !== 'true') return;
+    examples.dataset.v29GuideLibrary = 'true';
+    examples.innerHTML = guideLibrarySnapshot;
+  }
+
+  function scheduleGuideLibraryOwnership() {
+    if (libraryOwnershipScheduled) return;
+    libraryOwnershipScheduled = true;
+    requestAnimationFrame(syncGuideLibraryOwnership);
   }
 
   function ensureLegacyCloseContract(view) {
@@ -172,12 +225,21 @@
 
   function initialize() {
     ensureGuideLibraryAssets();
+    ensureGuideLibraryOwnershipStyle();
     schedule();
-    new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+    scheduleGuideLibraryOwnership();
+    new MutationObserver(() => {
+      schedule();
+      scheduleGuideLibraryOwnership();
+    }).observe(document.documentElement, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true });
   else initialize();
 
+  window.DokoHilfGuideLibraryOwnershipV29 = {
+    sync: syncGuideLibraryOwnership,
+    getState: () => ({ hasSnapshot: Boolean(guideLibrarySnapshot), snapshotLength: guideLibrarySnapshot.length }),
+  };
   window.__DOKOHILF_DIRECT_GUIDE_COPY_V29__ = true;
 })();
