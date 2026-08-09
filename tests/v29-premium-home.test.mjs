@@ -33,9 +33,10 @@ test('mobile header reserves the iPhone status-bar safe area', () => {
 });
 
 test('premium home refreshes the PWA shell on the current static Supertonic release', () => {
-  assert.match(sw, /HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-2'/);
-  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-static-supertonic-1/);
+  assert.match(sw, /HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3'/);
+  assert.match(sw, /dokohilf-shell-\$\{BUILD_ID\}-static-supertonic-2/);
   assert.match(sw, new RegExp(`guide-library-v29\\.js\\?v=${buildId}-library1`));
   assert.match(sw, new RegExp(`guide-library-v29\\.css\\?v=${buildId}-library1`));
+  assert.match(sw, /url\.pathname\.includes\('\/assets\/audio\/guides\/'\)[\s\S]*cache: 'no-store'/);
   assert.match(sw, /hardRefresh: true/);
 });
