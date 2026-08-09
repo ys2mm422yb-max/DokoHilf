@@ -93,7 +93,7 @@ test('GitHub-Build leitet die Gesamtzahl aus allen kontrollierten Sprachkataloge
   assert.match(workflowText, /Bedarfsmedikation/);
   assert.match(workflowText, /Wirksamkeitskontrolle/);
   assert.match(workflowText, /Maßnahmen ohne Zeitangabe/);
-  assert.match(navigationText, /feste grüne Leiste/);
+  assert.match(navigationText, /festen grünen Leiste/);
   assert.match(contextSpeechText, /Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole/);
   assert.match(build, /wav_count.*expected_count/s);
   assert.match(build, /summary_count.*expected_count/s);
@@ -117,7 +117,7 @@ test('Kontext-Hilfe spricht nur den statisch katalogisierten Basissatz', () => {
 });
 
 test('Orientierung erklärt grüne Hauptleiste und zweite Ebene', () => {
-  assert.match(orientation, /feste grüne Leiste/);
+  assert.match(orientation, /festen grünen Leiste/);
   assert.match(orientation, /Planung und Analyse/);
   assert.match(orientation, /Unterpunkte beziehungsweise Symbole/);
   assert.match(orientation, /Doku-Erweitert.*Vitalwerte/s);
