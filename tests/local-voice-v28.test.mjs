@@ -167,13 +167,17 @@ test('Versionsplakette ist oben verborgen und nur unten dezent verfügbar', () =
 });
 
 test('Build-ID, PWA und neue Assets sind konsistent', () => {
-  assert.equal(buildId, '20260809-33');
+  assert.equal(buildId, '20260809-34');
   assert.match(index, new RegExp(`dokohilf-build" content="${buildId}`));
   assert.match(index, new RegExp(`orientation-help-v29\\.js\\?v=${buildId}`));
   assert.match(index, new RegExp(`release-polish-v29\\.js\\?v=${buildId}`));
   assert.match(worker, new RegExp(`BUILD_ID = '${buildId}'`));
   assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2'/);
   assert.doesNotMatch(worker, /LOCAL_VOICE_MODEL_CACHE/);
+  assert.match(gate, /audioUrl\.searchParams\.set\('v', BUILD_ID\)/);
+  assert.match(gate, /const audioHref = audioUrl\.toString\(\)/);
+  assert.match(gate, /cache\?\.match\(audioHref\)/);
+  assert.match(gate, /fetchWithTimeout\(audioHref, AUDIO_TIMEOUT_MS, \{ cache: 'no-store' \}\)/);
   assert.match(applyDetail, /20260809-static-supertonic-orientation-ui-v29-3/);
   assert.match(applyDetail, /durchfuehrungs-workflows-v29\.js/);
 });
