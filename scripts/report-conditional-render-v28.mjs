@@ -37,7 +37,7 @@ for (const pattern of ['**/functions/v1/dokohilf-chat-router', '**/functions/v1/
 await page.route('**/assets/guide-audio-catalog.json*', async route => {
   await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ voice: 'Supertonic-F1', entries: [{ index: 33, text: spokenText, file: 'assets/audio/guides/033.wav' }] }) });
 });
-await page.route('**/assets/audio/guides/033.wav', async route => {
+await page.route(/\/assets\/audio\/guides\/033\.wav(?:\?.*)?$/, async route => {
   staticAudioRequests += 1;
   await route.fulfill({ status: 200, contentType: 'audio/wav', body: Buffer.alloc(128) });
 });
