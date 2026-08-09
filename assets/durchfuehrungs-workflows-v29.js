@@ -161,7 +161,7 @@
   function goLibrary() {
     if (window.DokoHilfGuideLibraryV29?.renderLibrary) {
       window.DokoHilfGuideLibraryV29.renderLibrary();
-      requestAnimationFrame(injectLibraryCards);
+      injectLibraryCards();
     }
   }
 
@@ -189,7 +189,7 @@
   function init() {
     injectLibraryCards();
     const target = document.getElementById('appShell') || document.body;
-    new MutationObserver(() => requestAnimationFrame(injectLibraryCards)).observe(target, { childList: true, subtree: true });
+    new MutationObserver(injectLibraryCards).observe(target, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
