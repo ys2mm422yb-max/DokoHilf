@@ -75,6 +75,16 @@ test('v29 redesign covers home, written chat and distinct voice states', async (
   assert.doesNotMatch(ui, /localStorage|sessionStorage|indexedDB/);
 });
 
+test('v29 mutation synchronization is idempotent and cannot feed its own observer', async () => {
+  const ui = await read('assets/v29-ui.js');
+  assert.match(ui, /if \(heading && heading\.textContent !== headingText\) heading\.textContent = headingText/);
+  assert.match(ui, /if \(copy && copy\.textContent !== copyText\) copy\.textContent = copyText/);
+  assert.match(ui, /if \(!button\.hidden\) button\.hidden = true/);
+  assert.match(ui, /if \(button\.hidden !== shouldHide\) button\.hidden = shouldHide/);
+  assert.match(ui, /if \(button\.textContent !== desiredText\) button\.textContent = desiredText/);
+  assert.match(ui, /new MutationObserver\(scheduleSync\).*attributeFilter: \['hidden', 'data-mode'\]/s);
+});
+
 test('service worker precaches the new UI and smart-help layer', async () => {
   const worker = await read('service-worker.js');
   for (const asset of ['assets/v29-ui.css', 'assets/v29-ui.js', 'assets/smart-help-v29.js', 'assets/direct-guide-copy-v29.js']) {
