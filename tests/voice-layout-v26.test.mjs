@@ -68,10 +68,11 @@ test('Voice-Layout bleibt erhalten, während v29 nur statische Supertonic-F1-Aus
 });
 
 test('Service Worker erzwingt die v29-Revision ohne die Voice-Balance zu verlieren', () => {
-  assert.match(worker, /HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-2'/);
+  assert.match(worker, /HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3'/);
   assert.match(worker, new RegExp(`voice-stage-balance-v27\\.css\\?v=${buildId}`));
   assert.match(worker, new RegExp(`direct-guides-chat-v27\\.css\\?v=${buildId}`));
   assert.match(worker, new RegExp(`local-voice-v28\\.js\\?v=${buildId}`));
+  assert.match(worker, /url\.pathname\.includes\('\/assets\/audio\/guides\/'\)[\s\S]*cache: 'no-store'/);
   assert.match(worker, /hotfixRevision: HOTFIX_REVISION/);
 });
 
