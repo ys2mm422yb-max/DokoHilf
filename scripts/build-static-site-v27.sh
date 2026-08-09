@@ -43,6 +43,7 @@ test -s "$SITE_DIR/assets/voice-release-catalog-v29.json"
 test -s "$SITE_DIR/assets/voice-durchfuehrung-catalog-v29.json"
 test -s "$SITE_DIR/assets/voice-ui-catalog-v29.json"
 test -s "$SITE_DIR/assets/voice-navigation-catalog-v29.json"
+test -s "$SITE_DIR/assets/voice-context-help-catalog-v29.json"
 test -s "$SITE_DIR/assets/premium-ui-v27.css"
 test -s "$SITE_DIR/assets/ux-v27.css"
 test -s "$SITE_DIR/assets/voice-stage-balance-v27.css"
@@ -175,42 +176,41 @@ if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
   test -s "$audio_dir/build-summary.json"
   expected_count="$(python -c "import json; print(len(json.load(open('$SITE_DIR/assets/guide-audio-catalog.json', encoding='utf-8'))['entries']))")"
   wav_count="$(find "$audio_dir" -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')"
-  if [[ "$expected_count" != 233 ]]; then
-    echo "Der statische Sprachkatalog muss in v29 exakt 233 Supertonic-F1-Sätze enthalten: $expected_count" >&2
+  summary_count="$(python -c "import json; print(json.load(open('$audio_dir/build-summary.json', encoding='utf-8'))['staticSpeechCount'])")"
+  if [[ "$wav_count" != "$expected_count" || "$summary_count" != "$expected_count" ]]; then
+    echo "Statischer Supertonic-Sprachbestand unvollständig: Katalog $expected_count, WAVs $wav_count, Summary $summary_count" >&2
     exit 1
   fi
-  if [[ "$wav_count" != "$expected_count" ]]; then
-    echo "Statischer Supertonic-Sprachbestand unvollständig: erwartet $expected_count, gefunden $wav_count" >&2
-    exit 1
-  fi
-  grep -q '"engine": "Supertonic 3"' "$audio_dir/build-summary.json"
-  grep -q '"voice": "F1"' "$audio_dir/build-summary.json"
-  grep -q '"baseGuideCount": 93' "$audio_dir/build-summary.json"
-  grep -q '"extraSpeechCount": 33' "$audio_dir/build-summary.json"
-  grep -q '"releaseSpeechCount": 49' "$audio_dir/build-summary.json"
-  grep -q '"workflowSpeechCount": 40' "$audio_dir/build-summary.json"
-  grep -q '"uiSpeechCount": 1' "$audio_dir/build-summary.json"
-  grep -q '"navigationSpeechCount": 17' "$audio_dir/build-summary.json"
-  grep -q '"staticSpeechCount": 233' "$audio_dir/build-summary.json"
-  grep -q '"count": 233' "$audio_dir/build-summary.json"
-  grep -q '"voice": "Supertonic-F1"' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q '"extraSpeechCount": 33' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q '"releaseSpeechCount": 49' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q '"workflowSpeechCount": 40' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q '"uiSpeechCount": 1' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q '"navigationSpeechCount": 17' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q '"staticSpeechCount": 233' "$SITE_DIR/assets/guide-audio-catalog.json"
+  python - "$SITE_DIR/assets/guide-audio-catalog.json" "$audio_dir/build-summary.json" <<'PY'
+import json, sys
+catalog = json.load(open(sys.argv[1], encoding='utf-8'))
+summary = json.load(open(sys.argv[2], encoding='utf-8'))
+expected_sources = {'base': 93, 'extra': 33, 'release': 49, 'workflow': 39, 'ui': 1, 'navigation': 17, 'context': 10}
+if catalog.get('voice') != 'Supertonic-F1':
+    raise SystemExit('Falsche statische Stimme im veröffentlichten Katalog.')
+if catalog.get('sourceCounts') != expected_sources:
+    raise SystemExit(f'Falsche Sprachquellen im Katalog: {catalog.get("sourceCounts")}')
+if summary.get('engine') != 'Supertonic 3' or summary.get('voice') != 'F1':
+    raise SystemExit('Falsche Supertonic-Build-Metadaten.')
+if summary.get('sourceCounts') != expected_sources:
+    raise SystemExit(f'Falsche Sprachquellen in der Summary: {summary.get("sourceCounts")}')
+if catalog.get('staticSpeechCount') != len(catalog.get('entries') or []):
+    raise SystemExit('Statischer Sprachkatalog hat eine inkonsistente Gesamtzahl.')
+if summary.get('staticSpeechCount') != catalog.get('staticSpeechCount') or summary.get('count') != catalog.get('staticSpeechCount'):
+    raise SystemExit('Build-Summary und Sprachkatalog haben unterschiedliche Gesamtzahlen.')
+PY
   grep -q 'Hey! Wobei brauchst du Hilfe?' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Ich habe die Antwort im Chat angezeigt.' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Bedarfsmedikation' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Wirksamkeitskontrolle' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Maßnahmen ohne Zeitangabe' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q 'Ganz oben in der festen grünen Leiste' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q 'Planung ist ein Hauptbereich ganz oben in der festen grünen Leiste' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q 'feste grüne Leiste' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q 'Planung' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q 'Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole' "$SITE_DIR/assets/guide-audio-catalog.json"
 fi
 
 if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
-  echo "DokoHilf $BUILD_ID als v29 mit 233 statischen Supertonic-F1-WAVs, grüner zweistufiger Orientierung, Durchführung-Workflows, kurzem Hey-Sprachstart und dezenter Versionsanzeige gebaut."
+  echo "DokoHilf $BUILD_ID als v29 mit vollständig katalogisierten statischen Supertonic-F1-WAVs, grüner zweistufiger Orientierung, Durchführung-Workflows, kurzem Hey-Sprachstart und dezenter Versionsanzeige gebaut."
 else
-  echo "DokoHilf $BUILD_ID als v29-QA-Site gebaut; der vollständige Releasebuild verlangt separat exakt 233 statische Supertonic-F1-WAVs."
+  echo "DokoHilf $BUILD_ID als v29-QA-Site gebaut; der vollständige Releasebuild verlangt für jeden zusammengeführten Sprachsatz eine statische Supertonic-F1-WAV-Datei."
 fi
