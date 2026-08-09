@@ -48,9 +48,10 @@ test('free-text help and the help button keep the same contextual router path', 
 });
 
 test('explicit location questions route to dedicated area-finding guides', async () => {
-  const [smart, migration] = await Promise.all([
+  const [smart, oldMigration, greenMigration] = await Promise.all([
     read('assets/smart-help-v29.js'),
     read('supabase/migrations/20260809112500_later_guides_stammdaten_v29.sql'),
+    read('supabase/migrations/20260809125500_green_navigation_hierarchy_v29.sql'),
   ]);
   assert.match(smart, /function isLocationQuestion\(text\)/);
   for (const slug of [
@@ -69,12 +70,13 @@ test('explicit location questions route to dedicated area-finding guides', async
     'stammdaten-finden',
   ]) {
     assert.match(smart, new RegExp(`return '${slug}'`));
-    assert.match(migration, new RegExp(`'${slug}'`));
+    assert.match(oldMigration, new RegExp(`'${slug}'`));
   }
-  assert.match(migration, /Beim geöffneten Bewohner findest du „Berichte“ in der festen Leiste/);
-  assert.match(migration, /„Doku-Erweitert“ in der festen Leiste/);
-  assert.match(migration, /Öffne oben den Reiter „Analyse“/);
-  assert.match(migration, /links die Bewohnerübersicht/);
+  assert.match(smart, /return 'planung-finden'/);
+  assert.match(greenMigration, /'planung-finden'/);
+  assert.match(greenMigration, /feste grüne Hauptleiste/);
+  assert.match(greenMigration, /Direkt darunter erscheinen/);
+  assert.match(greenMigration, /Der genaue Easy-Plan-Ablauf bleibt fachlich offen/);
   assert.doesNotMatch(smart, /return 'aufgaben-aktuelles'|return 'easyplan'|return 'berichtssuche'/);
 });
 
@@ -118,25 +120,31 @@ test('Bedarfsmedikation, Wirksamkeitskontrolle und Maßnahmen ohne Zeitangabe ro
   assert.match(speech, /Maßnahmen ohne Zeitangabe/);
 });
 
-test('nested orientation explains where parent areas are located', async () => {
-  const [orientation, extras] = await Promise.all([
+test('nested orientation explains green top bar and child symbols', async () => {
+  const [orientation, navigationSpeech, confirmed] = await Promise.all([
     read('assets/orientation-help-v29.js'),
-    read('assets/voice-extra-catalog-v28.json'),
+    read('assets/voice-navigation-catalog-v29.json'),
+    read('CONFIRMED_WORKFLOWS.md'),
   ]);
-  assert.match(orientation, /Doku-Erweitert ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Vitalwerte/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Visiten/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Medikation/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Formulare/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du An-\/Abwesenheiten/);
-  assert.match(orientation, /Innerhalb von Doku findest du den Durchführungsnachweis/);
-  assert.match(orientation, /Berichte ist ein Hauptbereich in der festen Leiste/);
-  assert.match(orientation, /Analyse findest du Was war los/);
+  assert.match(orientation, /feste grüne Leiste/);
+  assert.match(orientation, /Planung und Analyse/);
+  assert.match(orientation, /Unterpunkte beziehungsweise Symbole/);
+  assert.match(orientation, /Doku-Erweitert.*Vitalwerte/s);
+  assert.match(orientation, /Doku-Erweitert.*Visiten/s);
+  assert.match(orientation, /Doku-Erweitert.*Medikation/s);
+  assert.match(orientation, /Doku-Erweitert.*Formulare/s);
+  assert.match(orientation, /Doku-Erweitert.*An-\/Abwesenheiten/s);
+  assert.match(orientation, /Doku.*Durchführungsnachweis/s);
+  assert.match(orientation, /Analyse.*Was war los/s);
+  assert.match(orientation, /Planung ist ein Hauptbereich ganz oben/);
   assert.match(orientation, /Notfallblatt aufrufen/);
   assert.match(orientation, /Doppelklicke dort auf den gewünschten Bewohner/);
-  assert.doesNotMatch(orientation, /Easy-Plan|Berichtssuche|Aufgaben · Aktuelles/);
-  assert.match(extras, /Doku-Erweitert ist ein Hauptbereich in der festen Leiste/);
-  assert.match(extras, /Innerhalb von Doku-Erweitert findest du Vitalwerte/);
+  assert.match(orientation, /Der genaue Easy-Plan-Ablauf bleibt vorerst offen/);
+  assert.doesNotMatch(orientation, /Berichtssuche|Aufgaben · Aktuelles/);
+  assert.match(navigationSpeech, /Ganz oben in der festen grünen Leiste/);
+  assert.match(navigationSpeech, /Planung ist ein Hauptbereich/);
+  assert.match(confirmed, /feste grüne Hauptleiste/);
+  assert.match(confirmed, /direkt darunter die zu diesem Bereich gehörenden Symbole beziehungsweise Funktionen/);
 });
 
 test('active-guide help keeps the guide and approved area details', async () => {
