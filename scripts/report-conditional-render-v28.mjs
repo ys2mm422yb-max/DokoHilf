@@ -50,7 +50,15 @@ try {
   await page.goto(BASE_URL, { waitUntil: 'networkidle' });
   assert((await page.locator('#buildPill').innerText()).includes('v29'), 'Test läuft nicht auf v29.');
 
-  await page.locator('[data-direct-guide="bericht"]').click();
+  await page.waitForFunction(() => {
+    const examples = document.querySelector('.examples');
+    return window.__DOKOHILF_GUIDE_LIBRARY_V29__ === true
+      && examples?.dataset.v29GuideLibrary === 'true'
+      && examples.querySelector(':scope > span')?.textContent?.trim() === 'Häufig genutzt';
+  });
+  const reportCard = page.locator('.v29-frequent-guide[data-v29-open-guide="bericht-neu"]');
+  await reportCard.waitFor({ state: 'visible' });
+  await reportCard.click();
   const view = page.locator('#directGuideView');
   await view.waitFor({ state: 'visible' });
   const condition = view.locator('.report-protocol-condition');
