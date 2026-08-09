@@ -42,6 +42,7 @@ test -s "$SITE_DIR/assets/voice-extra-catalog-v28.json"
 test -s "$SITE_DIR/assets/voice-release-catalog-v29.json"
 test -s "$SITE_DIR/assets/voice-durchfuehrung-catalog-v29.json"
 test -s "$SITE_DIR/assets/voice-ui-catalog-v29.json"
+test -s "$SITE_DIR/assets/voice-navigation-catalog-v29.json"
 test -s "$SITE_DIR/assets/premium-ui-v27.css"
 test -s "$SITE_DIR/assets/ux-v27.css"
 test -s "$SITE_DIR/assets/voice-stage-balance-v27.css"
@@ -124,7 +125,8 @@ grep -q 'Ich habe die Antwort im Chat angezeigt' "$SITE_DIR/assets/local-voice-g
 grep -q '__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q 'spokenText' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_ORIENTATION_HELP_V29__' "$SITE_DIR/assets/orientation-help-v29.js"
-grep -q 'Doku-Erweitert ist ein Hauptbereich in der festen Leiste' "$SITE_DIR/assets/orientation-help-v29.js"
+grep -q 'feste grüne Leiste' "$SITE_DIR/assets/orientation-help-v29.js"
+grep -q 'Planung' "$SITE_DIR/assets/orientation-help-v29.js"
 grep -q 'Bedarfsmedikation' "$SITE_DIR/assets/orientation-help-v29.js"
 grep -q 'Maßnahmen ohne Zeitangabe' "$SITE_DIR/assets/orientation-help-v29.js"
 grep -q '__DOKOHILF_RELEASE_POLISH_V29__' "$SITE_DIR/assets/release-polish-v29.js"
@@ -173,8 +175,8 @@ if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
   test -s "$audio_dir/build-summary.json"
   expected_count="$(python -c "import json; print(len(json.load(open('$SITE_DIR/assets/guide-audio-catalog.json', encoding='utf-8'))['entries']))")"
   wav_count="$(find "$audio_dir" -maxdepth 1 -type f -name '*.wav' | wc -l | tr -d ' ')"
-  if [[ "$expected_count" != 216 ]]; then
-    echo "Der statische Sprachkatalog muss in v29 exakt 216 Supertonic-F1-Sätze enthalten: $expected_count" >&2
+  if [[ "$expected_count" != 233 ]]; then
+    echo "Der statische Sprachkatalog muss in v29 exakt 233 Supertonic-F1-Sätze enthalten: $expected_count" >&2
     exit 1
   fi
   if [[ "$wav_count" != "$expected_count" ]]; then
@@ -188,27 +190,27 @@ if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
   grep -q '"releaseSpeechCount": 49' "$audio_dir/build-summary.json"
   grep -q '"workflowSpeechCount": 40' "$audio_dir/build-summary.json"
   grep -q '"uiSpeechCount": 1' "$audio_dir/build-summary.json"
-  grep -q '"staticSpeechCount": 216' "$audio_dir/build-summary.json"
-  grep -q '"count": 216' "$audio_dir/build-summary.json"
+  grep -q '"navigationSpeechCount": 17' "$audio_dir/build-summary.json"
+  grep -q '"staticSpeechCount": 233' "$audio_dir/build-summary.json"
+  grep -q '"count": 233' "$audio_dir/build-summary.json"
   grep -q '"voice": "Supertonic-F1"' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q '"extraSpeechCount": 33' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q '"releaseSpeechCount": 49' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q '"workflowSpeechCount": 40' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q '"uiSpeechCount": 1' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q '"staticSpeechCount": 216' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q '"navigationSpeechCount": 17' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q '"staticSpeechCount": 233' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Hey! Wobei brauchst du Hilfe?' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Ich habe die Antwort im Chat angezeigt.' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Bedarfsmedikation' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Wirksamkeitskontrolle' "$SITE_DIR/assets/guide-audio-catalog.json"
   grep -q 'Maßnahmen ohne Zeitangabe' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q 'Doku-Erweitert ist ein Hauptbereich in der festen Leiste' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Innerhalb von Doku-Erweitert findest du Vitalwerte.' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“' "$SITE_DIR/assets/guide-audio-catalog.json"
-  grep -q 'Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q 'Ganz oben in der festen grünen Leiste' "$SITE_DIR/assets/guide-audio-catalog.json"
+  grep -q 'Planung ist ein Hauptbereich ganz oben in der festen grünen Leiste' "$SITE_DIR/assets/guide-audio-catalog.json"
 fi
 
 if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
-  echo "DokoHilf $BUILD_ID als v29 mit 216 statischen Supertonic-F1-WAVs, verschachtelter Orientierungshilfe, Durchführung-Workflows, kurzem Hey-Sprachstart und dezenter Versionsanzeige gebaut."
+  echo "DokoHilf $BUILD_ID als v29 mit 233 statischen Supertonic-F1-WAVs, grüner zweistufiger Orientierung, Durchführung-Workflows, kurzem Hey-Sprachstart und dezenter Versionsanzeige gebaut."
 else
-  echo "DokoHilf $BUILD_ID als v29-QA-Site gebaut; der vollständige Releasebuild verlangt separat exakt 216 statische Supertonic-F1-WAVs."
+  echo "DokoHilf $BUILD_ID als v29-QA-Site gebaut; der vollständige Releasebuild verlangt separat exakt 233 statische Supertonic-F1-WAVs."
 fi
