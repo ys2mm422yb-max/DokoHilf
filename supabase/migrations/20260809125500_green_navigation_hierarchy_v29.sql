@@ -1,0 +1,143 @@
+-- v29: product-confirmed navigation hierarchy.
+-- Doku, Doku-Erweitert, Planung and Analyse are fixed in the green top bar.
+-- After selecting a top-level area, its related icons/functions appear directly below.
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste. Dort findest du „Doku-Erweitert“. Öffne „Doku-Erweitert“.","check":"Ist „Doku-Erweitert“ geöffnet?","stuck":"„Doku-Erweitert“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku“, „Planung“ und „Analyse“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'Feste grüne Hauptleiste und zweistufige Navigation ergänzt.'
+where slug = 'doku-erweitert-finden' and status = 'approved';
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste. Dort findest du „Doku“. Öffne „Doku“.","check":"Ist „Doku“ geöffnet?","stuck":"„Doku“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku-Erweitert“, „Planung“ und „Analyse“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'Feste grüne Hauptleiste und zweistufige Navigation ergänzt.'
+where slug = 'doku-finden' and status = 'approved';
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste und öffne „Analyse“. Direkt darunter erscheinen die zu „Analyse“ gehörenden Funktionen.","check":"Ist „Analyse“ geöffnet?","stuck":"„Analyse“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku“, „Doku-Erweitert“ und „Planung“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'Analyse als fester Hauptbereich der grünen Leiste präzisiert.'
+where slug = 'analyse-finden' and status = 'approved';
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku“. Direkt darunter erscheinen die zu „Doku“ gehörenden Funktionen. Wähle dort „Durchführungsnachweis“.","check":"Ist der Durchführungsnachweis geöffnet?","stuck":"Zuerst ganz oben in der grünen Hauptleiste „Doku“ öffnen. Direkt darunter findest du „Durchführungsnachweis“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'Durchführungsnachweis mit grüner Hauptleiste und zweiter Ebene erklärt.'
+where slug = 'durchfuehrungsnachweis-finden' and status = 'approved';
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Vitalwerte“.","check":"Ist der Bereich „Vitalwerte“ geöffnet?","stuck":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du das Symbol beziehungsweise den Bereich „Vitalwerte“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'Vitalwerte mit grüner Hauptleiste und zweiter Symbol-Ebene erklärt.'
+where slug = 'vitalwerte-finden' and status = 'approved';
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Visiten“.","check":"Ist der Bereich „Visiten“ geöffnet?","stuck":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Visiten“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'Visiten mit grüner Hauptleiste und zweiter Symbol-Ebene erklärt.'
+where slug = 'visiten-finden' and status = 'approved';
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Medikation“.","check":"Ist die Medikamentenübersicht geöffnet?","stuck":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Medikation“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'Medikation mit grüner Hauptleiste und zweiter Symbol-Ebene erklärt.'
+where slug = 'medikation-finden' and status = 'approved';
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Formulare“.","check":"Ist der Bereich „Formulare“ geöffnet?","stuck":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Formulare“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'Formulare mit grüner Hauptleiste und zweiter Symbol-Ebene erklärt.'
+where slug = 'formulare-finden' and status = 'approved';
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „An-/Abwesenheiten“.","check":"Ist der Bereich „An-/Abwesenheiten“ geöffnet?","stuck":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „An-/Abwesenheiten“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'An-/Abwesenheiten mit grüner Hauptleiste und zweiter Symbol-Ebene erklärt.'
+where slug = 'anwesenheiten-finden' and status = 'approved';
+
+update public.dokohilf_guides
+set steps = '[{"text":"Schau ganz oben in die feste grüne Hauptleiste und öffne „Analyse“. Direkt darunter erscheinen die zu „Analyse“ gehörenden Funktionen. Wähle dort „Was war los?“, um die Übergabeansicht zu öffnen.","check":"Ist „Was war los?“ geöffnet?","stuck":"Zuerst ganz oben in der grünen Hauptleiste „Analyse“ öffnen. Direkt darunter findest du „Was war los?“."}]'::jsonb,
+    version = version + 1,
+    reviewed_at = now(),
+    reviewed_role = 'product-confirmed',
+    updated_at = now(),
+    approved_at = now(),
+    review_due_at = now() + interval '180 days',
+    change_note = 'Übergabe mit grüner Hauptleiste und zweiter Ebene erklärt.'
+where slug = 'uebergabe-finden' and status = 'approved';
+
+insert into public.dokohilf_guides (
+  id, slug, title, aliases, steps, troubleshooting, status, version,
+  reviewed_at, reviewed_role, created_at, updated_at,
+  review_interval_days, review_due_at, approved_at, change_note
+)
+values (
+  gen_random_uuid(),
+  'planung-finden',
+  'Planung finden',
+  array['planung finden','wo ist planung','wo finde ich planung','ich finde planung nicht','wie komme ich zu planung'],
+  '[{"text":"„Planung“ findest du ganz oben in der festen grünen Hauptleiste. Öffne dort „Planung“.","check":"Ist „Planung“ geöffnet?","stuck":"Suche ganz oben in der festen grünen Hauptleiste nach „Planung“. Dort befinden sich auch „Doku“, „Doku-Erweitert“ und „Analyse“."}]'::jsonb,
+  '{"abgrenzung":"Der Hauptbereich Planung ist bestätigt. Der genaue Easy-Plan-Ablauf bleibt fachlich offen und wird nicht erfunden."}'::jsonb,
+  'approved', 1, now(), 'product-confirmed', now(), now(), 180, now() + interval '180 days', now(),
+  'Planung als fester Hauptbereich der grünen Leiste bestätigt.'
+)
+on conflict (slug) do update set
+  title = excluded.title,
+  aliases = excluded.aliases,
+  steps = excluded.steps,
+  troubleshooting = excluded.troubleshooting,
+  status = excluded.status,
+  version = public.dokohilf_guides.version + 1,
+  reviewed_at = excluded.reviewed_at,
+  reviewed_role = excluded.reviewed_role,
+  updated_at = excluded.updated_at,
+  review_interval_days = excluded.review_interval_days,
+  review_due_at = excluded.review_due_at,
+  approved_at = excluded.approved_at,
+  change_note = excluded.change_note;
