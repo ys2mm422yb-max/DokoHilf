@@ -7,17 +7,17 @@
       subtitle: 'Bedarfsgabe und spätere Wirksamkeitskontrolle',
       icon: 'medication',
       warning: 'Dokumentiere nur die tatsächlich verwendete Bedarfsmenge. Die Verordnung selbst wird in diesem Ablauf nicht verändert.',
-      note: 'Nach der Bedarfsmedikationsgabe wird automatisch eine Wirksamkeitskontrolle erzeugt. Sie wird nach der dafür vorgesehenen Zeit im Durchführungsnachweis bearbeitet.',
+      note: 'Nach der Bedarfsmedikationsgabe wird die Wirksamkeitskontrolle automatisch vom System angelegt. Du erstellst sie nicht selbst und bearbeitest sie erst zum vorgesehenen Zeitpunkt.',
       steps: [
-        'Beim gewünschten Bewohner „Doku“ in der festen Leiste öffnen.',
-        'Den „Durchführungsnachweis“ öffnen.',
+        'Beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“ öffnen.',
+        'Direkt darunter „Durchführungsnachweis“ öffnen.',
         'Im Durchführungsnachweis „Bedarfsmedikation“ suchen und auf den kleinen Pfeil links daneben klicken.',
         'Das gewünschte Bedarfsmedikament auswählen und rechts im kleinen Kästchen den Haken setzen.',
         'Im Pop-up die Uhrzeit prüfen und nur auf den tatsächlichen Zeitpunkt der Gabe korrigieren beziehungsweise ergänzen.',
         'Unten im Pop-up kurz den Anlass beziehungsweise warum die Bedarfsmedikation gegeben wurde dokumentieren.',
         'Falls tatsächlich eine geringere Bedarfsmenge verwendet wurde, rechts im Pop-up die tatsächlich verwendete Menge dokumentieren. Die Verordnung selbst nicht verändern.',
         'Das Pop-up unten mit „OK“ bestätigen.',
-        'Nach der dafür vorgesehenen Zeit im Durchführungsnachweis die automatisch erzeugte Wirksamkeitskontrolle öffnen.',
+        'Die zugehörige Wirksamkeitskontrolle wird automatisch angelegt. Erst wenn sie zum vorgesehenen Zeitpunkt fällig ist, im Durchführungsnachweis öffnen.',
         'Die Wirksamkeitskontrolle abhaken und dokumentieren, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.',
         'Die Wirksamkeitskontrolle unten mit „OK“ bestätigen.',
       ],
@@ -26,14 +26,14 @@
       title: 'Wirksamkeitskontrolle dokumentieren',
       subtitle: 'Wirkung einer Bedarfsmedikation festhalten',
       icon: 'effect',
-      note: 'Die Wirksamkeitskontrolle wird nach einer Bedarfsmedikationsgabe automatisch erzeugt und erst nach der dafür vorgesehenen Zeit im Durchführungsnachweis bearbeitet.',
+      note: 'Die Wirksamkeitskontrolle wird automatisch nach einer Bedarfsmedikationsgabe angelegt. DokoHilf nennt keine erfundene Wartezeit.',
       steps: [
-        'Beim gewünschten Bewohner „Doku“ in der festen Leiste öffnen.',
-        'Den „Durchführungsnachweis“ öffnen.',
-        'Nach der dafür vorgesehenen Zeit die automatisch erzeugte Wirksamkeitskontrolle zur zuvor dokumentierten Bedarfsmedikation suchen.',
+        'Warten, bis die automatisch angelegte Wirksamkeitskontrolle zum vorgesehenen Zeitpunkt fällig ist.',
+        'Beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“ öffnen.',
+        'Direkt darunter „Durchführungsnachweis“ öffnen und die passende Wirksamkeitskontrolle suchen.',
         'Die Wirksamkeitskontrolle öffnen und abhaken.',
         'Dokumentieren, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.',
-        'Unten mit „OK“ bestätigen.',
+        'Das Pop-up unten mit „OK“ bestätigen.',
       ],
     },
     'massnahmen-ohne-zeitangabe': {
@@ -42,8 +42,8 @@
       icon: 'measure',
       note: 'Die zusätzliche Zeitangabe oben rechts im Pop-up ist optional.',
       steps: [
-        'Beim gewünschten Bewohner „Doku“ in der festen Leiste öffnen.',
-        'Den „Durchführungsnachweis“ öffnen.',
+        'Beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“ öffnen.',
+        'Direkt darunter „Durchführungsnachweis“ öffnen.',
         'Im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ öffnen.',
         'Die gewünschte Maßnahme auswählen, zum Beispiel „Klienten-Team Sitzung“ oder „Krise“.',
         'Im Pop-up Datum und Uhrzeit prüfen und nur ändern, wenn der tatsächliche Dokumentationszeitpunkt abweicht.',
@@ -148,7 +148,12 @@
   function injectLibraryCards() {
     const grid = document.querySelector('#directGuideView .v29-library-grid');
     if (!grid || grid.querySelector('[data-v29-open-durchfuehrung-guide]')) return;
-    for (const slug of Object.keys(META)) grid.append(makeCard(slug));
+    const firstLater = grid.querySelector('.v29-library-card.is-later');
+    for (const slug of Object.keys(META)) {
+      const card = makeCard(slug);
+      if (firstLater) grid.insertBefore(card, firstLater);
+      else grid.append(card);
+    }
     const active = grid.querySelectorAll('.v29-library-card:not(.is-later)').length;
     document.getElementById('directGuideView')?.setAttribute('data-v29-library-guide-count', String(active));
   }
