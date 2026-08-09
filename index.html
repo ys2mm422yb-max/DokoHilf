@@ -93,7 +93,13 @@
         </div>
         <div class="examples" aria-label="Häufige Abläufe" data-v27-ready="direct-guides-cross-platform">
           <span>Häufige Abläufe · direkt öffnen</span>
-          <button type="button" data-direct-guide="bericht">Bericht anlegen</button><button type="button" data-direct-guide="visite">Visite anlegen</button><button type="button" data-direct-guide="vitalwerte">Vitalwerte erfassen</button><button type="button" data-direct-guide="anwesenheit">An-/Abwesenheit</button><button type="button" data-direct-guide="medikation">Medikation ansehen</button><button type="button" data-direct-guide="formular">Formular anlegen</button><button type="button" data-direct-guide="uebergabe">Übergabe anzeigen</button>
+          <button type="button" data-direct-guide="bericht">Bericht anlegen</button>
+          <button type="button" data-direct-guide="visite">Visite anlegen</button>
+          <button type="button" data-direct-guide="vitalwerte">Vitalwerte erfassen</button>
+          <button type="button" data-direct-guide="anwesenheit">An-/Abwesenheit</button>
+          <button type="button" data-direct-guide="medikation">Medikation ansehen</button>
+          <button type="button" data-direct-guide="formular">Formular anlegen</button>
+          <button type="button" data-direct-guide="uebergabe">Übergabe anzeigen</button>
         </div>
         <div class="safety-note" role="note"><strong>Datenschutz aktiv.</strong><span>Bitte keine persönlichen Angaben eingeben.</span></div>
       </section>
@@ -108,8 +114,29 @@
     <footer class="composer-wrap" id="composerWrap" hidden><form class="composer" id="chatForm"><label class="sr-only" for="chatInput">Nachricht an DokoHilf</label><textarea id="chatInput" rows="1" maxlength="350" placeholder="Bedienfrage schreiben …" autocomplete="off" autocapitalize="sentences"></textarea><button class="small-mic" id="smallMicButton" type="button" aria-label="Frage diktieren"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="4" width="10" height="15" rx="5"/><path d="M7 15v1c0 5 4 9 9 9s9-4 9-9v-1M16 25v4"/></svg></button><button class="send-button" type="submit">Senden</button></form><p>Gespräch und Audio werden nicht dauerhaft gespeichert.</p></footer>
     <div class="update-toast" id="updateToast" hidden aria-live="polite">DokoHilf wurde automatisch aktualisiert.</div>
   </div>
-  <script src="assets/update-manager.js?v=20260809-30"></script><script src="assets/mobile-audio-fix.js?v=20260809-30"></script><script src="assets/routing-fix.js?v=20260809-30"></script><script src="assets/conversation-intelligence.js?v=20260809-30"></script><script src="assets/clarification-ui.js?v=20260809-30"></script><script src="assets/smart-help-v29.js?v=20260809-30"></script><script src="assets/guide-progress.js?v=20260809-30"></script><script src="assets/voice-focus-mode.js?v=20260809-30"></script><script src="assets/local-voice-v28.js?v=20260809-30"></script><script src="assets/experience-v27.js?v=20260809-30"></script><script src="assets/ux-v27.js?v=20260809-30"></script><script src="assets/v29-ui.js?v=20260809-30"></script><script src="assets/mobile-polish-v29.js?v=20260809-30-cardaxis1"></script><script src="assets/local-voice-gate-v28.js?v=20260809-30"></script>
-  <script src="assets/direct-guides-v27.js?v=20260809-30"></script><script src="assets/direct-guide-copy-v29.js?v=20260809-30"></script><script src="assets/guide-library-v29.js?v=20260809-30-library1" data-dokohilf-guide-library-v29></script><script src="assets/app.js?v=20260809-30" defer></script>
-  <script>document.getElementById('buildPill')?.addEventListener('click', () => { if (window.DokoHilfUpdate?.checkForUpdate) window.DokoHilfUpdate.checkForUpdate('manual'); else window.DokoHilfHardRefresh?.('20260809-30'); });</script>
+  <script src="assets/update-manager.js?v=20260809-30"></script>
+  <script src="assets/mobile-audio-fix.js?v=20260809-30"></script>
+  <script src="assets/routing-fix.js?v=20260809-30"></script>
+  <script src="assets/conversation-intelligence.js?v=20260809-30"></script>
+  <script src="assets/clarification-ui.js?v=20260809-30"></script>
+  <script src="assets/smart-help-v29.js?v=20260809-30"></script>
+  <script src="assets/guide-progress.js?v=20260809-30"></script>
+  <script src="assets/voice-focus-mode.js?v=20260809-30"></script>
+  <script src="assets/local-voice-v28.js?v=20260809-30"></script>
+  <script src="assets/experience-v27.js?v=20260809-30"></script>
+  <script src="assets/ux-v27.js?v=20260809-30"></script>
+  <script src="assets/v29-ui.js?v=20260809-30"></script>
+  <script src="assets/mobile-polish-v29.js?v=20260809-30-cardaxis1"></script>
+  <script src="assets/local-voice-gate-v28.js?v=20260809-30"></script>
+  <script src="assets/direct-guides-v27.js?v=20260809-30"></script>
+  <script src="assets/direct-guide-copy-v29.js?v=20260809-30"></script>
+  <script src="assets/guide-library-v29.js?v=20260809-30-library1" data-dokohilf-guide-library-v29></script>
+  <script src="assets/app.js?v=20260809-30" defer></script>
+  <script>
+    document.getElementById('buildPill')?.addEventListener('click', () => {
+      if (window.DokoHilfUpdate?.checkForUpdate) window.DokoHilfUpdate.checkForUpdate('manual');
+      else window.DokoHilfHardRefresh?.('20260809-30');
+    });
+  </script>
 </body>
 </html>
