@@ -7,14 +7,16 @@ from pathlib import Path
 BASE_GUIDE_COUNT = 93
 EXTRA_SPEECH_COUNT = 33
 RELEASE_SPEECH_COUNT = 49
-STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COUNT
+WORKFLOW_SPEECH_COUNT = 40
+STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT + EXTRA_SPEECH_COUNT + RELEASE_SPEECH_COUNT + WORKFLOW_SPEECH_COUNT
+
+LONG_VOICE_GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.'
+SHORT_VOICE_GREETING = 'Hey! Wobei brauchst du Hilfe?'
 
 
 def clean_catalog_text(value: str) -> str:
     text = str(value or '').replace('**', ' ').strip()
     rewrites = {
-        'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.':
-            'Hey! Wobei brauchst du Hilfe?',
         'Fülle das Formular nach der bei euch gültigen fachlichen Vorgabe aus. DokoHilf erfindet für noch nicht bestätigte Formularfelder keine Angaben.':
             'Fülle das geöffnete Formular wie gewohnt aus.',
         'Die Auswahl des Formulars ist bestätigt. Für nicht bestätigte Felder oder fachliche Inhalte wird kein Klickweg erfunden.':
@@ -60,6 +62,8 @@ def normalize_key(value: str) -> str:
 
 def supertonic_text(value: str) -> str:
     text = clean_catalog_text(value)
+    if text == LONG_VOICE_GREETING:
+        text = SHORT_VOICE_GREETING
     replacements = {
         '„': '', '“': '', '”': '', '«': '', '»': '', '‹': '', '›': '', '"': '',
         '‚': '', '‘': '', '’': '', '´': '', '`': '',
@@ -95,6 +99,7 @@ def main() -> None:
     parser.add_argument('--catalog', default='assets/guide-audio-catalog.json')
     parser.add_argument('--extra-catalog', default='assets/voice-extra-catalog-v28.json')
     parser.add_argument('--release-catalog', default='assets/voice-release-catalog-v29.json')
+    parser.add_argument('--workflow-catalog', default='assets/voice-durchfuehrung-catalog-v29.json')
     parser.add_argument('--output-root', default='assets/audio/guides')
     parser.add_argument('--voice', default='F1')
     parser.add_argument('--steps', type=int, default=8)
@@ -107,23 +112,28 @@ def main() -> None:
     base_catalog = json.loads(catalog_path.read_text(encoding='utf-8'))
     extra_catalog = json.loads(Path(args.extra_catalog).read_text(encoding='utf-8'))
     release_catalog = json.loads(Path(args.release_catalog).read_text(encoding='utf-8'))
+    workflow_catalog = json.loads(Path(args.workflow_catalog).read_text(encoding='utf-8'))
     base_entries = base_catalog.get('entries') or []
     extra_entries = extra_catalog.get('entries') or []
     release_entries = release_catalog.get('entries') or []
+    workflow_entries = workflow_catalog.get('entries') or []
     if len(base_entries) != BASE_GUIDE_COUNT:
         raise SystemExit(f'expected {BASE_GUIDE_COUNT} base guide sentences, found {len(base_entries)}')
     if len(extra_entries) != EXTRA_SPEECH_COUNT:
         raise SystemExit(f'expected {EXTRA_SPEECH_COUNT} fixed dialog sentences, found {len(extra_entries)}')
     if len(release_entries) != RELEASE_SPEECH_COUNT:
         raise SystemExit(f'expected {RELEASE_SPEECH_COUNT} v29 release sentences, found {len(release_entries)}')
-    entries = merged_entries(base_catalog, extra_catalog, release_catalog)
+    if len(workflow_entries) != WORKFLOW_SPEECH_COUNT:
+        raise SystemExit(f'expected {WORKFLOW_SPEECH_COUNT} Durchführung workflow sentences, found {len(workflow_entries)}')
+    entries = merged_entries(base_catalog, extra_catalog, release_catalog, workflow_catalog)
     if len(entries) != STATIC_SPEECH_COUNT:
         raise SystemExit(f'expected {STATIC_SPEECH_COUNT} unique static speech sentences, found {len(entries)}')
     if args.validate_only:
         print(
             f'Validated {BASE_GUIDE_COUNT} base guide sentences + '
             f'{EXTRA_SPEECH_COUNT} fixed dialog sentences + '
-            f'{RELEASE_SPEECH_COUNT} v29 guide/help sentences = {STATIC_SPEECH_COUNT} static sentences'
+            f'{RELEASE_SPEECH_COUNT} v29 guide/help sentences + '
+            f'{WORKFLOW_SPEECH_COUNT} Durchführung workflow sentences = {STATIC_SPEECH_COUNT} static sentences'
         )
         return
     if args.limit > 0:
@@ -178,6 +188,7 @@ def main() -> None:
         'baseGuideCount': BASE_GUIDE_COUNT,
         'extraSpeechCount': EXTRA_SPEECH_COUNT,
         'releaseSpeechCount': RELEASE_SPEECH_COUNT,
+        'workflowSpeechCount': WORKFLOW_SPEECH_COUNT,
         'staticSpeechCount': len(published_entries),
         'entries': published_entries,
     }
@@ -193,6 +204,7 @@ def main() -> None:
             'baseGuideCount': BASE_GUIDE_COUNT,
             'extraSpeechCount': EXTRA_SPEECH_COUNT,
             'releaseSpeechCount': RELEASE_SPEECH_COUNT,
+            'workflowSpeechCount': WORKFLOW_SPEECH_COUNT,
             'staticSpeechCount': len(generated),
             'count': len(generated),
             'entries': generated,
