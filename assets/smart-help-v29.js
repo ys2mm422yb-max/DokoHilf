@@ -58,23 +58,40 @@
       || n.split(' ').length <= 5;
   }
 
+  function isLocationQuestion(text) {
+    const n = normalize(text);
+    return /\b(wo ist|wo sind|wo finde|wie finde|wie komme|wo muss|wo soll)\b/.test(n)
+      || /\b(finde|sehe|erkenne|entdecke)\b.*\b(nicht|nirgends)\b/.test(n)
+      || /\b(kann|konnte)\b.*\b(nicht finden|nicht sehen|nicht offnen)\b/.test(n);
+  }
+
   function inferNavigationGuide(text) {
     const n = normalize(text);
     if (!hasNavigationIntent(n) || hasEntryAction(n)) return '';
 
-    if (/\b(berichtssuche|berichte auswerten|berichte suchen|nach berichten suchen|abfrage)\b/.test(n)) return 'berichtssuche';
-    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-einzelwert';
-    if (/\b(bericht|berichte|berichtseintrag)\b/.test(n)) return 'bericht-neu';
-    if (/\b(visite|visiten|sprechstunde)\b/.test(n)) return 'visiten-oeffnen';
-    if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n)) return 'medikation-ansehen';
-    if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)) return 'formulare-anlegen';
-    if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n)) return 'anwesenheit';
-    if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabeformular';
-    if (/\b(notfallblatt|notfallbogen)\b/.test(n)) return 'notfallblatt';
-    if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis|durchfuhrung|durchfuehrung)\b/.test(n)) return 'durchfuehrungsnachweis-oeffnen';
-    if (/\b(aufgaben|aktuelles)\b/.test(n)) return 'aufgaben-aktuelles';
-    if (/\b(easy plan|easy-plan|easyplan)\b/.test(n)) return 'easyplan';
-    if (/\b(stammdaten)\b/.test(n)) return 'stammdaten';
+    // Unfinished areas intentionally stay out of navigation routing:
+    // Berichtssuche, Aufgaben · Aktuelles and Easy-Plan come later.
+    if (/\b(berichtssuche|berichte auswerten|berichte suchen|nach berichten suchen|abfrage)\b/.test(n)) return '';
+    if (/\b(aufgaben|aktuelles|easy plan|easy-plan|easyplan)\b/.test(n)) return '';
+
+    // Existing intent contract: a short request such as "ich suche den Blutdruck"
+    // starts the single-value workflow. Explicit "where is it?" wording uses
+    // the dedicated area-finding guide instead.
+    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(n) && !isLocationQuestion(n)) return 'vitalwerte-einzelwert';
+
+    if (/\b(doku erweitert|doku-erweitert)\b/.test(n)) return 'doku-erweitert-finden';
+    if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(n)) return 'durchfuehrungsnachweis-finden';
+    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-finden';
+    if (/\b(bericht|berichte|berichtseintrag)\b/.test(n)) return 'berichte-finden';
+    if (/\b(visite|visiten|sprechstunde)\b/.test(n)) return 'visiten-finden';
+    if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n)) return 'medikation-finden';
+    if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)) return 'formulare-finden';
+    if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n)) return 'anwesenheiten-finden';
+    if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabe-finden';
+    if (/\b(notfallblatt|notfallbogen)\b/.test(n)) return 'notfallblatt-finden';
+    if (/\b(stammdaten|bewohnerubersicht|bewohneruebersicht)\b/.test(n)) return 'stammdaten-finden';
+    if (/\banalyse\b/.test(n)) return 'analyse-finden';
+    if (/\bdoku\b/.test(n)) return 'doku-finden';
     return '';
   }
 
@@ -109,6 +126,7 @@
   window.DokoHilfSmartHelpV29 = {
     normalize,
     helpLike,
+    isLocationQuestion,
     inferNavigationGuide,
     preparedBody,
   };

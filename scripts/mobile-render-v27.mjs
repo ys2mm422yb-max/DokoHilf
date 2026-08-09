@@ -251,14 +251,24 @@ try {
 
   await page.locator('.v29-all-guides-trigger').click();
   await page.locator('.v29-library-head h1').waitFor({ state: 'visible' });
-  const fullLibrary = await page.evaluate(() => ({
-    title: document.querySelector('.v29-library-head h1')?.textContent?.trim(),
-    guideCount: document.querySelectorAll('.v29-library-card[data-v29-open-guide]').length,
-    laterText: document.querySelector('.v29-library-card.is-later')?.textContent?.replace(/\s+/g, ' ').trim() || '',
-  }));
+  const fullLibrary = await page.evaluate(() => {
+    const active = [...document.querySelectorAll('.v29-library-card[data-v29-open-guide]')];
+    const later = [...document.querySelectorAll('.v29-library-card.is-later')];
+    return {
+      title: document.querySelector('.v29-library-head h1')?.textContent?.trim(),
+      guideCount: active.length,
+      laterCount: later.length,
+      laterTexts: later.map(card => card.textContent?.replace(/\s+/g, ' ').trim() || ''),
+      activeIconVariants: new Set(active.map(card => card.querySelector('svg')?.innerHTML || '')).size,
+    };
+  });
   assert(fullLibrary.title === 'Alle Anleitungen', `Bibliothekstitel falsch: ${fullLibrary.title}`);
-  assert(fullLibrary.guideCount >= 17, `Nicht alle fertigen Guides sind in der Bibliothek sichtbar: ${fullLibrary.guideCount}`);
-  assert(fullLibrary.laterText.includes('Berichtssuche') && fullLibrary.laterText.includes('kommt später'), 'Berichtssuche ist nicht korrekt als später markiert.');
+  assert(fullLibrary.guideCount === 15, `Es müssen 15 fertige Guides anklickbar sein: ${fullLibrary.guideCount}`);
+  assert(fullLibrary.laterCount === 3, `Es müssen genau drei Später-Karten sichtbar sein: ${fullLibrary.laterCount}`);
+  for (const expected of ['Aufgaben · Aktuelles', 'Easy-Plan öffnen', 'Berichtssuche']) {
+    assert(fullLibrary.laterTexts.some(text => text.includes(expected) && text.includes('kommt später')), `${expected} ist nicht korrekt als später markiert.`);
+  }
+  assert(fullLibrary.activeIconVariants >= 12, `Die fertigen Guides verwenden zu viele wiederholte Icons: ${fullLibrary.activeIconVariants}`);
   await page.locator('[data-v29-guide-home]').click();
   await page.locator('#startScreen').waitFor({ state: 'visible' });
 
@@ -307,9 +317,6 @@ try {
   const orb = page.locator('.voice-focus-stage .voice-orb');
   await orb.waitFor({ state: 'visible' });
 
-  // Zuerst darf die statische Supertonic-Begrüßung anlaufen. Für die optische QA
-  // messen wir jeden künstlichen Zustand anschließend atomar, bevor die laufende
-  // Sprachsteuerung den Status wieder auf den echten Laufzeitzustand setzen kann.
   await page.waitForTimeout(120);
   await page.evaluate(() => document.getElementById('pauseVoiceButton')?.click());
   await page.waitForTimeout(80);

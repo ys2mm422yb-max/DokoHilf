@@ -20,12 +20,16 @@
     notfallblatt: { label: 'Notfallblatt öffnen', subtitle: 'Notfallblatt in Word erzeugen', icon: 'emergency' },
     'durchfuehrung-storno': { label: 'Durchführung stornieren', subtitle: 'Falsch abgezeichnete Durchführung', icon: 'undo' },
     'durchfuehrungsnachweis-oeffnen': { label: 'Durchführungsnachweis', subtitle: 'Nachweis öffnen', icon: 'checklist' },
-    'aufgaben-aktuelles': { label: 'Aufgaben · Aktuelles', subtitle: 'Aktuelle Aufgaben öffnen', icon: 'tasks' },
-    easyplan: { label: 'Easy-Plan öffnen', subtitle: 'Planung · Easy-Plan', icon: 'plan' },
     stammdaten: { label: 'Stammdaten öffnen', subtitle: 'Bewohner-Stammdaten aufrufen', icon: 'person' },
-    'visiten-oeffnen': { label: 'Visiten öffnen', subtitle: 'Zum Bereich Visiten wechseln', icon: 'doctor' },
+    'visiten-oeffnen': { label: 'Visiten öffnen', subtitle: 'Zum Bereich Visiten wechseln', icon: 'visitList' },
     'visite-status-durchgefuehrt': { label: 'Visitenstatus', subtitle: 'Status „durchgeführt“ verwenden', icon: 'status' },
   });
+
+  const LATER_ITEMS = Object.freeze([
+    { label: 'Aufgaben · Aktuelles', subtitle: 'Wird fachlich noch überarbeitet · kommt später', icon: 'tasks' },
+    { label: 'Easy-Plan öffnen', subtitle: 'Wird fachlich noch überarbeitet · kommt später', icon: 'plan' },
+    { label: 'Berichtssuche', subtitle: 'Wird fachlich noch überarbeitet · kommt später', icon: 'reportSearch' },
+  ]);
 
   const GUIDES = Object.freeze({
     'bericht-neu': {
@@ -167,20 +171,16 @@
       title: 'Durchführungsnachweis öffnen', subtitle: 'Zum Durchführungsnachweis wechseln', icon: 'checklist',
       steps: ['„Doku“ öffnen.', '„Durchführungsnachweis“ wählen.', 'Dort den gewünschten Eintrag beziehungsweise die gewünschte Funktion auswählen.'],
     },
-    'aufgaben-aktuelles': {
-      title: 'Aufgaben · Aktuelles', subtitle: 'Aktuelle Aufgaben öffnen', icon: 'tasks',
-      steps: ['Oben den Reiter „Aufgaben“ öffnen.', 'Darunter „Aktuelles“ wählen.'],
-    },
-    easyplan: {
-      title: 'Easy-Plan öffnen', subtitle: 'Easy-Plan in der Planung öffnen', icon: 'plan',
-      steps: ['Oben den Reiter „Planung“ öffnen.', '„Easy-Plan“ wählen.'],
-    },
     stammdaten: {
       title: 'Stammdaten öffnen', subtitle: 'Stammdaten eines Bewohners aufrufen', icon: 'person',
-      steps: ['Zur Bewohnerübersicht gehen.', 'Die gewünschte Person mit einem Doppelklick öffnen.'],
+      steps: [
+        'Zuerst „Berichte“ oder „Durchführungsnachweis“ öffnen. Den Durchführungsnachweis erreichst du über „Doku“ → „Durchführungsnachweis“.',
+        'Solange einer dieser beiden Bereiche geöffnet ist, siehst du links die Bewohnerübersicht.',
+        'In der Bewohnerübersicht den gewünschten Bewohner doppelklicken. Dadurch öffnen sich die Stammdaten.',
+      ],
     },
     'visiten-oeffnen': {
-      title: 'Visiten öffnen', subtitle: 'Zum Bereich Visiten wechseln', icon: 'doctor',
+      title: 'Visiten öffnen', subtitle: 'Zum Bereich Visiten wechseln', icon: 'visitList',
       steps: ['„Doku-Erweitert“ öffnen.', '„Visiten“ wählen.'],
     },
     'visite-status-durchgefuehrt': {
@@ -193,7 +193,7 @@
   const LIBRARY_ORDER = [
     'bericht-neu', 'bericht-durchstreichen', 'bericht-folgebericht', 'visite-anlegen', 'visiten-oeffnen', 'visite-status-durchgefuehrt',
     'vitalwerte', 'anwesenheit', 'medikation-ansehen', 'formulare-anlegen', 'uebergabeformular', 'notfallblatt',
-    'durchfuehrung-storno', 'durchfuehrungsnachweis-oeffnen', 'aufgaben-aktuelles', 'easyplan', 'stammdaten',
+    'durchfuehrung-storno', 'durchfuehrungsnachweis-oeffnen', 'stammdaten',
   ];
 
   const LEGACY_KEY_TO_SLUG = Object.freeze({
@@ -206,6 +206,7 @@
     reportEdit: '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/><path d="m5 20 5-5"/>',
     followup: '<path d="M5 4h10l4 4v12H5z"/><path d="M15 4v5h5M8 13h6"/><path d="m11 18 2 2 4-4"/>',
     doctor: '<path d="M9 3v5a3 3 0 0 0 6 0V3M7 4h2M15 4h2"/><path d="M12 11v2a6 6 0 0 0 6 6h1"/><circle cx="19" cy="19" r="2"/>',
+    visitList: '<rect x="5" y="4" width="14" height="16" rx="2"/><path d="M8 8h6M8 12h8M8 16h5"/><circle cx="17" cy="8" r="1"/>',
     pulse: '<path d="M3 12h4l2-5 3 10 2-6 2 3h5"/>',
     presence: '<circle cx="9" cy="8" r="3"/><path d="M4 20v-2a5 5 0 0 1 10 0v2M16 8h5M18.5 5.5v5"/>',
     medication: '<path d="m7 17 10-10a4 4 0 0 1 0 6L11 19a4 4 0 0 1-6-6l2-2"/><path d="m9 15 6 6"/>',
@@ -214,10 +215,11 @@
     emergency: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
     undo: '<path d="M9 7H4v-5"/><path d="M4 7a8 8 0 1 1 2 9"/><path d="M10 11h6M13 8v6"/>',
     checklist: '<path d="M7 3h10v18H7z"/><path d="m9 8 1.5 1.5L13 7M14 9h1M9 14l1.5 1.5L13 13M14 15h1"/>',
-    tasks: '<path d="M6 4h12v16H6z"/><path d="m9 9 1.5 1.5L13 8M14 10h2M9 15h7"/>',
+    tasks: '<circle cx="7" cy="7" r="2"/><path d="m6 7 1 1 2-3M12 7h7M5 13h14M5 17h10"/>',
     plan: '<path d="M4 5h16v14H4zM8 3v4M16 3v4M4 9h16"/><path d="M8 13h3M13 13h3M8 16h3"/>',
     person: '<circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/>',
     status: '<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+    reportSearch: '<path d="M6 3h9l4 4v7M15 3v5h4M9 12h5M9 16h3"/><circle cx="16.5" cy="17.5" r="3"/><path d="m19 20 2 2"/>',
   });
 
   let view = null;
@@ -351,6 +353,14 @@
     return button;
   }
 
+  function createLaterCard(item) {
+    const card = document.createElement('div');
+    card.className = 'v29-library-card is-later';
+    card.setAttribute('aria-disabled', 'true');
+    card.innerHTML = `${iconMarkup(item.icon)}<span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.subtitle)}</small></span><b>Später</b>`;
+    return card;
+  }
+
   function renderLibrary() {
     const target = openFrame(); if (!target) return;
     state = { source: 'library', current: 'library' };
@@ -360,11 +370,7 @@
     </div><div class="v29-library-grid"></div>`;
     const grid = target.querySelector('.v29-library-grid');
     for (const slug of LIBRARY_ORDER) grid.append(createLibraryCard(slug));
-    const later = document.createElement('div');
-    later.className = 'v29-library-card is-later';
-    later.setAttribute('aria-disabled', 'true');
-    later.innerHTML = `${iconMarkup('report')}<span><strong>Berichtssuche</strong><small>Wird fachlich noch überarbeitet · kommt später</small></span><b>Später</b>`;
-    grid.append(later);
+    for (const item of LATER_ITEMS) grid.append(createLaterCard(item));
     target.dataset.v29LibraryGuideCount = String(grid.querySelectorAll('.v29-library-card[data-v29-open-guide]').length);
   }
 
@@ -439,7 +445,7 @@
       renderFrequent,
       renderLibrary,
       getLibraryOrder: () => [...LIBRARY_ORDER],
-      getState: () => ({ expectedGuideCount: LIBRARY_ORDER.length, current: state.current, source: state.source }),
+      getState: () => ({ expectedGuideCount: LIBRARY_ORDER.length, laterCount: LATER_ITEMS.length, current: state.current, source: state.source }),
     };
     window.__DOKOHILF_GUIDE_LIBRARY_V29__ = true;
   }
