@@ -2,182 +2,136 @@
 
 **Status:** verbindliche Arbeitsquelle  
 **Stand:** 9. August 2026  
-**Aktueller Releaseblock:** `v29` / geplanter Build `20260809-29`  
-**Aktiver Release-PR:** `#105` auf `fix/v29-force-pwa-refresh-20260809`  
+**Aktueller Releaseblock:** `v29` / geplanter Build `20260809-32`  
+**Aktiver Arbeitsbranch:** `fix/v29-static-supertonic-orientation-ui-20260809`  
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
-> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle `ACTIVE_WORK_*.md`. Für den aktuell offenen Releaseblock ist insbesondere `ACTIVE_WORK_PWA_REFRESH_V29.md` verbindlich. Danach werden GitHub, Actions, `main`, `gh-pages` und bei Supabase-Bezug das Projekt `efifbuqctylsujiauabg` live geprüft. Veränderliche Zustände niemals nur aus Dokumentation ableiten.
+> Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle `ACTIVE_WORK_*.md`. Danach werden GitHub, Actions, `main`, `gh-pages` und bei Supabase-Bezug das Projekt `efifbuqctylsujiauabg` live geprüft. Veränderliche Zustände niemals nur aus Dokumentation ableiten.
 
 ## 1. Harte Projekt- und Produktgrenzen
 
 - Einziges Repository: `ys2mm422yb-max/DokoHilf`.
 - Einziges Supabase-Projekt: `efifbuqctylsujiauabg`, Region `eu-central-1`.
-- DokoHilf ist ausschließlich eine erklärende Schritt-für-Schritt-Bedienhilfe.
-- DokoHilf besitzt keinerlei Konten oder Anmeldung – einschließlich Redaktions-, Mitarbeiter- oder Administrationskonten –, keine Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken.
+- DokoHilf ist eine öffentliche, accountfreie Schritt-für-Schritt-Bedienhilfe.
+- Keine Bewohner-/Mitarbeiterkonten, keine Fallakten, keine personenbezogenen Eingabemasken.
 - Keine echten Bewohner-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in App, Repository, Supabase, Tests oder Artefakten.
-- Tests nur mit synthetischen UI-Zuständen, neutralen Platzhaltern und erfundenen Werten; keine reale Person und kein realer Fall werden nachgebildet.
-- Öffentliche Inhalte nur selbst formuliert, anonymisiert und veröffentlichungsfähig; Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert.
 - Keine erfundenen Klickwege oder Feldnamen. `CONFIRMED_WORKFLOWS.md` ist fachliche Source of Truth.
-- Supertonic F1 bleibt die kostenlose reguläre Stimme. Keine kostenpflichtige Cloud-TTS-Lösung neu einführen.
+- Berichtssuche bleibt fachlich offen / Draft. Issue #103 nicht durch erfundene Details schließen.
 
 ## 2. Verbindlicher GitHub-Ablauf
 
-1. Vor Eingriffen `main`, offene Pull Requests, aktuelle Actions und `gh-pages` live prüfen.
-2. Nie direkt auf `main` arbeiten.
-3. Änderungen über Branch + PR integrieren.
-4. Relevante Entscheidungen, Fehlerursachen, Tests und Arbeitsstand dauerhaft dokumentieren.
-5. Nur einen vollständig geprüften **exakten PR-Head** mergen.
-6. Kein Auto-Merge.
-7. Nach Merge `main`, `gh-pages` und öffentlichen Build erneut prüfen.
-8. Bei Supabase-Änderungen zuerst sichere Dry-Run-/Rollback-Prüfung, dann produktive Migration.
-9. Gegenüber dem Nutzer niemals `live` behaupten, solange der reale `gh-pages`-Stand nicht geprüft wurde.
+1. Nie direkt auf `main` arbeiten.
+2. Änderungen über Branch + PR integrieren.
+3. Nur einen vollständig geprüften **exakten PR-Head** mergen.
+4. Alle acht etablierten Pflichtworkflows müssen auf genau diesem Head grün sein.
+5. Kein Auto-Merge und keine automatische Branch-Löschung.
+6. Bei Supabase-Änderungen zuerst Dry-Run in Transaktion mit Rollback; produktive Migration erst nach Merge.
+7. Nach Merge `main`, `gh-pages` und öffentlichen Build konkret prüfen.
+8. Gegenüber dem Nutzer nie `live` behaupten, solange `gh-pages` nicht real verifiziert wurde.
+9. Sichtbare Versionsbezeichnungen in Actions/Tests/Statushinweisen aktuell halten; wo die Versionsnummer keinen fachlichen Nutzen hat, versionsneutral benennen.
 
-## 3. Mobile Freigabe
+## 3. Letzter gemergter Stand vor diesem Arbeitsbranch
 
-`Mobil geprüft` bedeutet mindestens:
+- PR #107 brachte die ersten deterministischen `*-finden`-Guides und Build `20260809-31`.
+- PR #108 brachte kontextuelle Bereichshilfe innerhalb laufender Guides.
+- `main` vor diesem Branch: `0b54cbf88ad221c0cbc16eef11a28292c22b9c93`.
+- Build 31 war auf `gh-pages` testbar.
+- Nach Build 31 meldete das reale iPhone zwei verbleibende Probleme:
+  1. Orientierung war noch zu flach, z. B. Doku-Erweitert selbst wurde nicht ausreichend lokalisiert.
+  2. Voice zeigte „Lokale Stimme nicht bereit“ und blieb stumm.
 
-- iOS `393 × 852`
-- Android `412 × 915`
+## 4. Verbindliche Spracharchitektur ab Build 32
 
-Zu prüfen sind insbesondere Safe Areas, Überlagerungen, Touchziele, Startscreen, Direktguides, Chat, Voice, PWA-Updateverhalten und echte Navigation.
+`STATIC_VOICE_POLICY.md` ist verbindlich.
 
-## 4. Fachlicher Stand nach PR #104
+- **Jeder hörbar ausgegebene Satz kommt aus einer vorab im Release erzeugten Supertonic-3/F1-WAV-Datei.**
+- Keine Supertonic-Inferenz auf iPhone, Android oder im Browser.
+- Kein WebGPU-/WASM-TTS im Endgerät.
+- Keine System-/Gerätestimme als Fallback.
+- Keine Cloud-/Bezahl-TTS.
+- `assets/local-voice-v28.js` ist nur noch ein stillgelegter Kompatibilitätspfad und darf nicht synthetisieren.
+- `assets/local-voice-gate-v28.js` bedient ausschließlich den statischen Katalog.
+- Für freie Texte ohne exakte Audiodatei darf nur ein ebenfalls vorab erzeugter neutraler Supertonic-F1-Satz verwendet werden; der vollständige Text bleibt sichtbar.
+- Sprachstart im Sprechmodus: **„Hey! Wobei brauchst du Hilfe?“**
+- Der Supertonic-Build leitet die Gesamtzahl der WAV-Dateien aus allen kontrollierten Sprachkatalogen ab. Katalogzahl, WAV-Zahl und Build-Summary müssen exakt übereinstimmen.
 
-PR #104 wurde bereits gemergt (`8b5048bff4a40a74f05cfae45b949d91d1d30bbe`). Die zugehörigen Supabase-Änderungen sind produktiv.
+Kontrollierte Sprachquellen auf diesem Branch:
+- Basis-Katalog
+- feste Dialogsätze
+- Release-Sätze
+- Bedarfsmedikation / Wirksamkeitskontrolle / Maßnahmen ohne Zeitangabe
+- UI-Startsatz
+- grüne Navigationshierarchie
+- kontextuelle `stuck`-Hilfe
 
-Am 9. August 2026 live in Supabase geprüft:
+## 5. Bestätigte Navigationshierarchie
 
-- `bericht-durchstreichen`: approved, Version 7
-- `bericht-folgebericht`: approved, Version 4
-- `visite-anlegen`: approved, Version 8
-- `vitalwerte-einzelwert`: approved, Version 4
-- `vitalwerte-sammelerfassung`: approved, Version 4
-- `berichtssuche`: **draft**, Version 4
+- Ganz oben befindet sich die **feste grüne Hauptleiste**.
+- Bestätigte Hauptbereiche dort: **Berichte, Doku, Doku-Erweitert, Planung, Analyse**.
+- Nach Auswahl eines Hauptbereichs erscheinen direkt darunter die zugehörigen Symbole/Funktionen.
+- Unter **Doku-Erweitert**: Vitalwerte, Visiten, Medikation, Formulare, An-/Abwesenheiten.
+- Unter **Doku**: Durchführungsnachweis.
+- Unter **Analyse**: Was war los? für die Übergabe.
+- **Planung** als Hauptbereich ist bestätigt; der genaue Easy-Plan-Ablauf bleibt offen.
+- Orientierung muss bei „Ich finde X nicht“ eine Ebene zurück erklären und darf nicht nur denselben Schritt wiederholen.
 
-### Bericht korrigieren
+## 6. Neue bestätigte Abläufe im Build-32-Branch
 
-Ein falsch formulierter oder verschriebener bestehender Bericht wird **durchgestrichen**. Ein Folgebericht korrigiert den ursprünglichen Text nicht. Soll danach korrekt neu dokumentiert werden, wird ein neuer Bericht angelegt.
+### Bedarfsmedikation dokumentieren
 
-### Folgebericht
+Doku oben in der grünen Hauptleiste → darunter Durchführungsnachweis → kleiner Pfeil links neben Bedarfsmedikation → gewünschtes Medikament rechts anhaken → Pop-up: tatsächliche Uhrzeit prüfen/ergänzen → Anlass dokumentieren → bei tatsächlich geringerer Gabe die tatsächlich verwendete Bedarfsmenge dokumentieren, ohne die Verordnung zu verändern → unten OK.
 
-Ein Folgebericht ist ein neuer Bericht mit Bezug zu einem bereits dokumentierten Geschehen. Er ergänzt oder führt dieses fort und verändert den ursprünglichen Bericht nicht.
+Danach wird die zugehörige **Wirksamkeitskontrolle automatisch vom System angelegt**. DokoHilf erfindet keine Wartezeit und legt keine Kontrolle selbst an. Wenn sie zum vorgesehenen Zeitpunkt fällig ist: im Durchführungsnachweis öffnen → abhaken → dokumentieren, ob und wie die Bedarfsmedikation gewirkt/geholfen hat → unten OK.
 
-### Visite
+### Wirksamkeitskontrolle direkt
 
-Normalfall: beim Bewohner hinterlegten durchführenden Arzt auswählen. Nur wenn dieser dort fehlt, rechts neben der Arztauswahl das kleine Filtersymbol aktivieren und aus allen systemweit hinterlegten Ärzten wählen. Dieser Ausnahmefall ist als visueller **Sonderfall** darzustellen. Ortsoptionen: Einrichtung, beim Arzt, telefonisch, per Mail.
+Bei einer direkten Frage zur Wirksamkeitskontrolle nicht wieder bei der ursprünglichen Bedarfsgabe starten. Direkt erklären, dass die Kontrolle automatisch angelegt wird und zum vorgesehenen Zeitpunkt im Durchführungsnachweis bearbeitet wird.
 
-### Vitalwerte
+### Maßnahmen ohne Zeitangabe
 
-Bestätigte Beispiele: Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz und Atemalkohol. Bei Blutdruck Systole und Diastole. Je nach Vitalwert erscheinen passende Eingabefelder. Keine nicht bestätigten Einheiten oder Zusatzfelder erfinden.
+Doku oben → darunter Durchführungsnachweis → Maßnahmen ohne Zeitangabe → gewünschte Maßnahme, z. B. Klienten-Team Sitzung oder Krise → Pop-up: Datum/Uhrzeit prüfen → Kategorie wählen → unter „Was war“ dokumentieren → optionale zusätzliche Zeitangabe oben rechts → unten OK.
 
-### Berichtssuche
+## 7. UI-Polish in Build 32
 
-Issue #103 bleibt offen. `Analyse → Abfrage` ist nicht final fachlich bestätigt. Der Guide bleibt Draft / `kommt später` und darf nicht als fertige Anleitung oder neue Voice-Hilfe ausgebaut werden.
+- Update-Hinweis bleibt ungefähr 10 Sekunden sichtbar.
+- `KI · v29` wird nicht mehr prominent im Kopfbereich gezeigt.
+- Version/Build wird dezent ganz unten im Footer-/Statusbereich angezeigt.
+- Neue Durchführung-Anleitungen erscheinen als aktive Karten vor den deaktivierten „Später“-Karten.
 
-## 5. Neue Guide-Bibliothek aus #104
+## 8. Aktuelle Supabase-Migrationen auf dem Branch
 
-Der Zielzustand der Startseite ist:
+Nur diese beiden neuen Migrationen sind kanonisch:
 
-- `Häufig genutzt`
-- lokale anonyme Nutzungssortierung pro Guide
-- `Alle Anleitungen anzeigen`
-- vollständige Übersicht aller fertigen Guides
-- individuelle, fachlich passende SVG-Icons je Guide
-- dasselbe Icon für dieselbe Anleitung in `Häufig genutzt` und `Alle Anleitungen`
+1. `20260809124000_bedarfsmedikation_massnahmen_v29.sql`
+2. `20260809125500_green_navigation_hierarchy_v29.sql`
 
-Beispiele: Visite = Stethoskop/Arzt, Vitalwerte = Herz/Puls, Bericht = Dokument, Bericht korrigieren = Dokument/Korrektur, Folgebericht = Dokument/Verknüpfung, Medikation = Medikament, Formular = Formular/Liste, Übergabe = Übergabe/Pfeile.
+Doppelte Zwischenmigrationen wurden entfernt.
 
-Der Direktguide-Header muss auf iPhone/Android ausreichend Safe-Area-Abstand haben und darf Titel, Zurück-Pfeil oder Schritte nicht überdecken.
+Beide kanonischen Migrationen wurden gegen Produktion innerhalb `BEGIN ... ROLLBACK` erfolgreich getestet. Danach wurde ausdrücklich geprüft, dass die neuen Guide-Slugs produktiv noch **nicht** vorhanden sind. Produktive Anwendung erst nach erfolgreichem Merge des exakten finalen PR-Heads.
 
-## 6. Aktueller echter Live-Fehler
+## 9. Noch offene Freigabeschritte
 
-Nach PR #104 zeigte ein real installiertes iPhone weiterhin die **alte** Startsektion `HÄUFIGE ABLÄUFE · DIREKT ÖFFNEN` mit den statischen Karten.
+1. Branch final auf Konsistenz von Router, statischen Sprachkatalogen, Build-Gates und Tests prüfen.
+2. PR gegen `main` öffnen.
+3. Exakten finalen PR-Head bestimmen.
+4. Alle acht Pflichtworkflows auf genau diesem Head grün bekommen.
+5. Erst dann mit `expected_head_sha` mergen.
+6. Danach die zwei kanonischen Migrationen produktiv anwenden.
+7. Falls die geänderte `dokohilf-chat-router` Edge Function nicht über den normalen Releasepfad produktiv ausgerollt wird, sie gezielt aus dem gemergten Main deployen.
+8. `main`, `gh-pages`, `version.json`, Service Worker, statischen Supertonic-Katalog und öffentlichen Build prüfen.
+9. Erst danach Nutzer zum iPhone-Test auffordern.
 
-Die neue Guide-Bibliothek war damit auf dem realen Gerät nicht aktiv.
+## 10. Empfohlene reale iPhone-Tests nach Live-Freigabe
 
-Ursache: Die öffentliche Build-ID blieb über mehrere Releases `20260808-29`. Ein installierter iOS-PWA-Client konnte dadurch seinen alten Shell-/Service-Worker-Zustand als aktuell betrachten.
-
-Darum existiert PR #105: `Force installed PWA to refresh to guide library`.
-
-## 7. PR #105 – aktueller technischer Stand
-
-Branch: `fix/v29-force-pwa-refresh-20260809`  
-Ziel-Build: `20260809-29`
-
-`version.json`, `index.html` und `service-worker.js` verwenden den neuen Build bereits.
-
-Der aktive Releasepfad wurde am 9. August 2026 so repariert, dass künftige Buildwechsel nicht erneut an derselben Datumskonstante hängen:
-
-- `.github/workflows/pages.yml` liest die deklarierte Build-ID aus `version.json` und prüft Index sowie Service Worker dagegen.
-- `.github/workflows/ui-validation-v27.yml` prüft die gerenderte Meta-Build-ID dynamisch.
-- `.github/workflows/detail-help-mobile.yml` prüft alle Release-Asset-URLs gegen die deklarierte Build-ID.
-- `.github/workflows/local-voice-v28-mobile.yml` prüft Voice-Assets gegen die deklarierte Build-ID.
-- `.github/workflows/report-conditional-mobile-v28.yml` prüft `version.json` dynamisch.
-- `assets/local-voice-v28.js` übernimmt seine Build-ID aus dem ausgelieferten `dokohilf-build`-Meta-Tag.
-- `assets/local-voice-gate-v28.js` erzeugt die Manifest-Revision aus derselben ausgelieferten Build-ID.
-- `scripts/apply-detail-help-v27.mjs`, `scripts/apply-local-voice-v28.mjs` und `scripts/build-static-site-v27.sh` waren bereits auf `version.json` umgestellt und bleiben so erhalten.
-- Die Build-/Voice-Regressionen prüfen den dynamischen Vertrag statt ein neues Datum fest einzubrennen.
-- Die etablierten Account-/Datenschutzformulierungen im Handoff wurden wieder vollständig hergestellt; Tests wurden dafür nicht abgeschwächt.
-
-`20260808-29` darf weiterhin in historischen Fehlerbeschreibungen stehen. Benannte Revisionen wie `20260808-context-voice-v29-1` oder `20260808-smart-help-voice-ui-v29-1` sind eigenständige Hotfix-Revisionskennungen und keine aktuelle Build-ID.
-
-Die Freigabe bleibt blockiert, bis alle acht Pflichtworkflows auf demselben exakten PR-Head grün sind. Erst danach darf gemergt werden.
-
-## 8. Aktueller `gh-pages`-Stand vor Freigabe von #105
-
-Am 9. August 2026 vor der finalen Freigabe erneut live geprüft:
-
-`gh-pages/version.json` liefert weiterhin:
-
-- `buildId = 20260808-29`
-- Release `smart-help-voice-ui-v29`
-
-Damit ist der PWA-Refresh-Build `20260809-29` vor Merge von #105 **noch nicht live**.
-
-Ein neuer Chat darf nicht behaupten, die neue Guide-Bibliothek sei ausgeliefert, bevor `gh-pages` konkret den neuen Build zeigt und die reale Geräteabnahme erfolgreich war.
-
-## 9. Voice-Architektur
-
-- Supertonic F1 ist die reguläre kostenlose Stimme.
-- Vollständiger Releasebuild erzeugt 160 bestätigte statische Sätze.
-- Noch nicht vorbereitete freie Sätze dürfen lokal mit derselben Stimme erzeugt werden.
-- iOS-Notinferenz bleibt zeitlich begrenzt, damit die Oberfläche nicht hängen bleibt.
-- System-/Gerätestimmen bleiben als regulärer Fallback blockiert.
-- Cloud-TTS ist stillgelegt.
-- Freie Audios und Gesprächsinhalte werden nicht dauerhaft gespeichert.
-- Beim Publish bestehende Voice-/Detailhilfe-/Icon-Hotfixes auf `gh-pages` nicht blind überschreiben.
-
-## 10. Stillgelegte Account-/Cloud-Infrastruktur
-
-- keine App-Konten oder Anmeldung
-- Supabase Auth enthält keine für DokoHilf vorgesehenen Nutzerkonten
-- ehemaliger Editor ist stillgelegt
-- Cloud-TTS-/alte Gacrux-Pfade sind Ruhestandspfade
-- keine produktiven Personendaten in DokoHilf
-
-`PROJECT_RULES.md` bleibt hierfür verbindlich.
-
-## 11. Freigabeschritte für PR #105
-
-1. aktuellen PR-Head nach der Build-ID-Reparatur bestimmen.
-2. alle acht Pflichtworkflows genau auf diesem Head prüfen.
-3. jeden verbleibenden Fehler an der Ursache beheben und anschließend einen neuen exakten Head vollständig neu prüfen.
-4. erst bei acht grünen Pflichtworkflows PR #105 mit `expected_head_sha` mergen.
-5. Main-Workflow vollständig prüfen.
-6. `gh-pages` konkret verifizieren: `version.json`, Index, Service Worker, Guide-Bibliothek, Icons, Voice-Assets und relevante Guide-Inhalte.
-7. nur bei hängendem Publish gezielt Live-Dateien nachziehen; bestehende Live-Hotfixes nicht blind überschreiben.
-8. reales installiertes iPhone prüfen: neue `Häufig genutzt` / `Alle Anleitungen`-Ansicht muss tatsächlich erscheinen.
-
-## 12. Pflicht für jeden neuen Chat
-
-1. `README.md` lesen.
-2. `PROJECT_RULES.md` lesen.
-3. `CONFIRMED_WORKFLOWS.md` lesen.
-4. `PROJECT_HANDOFF.md` lesen.
-5. alle `ACTIVE_WORK_*.md` lesen, besonders `ACTIVE_WORK_PWA_REFRESH_V29.md`.
-6. GitHub live prüfen: `main`, PR #105, aktueller Head, Actions, `gh-pages`.
-7. Supabase live prüfen, wenn Guide-/Router-/Audio-/DB-Arbeit betroffen ist.
-8. exakt beim dokumentierten nächsten ausführbaren Schritt fortfahren.
-9. nach eigener Arbeit die Repository-Dokumentation erneut aktualisieren.
+- Sprechmodus starten → muss kurz **„Hey! Wobei brauchst du Hilfe?“** sprechen.
+- „Ich finde Doku-Erweitert nicht.“
+- „Wo finde ich Vitalwerte?“
+- „Wo ist Planung?“
+- „Wo finde ich Bedarfsmedikation?“
+- „Wie dokumentiere ich eine Bedarfsmedikation?“
+- „Wie dokumentiere ich die Wirksamkeitskontrolle?“
+- „Maßnahmen ohne Zeitangabe dokumentieren.“
+- Update-Hinweis auf Sichtdauer prüfen.
+- Version nur dezent ganz unten prüfen.
 
 Diese Datei ist das dauerhafte Handoff, ersetzt aber nie die Live-Prüfung veränderlicher Zustände.
