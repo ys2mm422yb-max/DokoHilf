@@ -151,13 +151,16 @@
   async function responseForEntry(entry) {
     const cache = await openStaticCache();
     const audioUrl = new URL(entry.file, document.baseURI).toString();
-    const cached = await cache?.match(audioUrl).catch(() => null);
+    const cacheKeyUrl = new URL(audioUrl);
+    cacheKeyUrl.searchParams.set('dokohilf-build', BUILD_ID);
+    const cacheKey = cacheKeyUrl.toString();
+    const cached = await cache?.match(cacheKey).catch(() => null);
     let response = cached;
     if (!response) {
-      response = await fetchWithTimeout(audioUrl, AUDIO_TIMEOUT_MS, { cache: 'force-cache' });
+      response = await fetchWithTimeout(audioUrl, AUDIO_TIMEOUT_MS, { cache: 'no-store' });
       if (!response.ok) throw new Error(`static_audio_${response.status}`);
       if (!/audio\/wav/i.test(response.headers.get('content-type') || '')) throw new Error('static_audio_invalid');
-      await cache?.put(audioUrl, response.clone()).catch(() => {});
+      await cache?.put(cacheKey, response.clone()).catch(() => {});
     }
     const bytes = await response.arrayBuffer();
     lastStaticHit = String(entry.file);
