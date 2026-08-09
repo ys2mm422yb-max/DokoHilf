@@ -134,11 +134,23 @@
     };
   }
 
+  function smartHelpBody(parsed, text) {
+    const prepared = window.DokoHilfSmartHelpV29?.preparedBody?.(parsed, text);
+    if (typeof prepared !== 'string' || !prepared) return '';
+    const candidate = parseBody(prepared);
+    if (!candidate) return '';
+    if (!candidate.selectedGuideSlug && !candidate.smartHelpIntent && !candidate.smartTaskIntent && !candidate.smartNavigationIntent) return '';
+    return prepared;
+  }
+
   window.fetch = async (input, init = {}) => {
     if (!isAiRequest(input, init)) return previousFetch(input, init);
     const parsed = parseBody(init.body);
     if (!parsed) return previousFetch(input, init);
-    const payload = responseFor(parsed, latestUser(parsed));
+    const userText = latestUser(parsed);
+    const delegatedBody = smartHelpBody(parsed, userText);
+    if (delegatedBody) return previousFetch(input, { ...init, body: delegatedBody });
+    const payload = responseFor(parsed, userText);
     if (!payload) return previousFetch(input, init);
     return new Response(JSON.stringify(payload), {
       status: 200,
@@ -155,6 +167,7 @@
     isLocationQuestion,
     orientationHelp,
     responseFor,
+    smartHelpBody,
   };
   window.__DOKOHILF_ORIENTATION_HELP_V29__ = true;
 })();
