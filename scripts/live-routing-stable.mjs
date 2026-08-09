@@ -138,7 +138,7 @@ const chatRouterCases = [
     },
     validate: payload => payload.guideSlug === 'bericht-folgebericht'
       && Number(payload.guideStep) === 1
-      && payload.source === 'approved-guide-context-help-v29-4'
+      && payload.source === 'approved-guide-context-help-v29-5'
       && !Array.isArray(payload.helpOptions),
   },
 ];
