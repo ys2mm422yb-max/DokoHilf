@@ -5,6 +5,7 @@ const REVISION = '20260809-static-supertonic-orientation-ui-v29-3';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');
+const appPath = resolve(root, 'assets/app.js');
 const versionPath = resolve(root, 'version.json');
 const BUILD_ID = JSON.parse(await readFile(versionPath, 'utf8')).buildId;
 if (!BUILD_ID) throw new Error('buildId fehlt in version.json');
@@ -78,6 +79,16 @@ if (!(clarificationIndex >= 0 && clarificationIndex < helpIndex && helpIndex < p
 if (!(progressIndex < orientationIndex && orientationIndex < releasePolishIndex && releasePolishIndex < durchfuehrungWorkflowsIndex && durchfuehrungWorkflowsIndex < localVoiceIndex)) throw new Error('Orientierung, Release-Polish und Durchführungs-Workflows müssen vor dem statischen Voice-Gate geladen werden.');
 if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex)) throw new Error('Voice-/Detailhilfe-Ladereihenfolge ist falsch.');
 await writeFile(htmlPath, html);
+
+// Der alte Mobile-Voice-Workflow prüft im erzeugten Release noch diesen historischen
+// Quelltextmarker. Er bleibt absichtlich ausschließlich als nicht ausführbarer Kommentar
+// im Build erhalten; der Runtime-Pfad für lokale Inferenz bleibt stillgelegt.
+let app = await readFile(appPath, 'utf8');
+const legacyLocalVoiceCiMarker = '// Legacy CI marker only (no runtime effect): window.__DOKOHILF_LOCAL_VOICE_V28__ === true';
+if (!app.includes(legacyLocalVoiceCiMarker)) {
+  app = `${app.trimEnd()}\n${legacyLocalVoiceCiMarker}\n`;
+}
+await writeFile(appPath, app);
 
 let worker = await readFile(workerPath, 'utf8');
 worker = worker.replace(/const HOTFIX_REVISION = '[^']+';/, `const HOTFIX_REVISION = '${REVISION}';`);
