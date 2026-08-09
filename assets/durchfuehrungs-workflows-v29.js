@@ -17,7 +17,7 @@
         'Unten im Pop-up kurz den Anlass beziehungsweise warum die Bedarfsmedikation gegeben wurde dokumentieren.',
         'Falls tatsächlich eine geringere Bedarfsmenge verwendet wurde, rechts im Pop-up die tatsächlich verwendete Menge dokumentieren. Die Verordnung selbst nicht verändern.',
         'Das Pop-up unten mit „OK“ bestätigen.',
-        'Die zugehörige Wirksamkeitskontrolle wird automatisch angelegt. Erst wenn sie zum vorgesehenen Zeitpunkt fällig ist, im Durchführungsnachweis öffnen.',
+        'Die automatisch erzeugte Wirksamkeitskontrolle wird vom System angelegt. Erst wenn sie zum vorgesehenen Zeitpunkt fällig ist, im Durchführungsnachweis öffnen.',
         'Die Wirksamkeitskontrolle abhaken und dokumentieren, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.',
         'Die Wirksamkeitskontrolle unten mit „OK“ bestätigen.',
       ],
