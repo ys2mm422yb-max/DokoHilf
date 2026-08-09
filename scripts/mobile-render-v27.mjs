@@ -263,7 +263,7 @@ try {
     };
   });
   assert(fullLibrary.title === 'Alle Anleitungen', `Bibliothekstitel falsch: ${fullLibrary.title}`);
-  assert(fullLibrary.guideCount === 15, `Es müssen 15 fertige Guides anklickbar sein: ${fullLibrary.guideCount}`);
+  assert(fullLibrary.guideCount === 18, `Es müssen 18 fertige Guides anklickbar sein: ${fullLibrary.guideCount}`);
   assert(fullLibrary.laterCount === 3, `Es müssen genau drei Später-Karten sichtbar sein: ${fullLibrary.laterCount}`);
   for (const expected of ['Aufgaben · Aktuelles', 'Easy-Plan öffnen', 'Berichtssuche']) {
     assert(fullLibrary.laterTexts.some(text => text.includes(expected) && text.includes('kommt später')), `${expected} ist nicht korrekt als später markiert.`);
