@@ -276,7 +276,13 @@ assert(await laterCards.count() === 3, `Es müssen genau 3 fachlich offene Spät
 for (const expected of ['Aufgaben · Aktuelles', 'Easy-Plan öffnen', 'Berichtssuche']) {
   const card = laterCards.filter({ hasText: expected });
   assert(await card.count() === 1, `Später-Karte fehlt: ${expected}`);
-  assert(await card.isDisabled(), `Später-Karte darf nicht anklickbar sein: ${expected}`);
+  const laterState = await card.evaluate(node => ({
+    ariaDisabled: node.getAttribute('aria-disabled'),
+    hasGuideTarget: node.hasAttribute('data-v29-open-guide') || node.hasAttribute('data-v29-open-durchfuehrung-guide'),
+    hasNestedInteractive: Boolean(node.querySelector('button, a[href], [data-v29-open-guide], [data-v29-open-durchfuehrung-guide]')),
+  }));
+  assert(laterState.ariaDisabled === 'true', `Später-Karte muss als nicht verfügbar markiert sein: ${expected}`);
+  assert(!laterState.hasGuideTarget && !laterState.hasNestedInteractive, `Später-Karte darf keinen anklickbaren Guide-Pfad besitzen: ${expected}`);
 }
 
 const librarySlugs = await activeLibraryCards.evaluateAll(cards => cards.map(card => card.getAttribute('data-v29-open-guide') || card.getAttribute('data-v29-open-durchfuehrung-guide')));
