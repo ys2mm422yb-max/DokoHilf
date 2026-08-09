@@ -84,7 +84,7 @@ const routerHandler=async route=>{
 for(const pattern of [/\/functions\/v1\/dokohilf-chat-router(?:\?.*)?$/, /\/functions\/v1\/dokohilf-ai-router(?:\?.*)?$/]) await page.route(pattern,routerHandler);
 await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/,async r=>{cloudTtsRequests+=1;await r.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'tts_network_forbidden_in_v29'})});});
 await page.route('**/assets/guide-audio-catalog.json*',async r=>{staticManifestRequests+=1;await r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schemaVersion:1,voice:'Supertonic-F1',entries:[{file:'assets/audio/guides/000.wav',text:GREETING},{file:'assets/audio/guides/001.wav',text:FIRST_SPEECH},{file:'assets/audio/guides/002.wav',text:HELP_SPEECH}]})});});
-await page.route('**/assets/audio/guides/*.wav',async r=>{staticAudioRequests+=1;await r.fulfill({status:200,contentType:'audio/wav',body:silentWav()});});
+await page.route(/\/assets\/audio\/guides\/[^/?]+\.wav(?:\?.*)?$/,async r=>{staticAudioRequests+=1;await r.fulfill({status:200,contentType:'audio/wav',body:silentWav()});});
 
 try{
   await page.goto(BASE_URL,{waitUntil:'networkidle'});assert((await page.locator('#buildPill').innerText()).includes('v29'),'Detailhilfe-Test läuft nicht auf v29.');
