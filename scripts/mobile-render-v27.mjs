@@ -342,16 +342,19 @@ await page.locator('[data-switch-mode="voice"]').click();
 await page.waitForFunction(() => document.getElementById('appShell')?.dataset.mode === 'voice');
 assertFits(await state(), `${PROFILE} Sprachmodus`);
 if (USE_MOCK_SERVICES) {
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('000.wav'));
+  assert(staticAudioRequests > 0, 'Statische Supertonic-Begrüßung wurde im Sprachmodus nicht verwendet.');
   const before = staticAudioRequests;
   const ttsBefore = rawTtsRequests;
-  await page.locator('#voiceButton').click();
-  await page.waitForTimeout(900);
-  assert(staticAudioRequests > before, 'Statische Supertonic-WAV wurde im Sprachmodus nicht verwendet.');
+  await page.evaluate(() => window.DokoHilf?.sendMessage?.('Wo sind die Visiten?', { fromVoice: true }));
+  await page.waitForFunction(text => document.querySelector('#voiceFocusText')?.textContent?.includes(text), VISIT_SPEECH);
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('001.wav'));
+  assert(staticAudioRequests > before, 'Statische Supertonic-WAV wurde für die Voice-Antwort nicht verwendet.');
   assert(rawTtsRequests === ttsBefore, 'Cloud-TTS-Netzwerkpfad wurde im Sprachmodus verwendet.');
   const systemSpeechCalls = await page.evaluate(() => window.__DOKOHILF_SYSTEM_SPEECH_TEST_CALLS__ || []);
   assert(systemSpeechCalls.length === 0, `Systemstimme wurde ${systemSpeechCalls.length}x verwendet.`);
   const voiceState = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
-  assert(voiceState?.lastStaticHit, 'Kein statischer Supertonic-Treffer im Voice-State registriert.');
+  assert(voiceState?.lastStaticHit?.includes('001.wav'), 'Voice-Antwort wurde nicht aus dem statischen Supertonic-Katalog abgespielt.');
 }
 
 assert(consoleErrors.length === 0, `Console-Fehler: ${consoleErrors.join(' | ')}`);
