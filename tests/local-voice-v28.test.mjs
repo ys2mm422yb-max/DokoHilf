@@ -145,7 +145,7 @@ test('Maßnahmen ohne Zeitangabe nennen den kleinen Pfeil in Guide, Finden-Hilfe
   const taskSentence = 'Im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ suchen und auf den kleinen Pfeil links daneben klicken.';
   const speechSentence = 'Suche im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ und klicke auf den kleinen Pfeil links daneben.';
   const findSentence = 'Im Durchführungsnachweis findest du „Maßnahmen ohne Zeitangabe“. Klicke auf den kleinen Pfeil links daneben, um den Bereich zu öffnen.';
-  const orientationSentence = 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um sie zu öffnen.';
+  const orientationSentence = 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du den Bereich Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um ihn zu öffnen.';
 
   assert.ok(durchfuehrungWorkflows.includes(taskSentence), 'Direktguide nennt den kleinen Pfeil bei Maßnahmen nicht.');
   assert.ok(orientation.includes(orientationSentence), 'Lokale Finden-Hilfe nennt den kleinen Pfeil bei Maßnahmen nicht.');
