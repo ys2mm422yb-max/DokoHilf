@@ -81,12 +81,13 @@ test('explicit location questions route to dedicated area-finding guides', async
 });
 
 test('Bedarfsmedikation, Wirksamkeitskontrolle und Maßnahmen ohne Zeitangabe route deterministically', async () => {
-  const [smart, orientation, direct, migration, speech] = await Promise.all([
+  const [smart, orientation, direct, migration, speech, clarityMigration] = await Promise.all([
     read('assets/smart-help-v29.js'),
     read('assets/orientation-help-v29.js'),
     read('assets/durchfuehrungs-workflows-v29.js'),
     read('supabase/migrations/20260809124000_bedarfsmedikation_massnahmen_v29.sql'),
     read('assets/voice-durchfuehrung-catalog-v29.json'),
+    read('supabase/migrations/20260809143000_guide_clarity_handover_v29.sql'),
   ]);
 
   for (const slug of [
@@ -111,10 +112,15 @@ test('Bedarfsmedikation, Wirksamkeitskontrolle und Maßnahmen ohne Zeitangabe ro
 
   assert.match(direct, /rechts im kleinen Kästchen den Haken/);
   assert.match(direct, /Verordnung selbst nicht verändern/);
-  assert.match(direct, /automatisch erzeugte Wirksamkeitskontrolle/);
+  assert.match(direct, /Wirksamkeitskontrolle automatisch.*angelegt/s);
   assert.match(direct, /„Klienten-Team Sitzung“ oder „Krise“/);
-  assert.match(direct, /Unter „Was war“/i);
+  assert.match(direct, /Wichtig für Schichtübergabe/);
+  assert.match(direct, /Textfeld darunter/);
+  assert.match(direct, /Pop-up-Fenster/);
+  assert.doesNotMatch(direct, /Unter „Was war“/i);
   assert.match(direct, /unten mit „OK“ bestätigen/);
+  assert.match(clarityMigration, /Wichtig für Schichtübergabe/);
+  assert.match(clarityMigration, /große Textfeld darunter/);
   assert.match(speech, /Bedarfsmedikation/);
   assert.match(speech, /Wirksamkeitskontrolle/);
   assert.match(speech, /Maßnahmen ohne Zeitangabe/);
@@ -252,5 +258,6 @@ test('version is moved to the footer and update notice stays visible', async () 
   assert.match(polish, /UPDATE_NOTICE_MS = 10000/);
   assert.match(polish, /footer-version-wrap/);
   assert.match(polish, /pill\.classList\.remove\('build-pill'\)/);
+  assert.match(polish, /Konzept & Umsetzung · MT/);
   assert.match(polish, /DokoHilf wurde aktualisiert/);
 });

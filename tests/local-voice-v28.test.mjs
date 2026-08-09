@@ -146,8 +146,11 @@ test('Neue Durchführung-Workflows sind als direkte Guides vorhanden', () => {
   assert.match(durchfuehrungWorkflows, /kleinen Pfeil links daneben/);
   assert.match(durchfuehrungWorkflows, /rechts im kleinen Kästchen/);
   assert.match(durchfuehrungWorkflows, /Verordnung selbst nicht verändern/);
-  assert.match(durchfuehrungWorkflows, /automatisch.*Wirksamkeitskontrolle/s);
-  assert.match(durchfuehrungWorkflows, /„Was war“/);
+  assert.match(durchfuehrungWorkflows, /Wirksamkeitskontrolle automatisch.*angelegt/s);
+  assert.match(durchfuehrungWorkflows, /Wichtig für Schichtübergabe/);
+  assert.match(durchfuehrungWorkflows, /Textfeld darunter/);
+  assert.match(durchfuehrungWorkflows, /Pop-up-Fenster/);
+  assert.doesNotMatch(durchfuehrungWorkflows, /Unter „Was war“/i);
   assert.match(durchfuehrungWorkflows, /unten mit „OK“ bestätigen/);
   assert.match(durchfuehrungWorkflows, /insertBefore\(card, firstLater\)/);
   assert.match(durchfuehrungWorkflows, /__DOKOHILF_DURCHFUEHRUNGS_WORKFLOWS_V29__/);
@@ -159,6 +162,7 @@ test('Versionsplakette ist oben verborgen und nur unten dezent verfügbar', () =
   assert.match(releasePolish, /footer-version-button/);
   assert.match(releasePolish, /pill\.classList\.remove\('build-pill'\)/);
   assert.match(releasePolish, /DokoHilf \$\{VERSION_LABEL\} · Build \$\{BUILD_ID\}/);
+  assert.match(releasePolish, /Konzept & Umsetzung · MT/);
   assert.match(releasePolish, /UPDATE_NOTICE_MS = 10000/);
 });
 

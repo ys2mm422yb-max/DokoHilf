@@ -54,18 +54,19 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
   }
 
   function polishForm(view) {
-    if (view.querySelector('.direct-guide-heading h1')?.textContent?.trim() !== 'Formular erstellen') return false;
+    const title = view.querySelector('.direct-guide-heading h1')?.textContent?.trim();
+    if (title !== 'Formular anlegen' && title !== 'Formular erstellen') return false;
     const list = view.querySelector('.direct-guide-steps');
     const steps = [...view.querySelectorAll('.direct-guide-step')];
     if (!list || steps.length < 7) return false;
     const lastParagraph = steps[6].querySelector('p');
     const naturalLast = 'Das geöffnete Formular wie gewohnt ausfüllen.';
     if (lastParagraph && lastParagraph.textContent !== naturalLast) lastParagraph.textContent = naturalLast;
-    if (!view.querySelector('[data-v29-form-save-step]')) {
+    if (!view.querySelector('[data-v29-form-save-step]') && steps.length === 7) {
       const item = document.createElement('li');
       item.className = 'direct-guide-step';
       item.dataset.v29FormSaveStep = 'true';
-      item.innerHTML = '<span class="direct-guide-number" aria-hidden="true">8</span><div><p>Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste.</p></div>';
+      item.innerHTML = '<span class="direct-guide-number" aria-hidden="true">8</span><div><p>Wenn du mit dem Formular fertig bist, oben links in der Leiste speichern.</p></div>';
       list.append(item);
       const count = view.querySelector('.direct-guide-count');
       if (count) count.textContent = '8 Schritte';
@@ -85,8 +86,13 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
 
   function polishReport(view) {
     if (view.querySelector('.direct-guide-heading h1')?.textContent?.trim() !== 'Bericht anlegen') return false;
+    const paragraphs = stepParagraphs(view);
+    if (paragraphs.length >= 12) {
+      const entryText = 'Wenn der Bericht für die nächste Schicht wichtig ist, „Wichtig für Schichtübergabe“ anhaken. Danach in das Textfeld darunter den Bericht eintragen.';
+      if (paragraphs[10] && paragraphs[10].textContent !== entryText) paragraphs[10].textContent = entryText;
+    }
     const note = view.querySelector('.direct-guide-callout:not(.warning) p');
-    const natural = 'Bei „Kontakt – alles außer Arzt“ ist das verknüpfte Protokoll ein Fallgespräch. Bei „Sturzereignis“ ist es das Sturzprotokoll.';
+    const natural = 'Nur bei „Kontakt – alles außer Arzt“ und „Sturzereignis“ gibt es den zusätzlichen Protokoll-Schritt. Bei allen anderen Kategorien kannst du direkt mit dem Bericht weitermachen.';
     if (note && note.textContent !== natural) note.textContent = natural;
     view.dataset.v29NaturalReport = 'true';
     return true;
@@ -121,8 +127,8 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
     const steps = [...view.querySelectorAll('.direct-guide-step')];
     const paragraphs = steps.map(step => step.querySelector('p'));
     if (paragraphs.length < 9) return false;
-    const selection = 'Im Pop-up den gewünschten Vitalwert auswählen, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.';
-    const value = 'Den gemessenen Wert eintragen. Je nach ausgewähltem Vitalwert erscheinen die dazu passenden Eingabefelder.';
+    const selection = 'Im Pop-up-Fenster den gewünschten Vitalwert auswählen, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.';
+    const value = 'Den gemessenen Wert eintragen. Je nach ausgewähltem Vitalwert erscheinen die passenden Eingabefelder.';
     if (paragraphs[4] && paragraphs[4].textContent !== selection) paragraphs[4].textContent = selection;
     if (paragraphs[6] && paragraphs[6].textContent !== value) paragraphs[6].textContent = value;
     insertSpecialAfter(steps[6], 'v29VitalExamples', 'Beispiele', 'Blutdruck: Systole und Diastole. Außerdem können bei euch Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz und Atemalkohol erfasst werden. Zusätzliche Felder oder Einheiten so übernehmen, wie sie in der geöffneten Maske angezeigt werden.');
