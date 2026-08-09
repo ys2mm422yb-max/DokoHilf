@@ -10,9 +10,9 @@ const VIEWPORT_HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE 
 const DEVICE_SCALE_FACTOR = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
 const BUILD_ID = JSON.parse(await readFile(new URL('../version.json', import.meta.url), 'utf8')).buildId;
 if (!BUILD_ID) throw new Error('buildId fehlt in version.json');
-const GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
-const VISIT_REPLY = 'Öffne „Doku erweitert“. Bist du in Doku erweitert?';
-const VISIT_SPEECH = 'Öffne Doku erweitert.';
+const GREETING = 'Hey! Wobei brauchst du Hilfe?';
+const VISIT_REPLY = 'Öffne „Doku-Erweitert“. Bist du in Doku-Erweitert?';
+const VISIT_SPEECH = 'Öffne Doku-Erweitert.';
 const USER_AGENT = PROFILE === 'android'
   ? 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'
   : 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1';
