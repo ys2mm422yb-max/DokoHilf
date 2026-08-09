@@ -11,11 +11,11 @@
     {"text":"Bleibe im Durchführungsnachweis und suche den Eintrag „Bedarfsmedikation“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen."},
     {"text":"Wähle das gewünschte Bedarfsmedikament aus, indem du rechts im kleinen Kästchen den Haken setzt."},
     {"text":"Die Bedarfsmedikation ist geöffnet. Suche das gewünschte Medikament und setze ganz rechts in der zugehörigen Zeile den Haken im kleinen Kästchen."},
-    {"text":"Prüfe im Pop-up die Uhrzeit und ergänze beziehungsweise korrigiere sie nur auf den tatsächlichen Zeitpunkt der Gabe."},
-    {"text":"Beschreibe unten im Pop-up kurz den Anlass beziehungsweise warum die Bedarfsmedikation gegeben wurde."},
-    {"text":"Wenn tatsächlich eine geringere Bedarfsmenge eingenommen beziehungsweise gegeben wurde, dokumentiere rechts im Pop-up die tatsächlich verwendete Menge. Die Verordnung selbst wird dabei nicht verändert."},
+    {"text":"Prüfe im Pop-up-Fenster die Uhrzeit. Nur ändern, wenn der tatsächliche Zeitpunkt der Gabe abweicht."},
+    {"text":"„Wichtig für Schichtübergabe“ ist bei Bedarfsmedikation bereits automatisch ausgewählt. Den Haken so lassen und darunter im Textfeld kurz den Anlass der Gabe eintragen."},
+    {"text":"Falls tatsächlich eine geringere Bedarfsmenge verwendet wurde, rechts im Pop-up-Fenster die tatsächlich verwendete Menge eintragen. Die Verordnung selbst nicht verändern."},
     {"text":"Ändere hier nur die dokumentierte tatsächlich verwendete Bedarfsmenge. Die verordnete Bedarfsmedikation beziehungsweise Dosierung wird in diesem Ablauf nicht geändert."},
-    {"text":"Bestätige das Pop-up unten mit „OK“."},
+    {"text":"Bestätige das Pop-up-Fenster unten mit „OK“."},
     {"text":"Nach der dokumentierten Bedarfsmedikationsgabe wird die zugehörige Wirksamkeitskontrolle automatisch vom System angelegt. Du erstellst sie nicht selbst. Bearbeite sie erst, wenn sie zum vorgesehenen Zeitpunkt fällig ist."},
     {"text":"Die Wirksamkeitskontrolle wird automatisch zur Bedarfsmedikation angelegt. DokoHilf nennt keine erfundene Wartezeit."},
     {"text":"Wenn die Wirksamkeitskontrolle fällig ist, öffne sie im Durchführungsnachweis, hake sie ab und dokumentiere, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat."},
@@ -30,7 +30,7 @@
     {"text":"Nach Auswahl von „Doku“ erscheint darunter „Durchführungsnachweis“. Dort wird die fällige Wirksamkeitskontrolle angezeigt."},
     {"text":"Öffne die Wirksamkeitskontrolle und hake sie als durchgeführt ab."},
     {"text":"Dokumentiere kurz, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat."},
-    {"text":"Bestätige das Pop-up zum Schluss unten mit „OK“."},
+    {"text":"Bestätige das Pop-up-Fenster zum Schluss unten mit „OK“."},
 
     {"text":"„Doku“ findest du ganz oben in der festen grünen Leiste."},
     {"text":"Im Durchführungsnachweis findest du „Bedarfsmedikation“. Klicke auf den kleinen Pfeil links daneben, um die Bedarfsmedikation des ausgewählten Bewohners zu öffnen."},
@@ -40,10 +40,10 @@
     {"text":"Öffne im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“."},
     {"text":"Bleibe im Durchführungsnachweis und suche dort den Eintrag „Maßnahmen ohne Zeitangabe“."},
     {"text":"Wähle die gewünschte Maßnahme aus, zum Beispiel „Klienten-Team Sitzung“ oder „Krise“."},
-    {"text":"Prüfe im Pop-up Datum und Uhrzeit und ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht."},
+    {"text":"Prüfe im Pop-up-Fenster Datum und Uhrzeit. Nur ändern, wenn der tatsächliche Dokumentationszeitpunkt abweicht."},
     {"text":"Wähle die passende Kategorie aus."},
-    {"text":"Dokumentiere unter „Was war“, was bei der Maßnahme relevant war."},
-    {"text":"Wenn du eine zusätzliche Zeitangabe dokumentieren möchtest, kannst du sie oben rechts im Pop-up ergänzen."},
+    {"text":"Wenn die Maßnahme für die nächste Schicht wichtig ist, „Wichtig für Schichtübergabe“ anhaken. Danach in das Textfeld darunter kurz eintragen, was passiert ist oder was du gemacht beziehungsweise durchgeführt hast."},
+    {"text":"Falls du zusätzlich eine Zeitangabe brauchst, kannst du sie oben rechts im Pop-up-Fenster ergänzen."},
     {"text":"Im Durchführungsnachweis findest du den Bereich „Maßnahmen ohne Zeitangabe“."}
   ]
 }
