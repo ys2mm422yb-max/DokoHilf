@@ -60,14 +60,19 @@ def clean_catalog_text(value: str) -> str:
     return re.sub(r'\s{2,}', ' ', text).strip()
 
 
+def canonical_catalog_text(value: str) -> str:
+    text = clean_catalog_text(value)
+    if text == LONG_VOICE_GREETING:
+        return SHORT_VOICE_GREETING
+    return text
+
+
 def normalize_key(value: str) -> str:
-    return re.sub(r'\s+', ' ', clean_catalog_text(value).lower()).strip()
+    return re.sub(r'\s+', ' ', canonical_catalog_text(value).lower()).strip()
 
 
 def supertonic_text(value: str) -> str:
-    text = clean_catalog_text(value)
-    if text == LONG_VOICE_GREETING:
-        text = SHORT_VOICE_GREETING
+    text = canonical_catalog_text(value)
     replacements = {
         '„': '', '“': '', '”': '', '«': '', '»': '', '‹': '', '›': '', '"': '',
         '‚': '', '‘': '', '’': '', '´': '', '`': '',
@@ -89,7 +94,7 @@ def merged_entries(*catalogs: dict) -> list[dict]:
         for raw in catalog.get('entries') or []:
             if not isinstance(raw, dict):
                 continue
-            text = clean_catalog_text(raw.get('text', ''))
+            text = canonical_catalog_text(raw.get('text', ''))
             key = normalize_key(text)
             if not key or key in seen:
                 continue
@@ -140,6 +145,11 @@ def main() -> None:
     static_speech_count = len(entries)
     if not static_speech_count:
         raise SystemExit('static speech catalog is empty')
+    published_texts = {str(entry.get('text') or '') for entry in entries}
+    if SHORT_VOICE_GREETING not in published_texts:
+        raise SystemExit('approved short voice greeting is missing from the published static catalog')
+    if LONG_VOICE_GREETING in published_texts:
+        raise SystemExit('legacy long voice greeting must not remain a published static catalog key')
 
     if args.validate_only:
         parts = ' + '.join(f'{source_counts[name]} {name}' for name in catalogs)
@@ -159,7 +169,7 @@ def main() -> None:
     generated = []
     published_entries = []
     for index, entry in enumerate(entries):
-        catalog_text = clean_catalog_text(entry.get('text', ''))
+        catalog_text = canonical_catalog_text(entry.get('text', ''))
         spoken_text = supertonic_text(catalog_text)
         if not spoken_text:
             raise RuntimeError(f'empty spoken text at index {index}')
