@@ -13,7 +13,7 @@
     style.textContent = `
       .topbar .build-pill{display:none!important}
       .footer-version-wrap{display:flex;justify-content:center;margin:7px auto 0;padding:0 12px calc(8px + env(safe-area-inset-bottom))}
-      .footer-version-button{min-height:28px;padding:0 9px;border:1px solid rgba(130,170,159,.10);border-radius:999px;background:rgba(255,255,255,.025);color:#58736c;font-size:9.5px;font-weight:700;letter-spacing:.025em;opacity:.72}
+      .footer-version-button{display:inline-flex!important;align-items:center;justify-content:center;min-height:28px;padding:0 9px;border:1px solid rgba(130,170,159,.10);border-radius:999px;background:rgba(255,255,255,.025);color:#58736c;font-size:9.5px;font-weight:700;letter-spacing:.025em;opacity:.72}
       .footer-version-button:active{opacity:1}
       .update-toast{max-width:calc(100% - 28px);text-align:center;white-space:normal;transition:opacity .2s ease,transform .2s ease}
       .app-shell[data-mode="chat"] .update-toast{bottom:calc(96px + env(safe-area-inset-bottom))}
@@ -27,6 +27,9 @@
     const wrap = document.createElement('div');
     wrap.id = 'footerVersionWrap';
     wrap.className = 'footer-version-wrap';
+    pill.hidden = false;
+    pill.removeAttribute('hidden');
+    pill.style.removeProperty('display');
     pill.classList.add('footer-version-button');
     pill.classList.remove('build-pill');
     pill.textContent = `DokoHilf ${VERSION_LABEL} · Build ${BUILD_ID}`;
