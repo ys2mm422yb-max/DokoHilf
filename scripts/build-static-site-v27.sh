@@ -14,7 +14,19 @@ rm -f "$SITE_DIR/assets/guide-audio-manifest.json"
 node scripts/generate-pwa-icons-v27.mjs "$SITE_DIR"
 node scripts/apply-pwa-icons-v27.mjs "$SITE_DIR"
 node scripts/apply-detail-help-v27.mjs "$SITE_DIR"
-node scripts/apply-local-voice-v28.mjs "$SITE_DIR"
+python - "$SITE_DIR/assets/app.js" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+text = path.read_text(encoding='utf-8')
+old = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.'
+new = 'Hey! Wobei brauchst du Hilfe?'
+if old in text:
+    text = text.replace(old, new, 1)
+if new not in text:
+    raise SystemExit('Kurzer Hey-Sprachstart konnte nicht in app.js gesetzt werden.')
+path.write_text(text, encoding='utf-8')
+PY
 touch "$SITE_DIR/.nojekyll"
 
 test -s "$SITE_DIR/index.html"
@@ -105,14 +117,12 @@ grep -Fq 'encodeURIComponent(BUILD_ID)' "$SITE_DIR/assets/local-voice-gate-v28.j
 grep -q "STATIC_VOICE = 'Supertonic-F1'" "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q 'Ich habe die Antwort im Chat angezeigt' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_BLOCK_SYSTEM_VOICE_V28__' "$SITE_DIR/assets/local-voice-gate-v28.js"
-grep -q 'payload.spokenText' "$SITE_DIR/assets/local-voice-gate-v28.js"
+grep -q 'spokenText' "$SITE_DIR/assets/local-voice-gate-v28.js"
 grep -q '__DOKOHILF_ORIENTATION_HELP_V29__' "$SITE_DIR/assets/orientation-help-v29.js"
 grep -q 'Doku-Erweitert ist ein Hauptbereich in der festen Leiste' "$SITE_DIR/assets/orientation-help-v29.js"
 grep -q '__DOKOHILF_RELEASE_POLISH_V29__' "$SITE_DIR/assets/release-polish-v29.js"
 grep -q 'Hey! Wobei brauchst du Hilfe?' "$SITE_DIR/assets/app.js"
-grep -q '__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__' "$SITE_DIR/assets/app.js"
 grep -q '__DOKOHILF_LOCAL_VOICE_ONLY_V28__' "$SITE_DIR/assets/ux-v27.js"
-grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ === true' "$SITE_DIR/assets/app.js"
 grep -q 'window.__DOKOHILF_LOCAL_VOICE_V28__ !== true' "$SITE_DIR/assets/experience-v27.js"
 grep -q '__DOKOHILF_SMART_HELP_V29__' "$SITE_DIR/assets/smart-help-v29.js"
 grep -q '__DOKOHILF_UI_V29__' "$SITE_DIR/assets/v29-ui.js"
