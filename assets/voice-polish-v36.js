@@ -14,6 +14,10 @@
 
   let scheduled = false;
 
+  function setText(node, value) {
+    if (node && node.textContent !== value) node.textContent = value;
+  }
+
   function guideState() {
     try { return window.DokoHilfGuideProgress?.getCurrentGuide?.() || null; } catch { return null; }
   }
@@ -48,13 +52,13 @@
     const guide = guideState();
     shell.classList.toggle('v36-no-guide', !guide);
     if (guide) {
-      step.textContent = `Schritt ${guide.guideStep} von ${guide.guideStepCount}`;
-      title.hidden = false;
-      title.textContent = guide.guideTitle || 'Aktiver Ablauf';
+      setText(step, `Schritt ${guide.guideStep} von ${guide.guideStepCount}`);
+      if (title.hidden) title.hidden = false;
+      setText(title, guide.guideTitle || 'Aktiver Ablauf');
     } else {
-      step.textContent = 'Sprachmodus';
-      title.hidden = true;
-      title.textContent = '';
+      setText(step, 'Sprachmodus');
+      if (!title.hidden) title.hidden = true;
+      setText(title, '');
     }
   }
 
@@ -66,11 +70,11 @@
 
     const current = status.textContent.trim();
     if (/natürliche stimme wird vorbereitet/i.test(current)) {
-      status.textContent = 'DokoHilf bereitet die Antwort vor …';
-      hint.textContent = 'Einen kurzen Moment bitte.';
+      setText(status, 'DokoHilf bereitet die Antwort vor …');
+      setText(hint, 'Einen kurzen Moment bitte.');
     } else if (/doko ?hilf spricht natürlich/i.test(current)) {
-      status.textContent = 'DokoHilf spricht …';
-      hint.textContent = 'Danach höre ich automatisch wieder zu.';
+      setText(status, 'DokoHilf spricht …');
+      setText(hint, 'Danach höre ich automatisch wieder zu.');
     }
   }
 
@@ -78,7 +82,7 @@
     const shell = document.getElementById('appShell');
     const chip = ensureStateChip();
     if (!shell || !chip) return;
-    chip.textContent = STATE_LABELS[shell.dataset.voiceState] || 'Bereit';
+    setText(chip, STATE_LABELS[shell.dataset.voiceState] || 'Bereit');
   }
 
   function sync() {
