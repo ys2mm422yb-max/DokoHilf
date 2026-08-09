@@ -320,7 +320,9 @@ for (const slug of librarySlugs) {
   await page.waitForFunction(() => document.querySelector('#directGuideView .v29-library-grid') && !document.getElementById('directGuideView').hidden);
 }
 
-await directView.locator('[data-v29-guide-home]').click();
+const libraryHome = directView.locator('[data-v29-guide-home]').filter({ hasText: 'Zurück zum Hauptmenü' });
+assert(await libraryHome.count() === 1, 'In der Anleitungsbibliothek muss genau ein Button „Zurück zum Hauptmenü“ vorhanden sein.');
+await libraryHome.click();
 await page.waitForFunction(() => document.getElementById('appShell')?.dataset.mode === 'start');
 
 // Chat route and contextual help must stay inside confirmed guide context.
