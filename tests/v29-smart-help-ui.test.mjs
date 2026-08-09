@@ -85,6 +85,16 @@ test('v29 mutation synchronization is idempotent and cannot feed its own observe
   assert.match(ui, /new MutationObserver\(scheduleSync\).*attributeFilter: \['hidden', 'data-mode'\]/s);
 });
 
+test('legacy v27 presentation yields to the v29 home and chat owner on initial load and pageshow', async () => {
+  const experience = await read('assets/experience-v27.js');
+  assert.match(experience, /function v29OwnsPresentation\(\)/);
+  assert.match(experience, /window\.__DOKOHILF_UI_V29__ === true/);
+  assert.match(experience, /examples\?\.dataset\.v29GuideLibrary === 'true'/);
+  assert.match(experience, /examples\.dataset\.v27Ready === 'direct-guides-cross-platform'/);
+  assert.match(experience, /if \(v29OwnsPresentation\(\)\) return/);
+  assert.match(experience, /window\.addEventListener\('pageshow', initialize\)/);
+});
+
 test('service worker precaches the new UI and smart-help layer', async () => {
   const worker = await read('service-worker.js');
   for (const asset of ['assets/v29-ui.css', 'assets/v29-ui.js', 'assets/smart-help-v29.js', 'assets/direct-guide-copy-v29.js']) {
