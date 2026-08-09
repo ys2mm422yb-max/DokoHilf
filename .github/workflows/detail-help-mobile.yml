@@ -80,7 +80,7 @@ jobs:
           grep -Fq "assets/smart-help-v29.js?v=$BUILD_ID" _detail_site/index.html
           grep -Fq "assets/local-voice-v28.js?v=$BUILD_ID" _detail_site/index.html
           grep -Fq "assets/local-voice-gate-v28.js?v=$BUILD_ID" _detail_site/index.html
-          grep -q "HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-2'" _detail_site/service-worker.js
+          grep -q "HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-3'" _detail_site/service-worker.js
           grep -Fq "detail-help-v27.js?v=$BUILD_ID" _detail_site/service-worker.js
           grep -Fq "smart-help-v29.js?v=$BUILD_ID" _detail_site/service-worker.js
           grep -Fq "local-voice-v28.js?v=$BUILD_ID" _detail_site/service-worker.js
