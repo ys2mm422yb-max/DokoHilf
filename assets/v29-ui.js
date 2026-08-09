@@ -241,9 +241,13 @@ html[data-dokohilf-ui="v29"] .composer-wrap{border-top-color:rgba(78,230,160,.15
       examplesLabel.textContent = desiredLabel;
     }
     for (const button of examples?.querySelectorAll('button[data-direct-guide]') || []) {
-      button.dataset.homeSymbol = symbolForButton(button);
+      const symbol = symbolForButton(button);
+      if (button.dataset.homeSymbol !== symbol) button.dataset.homeSymbol = symbol;
     }
-    document.documentElement.dataset.dokohilfHome = guideLibraryOwnsHome ? 'guide-library-v29' : 'premium-v29-1';
+    const desiredHomeOwner = guideLibraryOwnsHome ? 'guide-library-v29' : 'premium-v29-1';
+    if (document.documentElement.dataset.dokohilfHome !== desiredHomeOwner) {
+      document.documentElement.dataset.dokohilfHome = desiredHomeOwner;
+    }
   }
 
   function ensureHistoryToggle() {
@@ -269,7 +273,8 @@ html[data-dokohilf-ui="v29"] .composer-wrap{border-top-color:rgba(78,230,160,.15
     const list = messages();
     const button = ensureHistoryToggle();
     const active = Boolean(currentGuide());
-    shell()?.toggleAttribute('data-v29-guide-active', active);
+    const app = shell();
+    if (app?.hasAttribute('data-v29-guide-active') !== active) app?.toggleAttribute('data-v29-guide-active', active);
     if (!list || !button) return;
 
     const nodes = [...list.querySelectorAll(':scope > .message')];
@@ -279,32 +284,37 @@ html[data-dokohilf-ui="v29"] .composer-wrap{border-top-color:rgba(78,230,160,.15
     assistants.forEach((node, index) => node.classList.add(index === assistants.length - 1 ? 'v29-current-answer' : 'v29-past-answer'));
 
     if (!active || nodes.length <= 5) {
-      button.hidden = true;
+      if (!button.hidden) button.hidden = true;
       return;
     }
 
     const keep = 4;
     const collapsible = nodes.slice(0, Math.max(0, nodes.length - keep));
     if (!historyExpanded) collapsible.forEach(node => node.classList.add('v29-history-collapsed'));
-    button.hidden = collapsible.length === 0;
-    button.textContent = historyExpanded
+    const shouldHide = collapsible.length === 0;
+    if (button.hidden !== shouldHide) button.hidden = shouldHide;
+    const desiredText = historyExpanded
       ? 'Frühere Nachrichten ausblenden'
       : `Frühere Nachrichten anzeigen · ${collapsible.length}`;
+    if (button.textContent !== desiredText) button.textContent = desiredText;
   }
 
   function polishStaticCopy() {
     const heading = document.querySelector('.chat-head h1');
     const copy = document.querySelector('.chat-head p');
-    if (heading) heading.textContent = 'Was möchtest du erledigen?';
-    if (copy) copy.textContent = 'Schreib es so, wie du es sagen würdest. DokoHilf führt dich Schritt für Schritt.';
+    const headingText = 'Was möchtest du erledigen?';
+    const copyText = 'Schreib es so, wie du es sagen würdest. DokoHilf führt dich Schritt für Schritt.';
+    if (heading && heading.textContent !== headingText) heading.textContent = headingText;
+    if (copy && copy.textContent !== copyText) copy.textContent = copyText;
     const input = document.getElementById('chatInput');
-    if (input) input.placeholder = 'Frag einfach …';
+    if (input && input.placeholder !== 'Frag einfach …') input.placeholder = 'Frag einfach …';
   }
 
   function syncGuideState(event) {
     const active = Boolean(event?.detail || currentGuide());
     const app = shell();
-    if (app) app.dataset.v29GuideActive = active ? 'true' : 'false';
+    const desired = active ? 'true' : 'false';
+    if (app && app.dataset.v29GuideActive !== desired) app.dataset.v29GuideActive = desired;
     historyExpanded = false;
     syncHistory();
   }
