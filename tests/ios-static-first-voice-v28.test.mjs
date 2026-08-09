@@ -13,7 +13,9 @@ test('mobiler Voice-Einstieg startet keine lokale Sprachinferenz', () => {
   assert.match(runtime, /__DOKOHILF_LOCAL_VOICE_RETIRED_V29__/);
   assert.match(runtime, /__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__/);
   assert.match(runtime, /on_device_voice_retired_static_supertonic_only/);
-  assert.doesNotMatch(runtime, /armAndPrepare|loadTextToSpeech|loadVoiceStyle|navigator\.gpu|onnxruntime/);
+  assert.match(runtime, /armAndPrepare: retired/);
+  assert.match(runtime, /synthesize: retired/);
+  assert.doesNotMatch(runtime, /loadTextToSpeech|loadVoiceStyle|navigator\.gpu|onnxruntime|Supertone\/supertonic-3\/resolve\/main/);
 });
 
 test('statisches Supertonic-F1 ist der einzige Sprachpfad', () => {
