@@ -13,7 +13,7 @@ test('v29 build is cache-busted consistently and version badge starts hidden', a
     read('assets/local-voice-gate-v28.js'),
   ]);
   const buildId = JSON.parse(version).buildId;
-  assert.equal(buildId, '20260809-33');
+  assert.equal(buildId, '20260809-34');
   assert.match(html, /KI · v29/);
   assert.match(html, /id="buildPill" type="button" hidden/);
   assert.match(html, new RegExp(`dokohilf-build" content="${buildId}`));
@@ -24,6 +24,9 @@ test('v29 build is cache-busted consistently and version badge starts hidden', a
   assert.match(runtime, /on_device_voice_retired_static_supertonic_only/);
   assert.doesNotMatch(runtime, /Supertone\/supertonic-3\/resolve\/main|loadTextToSpeech|navigator\.gpu/);
   assert.match(gate, /guide-audio-catalog\.json\?v=\$\{encodeURIComponent\(BUILD_ID\)\}/);
+  assert.match(gate, /audioUrl\.searchParams\.set\('v', BUILD_ID\)/);
+  assert.match(gate, /const audioHref = audioUrl\.toString\(\)/);
+  assert.match(gate, /fetchWithTimeout\(audioHref, AUDIO_TIMEOUT_MS, \{ cache: 'no-store' \}\)/);
   assert.match(gate, /dokohilf-static-supertonic-audio-v29-2/);
   assert.match(gate, /static-supertonic-only-v29/);
   assert.doesNotMatch(gate, /IOS_LOCAL_TIMEOUT_MS|localFallback|DokoHilfLocalVoiceV28\.synthesize/);
