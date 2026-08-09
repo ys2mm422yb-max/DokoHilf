@@ -109,24 +109,6 @@
     <div class="update-toast" id="updateToast" hidden aria-live="polite">DokoHilf wurde automatisch aktualisiert.</div>
   </div>
   <script src="assets/update-manager.js?v=20260809-30"></script><script src="assets/mobile-audio-fix.js?v=20260809-30"></script><script src="assets/routing-fix.js?v=20260809-30"></script><script src="assets/conversation-intelligence.js?v=20260809-30"></script><script src="assets/clarification-ui.js?v=20260809-30"></script><script src="assets/smart-help-v29.js?v=20260809-30"></script><script src="assets/guide-progress.js?v=20260809-30"></script><script src="assets/voice-focus-mode.js?v=20260809-30"></script><script src="assets/local-voice-v28.js?v=20260809-30"></script><script src="assets/experience-v27.js?v=20260809-30"></script><script src="assets/ux-v27.js?v=20260809-30"></script><script src="assets/v29-ui.js?v=20260809-30"></script><script src="assets/mobile-polish-v29.js?v=20260809-30-cardaxis1"></script><script src="assets/local-voice-gate-v28.js?v=20260809-30"></script>
-  <script>
-    (() => {
-      const NativeMutationObserver = window.MutationObserver;
-      let consumed = false;
-      window.MutationObserver = class DokoHilfLegacyDirectGuidesObserver extends NativeMutationObserver {
-        constructor(callback) {
-          if (!consumed) {
-            consumed = true;
-            super(() => {});
-            window.MutationObserver = NativeMutationObserver;
-            window.__DOKOHILF_LEGACY_DIRECT_GUIDES_OBSERVER_GUARD_V29__ = true;
-            return;
-          }
-          super(callback);
-        }
-      };
-    })();
-  </script>
   <script src="assets/direct-guides-v27.js?v=20260809-30"></script><script src="assets/direct-guide-copy-v29.js?v=20260809-30"></script><script src="assets/guide-library-v29.js?v=20260809-30-library1" data-dokohilf-guide-library-v29></script><script src="assets/app.js?v=20260809-30" defer></script>
   <script>document.getElementById('buildPill')?.addEventListener('click', () => { if (window.DokoHilfUpdate?.checkForUpdate) window.DokoHilfUpdate.checkForUpdate('manual'); else window.DokoHilfHardRefresh?.('20260809-30'); });</script>
 </body>
