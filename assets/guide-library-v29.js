@@ -1,6 +1,9 @@
 (() => {
   'use strict';
 
+  if (window.__DOKOHILF_GUIDE_LIBRARY_V29__ === true || window.__DOKOHILF_GUIDE_LIBRARY_V29__ === 'initializing') return;
+  window.__DOKOHILF_GUIDE_LIBRARY_V29__ = 'initializing';
+
   const STORAGE_KEY = 'dokohilf-guide-usage-v29';
   const DEFAULT_FREQUENT = ['bericht-neu', 'visite-anlegen', 'vitalwerte', 'anwesenheit', 'medikation-ansehen', 'formulare-anlegen'];
 
@@ -249,8 +252,7 @@
 
   function frequentSlugs() {
     const usage = loadUsage();
-    const baseOrder = LIBRARY_ORDER.filter(slug => slug !== 'vitalwerte-einzelwert' && slug !== 'vitalwerte-sammelerfassung');
-    const candidates = [...new Set([...DEFAULT_FREQUENT, ...baseOrder])].filter(slug => META[slug]);
+    const candidates = [...new Set([...DEFAULT_FREQUENT, ...LIBRARY_ORDER])].filter(slug => META[slug]);
     return candidates.sort((a, b) => {
       const delta = Number(usage[b] || 0) - Number(usage[a] || 0);
       if (delta) return delta;
@@ -294,6 +296,7 @@
     if (el.shell) { el.shell.dataset.mode = 'start'; delete el.shell.dataset.v29GuideLibrary; }
     if (el.start) el.start.hidden = false; if (el.workspace) el.workspace.hidden = true; if (el.composer) el.composer.hidden = true;
     if (el.legal) el.legal.hidden = false; if (el.home) el.home.hidden = true; if (el.reset) el.reset.hidden = true;
+    renderFrequent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -337,20 +340,43 @@
       </div>`;
   }
 
+  function createLibraryCard(slug) {
+    const meta = META[slug];
+    if (!meta) throw new Error(`guide_library_meta_missing:${slug}`);
+    const button = document.createElement('button');
+    button.className = 'v29-library-card';
+    button.type = 'button';
+    button.dataset.v29OpenGuide = slug;
+    button.innerHTML = `${iconMarkup(meta.icon)}<span><strong>${escapeHtml(meta.label)}</strong><small>${escapeHtml(meta.subtitle)}</small></span><i aria-hidden="true">›</i>`;
+    return button;
+  }
+
   function renderLibrary() {
     const target = openFrame(); if (!target) return;
     state = { source: 'library', current: 'library' };
-    const cards = LIBRARY_ORDER.map(slug => {
-      const meta = META[slug]; if (!meta) return '';
-      return `<button class="v29-library-card" type="button" data-v29-open-guide="${slug}">${iconMarkup(meta.icon)}<span><strong>${escapeHtml(meta.label)}</strong><small>${escapeHtml(meta.subtitle)}</small></span><i aria-hidden="true">›</i></button>`;
-    }).join('');
     target.innerHTML = `<div class="v29-library-head">
       <button class="direct-guide-back" type="button" data-v29-guide-home aria-label="Zurück zum Hauptmenü">‹</button>
       <div><span>Übersicht</span><h1>Alle Anleitungen</h1><p>Wähle den Ablauf, den du gerade brauchst.</p></div>
-    </div>
-    <div class="v29-library-grid">${cards}
-      <div class="v29-library-card is-later" aria-disabled="true">${iconMarkup('report')}<span><strong>Berichtssuche</strong><small>Wird fachlich noch überarbeitet · kommt später</small></span><b>Später</b></div>
-    </div>`;
+    </div><div class="v29-library-grid"></div>`;
+    const grid = target.querySelector('.v29-library-grid');
+    for (const slug of LIBRARY_ORDER) grid.append(createLibraryCard(slug));
+    const later = document.createElement('div');
+    later.className = 'v29-library-card is-later';
+    later.setAttribute('aria-disabled', 'true');
+    later.innerHTML = `${iconMarkup('report')}<span><strong>Berichtssuche</strong><small>Wird fachlich noch überarbeitet · kommt später</small></span><b>Später</b>`;
+    grid.append(later);
+    target.dataset.v29LibraryGuideCount = String(grid.querySelectorAll('.v29-library-card[data-v29-open-guide]').length);
+  }
+
+  function frequentHomeValid(examples) {
+    if (!examples || examples.dataset.v29GuideLibrary !== 'true') return false;
+    const label = examples.querySelector(':scope > span')?.textContent?.trim();
+    const legacy = [...examples.querySelectorAll('button[data-direct-guide]')];
+    return label === 'Häufig genutzt'
+      && examples.querySelectorAll('.v29-frequent-guide').length === 6
+      && Boolean(examples.querySelector('.v29-all-guides-trigger'))
+      && legacy.length === 7
+      && legacy.every(button => button.hidden);
   }
 
   function renderFrequent() {
@@ -384,16 +410,16 @@
       event.preventDefault(); event.stopImmediatePropagation(); renderGuide(slug, 'home'); return;
     }
     const library = event.target.closest?.('[data-v29-open-library]');
-    if (library) { event.preventDefault(); renderLibrary(); return; }
+    if (library) { event.preventDefault(); event.stopImmediatePropagation(); renderLibrary(); return; }
     const open = event.target.closest?.('[data-v29-open-guide]');
     if (open) {
-      event.preventDefault();
+      event.preventDefault(); event.stopImmediatePropagation();
       const slug = open.dataset.v29OpenGuide; const source = state.current === 'library' ? 'library' : state.source;
       renderGuide(slug, source || 'home'); return;
     }
-    if (event.target.closest?.('[data-v29-guide-home]')) { event.preventDefault(); closeToHome(); return; }
+    if (event.target.closest?.('[data-v29-guide-home]')) { event.preventDefault(); event.stopImmediatePropagation(); closeToHome(); return; }
     if (event.target.closest?.('[data-v29-guide-back]')) {
-      event.preventDefault();
+      event.preventDefault(); event.stopImmediatePropagation();
       if (state.source === 'library') renderLibrary(); else closeToHome();
     }
   }, { capture: true });
@@ -406,8 +432,15 @@
   function initialize() {
     renderFrequent();
     new MutationObserver(() => {
-      if (!document.querySelector('.examples')?.dataset.v29GuideLibrary) renderFrequent();
+      const examples = document.querySelector('.examples');
+      if (!frequentHomeValid(examples)) renderFrequent();
     }).observe(document.documentElement, { childList: true, subtree: true });
+    window.DokoHilfGuideLibraryV29 = {
+      renderFrequent,
+      renderLibrary,
+      getLibraryOrder: () => [...LIBRARY_ORDER],
+      getState: () => ({ expectedGuideCount: LIBRARY_ORDER.length, current: state.current, source: state.source }),
+    };
     window.__DOKOHILF_GUIDE_LIBRARY_V29__ = true;
   }
 

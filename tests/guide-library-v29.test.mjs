@@ -72,6 +72,37 @@ test('Hauptmenü nutzt lokale Häufigkeit, passende Icons und eine vollständige
   assert.match(library, /handover: '<path/);
 });
 
+test('Guide-Bibliothek enthält exakt 17 bestätigte Top-Level-Anleitungen', () => {
+  const order = library.match(/const LIBRARY_ORDER = \[([\s\S]*?)\];/);
+  assert.ok(order, 'LIBRARY_ORDER fehlt');
+  const slugs = [...order[1].matchAll(/'([^']+)'/g)].map(match => match[1]);
+  assert.equal(slugs.length, 17);
+  assert.equal(new Set(slugs).size, 17);
+  for (const slug of slugs) {
+    assert.match(library, new RegExp(`['\"]?${slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['\"]?\\s*:`));
+  }
+});
+
+test('Guide-Bibliothek wird nur einmal initialisiert und rendert alle Hauptkarten als echte DOM-Buttons', () => {
+  assert.match(library, /__DOKOHILF_GUIDE_LIBRARY_V29__ === 'initializing'/);
+  assert.match(library, /window\.__DOKOHILF_GUIDE_LIBRARY_V29__ = 'initializing'/);
+  assert.match(library, /function createLibraryCard\(slug\)/);
+  assert.match(library, /document\.createElement\('button'\)/);
+  assert.match(library, /for \(const slug of LIBRARY_ORDER\) grid\.append\(createLibraryCard\(slug\)\)/);
+  assert.match(library, /target\.dataset\.v29LibraryGuideCount/);
+  assert.match(library, /expectedGuideCount: LIBRARY_ORDER\.length/);
+  assert.match(library, /window\.__DOKOHILF_GUIDE_LIBRARY_V29__ = true/);
+});
+
+test('Guide-Bibliothek heilt einen späteren Legacy-Reset des Startbereichs selbst', () => {
+  assert.match(library, /function frequentHomeValid\(examples\)/);
+  assert.match(library, /label === 'Häufig genutzt'/);
+  assert.match(library, /examples\.querySelectorAll\('\.v29-frequent-guide'\)\.length === 6/);
+  assert.match(library, /legacy\.length === 7/);
+  assert.match(library, /legacy\.every\(button => button\.hidden\)/);
+  assert.match(library, /if \(!frequentHomeValid\(examples\)\) renderFrequent\(\)/);
+});
+
 test('Guide-Bibliothek wird deterministisch beim App-Start geladen und der Legacy-Fallback ist vollständig stabil', () => {
   const cssIndex = index.indexOf(`assets/guide-library-v29.css?v=${buildId}-library1`);
   const copyIndex = index.indexOf(`assets/direct-guide-copy-v29.js?v=${buildId}`);
