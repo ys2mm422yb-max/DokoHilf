@@ -70,23 +70,29 @@ test('GitHub-Build leitet die Gesamtzahl aus allen kontrollierten Sprachkataloge
   assert.match(builder, /TTS\(auto_download=True\)/);
   assert.match(builder, /lang='de'/);
   assert.match(builder, /EXPECTED_SOURCE_COUNTS/);
-  assert.match(builder, /'base': 93/);
+  assert.match(builder, /'base': 130/);
   assert.match(builder, /'extra': 33/);
   assert.match(builder, /'release': 49/);
   assert.match(builder, /'workflow': 39/);
   assert.match(builder, /'ui': 1/);
   assert.match(builder, /'navigation': 17/);
   assert.match(builder, /'context': 10/);
+  assert.match(builder, /validate_base_catalog/);
+  assert.match(builder, /FORBIDDEN_BASE_SENTENCES/);
   assert.match(builder, /static_speech_count = len\(entries\)/);
   assert.doesNotMatch(builder, /STATIC_SPEECH_COUNT\s*=/);
 
-  assert.equal(catalogs.base.entries.length, 93);
+  assert.equal(catalogs.base.entries.length, 130);
   assert.equal(catalogs.extra.entries.length, 33);
   assert.equal(catalogs.release.entries.length, 49);
   assert.equal(catalogs.workflow.entries.length, 39);
   assert.equal(catalogs.ui.entries.length, 1);
   assert.equal(catalogs.navigation.entries.length, 17);
   assert.equal(catalogs.context.entries.length, 10);
+  assert.match(sourceCatalogText, /40 approved dokohilf_guides \/ 129 unique approved step texts plus greeting/);
+  assert.doesNotMatch(sourceCatalogText, /Doku erweitert|Öffne oben den Reiter „Aufgaben“|Wähle darunter „Aktuelles“/);
+  assert.match(sourceCatalogText, /Wichtig für Schichtübergabe.*Bedarfsmedikation/s);
+  assert.match(sourceCatalogText, /„Planung“ findest du ganz oben in der festen grünen Hauptleiste/);
 
   assert.match(uiSpeechText, /Hey! Wobei brauchst du Hilfe\?/);
   assert.match(extrasText, /Ich habe die Antwort im Chat angezeigt/);
@@ -167,7 +173,7 @@ test('Versionsplakette ist oben verborgen und nur unten dezent verfügbar', () =
 });
 
 test('Build-ID, PWA und neue Assets sind konsistent', () => {
-  assert.equal(buildId, '20260809-33');
+  assert.equal(buildId, '20260809-34');
   assert.match(index, new RegExp(`dokohilf-build" content="${buildId}`));
   assert.match(index, new RegExp(`orientation-help-v29\\.js\\?v=${buildId}`));
   assert.match(index, new RegExp(`release-polish-v29\\.js\\?v=${buildId}`));
