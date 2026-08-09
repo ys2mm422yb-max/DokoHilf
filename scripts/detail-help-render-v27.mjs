@@ -7,7 +7,7 @@ const HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE === 'andr
 const SCALE = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/detail-help-v29/${PROFILE}`;
-const GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.';
+const GREETING = 'Hey! Wobei brauchst du Hilfe?';
 const FIRST_SPEECH = 'Wähle zuerst den gewünschten Bewohner aus.';
 const HELP_SPEECH = 'Bleib beim ausgewählten Bewohner und prüfe, ob der richtige Bewohner geöffnet ist.';
 
