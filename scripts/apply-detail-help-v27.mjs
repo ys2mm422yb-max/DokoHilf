@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const REVISION = '20260808-context-voice-v29-1';
+const REVISION = '20260809-static-supertonic-orientation-ui-v29-2';
 const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');
@@ -38,11 +38,28 @@ if (!html.includes('assets/context-voice-hotfix-v28.js')) {
   if (!html.includes(syncScriptTag)) throw new Error('Render-Sync marker fehlt in index.html');
   html = html.replace(syncScriptTag, `${syncScriptTag}\n${contextVoiceHotfixTag}`);
 }
-if (!html.includes(contextVoiceHotfixTag.trim())) throw new Error('Kontext-/Voice-Hotfix konnte nicht in index.html aktiviert werden.');
+if (!html.includes(contextVoiceHotfixTag.trim())) throw new Error('Kontext-Hotfix konnte nicht in index.html aktiviert werden.');
+
+const orientationScriptTag = `  <script src="assets/orientation-help-v29.js?v=${BUILD_ID}"></script>`;
+if (!html.includes('assets/orientation-help-v29.js')) {
+  const marker = `  <script src="assets/guide-progress.js?v=${BUILD_ID}"></script>`;
+  if (!html.includes(marker)) throw new Error('guide-progress marker fehlt in index.html');
+  html = html.replace(marker, `${marker}\n${orientationScriptTag}`);
+}
+if (!html.includes(orientationScriptTag.trim())) throw new Error('Orientierungshilfe konnte nicht in index.html aktiviert werden.');
+
+const releasePolishTag = `  <script src="assets/release-polish-v29.js?v=${BUILD_ID}"></script>`;
+if (!html.includes('assets/release-polish-v29.js')) {
+  if (!html.includes(orientationScriptTag)) throw new Error('Orientierungsmarker fehlt in index.html');
+  html = html.replace(orientationScriptTag, `${orientationScriptTag}\n${releasePolishTag}`);
+}
+if (!html.includes(releasePolishTag.trim())) throw new Error('Release-Polish konnte nicht in index.html aktiviert werden.');
 
 const clarificationIndex = html.indexOf(`assets/clarification-ui.js?v=${BUILD_ID}`);
 const helpIndex = html.indexOf(`assets/detail-help-v27.js?v=${BUILD_ID}`);
 const progressIndex = html.indexOf(`assets/guide-progress.js?v=${BUILD_ID}`);
+const orientationIndex = html.indexOf(`assets/orientation-help-v29.js?v=${BUILD_ID}`);
+const releasePolishIndex = html.indexOf(`assets/release-polish-v29.js?v=${BUILD_ID}`);
 const localVoiceIndex = html.indexOf(`assets/local-voice-v28.js?v=${BUILD_ID}`);
 const experienceIndex = html.indexOf(`assets/experience-v27.js?v=${BUILD_ID}`);
 const polishIndex = html.indexOf(`assets/detail-help-polish-v27.js?v=${BUILD_ID}`);
@@ -50,35 +67,41 @@ const syncIndex = html.indexOf(`assets/detail-help-render-sync-v27.js?v=${BUILD_
 const contextVoiceHotfixIndex = html.indexOf(`assets/context-voice-hotfix-v28.js?v=${BUILD_ID}`);
 const gateIndex = html.indexOf(`assets/local-voice-gate-v28.js?v=${BUILD_ID}`);
 if (!(clarificationIndex >= 0 && clarificationIndex < helpIndex && helpIndex < progressIndex)) throw new Error('Detailhilfe muss nach Clarification und vor Guide-Progress geladen werden.');
-if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex)) throw new Error('Lokale Stimme, Experience, Detailhilfe, Kontext-Hotfix und finaler Voice-Gate sind falsch sortiert.');
+if (!(progressIndex < orientationIndex && orientationIndex < releasePolishIndex && releasePolishIndex < localVoiceIndex)) throw new Error('Orientierung und Release-Polish müssen vor dem statischen Voice-Gate geladen werden.');
+if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex)) throw new Error('Voice-/Detailhilfe-Ladereihenfolge ist falsch.');
 await writeFile(htmlPath, html);
 
 let worker = await readFile(workerPath, 'utf8');
 worker = worker.replace(/const HOTFIX_REVISION = '[^']+';/, `const HOTFIX_REVISION = '${REVISION}';`);
 
+function addWorkerAsset(line, marker) {
+  if (worker.includes(line)) return;
+  if (!worker.includes(marker)) throw new Error(`Service-Worker-Marker fehlt: ${marker}`);
+  worker = worker.replace(marker, `${marker}\n${line}`);
+}
+
 const helpAssetLine = `  './assets/detail-help-v27.js?v=${BUILD_ID}',`;
-if (!worker.includes(helpAssetLine)) {
-  const marker = `  './assets/clarification-ui.js?v=${BUILD_ID}',`;
-  if (!worker.includes(marker)) throw new Error('clarification-ui marker fehlt im Service Worker');
-  worker = worker.replace(marker, `${marker}\n${helpAssetLine}`);
-}
+addWorkerAsset(helpAssetLine, `  './assets/clarification-ui.js?v=${BUILD_ID}',`);
 const polishAssetLine = `  './assets/detail-help-polish-v27.js?v=${BUILD_ID}',`;
-if (!worker.includes(polishAssetLine)) {
-  const marker = `  './assets/experience-v27.js?v=${BUILD_ID}',`;
-  if (!worker.includes(marker)) throw new Error('experience-v27 marker fehlt im Service Worker');
-  worker = worker.replace(marker, `${marker}\n${polishAssetLine}`);
-}
+addWorkerAsset(polishAssetLine, `  './assets/experience-v27.js?v=${BUILD_ID}',`);
 const syncAssetLine = `  './assets/detail-help-render-sync-v27.js?v=${BUILD_ID}',`;
-if (!worker.includes(syncAssetLine)) {
-  if (!worker.includes(polishAssetLine)) throw new Error('Polish asset marker fehlt im Service Worker');
-  worker = worker.replace(polishAssetLine, `${polishAssetLine}\n${syncAssetLine}`);
-}
+addWorkerAsset(syncAssetLine, polishAssetLine);
 const contextVoiceHotfixAssetLine = `  './assets/context-voice-hotfix-v28.js?v=${BUILD_ID}',`;
-if (!worker.includes(contextVoiceHotfixAssetLine)) {
-  if (!worker.includes(syncAssetLine)) throw new Error('Render-Sync asset marker fehlt im Service Worker');
-  worker = worker.replace(syncAssetLine, `${syncAssetLine}\n${contextVoiceHotfixAssetLine}`);
+addWorkerAsset(contextVoiceHotfixAssetLine, syncAssetLine);
+const orientationAssetLine = `  './assets/orientation-help-v29.js?v=${BUILD_ID}',`;
+addWorkerAsset(orientationAssetLine, `  './assets/guide-progress.js?v=${BUILD_ID}',`);
+const releasePolishAssetLine = `  './assets/release-polish-v29.js?v=${BUILD_ID}',`;
+addWorkerAsset(releasePolishAssetLine, orientationAssetLine);
+
+if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`)
+  || !worker.includes(helpAssetLine)
+  || !worker.includes(polishAssetLine)
+  || !worker.includes(syncAssetLine)
+  || !worker.includes(contextVoiceHotfixAssetLine)
+  || !worker.includes(orientationAssetLine)
+  || !worker.includes(releasePolishAssetLine)) {
+  throw new Error('Neue Detailhilfe-/Orientierungsassets konnten nicht vollständig in den Service Worker aufgenommen werden.');
 }
-if (!worker.includes(`HOTFIX_REVISION = '${REVISION}'`) || !worker.includes(helpAssetLine) || !worker.includes(polishAssetLine) || !worker.includes(syncAssetLine) || !worker.includes(contextVoiceHotfixAssetLine)) throw new Error('Detailhilfe, Kontext-/Voice-Hotfix und Render-Sync konnten nicht in den Service Worker aufgenommen werden.');
 await writeFile(workerPath, worker);
 
-console.log(`DokoHilf detail help + context/iPhone voice hotfix applied: ${REVISION}`);
+console.log(`DokoHilf detail help + orientation + static voice UI polish applied: ${REVISION}`);
