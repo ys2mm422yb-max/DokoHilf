@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 EXPECTED_SOURCE_COUNTS = {
-    'base': 93,
+    'base': 130,
     'extra': 33,
     'release': 49,
     'workflow': 39,
@@ -16,6 +16,21 @@ EXPECTED_SOURCE_COUNTS = {
 
 LONG_VOICE_GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.'
 SHORT_VOICE_GREETING = 'Hey! Wobei brauchst du Hilfe?'
+
+FORBIDDEN_BASE_SENTENCES = {
+    'Öffne „Doku erweitert“.',
+    'Öffne beim gewünschten Bewohner entweder „Doku erweitert“ oder „Doku“.',
+    'Öffne oben den Reiter „Aufgaben“.',
+    'Wähle darunter „Aktuelles“.',
+    'Wähle „Easy-Plan“.',
+}
+
+REQUIRED_BASE_SENTENCES = {
+    '„Planung“ findest du ganz oben in der festen grünen Hauptleiste. Öffne dort „Planung“. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.',
+    '„Wichtig für Schichtübergabe“ ist bei Bedarfsmedikation bereits automatisch ausgewählt. Lass den Haken so. In das Textfeld darunter trägst du kurz den Anlass der Gabe ein.',
+    'Öffne beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“.',
+    'Wenn die Maßnahme für die nächste Schicht wichtig ist, hake „Wichtig für Schichtübergabe“ an. Wenn nicht, lässt du den Haken frei. In das große Textfeld darunter schreibst du kurz, was passiert ist und was du gemacht beziehungsweise durchgeführt hast.',
+}
 
 
 def clean_catalog_text(value: str) -> str:
@@ -102,6 +117,22 @@ def load_catalog(path: str) -> dict:
     return json.loads(Path(path).read_text(encoding='utf-8'))
 
 
+def validate_base_catalog(catalog: dict) -> None:
+    entries = catalog.get('entries') or []
+    raw_texts = {str(entry.get('text', '')).strip() for entry in entries if isinstance(entry, dict)}
+    forbidden = sorted(FORBIDDEN_BASE_SENTENCES.intersection(raw_texts))
+    if forbidden:
+        raise SystemExit(f'legacy base speech sentences are forbidden: {forbidden}')
+    missing = sorted(REQUIRED_BASE_SENTENCES.difference(raw_texts))
+    if missing:
+        raise SystemExit(f'current approved base speech sentences are missing: {missing}')
+    if any('Doku erweitert' in text for text in raw_texts):
+        raise SystemExit('legacy spelling "Doku erweitert" is forbidden in the base speech catalog')
+    generated_from = str(catalog.get('generatedFrom') or '')
+    if '40 approved dokohilf_guides' not in generated_from or '129 unique approved step texts' not in generated_from:
+        raise SystemExit('base speech catalog provenance/count metadata is stale')
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--catalog', default='assets/guide-audio-catalog.json')
@@ -135,6 +166,8 @@ def main() -> None:
         actual = source_counts.get(name, 0)
         if actual != expected:
             raise SystemExit(f'expected {expected} {name} speech sentences, found {actual}')
+
+    validate_base_catalog(catalogs['base'])
 
     entries = merged_entries(*catalogs.values())
     static_speech_count = len(entries)
