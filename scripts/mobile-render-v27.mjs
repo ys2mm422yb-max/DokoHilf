@@ -153,8 +153,56 @@ async function state() {
   }));
 }
 
+async function startupState() {
+  return page.evaluate(() => {
+    const title = document.getElementById('startTitle');
+    const start = document.getElementById('startScreen');
+    const shell = document.getElementById('appShell');
+    const examples = document.querySelector('.examples');
+    const titleStyle = title ? getComputedStyle(title) : null;
+    const startStyle = start ? getComputedStyle(start) : null;
+    const titleRect = title?.getBoundingClientRect();
+    const startRect = start?.getBoundingClientRect();
+    const legacy = examples ? [...examples.querySelectorAll('button[data-direct-guide]')] : [];
+    return {
+      readyState: document.readyState,
+      href: location.href,
+      titleExists: Boolean(title),
+      titleText: title?.textContent?.trim() || '',
+      titleDisplay: titleStyle?.display || '',
+      titleVisibility: titleStyle?.visibility || '',
+      titleOpacity: titleStyle?.opacity || '',
+      titleRect: titleRect ? { x: titleRect.x, y: titleRect.y, width: titleRect.width, height: titleRect.height } : null,
+      startExists: Boolean(start),
+      startHidden: start?.hidden ?? null,
+      startDisplay: startStyle?.display || '',
+      startVisibility: startStyle?.visibility || '',
+      startRect: startRect ? { x: startRect.x, y: startRect.y, width: startRect.width, height: startRect.height } : null,
+      shellMode: shell?.dataset.mode || '',
+      shellConnected: Boolean(shell?.isConnected),
+      ui: document.documentElement.dataset.dokohilfUi || '',
+      libraryFlag: window.__DOKOHILF_GUIDE_LIBRARY_V29__ ?? null,
+      libraryOwner: examples?.dataset.v29GuideLibrary || '',
+      examplesLabel: examples?.querySelector(':scope > span')?.textContent?.trim() || '',
+      frequentCount: examples?.querySelectorAll('.v29-frequent-guide').length || 0,
+      allGuidesCount: examples?.querySelectorAll('.v29-all-guides-trigger').length || 0,
+      legacyCount: legacy.length,
+      legacyHiddenCount: legacy.filter(button => button.hidden || getComputedStyle(button).display === 'none').length,
+      activeElement: document.activeElement?.id || document.activeElement?.tagName || '',
+    };
+  });
+}
+
 try {
   await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30_000 });
+  const startup = await startupState();
+  await writeFile(`${OUTPUT_DIR}/00-startup-${PROFILE}.json`, JSON.stringify({ startup, consoleErrors, pageErrors }, null, 2));
+  console.log(`DOKOHILF_STARTUP_STATE ${JSON.stringify(startup)}`);
+  console.log(`DOKOHILF_STARTUP_CONSOLE_ERRORS ${JSON.stringify(consoleErrors)}`);
+  console.log(`DOKOHILF_STARTUP_PAGE_ERRORS ${JSON.stringify(pageErrors)}`);
+  await page.screenshot({ path: `${OUTPUT_DIR}/00-startup-${PROFILE}.png`, fullPage: true }).catch(error => {
+    console.log(`DOKOHILF_STARTUP_SCREENSHOT_ERROR ${error.message}`);
+  });
   await page.locator('#startTitle').waitFor({ state: 'visible' });
 
   const identity = await page.evaluate(() => ({
