@@ -58,6 +58,13 @@
       || n.split(' ').length <= 5;
   }
 
+  function isLocationQuestion(text) {
+    const n = normalize(text);
+    return /\b(wo ist|wo sind|wo finde|wie finde|wie komme|wo muss|wo soll)\b/.test(n)
+      || /\b(finde|sehe|erkenne|entdecke)\b.*\b(nicht|nirgends)\b/.test(n)
+      || /\b(kann|konnte)\b.*\b(nicht finden|nicht sehen|nicht offnen)\b/.test(n);
+  }
+
   function inferNavigationGuide(text) {
     const n = normalize(text);
     if (!hasNavigationIntent(n) || hasEntryAction(n)) return '';
@@ -67,8 +74,11 @@
     if (/\b(berichtssuche|berichte auswerten|berichte suchen|nach berichten suchen|abfrage)\b/.test(n)) return '';
     if (/\b(aufgaben|aktuelles|easy plan|easy-plan|easyplan)\b/.test(n)) return '';
 
-    // Deterministic "where is it?" routes. These guides only explain location
-    // and never replace the actual task guide.
+    // Existing intent contract: a short request such as "ich suche den Blutdruck"
+    // starts the single-value workflow. Explicit "where is it?" wording uses
+    // the dedicated area-finding guide instead.
+    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(n) && !isLocationQuestion(n)) return 'vitalwerte-einzelwert';
+
     if (/\b(doku erweitert|doku-erweitert)\b/.test(n)) return 'doku-erweitert-finden';
     if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(n)) return 'durchfuehrungsnachweis-finden';
     if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-finden';
@@ -116,6 +126,7 @@
   window.DokoHilfSmartHelpV29 = {
     normalize,
     helpLike,
+    isLocationQuestion,
     inferNavigationGuide,
     preparedBody,
   };
