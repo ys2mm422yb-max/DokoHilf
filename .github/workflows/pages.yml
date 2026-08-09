@@ -110,6 +110,7 @@ jobs:
           test ! -e docs/EDITOR_ROLLOUT.md
           grep -q 'app_accounts_retired_v28' supabase/functions/dokohilf-editor/index.ts
           grep -q 'enable_signup = false' supabase/config.toml
+          grep -q 'dokohilf_block_all_user_creation' supabase/migrations/20260807230003_remove_app_account_infrastructure.sql
 
           node --check assets/update-manager.js
           node --check assets/mobile-audio-fix.js
