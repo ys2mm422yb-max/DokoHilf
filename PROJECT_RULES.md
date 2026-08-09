@@ -1,7 +1,7 @@
 # DokoHilf – verbindliche Projektregeln
 
 **Status:** Verbindlich  
-**Stand:** 7. August 2026
+**Stand:** 9. August 2026
 
 > Diese Datei ist vor jeder Arbeit an DokoHilf vollständig zu lesen. Bei rechtlicher, datenschutzrechtlicher oder technischer Unsicherheit gilt: stoppen, nichts veröffentlichen, keine Daten importieren und keine Echtdaten verwenden.
 
@@ -171,4 +171,5 @@ Diese Regeln sind ein technisches und organisatorisches Schutzkonzept, keine anw
 - Der aktuelle Gesamtstand und alle Übergaben werden in `PROJECT_HANDOFF.md` gepflegt.
 - Laufende größere Aufgaben erhalten bei Bedarf eine eigene `ACTIVE_WORK_*.md`, die im Handoff verlinkt wird.
 - PR-Beschreibungen und relevante Statusdokumente müssen bei Head- oder Scope-Wechseln aktualisiert werden; veraltete Aussagen dürfen nicht als aktueller Stand stehen bleiben.
+- Sichtbare Versionsbezeichnungen in GitHub-Actions-Namen, Testüberschriften, Statusdokumenten und Release-Hinweisen müssen bei jedem Versionssprung auf den aktuellen Stand gebracht werden. Wo eine konkrete Versionsnummer keinen fachlichen Nutzen hat, ist eine versionsneutrale Bezeichnung zu bevorzugen, damit keine veralteten `v27`-/`v28`-/`Build 29`-Titel stehen bleiben.
 - Datenschutz-, Echtdaten- und Veröffentlichungsgrenzen bleiben vorrangig. Öffentlich dokumentiert werden ausschließlich anonymisierte, selbst formulierte und veröffentlichungsfähige Ergebnisse.

@@ -58,6 +58,32 @@ test('explicit location questions route to dedicated area-finding guides', async
   assert.doesNotMatch(smart, /return 'aufgaben-aktuelles'|return 'easyplan'|return 'berichtssuche'/);
 });
 
+test('active-guide help keeps the guide and explains the current area concretely', async () => {
+  const migration = await read('supabase/migrations/20260809120500_contextual_area_stuck_help_v29.sql');
+  for (const slug of [
+    'visite-anlegen',
+    'anwesenheit',
+    'medikation-ansehen',
+    'formulare-anlegen',
+    'vitalwerte-einzelwert',
+    'vitalwerte-sammelerfassung',
+    'durchfuehrung-storno',
+    'uebergabeformular',
+    'notfallblatt',
+  ]) assert.match(migration, new RegExp(`where slug = '${slug}'`));
+  assert.match(migration, /Doku-Erweitert.*festen Leiste/);
+  assert.match(migration, /wähle danach „Visiten“/);
+  assert.match(migration, /wähle darin „An-\/Abwesenheiten“/);
+  assert.match(migration, /wähle darin „Medikation“/);
+  assert.match(migration, /wähle darin „Formulare“/);
+  assert.match(migration, /wähle darin „Vitalwerte“/);
+  assert.match(migration, /Vitalwerte Sammelerf\./);
+  assert.match(migration, /„Doku“.*festen Leiste/);
+  assert.match(migration, /Reiter „Analyse“ findest du oben/);
+  assert.match(migration, /„Was war los\?“/);
+  assert.match(migration, /„Notfallblatt aufrufen“/);
+});
+
 test('Hallo ich suche den Blutdruck keeps the approved single-value task intent', async () => {
   const [smart, router] = await Promise.all([
     read('assets/smart-help-v29.js'),
