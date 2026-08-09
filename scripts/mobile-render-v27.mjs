@@ -133,7 +133,7 @@ if (USE_MOCK_SERVICES) {
       }),
     });
   });
-  await page.route('**/assets/audio/guides/*.wav', async route => {
+  await page.route(/\/assets\/audio\/guides\/[^/?]+\.wav(?:\?.*)?$/, async route => {
     staticAudioRequests += 1;
     await route.fulfill({ status: 200, contentType: 'audio/wav', body: silentWav() });
   });
