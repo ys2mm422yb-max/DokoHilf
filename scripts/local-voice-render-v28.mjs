@@ -85,7 +85,7 @@ await page.route('**/assets/guide-audio-catalog.json*', async route => {
     ],
   }) });
 });
-await page.route('**/assets/audio/guides/*.wav', async route => { staticAudioRequests += 1; await route.fulfill({status:200,contentType:'audio/wav',body:silentWav()}); });
+await page.route(/\/assets\/audio\/guides\/[^/?]+\.wav(?:\?.*)?$/, async route => { staticAudioRequests += 1; await route.fulfill({status:200,contentType:'audio/wav',body:silentWav()}); });
 await page.route(/\/functions\/v1\/dokohilf-tts(?:\?.*)?$/, async route => { cloudTtsRequests += 1; await route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'tts_network_must_not_be_called_in_v29'})}); });
 const routerHandler = async route => {
   routerRequests += 1;
