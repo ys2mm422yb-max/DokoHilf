@@ -64,7 +64,7 @@ test('Navigation questions route to deterministic finding guides for all approve
     assert.match(followupMigration, new RegExp(`'${slug}'`));
     assert.match(smartHelp, new RegExp(`return '${slug}'`));
   }
-  assert.match(followupMigration, /feste Leiste/);
+  assert.match(followupMigration, /festen? Leiste/);
   assert.match(followupMigration, /„Doku-Erweitert“/);
   assert.match(followupMigration, /„Analyse“/);
 });
