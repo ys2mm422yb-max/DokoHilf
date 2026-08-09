@@ -7,6 +7,7 @@ const [
   runtime, gate, contextHotfix, orientation, releasePolish, durchfuehrungWorkflows,
   applyLocal, applyDetail, build, builder, sourceCatalogText, extrasText, releaseText,
   workflowText, uiSpeechText, navigationText, contextSpeechText, chatRouter, version, index, worker,
+  arrowMigration,
 ] = await Promise.all([
   read('assets/local-voice-v28.js'),
   read('assets/local-voice-gate-v28.js'),
@@ -29,6 +30,7 @@ const [
   read('version.json'),
   read('index.html'),
   read('service-worker.js'),
+  read('supabase/migrations/20260809235500_massnahmen_arrow_v29.sql'),
 ]);
 
 const catalogs = {
@@ -137,6 +139,24 @@ test('Orientierung erklärt grüne Hauptleiste und zweite Ebene', () => {
   assert.match(orientation, /Wirksamkeitskontrolle/);
   assert.match(orientation, /Maßnahmen ohne Zeitangabe/);
   assert.match(orientation, /__DOKOHILF_ORIENTATION_HELP_V29__/);
+});
+
+test('Maßnahmen ohne Zeitangabe nennen den kleinen Pfeil in Guide, Finden-Hilfe und Sprache', () => {
+  const taskSentence = 'Im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ suchen und auf den kleinen Pfeil links daneben klicken.';
+  const speechSentence = 'Suche im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ und klicke auf den kleinen Pfeil links daneben.';
+  const findSentence = 'Im Durchführungsnachweis findest du „Maßnahmen ohne Zeitangabe“. Klicke auf den kleinen Pfeil links daneben, um den Bereich zu öffnen.';
+  const orientationSentence = 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um sie zu öffnen.';
+
+  assert.ok(durchfuehrungWorkflows.includes(taskSentence), 'Direktguide nennt den kleinen Pfeil bei Maßnahmen nicht.');
+  assert.ok(orientation.includes(orientationSentence), 'Lokale Finden-Hilfe nennt den kleinen Pfeil bei Maßnahmen nicht.');
+  assert.ok(catalogs.workflow.entries.some(entry => entry.text === speechSentence), 'Statischer Workflow-Sprachsatz mit kleinem Pfeil fehlt.');
+  assert.ok(catalogs.workflow.entries.some(entry => entry.text === findSentence), 'Statischer Finden-Sprachsatz mit kleinem Pfeil fehlt.');
+  assert.ok(catalogs.navigation.entries.some(entry => entry.text === orientationSentence), 'Statischer Orientierungs-Sprachsatz mit kleinem Pfeil fehlt.');
+  assert.match(arrowMigration, /where slug = 'massnahmen-ohne-zeitangabe'/);
+  assert.match(arrowMigration, /where slug = 'massnahmen-ohne-zeitangabe-finden'/);
+  assert.match(arrowMigration, /kleinen Pfeil links daneben/);
+  assert.match(worker, /HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3'/);
+  assert.match(worker, /url\.pathname\.includes\('\/assets\/audio\/guides\/'\)[\s\S]*cache: 'no-store'/);
 });
 
 test('Unbestätigte Detailwege werden weiterhin nicht erfunden', () => {
