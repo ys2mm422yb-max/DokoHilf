@@ -27,12 +27,24 @@
     const style = document.createElement('style');
     style.id = 'voicePolishFineTuneV36';
     style.textContent = `
-      html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"]:not(.v36-no-guide) .voice-focus-main{
-        justify-content:flex-start!important;
-        padding-top:clamp(18px,3.2vh,30px)!important;
-      }
-      html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"].v36-no-guide .voice-focus-main{
+      html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"] .voice-focus-main{
         justify-content:center!important;
+      }
+      html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"] .voice-focus-main>.voice-focus-actions{
+        flex:0 0 auto!important;
+        width:min(650px,100%)!important;
+        margin:2px auto 0!important;
+      }
+      html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-copy>span:not(.voice-engine-badge){
+        font-size:0!important;
+      }
+      html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-copy>span:not(.voice-engine-badge):after{
+        content:'Danach höre ich automatisch wieder zu.';
+        display:block;
+        margin-top:5px;
+        color:#78978f;
+        font-size:12.5px;
+        line-height:1.35;
       }
       @media(max-width:620px){
         html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"] .voice-focus-stage .voice-orb{
@@ -49,11 +61,13 @@
         }
         html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"] .v36-voice-state{display:none!important}
         html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"].v36-no-guide .v36-voice-state{display:inline-flex!important}
+        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"] .voice-focus-main>.voice-focus-actions{
+          width:min(560px,100%)!important;
+          margin-top:0!important;
+        }
       }
       @media(max-height:760px){
-        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"]:not(.v36-no-guide) .voice-focus-main{
-          padding-top:12px!important;
-        }
+        html[data-dokohilf-ui="v29"] .app-shell[data-mode="voice"] .voice-focus-main{gap:12px!important}
       }
     `;
     document.head.append(style);
@@ -78,6 +92,13 @@
       toolbar.prepend(chip);
     }
     return chip;
+  }
+
+  function dockGuideActions() {
+    const main = document.querySelector('#voiceFocusStage .voice-focus-main');
+    const actions = document.getElementById('voiceFocusActions');
+    if (!main || !actions || actions.parentElement === main) return;
+    main.append(actions);
   }
 
   function polishContext() {
@@ -138,6 +159,7 @@
     scheduled = false;
     ensureFineTuneStyles();
     ensureChatButton();
+    dockGuideActions();
     polishContext();
     polishInstructionSpacing();
     polishVoiceCopy();
@@ -165,6 +187,7 @@
 
   window.DokoHilfVoicePolishV36 = {
     sync,
+    dockGuideActions,
     polishContext,
     polishInstructionSpacing,
     polishVoiceCopy,
