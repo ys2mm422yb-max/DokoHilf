@@ -54,6 +54,15 @@
     if (/\b(feste leiste|hauptleiste)\b/.test(n)) {
       return 'Die feste Leiste gehört zur geöffneten Bewohneransicht. Dort findest du die Hauptbereiche Berichte, Doku und Doku-Erweitert.';
     }
+    if (/\b(wirksamkeitskontrolle|wirksamkeit).*\b(bedarf|bedarfsmedikation|medikation)\b|\b(bedarf|bedarfsmedikation).*\b(wirksamkeitskontrolle|wirksamkeit)\b/.test(n)) {
+      return 'Öffne beim gewünschten Bewohner zuerst Doku und darin den Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.';
+    }
+    if (/\b(bedarfsmedikation|bedarfsgabe|bedarfsmedikament|bedarf medikament)\b/.test(n)) {
+      return 'Öffne beim gewünschten Bewohner zuerst Doku und darin den Durchführungsnachweis. Dort findest du Bedarfsmedikation. Klicke auf den kleinen Pfeil links daneben, um sie zu öffnen.';
+    }
+    if (/\b(massnahmen ohne zeitangabe|massnahme ohne zeitangabe)\b/.test(n)) {
+      return 'Öffne beim gewünschten Bewohner zuerst Doku und darin den Durchführungsnachweis. Dort findest du den Bereich Maßnahmen ohne Zeitangabe.';
+    }
     if (/\b(doku erweitert|doku-erweitert)\b/.test(n)) {
       return 'Bleibe beim geöffneten Bewohner. Doku-Erweitert ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku.';
     }
@@ -118,7 +127,7 @@
       ...(guide.guideStep ? { guideStep: guide.guideStep } : {}),
       ...(guide.guideStepCount ? { guideStepCount: guide.guideStepCount } : {}),
       completed: false,
-      source: 'confirmed-area-orientation-v29-2',
+      source: 'confirmed-area-orientation-v29-3',
     };
   }
 
@@ -133,7 +142,7 @@
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-store',
-        'X-DokoHilf-Orientation': 'confirmed-v29-2',
+        'X-DokoHilf-Orientation': 'confirmed-v29-3',
       },
     });
   };
