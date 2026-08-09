@@ -12,9 +12,11 @@
 
 - Einziges Repository: `ys2mm422yb-max/DokoHilf`.
 - Einziges Supabase-Projekt: `efifbuqctylsujiauabg`, Region `eu-central-1`.
-- DokoHilf ist eine öffentliche, accountfreie Schritt-für-Schritt-Bedienhilfe.
+- DokoHilf ist eine öffentliche, accountfreie Schritt-für-Schritt-Bedienhilfe; es gibt keinerlei Konten oder Anmeldung.
 - Keine Bewohner-/Mitarbeiterkonten, keine Fallakten, keine personenbezogenen Eingabemasken.
 - Keine echten Bewohner-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in App, Repository, Supabase, Tests oder Artefakten.
+- Öffentliche Projekttexte und Testzustände sind selbst formuliert, anonymisiert und veröffentlichungsfähig; keine reale Person und kein realer Fall werden nachgebildet.
+- Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert; veröffentlicht werden nur die daraus bestätigten DokoHilf-Ergebnisse und Regeln.
 - Keine erfundenen Klickwege oder Feldnamen. `CONFIRMED_WORKFLOWS.md` ist fachliche Source of Truth.
 - Berichtssuche bleibt fachlich offen / Draft. Issue #103 nicht durch erfundene Details schließen.
 
