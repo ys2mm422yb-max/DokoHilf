@@ -291,6 +291,27 @@ for (const slug of librarySlugs) {
   const card = directView.locator(selector).first();
   await card.scrollIntoViewIfNeeded();
   await card.click();
+
+  if (slug === 'vitalwerte') {
+    const choices = ['vitalwerte-einzelwert', 'vitalwerte-sammelerfassung'];
+    for (let index = 0; index < choices.length; index += 1) {
+      const choiceSlug = choices[index];
+      const choice = directView.locator(`[data-v29-open-guide="${choiceSlug}"]`);
+      assert(await choice.count() === 1, `Vitalwerte-Auswahl fehlt: ${choiceSlug}`);
+      await choice.click();
+      assert((await directView.locator('.direct-guide-step').count()) > 0, `Vitalwerte-Unterguide ${choiceSlug} hat keine sichtbaren Schritte.`);
+      await directView.locator('[data-v29-guide-back]').click();
+      await page.waitForFunction(() => document.querySelector('#directGuideView .v29-library-grid') && !document.getElementById('directGuideView').hidden);
+      if (index < choices.length - 1) {
+        const vitalCard = directView.locator('[data-v29-open-guide="vitalwerte"]');
+        await vitalCard.scrollIntoViewIfNeeded();
+        await vitalCard.click();
+        await page.waitForFunction(() => document.querySelector('#directGuideView .v29-vital-choice'));
+      }
+    }
+    continue;
+  }
+
   assert((await directView.locator('.direct-guide-step').count()) > 0, `Guide ${slug} hat keine sichtbaren Schritte.`);
   const backSelector = slug === 'bedarfsmedikation-gabe' || slug === 'bedarfsmedikation-wirksamkeitskontrolle' || slug === 'massnahmen-ohne-zeitangabe'
     ? '[data-v29-extra-back]'
