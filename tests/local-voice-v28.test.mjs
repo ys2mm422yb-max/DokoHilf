@@ -18,6 +18,7 @@ const [
   releaseText,
   workflowText,
   uiSpeechText,
+  navigationText,
   version,
   index,
   worker,
@@ -37,6 +38,7 @@ const [
   readFile(new URL('../assets/voice-release-catalog-v29.json', import.meta.url), 'utf8'),
   readFile(new URL('../assets/voice-durchfuehrung-catalog-v29.json', import.meta.url), 'utf8'),
   readFile(new URL('../assets/voice-ui-catalog-v29.json', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/voice-navigation-catalog-v29.json', import.meta.url), 'utf8'),
   readFile(new URL('../version.json', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
@@ -47,6 +49,7 @@ const extraCatalog = JSON.parse(extrasText);
 const releaseCatalog = JSON.parse(releaseText);
 const workflowCatalog = JSON.parse(workflowText);
 const uiSpeechCatalog = JSON.parse(uiSpeechText);
+const navigationCatalog = JSON.parse(navigationText);
 const buildId = JSON.parse(version).buildId;
 
 test('Sprachausgabe ist ausschließlich statisches Supertonic-F1', () => {
@@ -72,7 +75,7 @@ test('System- und Gerätestimme bleiben blockiert', () => {
   assert.match(contextHotfix, /voiceMode: 'static-supertonic-only'/);
 });
 
-test('GitHub-Build erzeugt 216 feste Supertonic-F1-Sätze', () => {
+test('GitHub-Build erzeugt 233 feste Supertonic-F1-Sätze', () => {
   assert.match(builder, /from supertonic import TTS/);
   assert.match(builder, /TTS\(auto_download=True\)/);
   assert.match(builder, /lang='de'/);
@@ -81,20 +84,24 @@ test('GitHub-Build erzeugt 216 feste Supertonic-F1-Sätze', () => {
   assert.match(builder, /RELEASE_SPEECH_COUNT = 49/);
   assert.match(builder, /WORKFLOW_SPEECH_COUNT = 40/);
   assert.match(builder, /UI_SPEECH_COUNT = 1/);
-  assert.match(builder, /STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT \+ EXTRA_SPEECH_COUNT \+ RELEASE_SPEECH_COUNT \+ WORKFLOW_SPEECH_COUNT \+ UI_SPEECH_COUNT/);
+  assert.match(builder, /NAVIGATION_SPEECH_COUNT = 17/);
+  assert.match(builder, /STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT \+ EXTRA_SPEECH_COUNT \+ RELEASE_SPEECH_COUNT \+ WORKFLOW_SPEECH_COUNT \+ UI_SPEECH_COUNT \+ NAVIGATION_SPEECH_COUNT/);
   assert.equal(sourceCatalog.entries.length, 93);
   assert.equal(extraCatalog.entries.length, 33);
   assert.equal(releaseCatalog.entries.length, 49);
   assert.equal(workflowCatalog.entries.length, 40);
   assert.equal(uiSpeechCatalog.entries.length, 1);
-  assert.equal(sourceCatalog.entries.length + extraCatalog.entries.length + releaseCatalog.entries.length + workflowCatalog.entries.length + uiSpeechCatalog.entries.length, 216);
+  assert.equal(navigationCatalog.entries.length, 17);
+  assert.equal(sourceCatalog.entries.length + extraCatalog.entries.length + releaseCatalog.entries.length + workflowCatalog.entries.length + uiSpeechCatalog.entries.length + navigationCatalog.entries.length, 233);
   assert.match(uiSpeechText, /Hey! Wobei brauchst du Hilfe\?/);
   assert.match(extrasText, /Ich habe die Antwort im Chat angezeigt/);
   assert.match(workflowText, /Bedarfsmedikation/);
   assert.match(workflowText, /Wirksamkeitskontrolle/);
   assert.match(workflowText, /Maßnahmen ohne Zeitangabe/);
-  assert.match(build, /expected_count" != 216/);
-  assert.match(build, /staticSpeechCount\": 216/);
+  assert.match(navigationText, /feste grüne Leiste/);
+  assert.match(navigationText, /Planung ist ein Hauptbereich/);
+  assert.match(build, /expected_count" != 233/);
+  assert.match(build, /staticSpeechCount\": 233/);
 });
 
 test('Sprachstart wird kurz und beginnt mit Hey', () => {
@@ -104,16 +111,17 @@ test('Sprachstart wird kurz und beginnt mit Hey', () => {
   assert.match(build, /Hey! Wobei brauchst du Hilfe/);
 });
 
-test('Orientierung erklärt bestätigte Bereiche eine Ebene zurück', () => {
-  assert.match(orientation, /Doku-Erweitert ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Vitalwerte/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Visiten/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Medikation/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du Formulare/);
-  assert.match(orientation, /Innerhalb von Doku-Erweitert findest du An-\/Abwesenheiten/);
-  assert.match(orientation, /Innerhalb von Doku findest du den Durchführungsnachweis/);
-  assert.match(orientation, /Berichte ist ein Hauptbereich in der festen Leiste/);
-  assert.match(orientation, /Analyse findest du Was war los/);
+test('Orientierung erklärt grüne Hauptleiste und zweite Ebene', () => {
+  assert.match(orientation, /feste grüne Leiste/);
+  assert.match(orientation, /Planung und Analyse/);
+  assert.match(orientation, /Unterpunkte beziehungsweise Symbole/);
+  assert.match(orientation, /Doku-Erweitert.*Vitalwerte/s);
+  assert.match(orientation, /Doku-Erweitert.*Visiten/s);
+  assert.match(orientation, /Doku-Erweitert.*Medikation/s);
+  assert.match(orientation, /Doku-Erweitert.*Formulare/s);
+  assert.match(orientation, /Doku-Erweitert.*An-\/Abwesenheiten/s);
+  assert.match(orientation, /Doku.*Durchführungsnachweis/s);
+  assert.match(orientation, /Analyse.*Was war los/s);
   assert.match(orientation, /kleine rote Kreuz beziehungsweise den zugehörigen Pfeil/);
   assert.match(orientation, /Bedarfsmedikation/);
   assert.match(orientation, /Wirksamkeitskontrolle/);
@@ -121,8 +129,9 @@ test('Orientierung erklärt bestätigte Bereiche eine Ebene zurück', () => {
   assert.match(orientation, /__DOKOHILF_ORIENTATION_HELP_V29__/);
 });
 
-test('Aufgaben, Easy-Plan und Berichtssuche erhalten keine erfundene Orientierung', () => {
-  assert.doesNotMatch(orientation, /Easy-Plan|Easy Plan|Aufgaben · Aktuelles|Berichtssuche/);
+test('Unbestätigte Detailwege werden weiterhin nicht erfunden', () => {
+  assert.doesNotMatch(orientation, /Aufgaben · Aktuelles|Berichtssuche/);
+  assert.match(orientation, /Der genaue Easy-Plan-Ablauf bleibt vorerst offen/);
 });
 
 test('Neue Durchführung-Workflows sind als direkte Guides vorhanden', () => {
@@ -166,7 +175,8 @@ test('Release-Gate verbietet lokale Inferenz technisch', () => {
   assert.match(build, /Supertone\/supertonic-3\/resolve\/main/);
   assert.match(build, /loadTextToSpeech\\|loadVoiceStyle\\|navigator\.gpu\\|localFallback/);
   assert.match(build, /Hey! Wobei brauchst du Hilfe/);
-  assert.match(build, /216 statischen Supertonic-F1-WAVs/);
+  assert.match(build, /233 statischen Supertonic-F1-WAVs/);
   assert.match(build, /Bedarfsmedikation/);
   assert.match(build, /Maßnahmen ohne Zeitangabe/);
+  assert.match(build, /grüner zweistufiger Orientierung/);
 });
