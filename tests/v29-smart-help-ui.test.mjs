@@ -41,13 +41,30 @@ test('free-text help and the help button use the same contextual router path', a
   assert.doesNotMatch(detail, /localStorage|sessionStorage|indexedDB/);
 });
 
-test('Hallo ich suche den Blutdruck starts the approved single-value guide instead of an overview', async () => {
+test('explicit location questions route to dedicated area-finding guides', async () => {
+  const [smart, migration] = await Promise.all([
+    read('assets/smart-help-v29.js'),
+    read('supabase/migrations/20260809112500_later_guides_stammdaten_v29.sql'),
+  ]);
+  assert.match(smart, /function isLocationQuestion\(text\)/);
+  for (const slug of ['berichte-finden', 'doku-erweitert-finden', 'doku-finden', 'visiten-finden', 'vitalwerte-finden', 'anwesenheiten-finden', 'medikation-finden', 'formulare-finden', 'durchfuehrungsnachweis-finden', 'analyse-finden', 'uebergabe-finden', 'notfallblatt-finden', 'stammdaten-finden']) {
+    assert.match(smart, new RegExp(`return '${slug}'`));
+    assert.match(migration, new RegExp(`'${slug}'`));
+  }
+  assert.match(migration, /Beim geöffneten Bewohner findest du „Berichte“ in der festen Leiste/);
+  assert.match(migration, /„Doku-Erweitert“ in der festen Leiste/);
+  assert.match(migration, /Öffne oben den Reiter „Analyse“/);
+  assert.match(migration, /links die Bewohnerübersicht/);
+  assert.doesNotMatch(smart, /return 'aufgaben-aktuelles'|return 'easyplan'|return 'berichtssuche'/);
+});
+
+test('Hallo ich suche den Blutdruck keeps the approved single-value task intent', async () => {
   const [smart, router] = await Promise.all([
     read('assets/smart-help-v29.js'),
     read('supabase/functions/dokohilf-chat-router/index.ts'),
   ]);
   assert.match(smart, /blutdruck\|puls\|temperatur/);
-  assert.match(smart, /return 'vitalwerte-einzelwert'/);
+  assert.match(smart, /!isLocationQuestion\(n\)\) return 'vitalwerte-einzelwert'/);
   assert.match(smart, /selectedGuideSlug/);
   assert.match(router, /selectedGuideSlug/);
   assert.match(router, /approved-guide-smart-start-v29-1/);
