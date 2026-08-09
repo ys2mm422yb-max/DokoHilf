@@ -19,6 +19,21 @@
     {"text":"Möchtest du einen einzelnen Wert oder mehrere Werte über die Sammelerfassung eintragen?"},
     {"text":"Geht es um einen einzelnen Vitalwert oder um mehrere Werte gleichzeitig?"},
     {"text":"Hier geht es nur ums Nachsehen der Medikation. Ändere nichts."},
-    {"text":"Der Ablauf ist erledigt. Kontrolliere zum Schluss den Eintrag."}
+    {"text":"Der Ablauf ist erledigt. Kontrolliere zum Schluss den Eintrag."},
+    {"text":"Ich habe die Antwort im Chat angezeigt."},
+    {"text":"Die feste Leiste gehört zur geöffneten Bewohneransicht. Dort findest du die Hauptbereiche Berichte, Doku und Doku-Erweitert."},
+    {"text":"Bleibe beim geöffneten Bewohner. Doku-Erweitert ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku."},
+    {"text":"Öffne beim gewünschten Bewohner zuerst Doku in der festen Leiste. Innerhalb von Doku findest du den Durchführungsnachweis."},
+    {"text":"Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Innerhalb von Doku-Erweitert findest du Vitalwerte."},
+    {"text":"Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Innerhalb von Doku-Erweitert findest du Visiten."},
+    {"text":"Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Innerhalb von Doku-Erweitert findest du Medikation."},
+    {"text":"Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Innerhalb von Doku-Erweitert findest du Formulare."},
+    {"text":"Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Innerhalb von Doku-Erweitert findest du An-/Abwesenheiten."},
+    {"text":"Bleibe beim geöffneten Bewohner. Berichte ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Doku und Doku-Erweitert."},
+    {"text":"Öffne oben zuerst Analyse. Innerhalb von Analyse findest du Was war los. Darüber öffnest du die Übergabeansicht."},
+    {"text":"Den Reiter Analyse findest du oben."},
+    {"text":"Bleibe beim gewünschten Bewohner. Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü und wählst Notfallblatt aufrufen."},
+    {"text":"Öffne zuerst Berichte oder den Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen."},
+    {"text":"Bleibe beim geöffneten Bewohner. Doku ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku-Erweitert."}
   ]
 }
