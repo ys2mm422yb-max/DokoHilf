@@ -1,26 +1,29 @@
 # Audio-Erzeugungsstatus
 
-**Stand:** 7. August 2026
-**Status:** PR #86 gemergt und v28-4 veröffentlicht; der bisherige Gacrux-Aufbau ist vollständig stillgelegt
-**Ziel:** exakt 111 kostenlose Supertonic-F1-WAV-Dateien
+**Stand:** 9. August 2026  
+**Status:** v29 – ausschließlich statische Supertonic-F1-WAVs  
+**Ziel-Build:** `20260809-34`
 
 ## Aktueller Vertrag
 
-- 93 bestätigte allgemeine Guide-Sätze aus `assets/guide-audio-catalog.json`
-- 18 feste Dialogsätze aus `assets/voice-extra-catalog-v28.json`
-- insgesamt exakt 111 eindeutige Sätze
+- 40 freigegebene Guides in Supabase
+- 129 eindeutige freigegebene Guide-Schritttexte
+- 130 Basiseinträge inklusive Begrüßungsquelle in `assets/guide-audio-catalog.json`
+- weitere kontrollierte Quellen: 33 Dialog, 49 Release, 39 Durchführung, 1 UI, 17 Navigation, 10 Kontext
 - Erzeugung ausschließlich im geprüften GitHub-Releasebuild mit Supertonic 3, Stimme F1, Deutsch
-- Veröffentlichung nur bei exakt 111 gültigen WAV-Dateien und übereinstimmender Build-Zusammenfassung
-- statische Wiedergabe zuerst; lokale Supertonic-F1-Inferenz nur für einen noch nicht vorbereiteten freien Satz
-- keine System-/Gerätestimme und keine Cloud-TTS-API als Sprachpfad
+- die endgültige WAV-Zahl wird nach Deduplizierung dynamisch aus allen kontrollierten Quellen abgeleitet
+- Veröffentlichung nur bei übereinstimmendem Katalog, WAV-Bestand und Build-Zusammenfassung
+- ausschließlich statische Wiedergabe; **keine lokale Inferenz**, keine System-/Gerätestimme und keine Cloud-TTS-API
 
-Die 111 WAV-Dateien werden nicht in den Quellbranch committed. Der Releasejob erzeugt sie reproduzierbar und veröffentlicht sie zusammen mit dem dazugehörigen Katalog im exakt geprüften Pages-Artefakt.
+Die WAV-Dateien werden nicht in den Quellbranch committed. Der Releasejob erzeugt sie reproduzierbar und veröffentlicht sie zusammen mit dem dazugehörigen Katalog im exakt geprüften Pages-Artefakt.
+
+## Schutz vor veralteten Sprachwegen
+
+Der Basiskatalog wird als Snapshot der aktuell freigegebenen Supabase-Guide-Schritte gepflegt. Der Builder blockiert bekannte Altwege wie die Schreibweise `Doku erweitert`, `Aufgaben → Aktuelles` und einen direkten erfundenen Easy-Plan-Schritt. Die bestätigte Navigation verwendet `Doku-Erweitert` und die feste grüne Hauptleiste.
 
 ## Stillgelegter Altbestand
 
-Die frühere private Gacrux-Registry und vorhandene alte Audiodateien sind nur historischer Bestand. v28-4 lädt sie nicht. Die früheren TTS-, Builder- und Gacrux-Auslieferungsfunktionen antworten ausschließlich mit `410 Gone`, verlangen ein gültiges JWT und enthalten weder Provider- noch Storagezugriff. Der interne Build-Schalter bleibt `false`; der Cron `dokohilf-static-guide-audio-v27` wird entfernt.
-
-Der frühere Stand `1/93`, `7/93` oder `9/93` ist für den aktuellen Sprachpfad ohne Bedeutung und darf nicht mehr als Ausbauziel verwendet werden.
+Die frühere private Gacrux-Registry und alte Audiodateien sind nur historischer Bestand. Die früheren TTS-, Builder- und Gacrux-Auslieferungsfunktionen sind nicht-generierende Ruhestandsendpunkte. Browsercode lädt keine Supertonic-Modellgewichte und erzeugt kein Audio lokal.
 
 ## Prüfung
 
@@ -30,6 +33,6 @@ Quellkataloge ohne Modelldownload prüfen:
 python3 scripts/build-supertonic-guide-audio-v28.py --validate-only
 ```
 
-Der vollständige GitHub-Releasejob erzeugt anschließend alle 111 Dateien und baut daraus die veröffentlichbare Site mit `DOKOHILF_REQUIRE_STATIC_SUPERTONIC=1`.
+Der vollständige GitHub-Releasejob erzeugt anschließend den dynamisch ermittelten statischen WAV-Bestand und baut daraus die veröffentlichbare Site mit `DOKOHILF_REQUIRE_STATIC_SUPERTONIC=1`.
 
-Die verbindliche Architektur und Datenschutzgrenze stehen in `PREBUILT_AUDIO.md`, `PROJECT_RULES.md` und `PROJECT_HANDOFF.md`.
+Die verbindliche Architektur und Datenschutzgrenze stehen in `STATIC_VOICE_POLICY.md`, `PREBUILT_AUDIO.md`, `PROJECT_RULES.md` und `PROJECT_HANDOFF.md`.
