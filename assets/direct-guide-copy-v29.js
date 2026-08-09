@@ -1,31 +1,7 @@
 (() => {
   'use strict';
 
-  const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
-  const GUIDE_LIBRARY_REVISION = 'library1';
   let scheduled = false;
-  let libraryOwnershipScheduled = false;
-  let guideLibrarySnapshot = '';
-
-  function guideLibraryAsset(name) {
-    return `assets/${name}?v=${encodeURIComponent(BUILD_ID)}-${GUIDE_LIBRARY_REVISION}`;
-  }
-
-  function ensureGuideLibraryAssets() {
-    if (!document.querySelector('link[data-dokohilf-guide-library-v29]')) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = guideLibraryAsset('guide-library-v29.css');
-      link.dataset.dokohilfGuideLibraryV29 = 'true';
-      document.head.append(link);
-    }
-    if (!document.querySelector('script[data-dokohilf-guide-library-v29]')) {
-      const script = document.createElement('script');
-      script.src = guideLibraryAsset('guide-library-v29.js');
-      script.dataset.dokohilfGuideLibraryV29 = 'true';
-      document.body.append(script);
-    }
-  }
 
   function ensureGuideLibraryOwnershipStyle() {
     if (document.getElementById('v29GuideLibraryOwnershipStyle')) return;
@@ -41,41 +17,8 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
 @media(max-width:700px){
   html[data-dokohilf-ui="v29"] .examples .v29-frequent-guide{min-height:68px!important;padding:9px 11px!important;font-size:13px!important}
   html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger{min-height:50px!important;padding:10px 12px!important;font-size:12.5px!important}
-}
-`;
+}`;
     document.head.append(style);
-  }
-
-  function guideLibraryHomeValid(examples) {
-    if (!examples) return false;
-    const label = examples.querySelector(':scope > span')?.textContent?.trim();
-    const legacy = [...examples.querySelectorAll('button[data-direct-guide]')];
-    return examples.dataset.v29GuideLibrary === 'true'
-      && label === 'Häufig genutzt'
-      && examples.querySelectorAll('.v29-frequent-guide').length === 6
-      && Boolean(examples.querySelector('.v29-all-guides-trigger'))
-      && legacy.length === 7
-      && legacy.every(button => button.hidden);
-  }
-
-  function syncGuideLibraryOwnership() {
-    libraryOwnershipScheduled = false;
-    const examples = document.querySelector('.examples');
-    if (!examples) return;
-    if (guideLibraryHomeValid(examples)) {
-      guideLibrarySnapshot = examples.innerHTML;
-      return;
-    }
-    if (!guideLibrarySnapshot) return;
-    if (window.__DOKOHILF_GUIDE_LIBRARY_V29__ !== true && examples.dataset.v29GuideLibrary !== 'true') return;
-    examples.dataset.v29GuideLibrary = 'true';
-    examples.innerHTML = guideLibrarySnapshot;
-  }
-
-  function scheduleGuideLibraryOwnership() {
-    if (libraryOwnershipScheduled) return;
-    libraryOwnershipScheduled = true;
-    requestAnimationFrame(syncGuideLibraryOwnership);
   }
 
   function ensureLegacyCloseContract(view) {
@@ -167,12 +110,7 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
     const place = 'Den Ort auswählen: Einrichtung, beim Arzt, telefonisch oder per Mail.';
     if (paragraphs[7] && paragraphs[7].textContent !== doctor) paragraphs[7].textContent = doctor;
     if (paragraphs[11] && paragraphs[11].textContent !== place) paragraphs[11].textContent = place;
-    insertSpecialAfter(
-      steps[7],
-      'v29VisitDoctorSpecial',
-      'Sonderfall · Arzt nicht beim Bewohner hinterlegt?',
-      'Nur dann rechts neben der Arztauswahl das kleine Filtersymbol aktivieren. Danach stehen alle im System hinterlegten Ärzte zur Auswahl. Im Normalfall bleibt das Filtersymbol aus.',
-    );
+    insertSpecialAfter(steps[7], 'v29VisitDoctorSpecial', 'Sonderfall · Arzt nicht beim Bewohner hinterlegt?', 'Nur dann rechts neben der Arztauswahl das kleine Filtersymbol aktivieren. Danach stehen alle im System hinterlegten Ärzte zur Auswahl. Im Normalfall bleibt das Filtersymbol aus.');
     view.dataset.v29VisitDoctorFilter = 'special-case';
     view.dataset.v29VisitMailLocation = 'true';
     return true;
@@ -187,25 +125,13 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
     const value = 'Den gemessenen Wert eintragen. Je nach ausgewähltem Vitalwert erscheinen die dazu passenden Eingabefelder.';
     if (paragraphs[4] && paragraphs[4].textContent !== selection) paragraphs[4].textContent = selection;
     if (paragraphs[6] && paragraphs[6].textContent !== value) paragraphs[6].textContent = value;
-    insertSpecialAfter(
-      steps[6],
-      'v29VitalExamples',
-      'Beispiele',
-      'Blutdruck: Systole und Diastole. Außerdem können bei euch Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz und Atemalkohol erfasst werden. Zusätzliche Felder oder Einheiten so übernehmen, wie sie in der geöffneten Maske angezeigt werden.',
-    );
+    insertSpecialAfter(steps[6], 'v29VitalExamples', 'Beispiele', 'Blutdruck: Systole und Diastole. Außerdem können bei euch Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz und Atemalkohol erfasst werden. Zusätzliche Felder oder Einheiten so übernehmen, wie sie in der geöffneten Maske angezeigt werden.');
     view.dataset.v29VitalExamples = 'true';
     return true;
   }
 
-  function polishChatHead() {
-    const copy = document.querySelector('.chat-head p');
-    const natural = 'Beschreibe kurz dein Ziel. DokoHilf führt dich Schritt für Schritt.';
-    if (copy && copy.textContent !== natural) copy.textContent = natural;
-  }
-
   function sync() {
     scheduled = false;
-    polishChatHead();
     const view = document.getElementById('directGuideView');
     if (!view || view.hidden) return;
     ensureLegacyCloseContract(view);
@@ -224,22 +150,13 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
   }
 
   function initialize() {
-    ensureGuideLibraryAssets();
     ensureGuideLibraryOwnershipStyle();
     schedule();
-    scheduleGuideLibraryOwnership();
-    new MutationObserver(() => {
-      schedule();
-      scheduleGuideLibraryOwnership();
-    }).observe(document.documentElement, { childList: true, subtree: true });
+    new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true });
   else initialize();
 
-  window.DokoHilfGuideLibraryOwnershipV29 = {
-    sync: syncGuideLibraryOwnership,
-    getState: () => ({ hasSnapshot: Boolean(guideLibrarySnapshot), snapshotLength: guideLibrarySnapshot.length }),
-  };
   window.__DOKOHILF_DIRECT_GUIDE_COPY_V29__ = true;
 })();
