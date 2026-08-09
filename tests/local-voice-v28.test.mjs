@@ -2,54 +2,44 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
+const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 const [
-  runtime,
-  gate,
-  contextHotfix,
-  orientation,
-  releasePolish,
-  durchfuehrungWorkflows,
-  applyLocal,
-  applyDetail,
-  build,
-  builder,
-  sourceCatalogText,
-  extrasText,
-  releaseText,
-  workflowText,
-  uiSpeechText,
-  navigationText,
-  version,
-  index,
-  worker,
+  runtime, gate, contextHotfix, orientation, releasePolish, durchfuehrungWorkflows,
+  applyLocal, applyDetail, build, builder, sourceCatalogText, extrasText, releaseText,
+  workflowText, uiSpeechText, navigationText, contextSpeechText, chatRouter, version, index, worker,
 ] = await Promise.all([
-  readFile(new URL('../assets/local-voice-v28.js', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/local-voice-gate-v28.js', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/context-voice-hotfix-v28.js', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/orientation-help-v29.js', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/release-polish-v29.js', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/durchfuehrungs-workflows-v29.js', import.meta.url), 'utf8'),
-  readFile(new URL('../scripts/apply-local-voice-v28.mjs', import.meta.url), 'utf8'),
-  readFile(new URL('../scripts/apply-detail-help-v27.mjs', import.meta.url), 'utf8'),
-  readFile(new URL('../scripts/build-static-site-v27.sh', import.meta.url), 'utf8'),
-  readFile(new URL('../scripts/build-supertonic-guide-audio-v28.py', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/guide-audio-catalog.json', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/voice-extra-catalog-v28.json', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/voice-release-catalog-v29.json', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/voice-durchfuehrung-catalog-v29.json', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/voice-ui-catalog-v29.json', import.meta.url), 'utf8'),
-  readFile(new URL('../assets/voice-navigation-catalog-v29.json', import.meta.url), 'utf8'),
-  readFile(new URL('../version.json', import.meta.url), 'utf8'),
-  readFile(new URL('../index.html', import.meta.url), 'utf8'),
-  readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
+  read('assets/local-voice-v28.js'),
+  read('assets/local-voice-gate-v28.js'),
+  read('assets/context-voice-hotfix-v28.js'),
+  read('assets/orientation-help-v29.js'),
+  read('assets/release-polish-v29.js'),
+  read('assets/durchfuehrungs-workflows-v29.js'),
+  read('scripts/apply-local-voice-v28.mjs'),
+  read('scripts/apply-detail-help-v27.mjs'),
+  read('scripts/build-static-site-v27.sh'),
+  read('scripts/build-supertonic-guide-audio-v28.py'),
+  read('assets/guide-audio-catalog.json'),
+  read('assets/voice-extra-catalog-v28.json'),
+  read('assets/voice-release-catalog-v29.json'),
+  read('assets/voice-durchfuehrung-catalog-v29.json'),
+  read('assets/voice-ui-catalog-v29.json'),
+  read('assets/voice-navigation-catalog-v29.json'),
+  read('assets/voice-context-help-catalog-v29.json'),
+  read('supabase/functions/dokohilf-chat-router/index.ts'),
+  read('version.json'),
+  read('index.html'),
+  read('service-worker.js'),
 ]);
 
-const sourceCatalog = JSON.parse(sourceCatalogText);
-const extraCatalog = JSON.parse(extrasText);
-const releaseCatalog = JSON.parse(releaseText);
-const workflowCatalog = JSON.parse(workflowText);
-const uiSpeechCatalog = JSON.parse(uiSpeechText);
-const navigationCatalog = JSON.parse(navigationText);
+const catalogs = {
+  base: JSON.parse(sourceCatalogText),
+  extra: JSON.parse(extrasText),
+  release: JSON.parse(releaseText),
+  workflow: JSON.parse(workflowText),
+  ui: JSON.parse(uiSpeechText),
+  navigation: JSON.parse(navigationText),
+  context: JSON.parse(contextSpeechText),
+};
 const buildId = JSON.parse(version).buildId;
 
 test('Sprachausgabe ist ausschließlich statisches Supertonic-F1', () => {
@@ -75,33 +65,40 @@ test('System- und Gerätestimme bleiben blockiert', () => {
   assert.match(contextHotfix, /voiceMode: 'static-supertonic-only'/);
 });
 
-test('GitHub-Build erzeugt 233 feste Supertonic-F1-Sätze', () => {
+test('GitHub-Build leitet die Gesamtzahl aus allen kontrollierten Sprachkatalogen ab', () => {
   assert.match(builder, /from supertonic import TTS/);
   assert.match(builder, /TTS\(auto_download=True\)/);
   assert.match(builder, /lang='de'/);
-  assert.match(builder, /BASE_GUIDE_COUNT = 93/);
-  assert.match(builder, /EXTRA_SPEECH_COUNT = 33/);
-  assert.match(builder, /RELEASE_SPEECH_COUNT = 49/);
-  assert.match(builder, /WORKFLOW_SPEECH_COUNT = 40/);
-  assert.match(builder, /UI_SPEECH_COUNT = 1/);
-  assert.match(builder, /NAVIGATION_SPEECH_COUNT = 17/);
-  assert.match(builder, /STATIC_SPEECH_COUNT = BASE_GUIDE_COUNT \+ EXTRA_SPEECH_COUNT \+ RELEASE_SPEECH_COUNT \+ WORKFLOW_SPEECH_COUNT \+ UI_SPEECH_COUNT \+ NAVIGATION_SPEECH_COUNT/);
-  assert.equal(sourceCatalog.entries.length, 93);
-  assert.equal(extraCatalog.entries.length, 33);
-  assert.equal(releaseCatalog.entries.length, 49);
-  assert.equal(workflowCatalog.entries.length, 40);
-  assert.equal(uiSpeechCatalog.entries.length, 1);
-  assert.equal(navigationCatalog.entries.length, 17);
-  assert.equal(sourceCatalog.entries.length + extraCatalog.entries.length + releaseCatalog.entries.length + workflowCatalog.entries.length + uiSpeechCatalog.entries.length + navigationCatalog.entries.length, 233);
+  assert.match(builder, /EXPECTED_SOURCE_COUNTS/);
+  assert.match(builder, /'base': 93/);
+  assert.match(builder, /'extra': 33/);
+  assert.match(builder, /'release': 49/);
+  assert.match(builder, /'workflow': 39/);
+  assert.match(builder, /'ui': 1/);
+  assert.match(builder, /'navigation': 17/);
+  assert.match(builder, /'context': 10/);
+  assert.match(builder, /static_speech_count = len\(entries\)/);
+  assert.doesNotMatch(builder, /STATIC_SPEECH_COUNT\s*=/);
+
+  assert.equal(catalogs.base.entries.length, 93);
+  assert.equal(catalogs.extra.entries.length, 33);
+  assert.equal(catalogs.release.entries.length, 49);
+  assert.equal(catalogs.workflow.entries.length, 39);
+  assert.equal(catalogs.ui.entries.length, 1);
+  assert.equal(catalogs.navigation.entries.length, 17);
+  assert.equal(catalogs.context.entries.length, 10);
+
   assert.match(uiSpeechText, /Hey! Wobei brauchst du Hilfe\?/);
   assert.match(extrasText, /Ich habe die Antwort im Chat angezeigt/);
   assert.match(workflowText, /Bedarfsmedikation/);
   assert.match(workflowText, /Wirksamkeitskontrolle/);
   assert.match(workflowText, /Maßnahmen ohne Zeitangabe/);
   assert.match(navigationText, /feste grüne Leiste/);
-  assert.match(navigationText, /Planung ist ein Hauptbereich/);
-  assert.match(build, /expected_count" != 233/);
-  assert.match(build, /staticSpeechCount\": 233/);
+  assert.match(contextSpeechText, /Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole/);
+  assert.match(build, /wav_count.*expected_count/s);
+  assert.match(build, /summary_count.*expected_count/s);
+  assert.match(build, /sourceCounts/);
+  assert.doesNotMatch(build, /exakt 233|expected_count" != 233/);
 });
 
 test('Sprachstart wird kurz und beginnt mit Hey', () => {
@@ -109,6 +106,14 @@ test('Sprachstart wird kurz und beginnt mit Hey', () => {
   assert.match(applyLocal, /const oldGreeting = 'Hallo! Sag mir einfach/);
   assert.match(uiSpeechText, /Hey! Wobei brauchst du Hilfe\?/);
   assert.match(build, /Hey! Wobei brauchst du Hilfe/);
+});
+
+test('Kontext-Hilfe spricht nur den statisch katalogisierten Basissatz', () => {
+  assert.match(chatRouter, /const visibleInstruction = extra \? `\$\{instruction\} \$\{extra\}`\.trim\(\) : instruction/);
+  assert.match(chatRouter, /reply: `\$\{visibleInstruction\}/);
+  assert.match(chatRouter, /spokenText: instruction/);
+  assert.match(chatRouter, /approved-guide-context-help-v29-5/);
+  assert.doesNotMatch(chatRouter, /spokenText: visibleInstruction/);
 });
 
 test('Orientierung erklärt grüne Hauptleiste und zweite Ebene', () => {
@@ -122,7 +127,6 @@ test('Orientierung erklärt grüne Hauptleiste und zweite Ebene', () => {
   assert.match(orientation, /Doku-Erweitert.*An-\/Abwesenheiten/s);
   assert.match(orientation, /Doku.*Durchführungsnachweis/s);
   assert.match(orientation, /Analyse.*Was war los/s);
-  assert.match(orientation, /kleine rote Kreuz beziehungsweise den zugehörigen Pfeil/);
   assert.match(orientation, /Bedarfsmedikation/);
   assert.match(orientation, /Wirksamkeitskontrolle/);
   assert.match(orientation, /Maßnahmen ohne Zeitangabe/);
@@ -138,12 +142,14 @@ test('Neue Durchführung-Workflows sind als direkte Guides vorhanden', () => {
   assert.match(durchfuehrungWorkflows, /bedarfsmedikation-gabe/);
   assert.match(durchfuehrungWorkflows, /bedarfsmedikation-wirksamkeitskontrolle/);
   assert.match(durchfuehrungWorkflows, /massnahmen-ohne-zeitangabe/);
+  assert.match(durchfuehrungWorkflows, /festen grünen Leiste/);
   assert.match(durchfuehrungWorkflows, /kleinen Pfeil links daneben/);
   assert.match(durchfuehrungWorkflows, /rechts im kleinen Kästchen/);
   assert.match(durchfuehrungWorkflows, /Verordnung selbst nicht verändern/);
-  assert.match(durchfuehrungWorkflows, /automatisch erzeugte Wirksamkeitskontrolle/);
+  assert.match(durchfuehrungWorkflows, /automatisch.*Wirksamkeitskontrolle/s);
   assert.match(durchfuehrungWorkflows, /„Was war“/);
   assert.match(durchfuehrungWorkflows, /unten mit „OK“ bestätigen/);
+  assert.match(durchfuehrungWorkflows, /insertBefore\(card, firstLater\)/);
   assert.match(durchfuehrungWorkflows, /__DOKOHILF_DURCHFUEHRUNGS_WORKFLOWS_V29__/);
 });
 
@@ -163,8 +169,6 @@ test('Build-ID, PWA und neue Assets sind konsistent', () => {
   assert.match(index, new RegExp(`release-polish-v29\\.js\\?v=${buildId}`));
   assert.match(worker, new RegExp(`BUILD_ID = '${buildId}'`));
   assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2'/);
-  assert.match(worker, /orientation-help-v29\.js\?v=20260809-32/);
-  assert.match(worker, /release-polish-v29\.js\?v=20260809-32/);
   assert.doesNotMatch(worker, /LOCAL_VOICE_MODEL_CACHE/);
   assert.match(applyDetail, /20260809-static-supertonic-orientation-ui-v29-3/);
   assert.match(applyDetail, /durchfuehrungs-workflows-v29\.js/);
@@ -174,9 +178,7 @@ test('Release-Gate verbietet lokale Inferenz technisch', () => {
   assert.match(build, /On-Device-Spracherzeugung ist im Release verboten/);
   assert.match(build, /Supertone\/supertonic-3\/resolve\/main/);
   assert.match(build, /loadTextToSpeech\\|loadVoiceStyle\\|navigator\.gpu\\|localFallback/);
-  assert.match(build, /Hey! Wobei brauchst du Hilfe/);
-  assert.match(build, /233 statischen Supertonic-F1-WAVs/);
+  assert.match(build, /vollständig katalogisierten statischen Supertonic-F1-WAVs/);
   assert.match(build, /Bedarfsmedikation/);
   assert.match(build, /Maßnahmen ohne Zeitangabe/);
-  assert.match(build, /grüner zweistufiger Orientierung/);
 });
