@@ -13,7 +13,7 @@ test('v29 build is cache-busted consistently and version badge starts hidden', a
     read('assets/local-voice-gate-v28.js'),
   ]);
   const buildId = JSON.parse(version).buildId;
-  assert.equal(buildId, '20260809-35');
+  assert.equal(buildId, '20260809-36');
   assert.match(html, /KI · v29/);
   assert.match(html, /id="buildPill" type="button" hidden/);
   assert.match(html, new RegExp(`dokohilf-build" content="${buildId}`));
@@ -22,6 +22,8 @@ test('v29 build is cache-busted consistently and version badge starts hidden', a
   assert.match(html, new RegExp(`release-polish-v29\\.js\\?v=${buildId}`));
   assert.match(html, new RegExp(`ui-polish-v35\\.css\\?v=${buildId}-ui1`));
   assert.match(html, new RegExp(`ui-polish-v35\\.js\\?v=${buildId}-ui1`));
+  assert.match(html, new RegExp(`voice-polish-v36\\.css\\?v=${buildId}-voice1`));
+  assert.match(html, new RegExp(`voice-polish-v36\\.js\\?v=${buildId}-voice1`));
   assert.match(worker, new RegExp(`BUILD_ID = '${buildId}'`));
   assert.match(runtime, /on_device_voice_retired_static_supertonic_only/);
   assert.doesNotMatch(runtime, /Supertone\/supertonic-3\/resolve\/main|loadTextToSpeech|navigator\.gpu/);
@@ -250,6 +252,8 @@ test('service worker source keeps new UI, orientation and static audio only', as
     'assets/direct-guide-copy-v29.js',
     'assets/ui-polish-v35.css',
     'assets/ui-polish-v35.js',
+    'assets/voice-polish-v36.css',
+    'assets/voice-polish-v36.js',
   ]) assert.ok(worker.includes(asset), `${asset} fehlt im Service Worker`);
   assert.match(worker, /dokohilf-static-supertonic-audio-v29-2/);
   assert.match(worker, /caches\.delete\('dokohilf-local-voice-model-v28-1'\)/);
@@ -288,4 +292,27 @@ test('build 35 polish groups the library and removes duplicate-looking control i
   assert.match(library, /const LIBRARY_ORDER = \[/);
   assert.match(execution, /Wirksamkeitskontrolle automatisch.*angelegt/s);
   assert.doesNotMatch(polish, /localStorage|sessionStorage|indexedDB/);
+});
+
+test('build 36 voice polish fixes the mobile focus hierarchy without touching guide logic', async () => {
+  const [voiceCss, voiceUi] = await Promise.all([
+    read('assets/voice-polish-v36.css'),
+    read('assets/voice-polish-v36.js'),
+  ]);
+  assert.match(voiceCss, /\.app-shell\[data-mode="voice"\] \.topbar/);
+  assert.match(voiceCss, /width:min\(calc\(100% - 24px\),760px\)/);
+  assert.match(voiceCss, /\.footer-version-wrap/);
+  assert.match(voiceCss, /display:none!important/);
+  assert.match(voiceCss, /AKTUELLE ANWEISUNG/);
+  assert.match(voiceCss, /justify-content:center!important/);
+  assert.match(voiceCss, /data-voice-state="listening"/);
+  assert.match(voiceCss, /data-voice-state="thinking"/);
+  assert.match(voiceCss, /data-voice-state="speaking"/);
+  assert.match(voiceCss, /@media\(max-height:760px\)/);
+  assert.match(voiceUi, /STATE_LABELS/);
+  assert.match(voiceUi, /Sprachmodus/);
+  assert.match(voiceUi, /DokoHilf spricht …/);
+  assert.match(voiceUi, /DokoHilf bereitet die Antwort vor …/);
+  assert.doesNotMatch(voiceUi, /localStorage|sessionStorage|indexedDB/);
+  assert.doesNotMatch(voiceUi, /sendMessage\(|guideSlug\s*=|fetch\(/);
 });
