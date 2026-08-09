@@ -47,7 +47,7 @@ test('free-text help and the help button keep the same contextual router path', 
   assert.doesNotMatch(detail, /localStorage|sessionStorage|indexedDB/);
 });
 
-test('explicit location questions still route to dedicated area-finding guides', async () => {
+test('explicit location questions route to dedicated area-finding guides', async () => {
   const [smart, migration] = await Promise.all([
     read('assets/smart-help-v29.js'),
     read('supabase/migrations/20260809112500_later_guides_stammdaten_v29.sql'),
@@ -76,6 +76,46 @@ test('explicit location questions still route to dedicated area-finding guides',
   assert.match(migration, /Öffne oben den Reiter „Analyse“/);
   assert.match(migration, /links die Bewohnerübersicht/);
   assert.doesNotMatch(smart, /return 'aufgaben-aktuelles'|return 'easyplan'|return 'berichtssuche'/);
+});
+
+test('Bedarfsmedikation, Wirksamkeitskontrolle und Maßnahmen ohne Zeitangabe route deterministically', async () => {
+  const [smart, orientation, direct, migration, speech] = await Promise.all([
+    read('assets/smart-help-v29.js'),
+    read('assets/orientation-help-v29.js'),
+    read('assets/durchfuehrungs-workflows-v29.js'),
+    read('supabase/migrations/20260809124000_bedarfsmedikation_massnahmen_v29.sql'),
+    read('assets/voice-durchfuehrung-catalog-v29.json'),
+  ]);
+
+  for (const slug of [
+    'bedarfsmedikation-gabe',
+    'bedarfsmedikation-wirksamkeitskontrolle',
+    'bedarfsmedikation-finden',
+    'bedarfsmedikation-wirksamkeitskontrolle-finden',
+    'massnahmen-ohne-zeitangabe',
+    'massnahmen-ohne-zeitangabe-finden',
+  ]) assert.match(migration, new RegExp(`'${slug}'`));
+
+  assert.match(smart, /return 'bedarfsmedikation-gabe'/);
+  assert.match(smart, /return 'bedarfsmedikation-wirksamkeitskontrolle'/);
+  assert.match(smart, /return 'bedarfsmedikation-finden'/);
+  assert.match(smart, /return 'bedarfsmedikation-wirksamkeitskontrolle-finden'/);
+  assert.match(smart, /return 'massnahmen-ohne-zeitangabe'/);
+  assert.match(smart, /return 'massnahmen-ohne-zeitangabe-finden'/);
+
+  assert.match(orientation, /kleinen Pfeil links daneben/);
+  assert.match(orientation, /automatisch erzeugte Wirksamkeitskontrolle/);
+  assert.match(orientation, /Bereich Maßnahmen ohne Zeitangabe/);
+
+  assert.match(direct, /rechts im kleinen Kästchen den Haken/);
+  assert.match(direct, /Verordnung selbst nicht verändern/);
+  assert.match(direct, /automatisch erzeugte Wirksamkeitskontrolle/);
+  assert.match(direct, /„Klienten-Team Sitzung“ oder „Krise“/);
+  assert.match(direct, /Unter „Was war“/i);
+  assert.match(direct, /unten mit „OK“ bestätigen/);
+  assert.match(speech, /Bedarfsmedikation/);
+  assert.match(speech, /Wirksamkeitskontrolle/);
+  assert.match(speech, /Maßnahmen ohne Zeitangabe/);
 });
 
 test('nested orientation explains where parent areas are located', async () => {
@@ -183,7 +223,7 @@ test('legacy v27 presentation yields to the v29 home and chat owner', async () =
   assert.match(experience, /window\.addEventListener\('pageshow', initialize\)/);
 });
 
-test('service worker precaches new UI, orientation and static audio only', async () => {
+test('service worker source keeps new UI, orientation and static audio only', async () => {
   const worker = await read('service-worker.js');
   for (const asset of [
     'assets/v29-ui.css',
@@ -201,7 +241,7 @@ test('service worker precaches new UI, orientation and static audio only', async
 
 test('version is moved to the footer and update notice stays visible', async () => {
   const polish = await read('assets/release-polish-v29.js');
-  assert.match(polish, /UPDATE_NOTICE_MS = 7500/);
+  assert.match(polish, /UPDATE_NOTICE_MS = 10000/);
   assert.match(polish, /footer-version-wrap/);
   assert.match(polish, /pill\.classList\.remove\('build-pill'\)/);
   assert.match(polish, /DokoHilf wurde aktualisiert/);
