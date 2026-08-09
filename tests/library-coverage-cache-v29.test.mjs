@@ -24,23 +24,25 @@ const extra = [
 ];
 
 test('alle 18 freigegebenen Bibliothekswege sind im UI verdrahtet', () => {
-  for (const slug of baseGuides) assert.match(library, new RegExp(`['"]${slug}['"]`), `Basis-Guide fehlt: ${slug}`);
-  for (const slug of extra) assert.match(extraGuides, new RegExp(`['"]${slug}['"]`), `Durchführungs-Guide fehlt: ${slug}`);
+  assert.match(library, /const LIBRARY_ORDER = \[/);
+  for (const slug of baseGuides) assert.ok(library.includes(`'${slug}'`), `Basis-Guide fehlt im Bibliotheksvertrag: ${slug}`);
+  for (const slug of extra) assert.ok(extraGuides.includes(`'${slug}'`), `Durchführungs-Guide fehlt: ${slug}`);
   assert.match(extraGuides, /insertBefore\(card, firstLater\)/);
   assert.equal(baseGuides.length + extra.length, 18);
 });
 
 test('Vitalwerte führt bewusst über Einzelwert oder Sammelerfassung', () => {
-  assert.match(library, /renderVitalChoice/);
-  assert.match(library, /vitalwerte-einzelwert/);
-  assert.match(library, /vitalwerte-sammelerfassung/);
-  assert.match(library, /data-v29-open-guide/);
+  assert.match(library, /if \(slug === 'vitalwerte'\) return renderVitalChoice\(source\)/);
+  assert.match(library, /function renderVitalChoice\(source = 'home'\)/);
+  assert.match(library, /data-v29-open-guide=\"vitalwerte-einzelwert\"/);
+  assert.match(library, /data-v29-open-guide=\"vitalwerte-sammelerfassung\"/);
 });
 
 test('die drei fachlich offenen Karten bleiben sichtbar aber nicht als Guide anklickbar', () => {
-  for (const label of ['Aufgaben · Aktuelles', 'Easy-Plan öffnen', 'Berichtssuche']) assert.match(library, new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  assert.match(library, /class="v29-library-card is-later"/);
-  assert.match(library, /aria-disabled="true"/);
+  for (const label of ['Aufgaben · Aktuelles', 'Easy-Plan öffnen', 'Berichtssuche']) assert.ok(library.includes(label), `Später-Karte fehlt: ${label}`);
+  assert.match(library, /card\.className = 'v29-library-card is-later'/);
+  assert.match(library, /card\.setAttribute\('aria-disabled', 'true'\)/);
+  assert.doesNotMatch(library, /function createLaterCard[\s\S]*?data-v29-open-guide[\s\S]*?return card;/);
 });
 
 test('statische WAVs ignorieren alte Build-Caches und den HTTP-Cache', () => {
