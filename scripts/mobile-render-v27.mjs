@@ -251,6 +251,13 @@ try {
 
   await page.locator('.v29-all-guides-trigger').click();
   await page.locator('.v29-library-head h1').waitFor({ state: 'visible' });
+  await page.waitForFunction(() => {
+    const view = document.getElementById('directGuideView');
+    const grid = view?.querySelector('.v29-library-grid');
+    return Boolean(grid)
+      && grid.querySelectorAll('.v29-library-card[data-v29-open-durchfuehrung-guide]').length === 3
+      && view?.getAttribute('data-v29-library-guide-count') === '18';
+  }, null, { timeout: 8_000 });
   const fullLibrary = await page.evaluate(() => {
     const active = [...document.querySelectorAll('.v29-library-card[data-v29-open-guide], .v29-library-card[data-v29-open-durchfuehrung-guide]')];
     const later = [...document.querySelectorAll('.v29-library-card.is-later')];
