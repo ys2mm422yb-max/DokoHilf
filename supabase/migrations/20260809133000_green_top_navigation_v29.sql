@@ -43,115 +43,97 @@ set approved_guide_slugs = (
     updated_at = now()
 where slug = 'easyplan';
 
-update public.dokohilf_guides
+with navigation(slug, step_text, check_text, stuck_text, note) as (
+  values
+    (
+      'doku-erweitert-finden',
+      '„Doku-Erweitert“ ist ein fester Hauptbereich ganz oben in der grünen Leiste. Wähle dort „Doku-Erweitert“. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.',
+      'Ist „Doku-Erweitert“ geöffnet?',
+      'Suche ganz oben in der festen grünen Leiste nach „Doku-Erweitert“. Die Unterpunkte erscheinen erst darunter, nachdem du „Doku-Erweitert“ ausgewählt hast.',
+      'Feste grüne Hauptleiste und darunter erscheinende Unterpunkte fachlich klargestellt.'
+    ),
+    (
+      'doku-finden',
+      '„Doku“ ist ein fester Hauptbereich ganz oben in der grünen Leiste. Wähle dort „Doku“. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.',
+      'Ist „Doku“ geöffnet?',
+      'Suche ganz oben in der festen grünen Leiste nach „Doku“. Die Unterpunkte erscheinen erst darunter, nachdem du „Doku“ ausgewählt hast.',
+      'Feste grüne Hauptleiste und darunter erscheinende Unterpunkte fachlich klargestellt.'
+    ),
+    (
+      'analyse-finden',
+      '„Analyse“ ist ein fester Hauptbereich ganz oben in der grünen Leiste. Wähle dort „Analyse“. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.',
+      'Ist „Analyse“ geöffnet?',
+      'Suche ganz oben in der festen grünen Leiste nach „Analyse“. Die Unterpunkte erscheinen erst darunter, nachdem du „Analyse“ ausgewählt hast.',
+      'Analyse als fester Hauptbereich in der grünen oberen Leiste fachlich klargestellt.'
+    ),
+    (
+      'berichte-finden',
+      'Beim geöffneten Bewohner findest du „Berichte“ ganz oben in der festen grünen Leiste. Wähle dort „Berichte“.',
+      'Ist der Bereich „Berichte“ geöffnet?',
+      'Bleibe beim geöffneten Bewohner und suche ganz oben in der festen grünen Leiste nach „Berichte“.',
+      'Position von Berichte in der festen grünen oberen Leiste sprachlich präzisiert.'
+    ),
+    (
+      'visiten-finden',
+      'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Visiten“.',
+      'Ist der Bereich „Visiten“ geöffnet?',
+      'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „Visiten“.',
+      'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
+    ),
+    (
+      'vitalwerte-finden',
+      'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Vitalwerte“.',
+      'Ist der Bereich „Vitalwerte“ geöffnet?',
+      'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „Vitalwerte“.',
+      'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
+    ),
+    (
+      'anwesenheiten-finden',
+      'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „An-/Abwesenheiten“.',
+      'Ist der Bereich „An-/Abwesenheiten“ geöffnet?',
+      'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „An-/Abwesenheiten“.',
+      'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
+    ),
+    (
+      'medikation-finden',
+      'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Medikation“.',
+      'Ist die Medikamentenübersicht geöffnet?',
+      'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „Medikation“.',
+      'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
+    ),
+    (
+      'formulare-finden',
+      'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Formulare“.',
+      'Ist der Bereich „Formulare“ geöffnet?',
+      'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „Formulare“.',
+      'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
+    ),
+    (
+      'durchfuehrungsnachweis-finden',
+      'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Durchführungsnachweis“.',
+      'Ist der Durchführungsnachweis geöffnet?',
+      'Ganz oben „Doku“ wählen; danach erscheint darunter „Durchführungsnachweis“.',
+      'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
+    ),
+    (
+      'uebergabe-finden',
+      'Wähle ganz oben in der festen grünen Leiste „Analyse“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Was war los?“. Darüber öffnest du die Übergabeansicht.',
+      'Ist „Was war los?“ geöffnet?',
+      'Ganz oben „Analyse“ wählen; danach erscheint darunter „Was war los?“.',
+      'Analyse oben und Was war los darunter fachlich klargestellt.'
+    )
+)
+update public.dokohilf_guides as guide
 set steps = jsonb_build_array(jsonb_build_object(
-      'text', '„Doku-Erweitert“ ist ein fester Hauptbereich ganz oben in der grünen Leiste. Wähle dort „Doku-Erweitert“. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.',
-      'check', 'Ist „Doku-Erweitert“ geöffnet?',
-      'stuck', 'Suche ganz oben in der festen grünen Leiste nach „Doku-Erweitert“. Die Unterpunkte erscheinen erst darunter, nachdem du „Doku-Erweitert“ ausgewählt hast.'
+      'text', navigation.step_text,
+      'check', navigation.check_text,
+      'stuck', navigation.stuck_text
     )),
     updated_at = now(),
-    change_note = 'Feste grüne Hauptleiste und darunter erscheinende Unterpunkte fachlich klargestellt.'
-where slug = 'doku-erweitert-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', '„Doku“ ist ein fester Hauptbereich ganz oben in der grünen Leiste. Wähle dort „Doku“. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.',
-      'check', 'Ist „Doku“ geöffnet?',
-      'stuck', 'Suche ganz oben in der festen grünen Leiste nach „Doku“. Die Unterpunkte erscheinen erst darunter, nachdem du „Doku“ ausgewählt hast.'
-    )),
-    updated_at = now(),
-    change_note = 'Feste grüne Hauptleiste und darunter erscheinende Unterpunkte fachlich klargestellt.'
-where slug = 'doku-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', '„Analyse“ ist ein fester Hauptbereich ganz oben in der grünen Leiste. Wähle dort „Analyse“. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.',
-      'check', 'Ist „Analyse“ geöffnet?',
-      'stuck', 'Suche ganz oben in der festen grünen Leiste nach „Analyse“. Die Unterpunkte erscheinen erst darunter, nachdem du „Analyse“ ausgewählt hast.'
-    )),
-    updated_at = now(),
-    change_note = 'Analyse als fester Hauptbereich in der grünen oberen Leiste fachlich klargestellt.'
-where slug = 'analyse-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', 'Beim geöffneten Bewohner findest du „Berichte“ ganz oben in der festen grünen Leiste. Wähle dort „Berichte“.',
-      'check', 'Ist der Bereich „Berichte“ geöffnet?',
-      'stuck', 'Bleibe beim geöffneten Bewohner und suche ganz oben in der festen grünen Leiste nach „Berichte“.'
-    )),
-    updated_at = now(),
-    change_note = 'Position von Berichte in der festen grünen oberen Leiste sprachlich präzisiert.'
-where slug = 'berichte-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Visiten“.',
-      'check', 'Ist der Bereich „Visiten“ geöffnet?',
-      'stuck', 'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „Visiten“.'
-    )),
-    updated_at = now(),
-    change_note = 'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
-where slug = 'visiten-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Vitalwerte“.',
-      'check', 'Ist der Bereich „Vitalwerte“ geöffnet?',
-      'stuck', 'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „Vitalwerte“.'
-    )),
-    updated_at = now(),
-    change_note = 'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
-where slug = 'vitalwerte-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „An-/Abwesenheiten“.',
-      'check', 'Ist der Bereich „An-/Abwesenheiten“ geöffnet?',
-      'stuck', 'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „An-/Abwesenheiten“.'
-    )),
-    updated_at = now(),
-    change_note = 'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
-where slug = 'anwesenheiten-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Medikation“.',
-      'check', 'Ist die Medikamentenübersicht geöffnet?',
-      'stuck', 'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „Medikation“.''
-    )),
-    updated_at = now(),
-    change_note = 'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
-where slug = 'medikation-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Formulare“.',
-      'check', 'Ist der Bereich „Formulare“ geöffnet?',
-      'stuck', 'Ganz oben „Doku-Erweitert“ wählen; danach erscheint darunter „Formulare“.''
-    )),
-    updated_at = now(),
-    change_note = 'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
-where slug = 'formulare-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Durchführungsnachweis“.',
-      'check', 'Ist der Durchführungsnachweis geöffnet?',
-      'stuck', 'Ganz oben „Doku“ wählen; danach erscheint darunter „Durchführungsnachweis“.''
-    )),
-    updated_at = now(),
-    change_note = 'Hierarchie Hauptbereich oben, Unterpunkt darunter fachlich klargestellt.'
-where slug = 'durchfuehrungsnachweis-finden' and status = 'approved';
-
-update public.dokohilf_guides
-set steps = jsonb_build_array(jsonb_build_object(
-      'text', 'Wähle ganz oben in der festen grünen Leiste „Analyse“. Danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole. Wähle dort „Was war los?“. Darüber öffnest du die Übergabeansicht.',
-      'check', 'Ist „Was war los?“ geöffnet?',
-      'stuck', 'Ganz oben „Analyse“ wählen; danach erscheint darunter „Was war los?“.''
-    )),
-    updated_at = now(),
-    change_note = 'Analyse oben und Was war los darunter fachlich klargestellt.'
-where slug = 'uebergabe-finden' and status = 'approved';
+    change_note = navigation.note
+from navigation
+where guide.slug = navigation.slug
+  and guide.status = 'approved';
 
 -- Contextual help inside active guides uses the same hierarchy.
 update public.dokohilf_guides
