@@ -7,7 +7,7 @@ const ALLOWED_ORIGINS = new Set([
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 24;
 const MAX_BODY_CHARS = 16_000;
-const ROUTER_CONTRACT_MARKERS = ['approved-guide-context-help-v28', 'approved-guide-context-help-v29-4'] as const;
+const ROUTER_CONTRACT_MARKERS = ['approved-guide-context-help-v28', 'approved-guide-context-help-v29-5'] as const;
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
@@ -52,7 +52,7 @@ function jsonResponse(origin: string | null, status: number, body: unknown): Res
     headers: {
       ...corsHeaders(origin),
       'Content-Type': 'application/json; charset=utf-8',
-      'X-DokoHilf-Chat-Router': 'context-aware-v29-4',
+      'X-DokoHilf-Chat-Router': 'context-aware-v29-5',
     },
   });
 }
@@ -204,11 +204,11 @@ function stepResponse(
 ): Response {
   const step = guide.steps[index] || guide.steps[0] || {};
   let instruction = String((useStuck ? step.stuck : step.text) || step.text || step.stuck || '').trim();
-  if (extra) instruction = `${instruction} ${extra}`.trim();
   if (!instruction) instruction = `Bleib im Ablauf „${guide.title}“ beim aktuellen Schritt.`;
+  const visibleInstruction = extra ? `${instruction} ${extra}`.trim() : instruction;
   const check = String(step.check || 'Bist du an dieser Stelle?').trim();
   return jsonResponse(origin, 200, {
-    reply: `${instruction}\n\n${check}`,
+    reply: `${visibleInstruction}\n\n${check}`,
     spokenText: instruction,
     guideSlug: guide.slug,
     guideTitle: guide.title,
