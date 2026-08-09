@@ -8,40 +8,37 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DokoHilf">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="dokohilf-build" content="20260809-29">
+  <meta name="dokohilf-build" content="20260809-30">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>DokoHilf – KI-Bedienungshilfe</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="assets/styles.css?v=20260809-29">
-  <link rel="stylesheet" href="assets/premium-ui-v25.css?v=20260809-29" data-dokohilf-premium-v25>
-  <link rel="stylesheet" href="assets/premium-ui-v26.css?v=20260809-29" data-dokohilf-premium-v26>
-  <link rel="stylesheet" href="assets/premium-ui-v27.css?v=20260809-29" data-dokohilf-premium-v27>
-  <link rel="stylesheet" href="assets/ux-v27.css?v=20260809-29" data-dokohilf-ux-v27>
-  <link rel="stylesheet" href="assets/voice-stage-balance-v27.css?v=20260809-29" data-dokohilf-voice-stage-balance-v27>
-  <link rel="stylesheet" href="assets/direct-guides-chat-v27.css?v=20260809-29" data-dokohilf-direct-guides-chat-v27>
-  <link rel="stylesheet" href="assets/v29-ui.css?v=20260809-29" data-dokohilf-v29-ui>
-  <link rel="stylesheet" href="assets/card-axis-fix-v29.css?v=20260809-29-cardaxis1" data-dokohilf-card-axis-fix-v29>
-  <link rel="stylesheet" href="assets/guide-library-v29.css?v=20260809-29-library1" data-dokohilf-guide-library-v29>
+  <link rel="stylesheet" href="assets/styles.css?v=20260809-30">
+  <link rel="stylesheet" href="assets/premium-ui-v25.css?v=20260809-30" data-dokohilf-premium-v25>
+  <link rel="stylesheet" href="assets/premium-ui-v26.css?v=20260809-30" data-dokohilf-premium-v26>
+  <link rel="stylesheet" href="assets/premium-ui-v27.css?v=20260809-30" data-dokohilf-premium-v27>
+  <link rel="stylesheet" href="assets/ux-v27.css?v=20260809-30" data-dokohilf-ux-v27>
+  <link rel="stylesheet" href="assets/voice-stage-balance-v27.css?v=20260809-30" data-dokohilf-voice-stage-balance-v27>
+  <link rel="stylesheet" href="assets/direct-guides-chat-v27.css?v=20260809-30" data-dokohilf-direct-guides-chat-v27>
+  <link rel="stylesheet" href="assets/v29-ui.css?v=20260809-30" data-dokohilf-v29-ui>
+  <link rel="stylesheet" href="assets/card-axis-fix-v29.css?v=20260809-30-cardaxis1" data-dokohilf-card-axis-fix-v29>
+  <link rel="stylesheet" href="assets/guide-library-v29.css?v=20260809-30-library1" data-dokohilf-guide-library-v29>
   <script>
     (() => {
       'use strict';
-      const BUILD_ID = '20260809-29';
+      const BUILD_ID = '20260809-30';
       const ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router';
       const CORE_ENDPOINT_MARKER = '/functions/v1/dokohilf-ai';
       const nativeFetch = window.fetch.bind(window);
-
       function routedInput(input) {
         const url = typeof input === 'string' ? input : input?.url;
         if (typeof url !== 'string' || !url.includes(CORE_ENDPOINT_MARKER) || url.includes('dokohilf-ai-router')) return input;
         if (typeof input === 'string') return ROUTER_ENDPOINT;
         try { return new Request(ROUTER_ENDPOINT, input); } catch { return ROUTER_ENDPOINT; }
       }
-
       window.fetch = (input, init) => nativeFetch(routedInput(input), init);
       window.__DOKOHILF_DIRECT_ROUTER_V27__ = true;
-
       if ('serviceWorker' in navigator) {
         const nativeRegister = navigator.serviceWorker.register.bind(navigator.serviceWorker);
         navigator.serviceWorker.register = (scriptURL, options) => {
@@ -50,13 +47,9 @@
           return nativeRegister(`${raw}${separator}build=${BUILD_ID}`, options);
         };
       }
-
       async function hardRefresh(targetBuildId = BUILD_ID) {
         const key = `dokohilf-hard-refresh-${targetBuildId}`;
-        try {
-          if (sessionStorage.getItem(key) === 'running') return;
-          sessionStorage.setItem(key, 'running');
-        } catch { }
+        try { if (sessionStorage.getItem(key) === 'running') return; sessionStorage.setItem(key, 'running'); } catch { }
         try {
           const registrations = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistrations() : [];
           await Promise.all(registrations.map(registration => registration.unregister().catch(() => false)));
@@ -67,7 +60,6 @@
         } catch { }
         window.location.reload();
       }
-
       async function verifyRemoteBuild() {
         try {
           const response = await nativeFetch(`./version.json?check=${Date.now()}`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
@@ -76,58 +68,30 @@
           if (payload?.buildId && payload.buildId !== BUILD_ID) await hardRefresh(payload.buildId);
         } catch { }
       }
-
       window.DokoHilfHardRefresh = hardRefresh;
       window.addEventListener('pageshow', verifyRemoteBuild);
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') verifyRemoteBuild();
-      });
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') verifyRemoteBuild(); });
     })();
   </script>
 </head>
 <body>
-  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260809-29">
+  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260809-30">
     <header class="topbar">
-      <div class="brand" aria-label="DokoHilf">
-        <img src="icon.svg" alt="" width="48" height="48">
-        <span><strong>DokoHilf</strong><small>KI-Bedienungshilfe</small></span>
-      </div>
+      <div class="brand" aria-label="DokoHilf"><img src="icon.svg" alt="" width="48" height="48"><span><strong>DokoHilf</strong><small>KI-Bedienungshilfe</small></span></div>
       <div class="top-actions">
-        <button class="build-pill" id="buildPill" type="button" aria-label="Version 20260809-29 und Updateprüfung">KI · v29</button>
-        <button class="home-button" id="homeButton" type="button" hidden aria-label="Zum Hauptmenü">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></svg>
-          <span>Hauptmenü</span>
-        </button>
+        <button class="build-pill" id="buildPill" type="button" aria-label="Version 20260809-30 und Updateprüfung">KI · v29</button>
+        <button class="home-button" id="homeButton" type="button" hidden aria-label="Zum Hauptmenü"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></svg><span>Hauptmenü</span></button>
         <button class="new-button" id="resetButton" type="button" hidden aria-label="Neues Gespräch starten">Neu</button>
       </div>
     </header>
-
     <main class="main-content">
       <section class="start-screen" id="startScreen" aria-labelledby="startTitle">
-        <div class="start-copy">
-          <h1 id="startTitle">Wobei brauchst du Hilfe?</h1>
-          <p>Sprich mit DokoHilf oder schreibe deine Bedienfrage.</p>
-        </div>
-
+        <div class="start-copy"><h1 id="startTitle">Wobei brauchst du Hilfe?</h1><p>Sprich mit DokoHilf oder schreibe deine Bedienfrage.</p></div>
         <div class="mode-grid" aria-label="Bedienart auswählen">
-          <button class="mode-card voice-card" type="button" data-select-mode="voice">
-            <span class="mode-icon" aria-hidden="true">
-              <svg viewBox="0 0 48 48"><rect x="17" y="7" width="14" height="23" rx="7"/><path d="M11 24v2c0 7 6 13 13 13s13-6 13-13v-2M24 39v5M17 44h14"/></svg>
-            </span>
-            <span class="mode-text"><strong>Sprechen</strong><small>DokoHilf antwortet laut und führt dich Schritt für Schritt.</small></span>
-            <span class="mode-arrow" aria-hidden="true">›</span>
-          </button>
-
-          <button class="mode-card chat-card" type="button" data-select-mode="chat">
-            <span class="mode-icon" aria-hidden="true">
-              <svg viewBox="0 0 48 48"><path d="M9 10h30v23H22l-9 7v-7H9z"/><path d="M16 18h16M16 24h11"/></svg>
-            </span>
-            <span class="mode-text"><strong>Schreiben</strong><small>Antworten bleiben klar, ruhig und übersichtlich zum Nachlesen.</small></span>
-            <span class="mode-arrow" aria-hidden="true">›</span>
-          </button>
+          <button class="mode-card voice-card" type="button" data-select-mode="voice"><span class="mode-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="17" y="7" width="14" height="23" rx="7"/><path d="M11 24v2c0 7 6 13 13 13s13-6 13-13v-2M24 39v5M17 44h14"/></svg></span><span class="mode-text"><strong>Sprechen</strong><small>DokoHilf antwortet laut und führt dich Schritt für Schritt.</small></span><span class="mode-arrow" aria-hidden="true">›</span></button>
+          <button class="mode-card chat-card" type="button" data-select-mode="chat"><span class="mode-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M9 10h30v23H22l-9 7v-7H9z"/><path d="M16 18h16M16 24h11"/></svg></span><span class="mode-text"><strong>Schreiben</strong><small>Antworten bleiben klar, ruhig und übersichtlich zum Nachlesen.</small></span><span class="mode-arrow" aria-hidden="true">›</span></button>
         </div>
-
-        <div class="examples" aria-label="Häufige Abläufe">
+        <div class="examples" aria-label="Häufige Abläufe" data-v27-ready="direct-guides-cross-platform">
           <span>Häufige Abläufe · direkt öffnen</span>
           <button type="button" data-direct-guide="bericht">Bericht anlegen</button>
           <button type="button" data-direct-guide="visite">Visite anlegen</button>
@@ -135,97 +99,43 @@
           <button type="button" data-direct-guide="anwesenheit">An-/Abwesenheit</button>
           <button type="button" data-direct-guide="medikation">Medikation ansehen</button>
           <button type="button" data-direct-guide="formular">Formular anlegen</button>
+          <button type="button" data-direct-guide="uebergabe">Übergabe anzeigen</button>
         </div>
-
-        <div class="safety-note" role="note">
-          <strong>Datenschutz aktiv.</strong>
-          <span>Bitte keine persönlichen Angaben eingeben.</span>
-        </div>
+        <div class="safety-note" role="note"><strong>Datenschutz aktiv.</strong><span>Bitte keine persönlichen Angaben eingeben.</span></div>
       </section>
-
       <section class="workspace" id="workspace" hidden>
-        <nav class="mode-switch" aria-label="Bedienart wechseln">
-          <button type="button" data-switch-mode="voice"><span aria-hidden="true">●</span> Sprechen</button>
-          <button type="button" data-switch-mode="chat"><span aria-hidden="true">▰</span> Schreiben</button>
-        </nav>
-
-        <section class="voice-console" id="voiceConsole" hidden aria-label="Sprachgespräch">
-          <button class="voice-orb" id="voiceButton" type="button" aria-label="Sprachgespräch starten oder pausieren">
-            <span class="orb-rings" aria-hidden="true"></span>
-            <span class="mic-symbol" aria-hidden="true">
-              <svg viewBox="0 0 64 64"><rect x="23" y="8" width="18" height="31" rx="9"/><path d="M16 30v3c0 9 7 16 16 16s16-7 16-16v-3M32 49v8M23 57h18"/></svg>
-            </span>
-            <span class="voice-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-          </button>
-          <div class="voice-copy" aria-live="polite">
-            <strong id="voiceStatus">Bereit</strong>
-            <span id="voiceHint">Tippe auf das Mikrofon und sprich los.</span>
-          </div>
-          <button class="pause-button" id="pauseVoiceButton" type="button">Gespräch pausieren</button>
-        </section>
-
-        <section class="chat-head" id="chatHead" hidden>
-          <span class="chat-eyebrow">DokoHilf Chat</span>
-          <h1>Schreib deine Frage.</h1>
-          <p>Beschreibe kurz dein Ziel. DokoHilf führt dich nur durch bestätigte Abläufe.</p>
-          <div class="quick-prompts" aria-label="Schnelle Fragen">
-            <button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe</button>
-            <button type="button" data-prompt="Ich habe mich in einem Bericht verschrieben">Bericht korrigieren</button>
-            <button type="button" data-prompt="Wie lege ich eine Visite an?">Visite</button>
-          </div>
-        </section>
-
-        <section class="conversation" aria-label="Gespräch mit DokoHilf">
-          <div class="messages" id="messages" aria-live="polite" aria-relevant="additions"></div>
-          <div class="command-row" id="commandRow" hidden aria-label="Schnelle Antworten">
-            <button type="button" data-command="weiter">Weiter</button>
-            <button type="button" data-command="nochmal">Nochmal</button>
-            <button type="button" data-command="ich finde das nicht">Ich brauche Hilfe</button>
-            <button type="button" data-command="zurück">Zurück</button>
-          </div>
-        </section>
+        <nav class="mode-switch" aria-label="Bedienart wechseln"><button type="button" data-switch-mode="voice"><span aria-hidden="true">●</span> Sprechen</button><button type="button" data-switch-mode="chat"><span aria-hidden="true">▰</span> Schreiben</button></nav>
+        <section class="voice-console" id="voiceConsole" hidden aria-label="Sprachgespräch"><button class="voice-orb" id="voiceButton" type="button" aria-label="Sprachgespräch starten oder pausieren"><span class="orb-rings" aria-hidden="true"></span><span class="mic-symbol" aria-hidden="true"><svg viewBox="0 0 64 64"><rect x="23" y="8" width="18" height="31" rx="9"/><path d="M16 30v3c0 9 7 16 16 16s16-7 16-16v-3M32 49v8M23 57h18"/></svg></span><span class="voice-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></button><div class="voice-copy" aria-live="polite"><strong id="voiceStatus">Bereit</strong><span id="voiceHint">Tippe auf das Mikrofon und sprich los.</span></div><button class="pause-button" id="pauseVoiceButton" type="button">Gespräch pausieren</button></section>
+        <section class="chat-head" id="chatHead" hidden><span class="chat-eyebrow">DokoHilf Chat</span><h1>Schreib deine Frage.</h1><p>Beschreibe kurz dein Ziel. DokoHilf führt dich nur durch bestätigte Abläufe.</p><div class="quick-prompts" aria-label="Schnelle Fragen"><button type="button" data-prompt="Wie komme ich zur Übergabe?">Übergabe</button><button type="button" data-prompt="Ich habe mich in einem Bericht verschrieben">Bericht korrigieren</button><button type="button" data-prompt="Wie lege ich eine Visite an?">Visite</button></div></section>
+        <section class="conversation" aria-label="Gespräch mit DokoHilf"><div class="messages" id="messages" aria-live="polite" aria-relevant="additions"></div><div class="command-row" id="commandRow" hidden aria-label="Schnelle Antworten"><button type="button" data-command="weiter">Weiter</button><button type="button" data-command="nochmal">Nochmal</button><button type="button" data-command="ich finde das nicht">Ich brauche Hilfe</button><button type="button" data-command="zurück">Zurück</button></div></section>
       </section>
-
       <footer class="legal-note">Unabhängige interne Arbeitshilfe. Nicht vom Hersteller der Dokumentationssoftware entwickelt oder geprüft.</footer>
     </main>
-
-    <footer class="composer-wrap" id="composerWrap" hidden>
-      <form class="composer" id="chatForm">
-        <label class="sr-only" for="chatInput">Nachricht an DokoHilf</label>
-        <textarea id="chatInput" rows="1" maxlength="350" placeholder="Bedienfrage schreiben …" autocomplete="off" autocapitalize="sentences"></textarea>
-        <button class="small-mic" id="smallMicButton" type="button" aria-label="Frage diktieren">
-          <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="4" width="10" height="15" rx="5"/><path d="M7 15v1c0 5 4 9 9 9s9-4 9-9v-1M16 25v4"/></svg>
-        </button>
-        <button class="send-button" type="submit">Senden</button>
-      </form>
-      <p>Gespräch und Audio werden nicht dauerhaft gespeichert.</p>
-    </footer>
-
+    <footer class="composer-wrap" id="composerWrap" hidden><form class="composer" id="chatForm"><label class="sr-only" for="chatInput">Nachricht an DokoHilf</label><textarea id="chatInput" rows="1" maxlength="350" placeholder="Bedienfrage schreiben …" autocomplete="off" autocapitalize="sentences"></textarea><button class="small-mic" id="smallMicButton" type="button" aria-label="Frage diktieren"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="4" width="10" height="15" rx="5"/><path d="M7 15v1c0 5 4 9 9 9s9-4 9-9v-1M16 25v4"/></svg></button><button class="send-button" type="submit">Senden</button></form><p>Gespräch und Audio werden nicht dauerhaft gespeichert.</p></footer>
     <div class="update-toast" id="updateToast" hidden aria-live="polite">DokoHilf wurde automatisch aktualisiert.</div>
   </div>
-
-  <script src="assets/update-manager.js?v=20260809-29"></script>
-  <script src="assets/mobile-audio-fix.js?v=20260809-29"></script>
-  <script src="assets/routing-fix.js?v=20260809-29"></script>
-  <script src="assets/conversation-intelligence.js?v=20260809-29"></script>
-  <script src="assets/clarification-ui.js?v=20260809-29"></script>
-  <script src="assets/smart-help-v29.js?v=20260809-29"></script>
-  <script src="assets/guide-progress.js?v=20260809-29"></script>
-  <script src="assets/voice-focus-mode.js?v=20260809-29"></script>
-  <script src="assets/local-voice-v28.js?v=20260809-29"></script>
-  <script src="assets/experience-v27.js?v=20260809-29"></script>
-  <script src="assets/ux-v27.js?v=20260809-29"></script>
-  <script src="assets/v29-ui.js?v=20260809-29"></script>
-  <script src="assets/mobile-polish-v29.js?v=20260809-29-cardaxis1"></script>
-  <script src="assets/local-voice-gate-v28.js?v=20260809-29"></script>
-  <script src="assets/direct-guides-v27.js?v=20260809-29"></script>
-  <script src="assets/direct-guide-copy-v29.js?v=20260809-29"></script>
-  <script src="assets/guide-library-v29.js?v=20260809-29-library1" data-dokohilf-guide-library-v29></script>
-  <script src="assets/app.js?v=20260809-29" defer></script>
+  <script src="assets/update-manager.js?v=20260809-30"></script>
+  <script src="assets/mobile-audio-fix.js?v=20260809-30"></script>
+  <script src="assets/routing-fix.js?v=20260809-30"></script>
+  <script src="assets/conversation-intelligence.js?v=20260809-30"></script>
+  <script src="assets/clarification-ui.js?v=20260809-30"></script>
+  <script src="assets/smart-help-v29.js?v=20260809-30"></script>
+  <script src="assets/guide-progress.js?v=20260809-30"></script>
+  <script src="assets/voice-focus-mode.js?v=20260809-30"></script>
+  <script src="assets/local-voice-v28.js?v=20260809-30"></script>
+  <script src="assets/experience-v27.js?v=20260809-30"></script>
+  <script src="assets/ux-v27.js?v=20260809-30"></script>
+  <script src="assets/v29-ui.js?v=20260809-30"></script>
+  <script src="assets/mobile-polish-v29.js?v=20260809-30-cardaxis1"></script>
+  <script src="assets/local-voice-gate-v28.js?v=20260809-30"></script>
+  <script src="assets/direct-guides-v27.js?v=20260809-30"></script>
+  <script src="assets/direct-guide-copy-v29.js?v=20260809-30"></script>
+  <script src="assets/guide-library-v29.js?v=20260809-30-library1" data-dokohilf-guide-library-v29></script>
+  <script src="assets/app.js?v=20260809-30" defer></script>
   <script>
     document.getElementById('buildPill')?.addEventListener('click', () => {
       if (window.DokoHilfUpdate?.checkForUpdate) window.DokoHilfUpdate.checkForUpdate('manual');
-      else window.DokoHilfHardRefresh?.('20260809-29');
+      else window.DokoHilfHardRefresh?.('20260809-30');
     });
   </script>
 </body>

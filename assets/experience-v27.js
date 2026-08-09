@@ -231,9 +231,18 @@
     if (node) node.textContent = value;
   }
 
+  function v29OwnsPresentation() {
+    const examples = document.querySelector('.examples');
+    return window.__DOKOHILF_UI_V29__ === true
+      || document.documentElement.dataset.dokohilfUi === 'v29'
+      || examples?.dataset.v29GuideLibrary === 'true'
+      || window.__DOKOHILF_GUIDE_LIBRARY_V29__ === true
+      || window.__DOKOHILF_GUIDE_LIBRARY_V29__ === 'initializing';
+  }
+
   function ensureWorkflowButtons() {
     const examples = document.querySelector('.examples');
-    if (!examples || examples.dataset.v27Ready === 'true') return;
+    if (!examples || v29OwnsPresentation() || examples.dataset.v27Ready === 'direct-guides-cross-platform' || examples.dataset.v27Ready === 'true') return;
     examples.dataset.v27Ready = 'true';
     examples.innerHTML = `
       <span>Häufige Abläufe</span>
@@ -248,6 +257,8 @@
   }
 
   function polishStaticCopy() {
+    document.documentElement.dataset.dokohilfExperience = 'dark-premium-v27';
+    if (v29OwnsPresentation()) return;
     setText('#startTitle', 'Was möchtest du erledigen?');
     const intro = document.querySelector('#startTitle + p');
     if (intro) intro.textContent = 'Wähle einen Ablauf oder starte ein Sprachgespräch.';
@@ -266,7 +277,6 @@
     if (note) note.innerHTML = '<strong>Keine persönlichen Daten eingeben.</strong><span>Nutze DokoHilf nur für allgemeine Bedienfragen.</span>';
     const brandSmall = document.querySelector('.brand small');
     if (brandSmall) brandSmall.textContent = 'Bedienhilfe';
-    document.documentElement.dataset.dokohilfExperience = 'dark-premium-v27';
     ensureWorkflowButtons();
   }
 

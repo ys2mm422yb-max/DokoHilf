@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [directCopy, contextVoice, extraVoice, releaseVoice, audioBuild, migration] = await Promise.all([
+const [directCopy, v29Ui, contextVoice, extraVoice, releaseVoice, audioBuild, migration] = await Promise.all([
   readFile(new URL('../assets/direct-guide-copy-v29.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/v29-ui.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/context-voice-hotfix-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/voice-extra-catalog-v28.json', import.meta.url), 'utf8'),
   readFile(new URL('../assets/voice-release-catalog-v29.json', import.meta.url), 'utf8'),
@@ -19,10 +20,14 @@ const forbiddenUserPhrases = [
   'DokoHilf darf bei diesem Ablauf nicht zu Änderungen an der Medikation anleiten',
 ];
 
-test('direct guides show natural task copy instead of internal approval language', () => {
+test('direct guides and v29 chat show natural task copy instead of internal approval language', () => {
   assert.match(directCopy, /Das geöffnete Formular wie gewohnt ausfüllen\./);
-  assert.match(directCopy, /DokoHilf führt dich Schritt für Schritt\./);
-  for (const phrase of forbiddenUserPhrases) assert.doesNotMatch(directCopy, new RegExp(phrase));
+  assert.match(v29Ui, /DokoHilf führt dich Schritt für Schritt\./);
+  for (const phrase of forbiddenUserPhrases) {
+    const pattern = new RegExp(phrase);
+    assert.doesNotMatch(directCopy, pattern);
+    assert.doesNotMatch(v29Ui, pattern);
+  }
 });
 
 test('spoken response guard removes stale QA and approval wording from reply and spokenText', () => {

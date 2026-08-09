@@ -151,9 +151,18 @@
       && WORKFLOW_BUTTONS.every(([key, label], index) => buttons[index]?.dataset.directGuide === key && buttons[index]?.textContent?.trim() === label);
   }
 
+  function v29OwnsGuideLibrary(examples) {
+    const owner = window.__DOKOHILF_GUIDE_LIBRARY_V29__;
+    return examples?.dataset.v29GuideLibrary === 'true' || owner === true || owner === 'initializing';
+  }
+
+  function v29OwnsChatCopy() {
+    return document.documentElement.dataset.dokohilfUi === 'v29' || window.__DOKOHILF_UI_V29__ === true;
+  }
+
   function ensureDirectWorkflowButtons() {
     const examples = document.querySelector('.examples');
-    if (!examples || desiredButtonsPresent(examples)) return false;
+    if (!examples || v29OwnsGuideLibrary(examples) || desiredButtonsPresent(examples)) return false;
     examples.dataset.v27Ready = 'direct-guides-cross-platform';
     examples.innerHTML = `<span>Häufige Abläufe · direkt öffnen</span>${WORKFLOW_BUTTONS
       .map(([key, label]) => `<button type="button" data-direct-guide="${key}">${label}</button>`)
@@ -162,6 +171,7 @@
   }
 
   function ensureCompactChatCopy() {
+    if (v29OwnsChatCopy()) return false;
     const head = document.querySelector('.chat-head');
     if (!head) return false;
     let changed = false;

@@ -153,8 +153,56 @@ async function state() {
   }));
 }
 
+async function startupState() {
+  return page.evaluate(() => {
+    const title = document.getElementById('startTitle');
+    const start = document.getElementById('startScreen');
+    const shell = document.getElementById('appShell');
+    const examples = document.querySelector('.examples');
+    const titleStyle = title ? getComputedStyle(title) : null;
+    const startStyle = start ? getComputedStyle(start) : null;
+    const titleRect = title?.getBoundingClientRect();
+    const startRect = start?.getBoundingClientRect();
+    const legacy = examples ? [...examples.querySelectorAll('button[data-direct-guide]')] : [];
+    return {
+      readyState: document.readyState,
+      href: location.href,
+      titleExists: Boolean(title),
+      titleText: title?.textContent?.trim() || '',
+      titleDisplay: titleStyle?.display || '',
+      titleVisibility: titleStyle?.visibility || '',
+      titleOpacity: titleStyle?.opacity || '',
+      titleRect: titleRect ? { x: titleRect.x, y: titleRect.y, width: titleRect.width, height: titleRect.height } : null,
+      startExists: Boolean(start),
+      startHidden: start?.hidden ?? null,
+      startDisplay: startStyle?.display || '',
+      startVisibility: startStyle?.visibility || '',
+      startRect: startRect ? { x: startRect.x, y: startRect.y, width: startRect.width, height: startRect.height } : null,
+      shellMode: shell?.dataset.mode || '',
+      shellConnected: Boolean(shell?.isConnected),
+      ui: document.documentElement.dataset.dokohilfUi || '',
+      libraryFlag: window.__DOKOHILF_GUIDE_LIBRARY_V29__ ?? null,
+      libraryOwner: examples?.dataset.v29GuideLibrary || '',
+      examplesLabel: examples?.querySelector(':scope > span')?.textContent?.trim() || '',
+      frequentCount: examples?.querySelectorAll('.v29-frequent-guide').length || 0,
+      allGuidesCount: examples?.querySelectorAll('.v29-all-guides-trigger').length || 0,
+      legacyCount: legacy.length,
+      legacyHiddenCount: legacy.filter(button => button.hidden || getComputedStyle(button).display === 'none').length,
+      activeElement: document.activeElement?.id || document.activeElement?.tagName || '',
+    };
+  });
+}
+
 try {
   await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30_000 });
+  const startup = await startupState();
+  await writeFile(`${OUTPUT_DIR}/00-startup-${PROFILE}.json`, JSON.stringify({ startup, consoleErrors, pageErrors }, null, 2));
+  console.log(`DOKOHILF_STARTUP_STATE ${JSON.stringify(startup)}`);
+  console.log(`DOKOHILF_STARTUP_CONSOLE_ERRORS ${JSON.stringify(consoleErrors)}`);
+  console.log(`DOKOHILF_STARTUP_PAGE_ERRORS ${JSON.stringify(pageErrors)}`);
+  await page.screenshot({ path: `${OUTPUT_DIR}/00-startup-${PROFILE}.png`, fullPage: true }).catch(error => {
+    console.log(`DOKOHILF_STARTUP_SCREENSHOT_ERROR ${error.message}`);
+  });
   await page.locator('#startTitle').waitFor({ state: 'visible' });
 
   const identity = await page.evaluate(() => ({
@@ -172,10 +220,47 @@ try {
   assert(start.scrollWidth <= start.viewportWidth + 1, `Hauptmenü hat auf ${PROFILE} horizontalen Überlauf.`);
   assert(await page.locator('[data-select-mode="voice"]').isVisible(), 'Sprechen-Karte fehlt.');
   assert(await page.locator('[data-select-mode="chat"]').isVisible(), 'Schreiben-Karte fehlt.');
-  await page.waitForFunction(() => document.querySelectorAll('.examples button[data-direct-guide]').length >= 7, null, { timeout: 8_000 });
-  assert(await page.locator('.examples button[data-direct-guide]').count() >= 7, 'Häufige direkte Abläufe sind nicht vollständig sichtbar.');
+  await page.waitForFunction(() => {
+    const examples = document.querySelector('.examples');
+    const label = examples?.querySelector(':scope > span')?.textContent?.trim();
+    return window.__DOKOHILF_GUIDE_LIBRARY_V29__ === true
+      && examples?.dataset.v29GuideLibrary === 'true'
+      && label === 'Häufig genutzt'
+      && examples.querySelectorAll('.v29-frequent-guide').length === 6
+      && Boolean(examples.querySelector('.v29-all-guides-trigger'));
+  }, null, { timeout: 8_000 });
+  const libraryHome = await page.evaluate(() => {
+    const examples = document.querySelector('.examples');
+    const legacy = [...examples.querySelectorAll('button[data-direct-guide]')];
+    const frequent = [...examples.querySelectorAll('.v29-frequent-guide')];
+    return {
+      label: examples.querySelector(':scope > span')?.textContent?.trim(),
+      frequentCount: frequent.length,
+      allGuidesVisible: getComputedStyle(examples.querySelector('.v29-all-guides-trigger')).display !== 'none',
+      legacyHidden: legacy.length === 7 && legacy.every(button => button.hidden && getComputedStyle(button).display === 'none'),
+      iconVariants: new Set(frequent.map(button => button.querySelector('svg')?.innerHTML || '')).size,
+    };
+  });
+  assert(libraryHome.label === 'Häufig genutzt', `Guide-Bibliothek hat falsche Überschrift: ${libraryHome.label}`);
+  assert(libraryHome.frequentCount === 6, `Häufig genutzt muss sechs Karten zeigen: ${libraryHome.frequentCount}`);
+  assert(libraryHome.allGuidesVisible, '„Alle Anleitungen anzeigen“ ist nicht sichtbar.');
+  assert(libraryHome.legacyHidden, 'Legacy-Direktkarten sind trotz Guide-Bibliothek noch sichtbar.');
+  assert(libraryHome.iconVariants >= 5, `Die häufig genutzten Guides verwenden nicht genügend unterschiedliche Icons: ${libraryHome.iconVariants}`);
   assert(await page.locator('.start-copy').evaluate(node => getComputedStyle(node, '::before').content.includes('DOKOHILF')), 'Neuer Hauptmenü-Kicker fehlt.');
   await page.screenshot({ path: `${OUTPUT_DIR}/01-main-v29-${PROFILE}.png`, fullPage: true });
+
+  await page.locator('.v29-all-guides-trigger').click();
+  await page.locator('.v29-library-head h1').waitFor({ state: 'visible' });
+  const fullLibrary = await page.evaluate(() => ({
+    title: document.querySelector('.v29-library-head h1')?.textContent?.trim(),
+    guideCount: document.querySelectorAll('.v29-library-card[data-v29-open-guide]').length,
+    laterText: document.querySelector('.v29-library-card.is-later')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+  }));
+  assert(fullLibrary.title === 'Alle Anleitungen', `Bibliothekstitel falsch: ${fullLibrary.title}`);
+  assert(fullLibrary.guideCount >= 17, `Nicht alle fertigen Guides sind in der Bibliothek sichtbar: ${fullLibrary.guideCount}`);
+  assert(fullLibrary.laterText.includes('Berichtssuche') && fullLibrary.laterText.includes('kommt später'), 'Berichtssuche ist nicht korrekt als später markiert.');
+  await page.locator('[data-v29-guide-home]').click();
+  await page.locator('#startScreen').waitFor({ state: 'visible' });
 
   await page.getByRole('button', { name: 'Bericht anlegen' }).click();
   const directGuide = page.locator('#directGuideView');
@@ -188,7 +273,7 @@ try {
   const guideState = await state();
   assert(guideState.scrollWidth <= guideState.viewportWidth + 1, 'Direkte Anleitung läuft horizontal über.');
   await page.screenshot({ path: `${OUTPUT_DIR}/02-report-guide-v29-${PROFILE}.png`, fullPage: true });
-  await page.locator('[data-direct-guide-close]').first().click();
+  await page.locator('[data-v29-guide-home]').click();
   await page.locator('#startScreen').waitFor({ state: 'visible' });
 
   await page.locator('[data-select-mode="chat"]').click();
@@ -270,6 +355,8 @@ try {
     profile: PROFILE,
     viewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT },
     identity,
+    libraryHome,
+    fullLibrary,
     assistantText,
     visualStates,
     aiRequests,
