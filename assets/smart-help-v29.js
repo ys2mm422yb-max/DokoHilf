@@ -108,6 +108,7 @@
     if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabe-finden';
     if (/\b(notfallblatt|notfallbogen)\b/.test(n)) return 'notfallblatt-finden';
     if (/\b(stammdaten|bewohnerubersicht|bewohneruebersicht)\b/.test(n)) return 'stammdaten-finden';
+    if (/\bplanung\b/.test(n)) return 'planung-finden';
     if (/\banalyse\b/.test(n)) return 'analyse-finden';
     if (/\bdoku\b/.test(n)) return 'doku-finden';
     return '';
