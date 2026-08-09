@@ -306,7 +306,7 @@ try {
   const newAssistantBubble = assistantBubbles.nth(assistantCountBeforeSend);
   await newAssistantBubble.waitFor({ state: 'visible', timeout: 15_000 });
   const assistantText = await newAssistantBubble.innerText();
-  assert(assistantText.includes('Doku erweitert'), `Kontextantwort fehlt: ${assistantText}`);
+  assert(assistantText.includes('Doku-Erweitert'), `Kontextantwort fehlt: ${assistantText}`);
   await page.locator('.guide-progress').waitFor({ state: 'visible', timeout: 8_000 });
   await page.screenshot({ path: `${OUTPUT_DIR}/03-chat-v29-${PROFILE}.png`, fullPage: true });
 
@@ -357,7 +357,6 @@ try {
   }
   assert(consoleErrors.length === 0, `Console-Fehler: ${consoleErrors.join(' | ')}`);
   assert(pageErrors.length === 0, `Page-Fehler: ${pageErrors.join(' | ')}`);
-
   await writeFile(`${OUTPUT_DIR}/summary.json`, JSON.stringify({
     profile: PROFILE,
     viewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT },
