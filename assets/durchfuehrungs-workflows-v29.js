@@ -44,7 +44,7 @@
       steps: [
         'Beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“ öffnen.',
         'Direkt darunter „Durchführungsnachweis“ öffnen.',
-        'Im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ öffnen.',
+        'Im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ suchen und auf den kleinen Pfeil links daneben klicken.',
         'Die gewünschte Maßnahme auswählen, zum Beispiel „Klienten-Team Sitzung“ oder „Krise“.',
         'Im Pop-up-Fenster Datum und Uhrzeit prüfen. Nur ändern, wenn der tatsächliche Dokumentationszeitpunkt abweicht.',
         'Die passende Kategorie auswählen.',
