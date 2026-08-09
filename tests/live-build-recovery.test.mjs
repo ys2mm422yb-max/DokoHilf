@@ -2,12 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [html, worker, version, router, localVoice, premiumCss25, premiumCss26, premiumCss27, activeVoice, confirmed, rules] = await Promise.all([
+const [html, worker, version, router, localVoice, localGate, premiumCss25, premiumCss26, premiumCss27, activeVoice, confirmed, rules] = await Promise.all([
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
   readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
   readFile(new URL('../version.json', import.meta.url), 'utf8'),
   readFile(new URL('../supabase/functions/dokohilf-ai-router/index.ts', import.meta.url), 'utf8'),
   readFile(new URL('../assets/local-voice-v28.js', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/local-voice-gate-v28.js', import.meta.url), 'utf8'),
   readFile(new URL('../assets/premium-ui-v25.css', import.meta.url), 'utf8'),
   readFile(new URL('../assets/premium-ui-v26.css', import.meta.url), 'utf8'),
   readFile(new URL('../assets/premium-ui-v27.css', import.meta.url), 'utf8'),
@@ -30,17 +31,19 @@ test('die App leitet KI-Anfragen schon vor dem Hauptskript direkt an den bestät
   assert.match(html, /routedInput/);
 });
 
-test('Mobile PWA kann alte Shell-Caches entfernen und den lokalen v28-Modellcache erhalten', () => {
+test('Mobile PWA entfernt alte Shell- und lokale Modellcaches und erneuert statisches Audio', () => {
   assert.match(html, /getRegistrations\(\)/);
   assert.match(html, /registration\.unregister/);
   assert.match(html, /name\.startsWith\('dokohilf-'\)/);
   assert.match(worker, /CLEAR_DOKOHILF_CACHES/);
   assert.match(worker, /navigationPreload\.enable/);
-  assert.match(worker, /LOCAL_VOICE_MODEL_CACHE/);
-  assert.match(worker, /key !== LOCAL_VOICE_MODEL_CACHE/);
+  assert.match(worker, /STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2'/);
+  assert.match(worker, /dokohilf-local-voice-model-v28-1/);
+  assert.match(worker, /await caches\.delete\(STATIC_AUDIO_CACHE\)/);
+  assert.doesNotMatch(worker, /LOCAL_VOICE_MODEL_CACHE/);
 });
 
-test('Build 29 lädt Premium-Basisschichten, Voice-Balance und lokale Stimme gemeinsam', () => {
+test('Build 29 lädt Premium-Basisschichten, Voice-Balance und statische Stimme gemeinsam', () => {
   assert.match(html, new RegExp(`premium-ui-v25\\.css\\?v=${buildId}`));
   assert.match(html, new RegExp(`premium-ui-v26\\.css\\?v=${buildId}`));
   assert.match(html, new RegExp(`premium-ui-v27\\.css\\?v=${buildId}`));
@@ -54,11 +57,14 @@ test('Build 29 lädt Premium-Basisschichten, Voice-Balance und lokale Stimme gem
   assert.doesNotMatch(html, /notfallblattButton/);
 });
 
-test('v29 erzeugt Sprache lokal und speichert nur Modellressourcen dauerhaft', () => {
-  assert.match(localVoice, /Supertone\/supertonic-3\/resolve\/main/);
-  assert.match(localVoice, /MODEL_CACHE = 'dokohilf-local-voice-model-v28-1'/);
-  assert.match(localVoice, /no-generated-audio-storage/);
-  assert.doesNotMatch(localVoice, /localStorage|sessionStorage|indexedDB/);
+test('v29 spielt ausschließlich vorab erzeugtes Supertonic-F1 ab', () => {
+  assert.match(localVoice, /__DOKOHILF_LOCAL_VOICE_RETIRED_V29__/);
+  assert.match(localVoice, /on_device_voice_retired_static_supertonic_only/);
+  assert.doesNotMatch(localVoice, /Supertone\/supertonic-3\/resolve\/main|MODEL_CACHE|loadTextToSpeech|loadVoiceStyle|navigator\.gpu/);
+  assert.match(localGate, /STATIC_VOICE = 'Supertonic-F1'/);
+  assert.match(localGate, /loadStaticSupertonicVoice/);
+  assert.match(localGate, /static-supertonic-only-v29/);
+  assert.doesNotMatch(localGate, /localFallback|DokoHilfLocalVoiceV28\.synthesize/);
   assert.match(activeVoice, /kein Cloud-TTS-Aufruf für v28-Sprachausgabe/);
   assert.match(activeVoice, /keine hörbare `speechSynthesis`-\/Gerätestimme als Fallback/);
 });
