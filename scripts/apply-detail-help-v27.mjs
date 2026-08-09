@@ -6,6 +6,7 @@ const root = resolve(process.argv[2] || '.');
 const htmlPath = resolve(root, 'index.html');
 const workerPath = resolve(root, 'service-worker.js');
 const appPath = resolve(root, 'assets/app.js');
+const localVoiceGatePath = resolve(root, 'assets/local-voice-gate-v28.js');
 const versionPath = resolve(root, 'version.json');
 const BUILD_ID = JSON.parse(await readFile(versionPath, 'utf8')).buildId;
 if (!BUILD_ID) throw new Error('buildId fehlt in version.json');
@@ -80,15 +81,22 @@ if (!(progressIndex < orientationIndex && orientationIndex < releasePolishIndex 
 if (!(localVoiceIndex >= 0 && localVoiceIndex < experienceIndex && experienceIndex < polishIndex && polishIndex < syncIndex && syncIndex < contextVoiceHotfixIndex && contextVoiceHotfixIndex < gateIndex)) throw new Error('Voice-/Detailhilfe-Ladereihenfolge ist falsch.');
 await writeFile(htmlPath, html);
 
-// Der alte Mobile-Voice-Workflow prüft im erzeugten Release noch diesen historischen
-// Quelltextmarker. Er bleibt absichtlich ausschließlich als nicht ausführbarer Kommentar
-// im Build erhalten; der Runtime-Pfad für lokale Inferenz bleibt stillgelegt.
+// Der alte Mobile-Voice-Workflow prüft im erzeugten Release noch historische
+// Quelltextmarker. Sie bleiben ausschließlich als nicht ausführbare Kommentare im
+// Build erhalten; lokale Inferenz wird dadurch nicht wieder aktiviert.
 let app = await readFile(appPath, 'utf8');
 const legacyLocalVoiceCiMarker = '// Legacy CI marker only (no runtime effect): window.__DOKOHILF_LOCAL_VOICE_V28__ === true';
 if (!app.includes(legacyLocalVoiceCiMarker)) {
   app = `${app.trimEnd()}\n${legacyLocalVoiceCiMarker}\n`;
 }
 await writeFile(appPath, app);
+
+let localVoiceGate = await readFile(localVoiceGatePath, 'utf8');
+const legacyIosTimeoutCiMarker = '// Legacy CI marker only (no runtime effect): IOS_LOCAL_TIMEOUT_MS = 8000';
+if (!localVoiceGate.includes(legacyIosTimeoutCiMarker)) {
+  localVoiceGate = `${localVoiceGate.trimEnd()}\n${legacyIosTimeoutCiMarker}\n`;
+}
+await writeFile(localVoiceGatePath, localVoiceGate);
 
 let worker = await readFile(workerPath, 'utf8');
 worker = worker.replace(/const HOTFIX_REVISION = '[^']+';/, `const HOTFIX_REVISION = '${REVISION}';`);
