@@ -52,7 +52,7 @@
     if (!isLocationQuestion(n) && !/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) return '';
 
     if (/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) {
-      return 'Ganz oben in der festen grünen Leiste findest du die Hauptbereiche Berichte, Doku-Erweitert, Doku, Planung und Analyse. Wenn du einen Hauptbereich auswählst, erscheinen direkt darunter die dazugehörigen Unterpunkte beziehungsweise Symbole.';
+      return 'Die feste grüne Leiste ist ganz oben. Dort findest du die Hauptbereiche Berichte, Doku-Erweitert, Doku, Planung und Analyse. Wenn du einen Hauptbereich auswählst, erscheinen direkt darunter die dazugehörigen Unterpunkte beziehungsweise Symbole.';
     }
     if (/\b(wirksamkeitskontrolle|wirksamkeit).*\b(bedarf|bedarfsmedikation|medikation)\b|\b(bedarf|bedarfsmedikation).*\b(wirksamkeitskontrolle|wirksamkeit)\b/.test(n)) {
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.';
@@ -91,7 +91,7 @@
       return 'Öffne oben zuerst Analyse. Analyse steht ganz oben in der festen grünen Leiste. Nach der Auswahl erscheinen darunter die zugehörigen Unterpunkte; dort findest du Was war los. Darüber öffnest du die Übergabeansicht.';
     }
     if (/\bplanung\b/.test(n)) {
-      return 'Planung ist ein Hauptbereich ganz oben in der festen grünen Leiste. Wähle dort Planung. Die zugehörigen Unterpunkte beziehungsweise Symbole erscheinen danach direkt darunter.';
+      return 'Planung ist ein Hauptbereich ganz oben in der festen grünen Leiste. Wähle dort Planung. Die zugehörigen Unterpunkte beziehungsweise Symbole erscheinen danach direkt darunter. Der genaue Easy-Plan-Ablauf bleibt vorerst offen.';
     }
     if (/\banalyse\b/.test(n)) {
       return 'Den Reiter Analyse findest du oben in der festen grünen Leiste. Nach der Auswahl erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.';
