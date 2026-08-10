@@ -6,13 +6,15 @@ await import('../assets/routing-fix.js');
 
 const { rewriteRouterInput, chatRouterEndpoint } = globalThis.DokoHilfRouting;
 const router = await readFile(new URL('../supabase/functions/dokohilf-chat-router/index.ts', import.meta.url), 'utf8');
+const conversationRouter = await readFile(new URL('../supabase/functions/dokohilf-conversation-router/index.ts', import.meta.url), 'utf8');
 
-test('alter Chat-Router wird transparent auf den kontextbewussten Router umgebogen', () => {
+test('alter Chat-Router wird transparent auf den Completion-Wrapper vor dem kontextbewussten Router umgebogen', () => {
   assert.equal(
     rewriteRouterInput('https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router'),
     chatRouterEndpoint,
   );
-  assert.match(chatRouterEndpoint, /dokohilf-chat-router$/);
+  assert.match(chatRouterEndpoint, /dokohilf-conversation-router$/);
+  assert.match(conversationRouter, /dokohilf-chat-router/, 'Completion-Wrapper muss alle normalen Anfragen an den bestehenden Chat-Router weiterreichen');
 });
 
 test('fremde Requests bleiben unangetastet', () => {
