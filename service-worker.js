@@ -2,6 +2,7 @@ const BUILD_ID = '20260809-36';
 const HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3';
 const LIBRARY_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1';
 const CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1';
+const ROUTING_REVISION = '20260810-natural-guide-routing-v39-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
@@ -82,6 +83,7 @@ self.addEventListener('activate', event => {
         hotfixRevision: HOTFIX_REVISION,
         libraryLayoutRevision: LIBRARY_LAYOUT_REVISION,
         chatUiRevision: CHAT_UI_REVISION,
+        routingRevision: ROUTING_REVISION,
         hardRefresh: true,
       });
     }
@@ -96,6 +98,7 @@ self.addEventListener('message', event => {
       hotfixRevision: HOTFIX_REVISION,
       libraryLayoutRevision: LIBRARY_LAYOUT_REVISION,
       chatUiRevision: CHAT_UI_REVISION,
+      routingRevision: ROUTING_REVISION,
     });
   }
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
@@ -108,6 +111,7 @@ self.addEventListener('message', event => {
         hotfixRevision: HOTFIX_REVISION,
         libraryLayoutRevision: LIBRARY_LAYOUT_REVISION,
         chatUiRevision: CHAT_UI_REVISION,
+        routingRevision: ROUTING_REVISION,
       });
     })());
   }
