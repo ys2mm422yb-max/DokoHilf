@@ -128,6 +128,18 @@ const chatRouterCases = [
       && String(payload.reply || '').length < 350,
   },
   {
+    name: 'v39 natürlicher Visiten-Satz startet den bestätigten Guide',
+    body: {
+      selectedGuideSlug: 'visite-anlegen',
+      messages: [{ role: 'user', content: 'Wie lege ich eine Visite an?' }],
+    },
+    validate: payload => payload.guideSlug === 'visite-anlegen'
+      && Number(payload.guideStep) === 1
+      && payload.source === 'approved-guide-smart-start-v29-1'
+      && /Doku-Erweitert/i.test(payload.reply || '')
+      && String(payload.reply || '').length < 350,
+  },
+  {
     name: 'v29 Ich-weiß-nicht bleibt exakt auf dem aktuellen Bericht-Schritt',
     body: {
       guideSlug: 'bericht-folgebericht',
