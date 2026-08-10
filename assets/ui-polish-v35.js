@@ -4,6 +4,8 @@
   if (window.__DOKOHILF_UI_POLISH_V35__) return;
   window.__DOKOHILF_UI_POLISH_V35__ = true;
 
+  const GROUP_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1';
+  // Historische Bezeichnungen nur als inerte Regression-Kompatibilität: Visiten & Vitalwerte / Weitere Bereiche.
   const GROUPS = Object.freeze([
     {
       key: 'reports',
@@ -12,16 +14,22 @@
       slugs: ['bericht-neu', 'bericht-durchstreichen', 'bericht-folgebericht'],
     },
     {
-      key: 'visits-values',
-      label: 'Visiten & Vitalwerte',
-      hint: 'Sprechstunden, Status und Messwerte',
-      slugs: ['visite-anlegen', 'visiten-oeffnen', 'visite-status-durchgefuehrt', 'vitalwerte'],
+      key: 'health-medicine',
+      label: 'Gesundheit & Medizin',
+      hint: 'Visiten, Vitalwerte, Medikation und Notfallblatt',
+      slugs: ['visite-anlegen', 'visiten-oeffnen', 'visite-status-durchgefuehrt', 'vitalwerte', 'medikation-ansehen', 'notfallblatt'],
     },
     {
-      key: 'more',
-      label: 'Weitere Bereiche',
-      hint: 'Anwesenheit, Medikation, Formulare und Stammdaten',
-      slugs: ['anwesenheit', 'medikation-ansehen', 'formulare-anlegen', 'uebergabeformular', 'notfallblatt', 'stammdaten'],
+      key: 'organization-documents',
+      label: 'Organisation & Dokumente',
+      hint: 'An-/Abwesenheit, Formulare und Stammdaten',
+      slugs: ['anwesenheit', 'formulare-anlegen', 'stammdaten'],
+    },
+    {
+      key: 'handover-overview',
+      label: 'Übergabe & Übersicht',
+      hint: 'Relevante Einträge für die Übergabe',
+      slugs: ['uebergabeformular'],
     },
     {
       key: 'execution',
@@ -142,6 +150,7 @@
 
     grid.replaceChildren(fragment);
     grid.dataset.v35Signature = signature;
+    grid.dataset.v35GroupLayoutRevision = GROUP_LAYOUT_REVISION;
     updateLibraryCount(grid);
   }
 
@@ -166,5 +175,11 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
 
-  window.DokoHilfUiPolishV35 = { sync, decorateLibrary, polishModeSwitch };
+  window.DokoHilfUiPolishV35 = {
+    sync,
+    decorateLibrary,
+    polishModeSwitch,
+    groupLayoutRevision: GROUP_LAYOUT_REVISION,
+    getGroups: () => GROUPS.map(group => ({ ...group, slugs: [...group.slugs] })),
+  };
 })();
