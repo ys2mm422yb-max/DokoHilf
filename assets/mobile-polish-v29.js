@@ -2,7 +2,9 @@
   'use strict';
 
   const STYLE_ID = 'dokohilf-mobile-polish-v29';
+  const CHAT_VIEWPORT_REVISION = '20260810-mobile-chat-viewport-v38-1';
   let previousMode = '';
+  let lastMessageCount = 0;
   const css = `
 html[data-dokohilf-ui="v29"] .app-shell:not([data-mode="start"]) .legal-note{display:none!important}
 html[data-dokohilf-ui="v29"] .message.v29-mobile-welcome{display:none!important}
@@ -51,8 +53,17 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
   html[data-dokohilf-ui="v29"] .examples button:after{margin-top:4px!important;font-size:9.5px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="start"] .legal-note{margin-top:10px!important;padding-bottom:9px!important;font-size:10px!important}
 
-  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"]{min-height:100dvh!important;padding-bottom:0!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"]{
+    min-height:100dvh!important;
+    height:var(--dokohilf-chat-viewport-height,100dvh)!important;
+    max-height:var(--dokohilf-chat-viewport-height,100dvh)!important;
+    padding-bottom:0!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+  }
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .topbar{
+    flex:0 0 auto!important;
     min-height:58px!important;padding:6px 8px!important;border-radius:18px!important;
   }
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .brand img{width:36px!important;height:36px!important;border-radius:11px!important}
@@ -60,33 +71,58 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .build-pill,
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .home-button,
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .new-button{height:36px!important;min-height:36px!important;border-radius:11px!important}
-  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .main-content{padding:8px 12px 4px!important}
-  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .workspace:not([hidden]){min-height:0!important;display:block!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .main-content{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    width:100%!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch;
+    padding:8px 12px 4px!important;
+  }
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .workspace:not([hidden]){
+    min-height:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+  }
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .mode-switch{max-width:340px!important;margin:0 auto 8px!important;min-height:39px!important;padding:4px!important;border-radius:14px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .mode-switch button{min-height:37px!important;font-size:12px!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .guide-progress{top:0!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .chat-head{margin-bottom:8px!important;padding:12px 13px!important;border-radius:18px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .chat-head h1{font-size:24px!important;line-height:1.02!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .chat-head p{display:none!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .quick-prompts{margin-top:8px!important;gap:5px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .quick-prompts button{min-height:32px!important;padding:0 10px!important;font-size:11px!important;border-radius:10px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .conversation{min-height:0!important;margin:0!important;overflow:visible!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"][data-v35-chat-started="true"] .workspace:not([hidden]) .conversation{margin-top:auto!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"]:not([data-v29-guide-active="true"]) .conversation{
     border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;
   }
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .messages{gap:8px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .messages:empty{display:none!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .bubble{padding:11px 13px!important;font-size:14px!important;line-height:1.38!important;border-radius:16px!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .message.user .bubble{color:#f7fffb!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .message.assistant.v29-current-answer .bubble{color:#edf9f4!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .avatar{width:30px!important;height:30px!important;flex-basis:30px!important;border-radius:9px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .command-row{gap:6px!important;margin-top:7px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .command-row button{min-height:44px!important;border-radius:12px!important;font-size:11.5px!important}
 
-  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer-wrap{position:sticky!important;left:auto!important;right:auto!important;bottom:0!important;z-index:30!important;width:auto!important;margin-top:8px!important;padding:5px 8px calc(4px + env(safe-area-inset-bottom))!important;border-top-color:rgba(78,230,160,.10)!important;background:rgba(1,10,15,.94)!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer-wrap{
+    position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;z-index:30!important;
+    flex:0 0 auto!important;width:100%!important;margin-top:0!important;
+    padding:5px 8px calc(4px + env(safe-area-inset-bottom))!important;
+    border-top-color:rgba(78,230,160,.10)!important;background:rgba(1,10,15,.94)!important;
+  }
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer{gap:5px!important;padding:3px!important;border:1px solid rgba(117,217,188,.13)!important;border-radius:17px!important;background:rgba(6,24,30,.94)!important;box-shadow:0 10px 28px rgba(0,0,0,.28)!important}
-  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer textarea{min-height:44px!important;max-height:88px!important;padding:10px 11px!important;border-radius:13px!important;font-size:15px!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer textarea{
+    min-width:0!important;min-height:44px!important;max-height:88px!important;padding:10px 11px!important;
+    border-radius:13px!important;font-size:16px!important;-webkit-text-size-adjust:100%;text-size-adjust:100%;
+  }
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .small-mic{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;border-radius:13px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .small-mic svg{width:24px!important;height:24px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .send-button{min-width:80px!important;height:44px!important;min-height:44px!important;padding:0 12px!important;border-radius:13px!important;font-size:15px!important}
-  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer-wrap>p{margin:3px 5px 0!important;font-size:9px!important;line-height:1.2!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .composer-wrap>p{margin:3px 5px 0!important;color:#78918b!important;font-size:10.5px!important;line-height:1.2!important}
 }
 
 @media(max-width:420px){
@@ -118,6 +154,43 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
     return /^Hallo!\s*Schreib einfach,?\s*was du in der Dokumentation machen möchtest\.?$/i.test(text);
   }
 
+  function syncChatViewport() {
+    const shell = document.getElementById('appShell');
+    if (!shell) return;
+    if (shell.dataset.mode !== 'chat') {
+      shell.style.removeProperty('--dokohilf-chat-viewport-height');
+      return;
+    }
+    const viewportHeight = Number(window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
+    if (!viewportHeight) return;
+    shell.style.setProperty('--dokohilf-chat-viewport-height', `${Math.max(240, Math.round(viewportHeight))}px`);
+  }
+
+  function polishCommandCopy() {
+    const commandRow = document.getElementById('commandRow');
+    const next = commandRow?.querySelector('[data-command="weiter"]');
+    const help = commandRow?.querySelector('[data-command="ich finde das nicht"]');
+    if (next && next.textContent !== 'Erledigt, weiter') next.textContent = 'Erledigt, weiter';
+    if (help && help.textContent !== 'Hilfe zum Schritt') help.textContent = 'Hilfe zum Schritt';
+    const input = document.getElementById('chatInput');
+    if (input && input.getAttribute('enterkeyhint') !== 'send') input.setAttribute('enterkeyhint', 'send');
+  }
+
+  function syncLatestMessage() {
+    const shell = document.getElementById('appShell');
+    const messages = document.getElementById('messages');
+    if (!shell || !messages) return;
+    const count = messages.children.length;
+    if (shell.dataset.mode === 'chat' && count > lastMessageCount) {
+      requestAnimationFrame(() => {
+        const commandRow = document.getElementById('commandRow');
+        const target = commandRow && !commandRow.hidden ? commandRow : messages.lastElementChild;
+        target?.scrollIntoView({ block: 'end', inline: 'nearest', behavior: 'smooth' });
+      });
+    }
+    lastMessageCount = count;
+  }
+
   function polishChat() {
     const shell = document.getElementById('appShell');
     const chatHead = document.getElementById('chatHead');
@@ -127,6 +200,9 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
     const activeGuide = shell.dataset.v29GuideActive === 'true';
     const initialChat = mode === 'chat' && !activeGuide;
     const messages = document.getElementById('messages');
+
+    syncChatViewport();
+    polishCommandCopy();
 
     if (messages && initialChat) {
       [...messages.querySelectorAll('.message.assistant')].forEach(message => {
@@ -141,16 +217,41 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
       if (commandRow.hidden !== !activeGuide) commandRow.hidden = !activeGuide;
     }
 
+    syncLatestMessage();
+
     if (previousMode !== mode) {
       previousMode = mode;
-      if (mode === 'chat') requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }));
+      if (mode === 'chat') {
+        requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }));
+        if (window.matchMedia?.('(max-width:700px)').matches) {
+          window.setTimeout(() => {
+            const input = document.getElementById('chatInput');
+            if (document.activeElement === input) input.blur();
+          }, 120);
+        }
+      }
     }
   }
 
+  function installViewportObservers() {
+    const viewport = window.visualViewport;
+    viewport?.addEventListener('resize', syncChatViewport);
+    viewport?.addEventListener('scroll', syncChatViewport);
+    window.addEventListener('resize', syncChatViewport);
+    window.addEventListener('orientationchange', () => window.setTimeout(syncChatViewport, 100));
+    window.addEventListener('pageshow', syncChatViewport);
+  }
+
   installStyle();
+  installViewportObservers();
   polishChat();
 
   const observer = new MutationObserver(() => polishChat());
   observer.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-mode', 'data-v29-guide-active', 'hidden'] });
   window.__DOKOHILF_MOBILE_POLISH_V29__ = true;
+  window.DokoHilfMobilePolishV29 = {
+    sync: polishChat,
+    syncChatViewport,
+    revision: CHAT_VIEWPORT_REVISION,
+  };
 })();

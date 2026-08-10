@@ -295,14 +295,34 @@ try {
 
   await page.locator('[data-select-mode="chat"]').click();
   await page.locator('.chat-head').waitFor({ state: 'visible' });
-  const chat = await page.evaluate(() => ({
-    heading: document.querySelector('.chat-head h1')?.textContent?.trim(),
-    eyebrowDisplay: getComputedStyle(document.querySelector('.chat-eyebrow')).display,
-    composerVisible: !document.getElementById('composerWrap')?.hidden,
-  }));
+  await page.waitForTimeout(180);
+  const chat = await page.evaluate(() => {
+    const shell = document.getElementById('appShell');
+    const input = document.getElementById('chatInput');
+    const composer = document.getElementById('composerWrap');
+    const shellRect = shell?.getBoundingClientRect();
+    const composerRect = composer?.getBoundingClientRect();
+    const visualBottom = window.visualViewport?.height || window.innerHeight;
+    return {
+      heading: document.querySelector('.chat-head h1')?.textContent?.trim(),
+      eyebrowDisplay: getComputedStyle(document.querySelector('.chat-eyebrow')).display,
+      composerVisible: !composer?.hidden,
+      inputFontSize: Number.parseFloat(getComputedStyle(input).fontSize),
+      composerPosition: getComputedStyle(composer).position,
+      composerBottom: composerRect?.bottom ?? null,
+      shellBottom: shellRect?.bottom ?? null,
+      visualBottom,
+      bottomGap: composerRect && shellRect ? Math.abs(Math.min(shellRect.bottom, visualBottom) - composerRect.bottom) : null,
+      activeElement: document.activeElement?.id || document.activeElement?.tagName || '',
+    };
+  });
   assert(chat.heading === 'Was möchtest du erledigen?', `v29-Chatüberschrift falsch: ${chat.heading}`);
   assert(chat.eyebrowDisplay === 'none', 'Alte Chat-Eyebrow ist in v29 noch sichtbar.');
   assert(chat.composerVisible, 'Composer fehlt im Schreib-Chat.');
+  assert(chat.inputFontSize >= 16, `Chat-Eingabe ist auf ${PROFILE} nur ${chat.inputFontSize}px groß und kann Fokuszoom auslösen.`);
+  assert(chat.composerPosition === 'relative', `Composer verwendet auf ${PROFILE} unerwartet ${chat.composerPosition} statt des Viewport-Flexlayouts.`);
+  assert(chat.bottomGap !== null && chat.bottomGap <= 3, `Composer sitzt auf ${PROFILE} ${chat.bottomGap}px oberhalb des sichtbaren Chat-Rands.`);
+  assert(chat.activeElement !== 'chatInput', `Chat öffnet auf ${PROFILE} die Bildschirmtastatur beim Einstieg ungefragt.`);
   const chatState = await state();
   assert(chatState.scrollWidth <= chatState.viewportWidth + 1, `Chat hat auf ${PROFILE} horizontalen Überlauf.`);
 
@@ -315,7 +335,16 @@ try {
   const assistantText = await newAssistantBubble.innerText();
   assert(assistantText.includes('Doku-Erweitert'), `Kontextantwort fehlt: ${assistantText}`);
   await page.locator('.guide-progress').waitFor({ state: 'visible', timeout: 8_000 });
-  await page.screenshot({ path: `${OUTPUT_DIR}/03-chat-v29-${PROFILE}.png`, fullPage: true });
+  const guideActions = await page.evaluate(() => ({
+    next: document.querySelector('#commandRow [data-command="weiter"]')?.textContent?.trim(),
+    help: document.querySelector('#commandRow [data-command="ich finde das nicht"]')?.textContent?.trim(),
+    composerBottom: document.getElementById('composerWrap')?.getBoundingClientRect().bottom ?? null,
+    shellBottom: document.getElementById('appShell')?.getBoundingClientRect().bottom ?? null,
+  }));
+  assert(guideActions.next === 'Erledigt, weiter', `Guide-Weiter-Aktion ist auf ${PROFILE} unklar: ${guideActions.next}`);
+  assert(guideActions.help === 'Hilfe zum Schritt', `Guide-Hilfe-Aktion ist auf ${PROFILE} unklar: ${guideActions.help}`);
+  assert(guideActions.composerBottom !== null && guideActions.shellBottom !== null && Math.abs(guideActions.shellBottom - guideActions.composerBottom) <= 3, `Composer bleibt nach der Antwort auf ${PROFILE} nicht unten.`);
+  await page.screenshot({ path: `${OUTPUT_DIR}/03-chat-v29-${PROFILE}.png`, fullPage: false });
 
   await page.evaluate(() => window.DokoHilf?.resetConversation?.({ keepMode: false }));
   await page.locator('#startScreen').waitFor({ state: 'visible' });
@@ -370,6 +399,8 @@ try {
     identity,
     libraryHome,
     fullLibrary,
+    chat,
+    guideActions,
     assistantText,
     visualStates,
     aiRequests,
