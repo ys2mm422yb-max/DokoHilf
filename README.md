@@ -11,7 +11,8 @@ Vor jeder Arbeit sind diese Dateien vollständig zu lesen:
 1. [`PROJECT_RULES.md`](./PROJECT_RULES.md) – verbindliche Sicherheits-, Datenschutz- und Projektregeln
 2. [`PROJECT_HANDOFF.md`](./PROJECT_HANDOFF.md) – aktueller Stand, Architektur, Entscheidungen und offene Arbeiten
 3. [`CONFIRMED_WORKFLOWS.md`](./CONFIRMED_WORKFLOWS.md) – alle fachlich bestätigten, anonymisierten Klickwege und Sonderregeln
-4. anschließend tatsächlichen GitHub-, Actions-, Pages- und Supabase-Stand prüfen
+4. [`CROSS_PLATFORM_POLICY.md`](./CROSS_PLATFORM_POLICY.md) – verbindliche iPhone/iOS- und Android-Freigaberegel
+5. anschließend tatsächlichen GitHub-, Actions-, Pages- und Supabase-Stand prüfen
 
 Die Übergabe und die bestätigten Arbeitsabläufe sind dauerhaft im Repository zu pflegen, damit ein neuer Chat nicht wieder bei null beginnt.
 
@@ -33,6 +34,7 @@ Das ist der einzige feste öffentliche Link von DokoHilf. Veröffentlichte Ände
 - keine Logos, kopierten Handbücher oder geschützten Schulungsunterlagen
 - zustandsbasierte, fachlich geprüfte Schritt-für-Schritt-Anleitungen
 - PWA-Veröffentlichung über `main` und den tatsächlich ausgelieferten Branch `gh-pages`
+- **jede Produktänderung muss auf iPhone/iOS und Android erfolgreich geprüft sein; schlägt eine der beiden Plattformen fehl, wird nicht gemergt oder veröffentlicht**
 
 ## Projektgrenzen
 
