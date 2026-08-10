@@ -3,7 +3,7 @@
 **Status:** verbindliche Arbeitsquelle  
 **Stand:** 10. August 2026  
 **Aktueller Releaseblock:** `v29` / Build `20260809-36`  
-**Aktiver Arbeitsbranch:** `docs/github-maintenance-20260810`  
+**Arbeitsbranch:** nicht dauerhaft festschreiben; vor jeder Arbeit aktuellen GitHub-Stand live prüfen  
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
 > Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle `ACTIVE_WORK_*.md`. Danach werden GitHub, Actions, `main`, `gh-pages` und bei Supabase-Bezug ausschließlich das Projekt `efifbuqctylsujiauabg` live geprüft. Veränderliche Zustände niemals nur aus Dokumentation ableiten.
@@ -33,18 +33,18 @@
 8. Gegenüber dem Nutzer nie `live` behaupten, solange `gh-pages` und der feste öffentliche Hauptlink nicht real verifiziert wurden.
 9. Sichtbare Versionsbezeichnungen in Actions/Tests/Statushinweisen aktuell halten; wo eine konkrete Versionsnummer keinen fachlichen Nutzen hat, versionsneutral benennen.
 10. Überholte PRs werden nach eindeutigem Ersatz sauber kommentiert und geschlossen, nicht unbegründet offen gelassen.
+11. Flüchtige Zustände wie „aktueller Branch“ oder „aktueller Main-SHA“ werden nicht als dauerhaft gültige Wahrheit formuliert; dafür immer GitHub live prüfen.
 
-## 3. Aktueller GitHub-Stand nach Wartung am 10. August 2026
+## 3. Bereinigter GitHub-Stand am 10. August 2026
 
-- Aktueller `main`: `5182aaf641222ca83b9d2c4e3e71f543afe0acb7` – Merge von PR #120.
-- PR #120 **„Fix static short greeting catalog key on current main“** ist gemergt. Exakter geprüfter Head: `120707c06df10372e0b622bbb431480d4dbff86d`.
+- PR #120 **„Fix static short greeting catalog key on current main“** ist gemergt. Merge-Commit: `5182aaf641222ca83b9d2c4e3e71f543afe0acb7`; exakter geprüfter PR-Head: `120707c06df10372e0b622bbb431480d4dbff86d`.
 - Für PR #120 waren alle acht etablierten DokoHilf-Pflichtworkflows auf dem exakten Head erfolgreich.
 - PR #119 ist gemergt und enthält die bestätigte Pfeil-Anleitung für **„Maßnahmen ohne Zeitangabe“** über Direktguide, Finden-/Orientierungshilfe, statische Sprache und Supabase.
 - PR #118 ist gemergt und enthält den mobilen Voice-Fokusbildschirm für Build 36.
 - PR #117 ist gemergt und enthält die gegliederte Anleitungsbibliothek und mobile Icon-Überarbeitung.
 - PR #116 ist gemergt und synchronisiert den statischen Basis-Sprachbestand mit 40 freigegebenen Guides / 129 eindeutigen Schritttexten.
 - Der alte PR #110 **„Fix static short greeting catalog key“** wurde am 10. August 2026 ausdrücklich als durch PR #120 ersetzt dokumentiert und **geschlossen, nicht gemergt**. Sein veralteter Branch wird gemäß Projektregel nicht automatisch gelöscht.
-- Nach Schließen von #110 gibt es **keinen offenen Pull Request**.
+- Offene Produkt-/Fehler-PRs nach dieser Bereinigung: **0**. Ein reiner Dokumentations-/Wartungs-PR kann während der Pflege dieses Handoffs vorübergehend offen sein.
 - Offenes Fach-Issue #103 bleibt bewusst offen: Die Berichtssuche ist noch nicht final bestätigt und darf nicht erfunden oder vorzeitig als fertiger Guide veröffentlicht werden.
 
 ## 4. Live-Status Build 36
@@ -130,15 +130,15 @@ Live geprüft am 10. August 2026 für ausschließlich Projekt `efifbuqctylsujiau
 - `massnahmen-ohne-zeitangabe` ist produktiv freigegeben und enthält den bestätigten kleinen Pfeil links zum Öffnen.
 - `massnahmen-ohne-zeitangabe-finden` ist produktiv freigegeben und enthält denselben bestätigten Pfeilschritt.
 
-## 9. Aktueller Wartungszustand und nächster ausführbarer Schritt
+## 9. Wartungszustand und nächster ausführbarer Schritt
 
-- Offene PRs: **0**.
+- Offene Produkt-/Fehler-PRs: **0**.
 - Bewusst offenes Fach-Issue: **#103 Berichtssuche später fachlich überarbeiten**.
 - PR #110: **geschlossen / superseded durch #120 / nicht gemergt**.
-- PR #120: **gemergt / 8 von 8 Pflichtworkflows grün auf exaktem Head / Greeting-Fix auf aktuellem Main**.
+- PR #120: **gemergt / 8 von 8 Pflichtworkflows grün auf exaktem Head / Greeting-Fix integriert**.
 - `gh-pages`: aktueller Greeting-Katalogschlüssel live geprüft.
 - Alte Branches werden nicht automatisch gelöscht; das entspricht ausdrücklich der Projektregel.
-- Neue technische Änderungen starten immer von aktuellem `main` auf einem frischen Branch.
+- Neue technische Änderungen starten immer von dem beim Arbeitsbeginn live geprüften `main` auf einem frischen Branch.
 - Nächster fachlicher Ausbau erfolgt nur mit neuen bestätigten Informationen. Issue #103 bleibt bis dahin offen.
 
 ## 10. Empfohlene reale iPhone-Tests
