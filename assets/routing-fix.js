@@ -41,7 +41,7 @@
 
   function hasCreateIntent(value) {
     const text = normalize(value);
-    return /\b(anlegen|erstellen|dokumentieren|erfassen|eintragen|schreiben|verfassen)\b/.test(text)
+    return /\b(anlegen|erstellen|dokumentieren|erfassen|eintragen|schreiben|verfassen|abhaken|kontrollieren)\b/.test(text)
       || /\b(lege|legst|legt|leg)\b.*\ban\b/.test(text)
       || /\b(trage|tragst|tragt|trag)\b.*\bein\b/.test(text)
       || /\b(erstelle|erstellst|erstellt|erstell)\b/.test(text)
@@ -52,11 +52,12 @@
 
   function hasOpenIntent(value) {
     const text = normalize(value);
-    return /\b(offnen|ansehen|anschauen|nachsehen|aufrufen|finden|zeigen)\b/.test(text)
+    return /\b(offnen|ansehen|anschauen|nachsehen|aufrufen|finden|zeigen|suchen)\b/.test(text)
       || /\b(offne|offnest|offnet|offn)\b/.test(text)
       || /\b(rufe|rufst|ruft|ruf)\b.*\bauf\b/.test(text)
       || /\b(sehe|siehst|sieht|seh)\b.*\ban\b/.test(text)
-      || /\b(schaue|schaust|schaut|schau)\b.*\ban\b/.test(text);
+      || /\b(schaue|schaust|schaut|schau)\b.*\ban\b/.test(text)
+      || /\b(wo|wie)\b.*\b(finde|findest|finden|komme)\b/.test(text);
   }
 
   function inferSelectedGuideSlug(value) {
@@ -81,9 +82,22 @@
       return 'formulare-anlegen';
     }
 
-    if (/\bbedarfsmedikation\b/.test(text) && hasCreateIntent(text)) return 'bedarfsmedikation-gabe';
-    if (/\bwirksamkeitskontrolle\b/.test(text)) return 'wirksamkeitskontrolle';
-    if (/\bmassnahmen ohne zeitangabe\b/.test(text)) return 'massnahmen-ohne-zeitangabe';
+    if (/\bbedarfsmedikation\b/.test(text)) {
+      if (hasOpenIntent(text)) return 'bedarfsmedikation-finden';
+      if (hasCreateIntent(text) || /\b(gabe|geben|machen)\b/.test(text)) return 'bedarfsmedikation-gabe';
+    }
+
+    if (/\bwirksamkeitskontrolle\b/.test(text)) {
+      if (hasOpenIntent(text)) return 'bedarfsmedikation-wirksamkeitskontrolle-finden';
+      if (hasCreateIntent(text) || /\b(wirksamkeit|wirkung|machen)\b/.test(text)) {
+        return 'bedarfsmedikation-wirksamkeitskontrolle';
+      }
+    }
+
+    if (/\bmassnahmen ohne zeitangabe\b/.test(text)) {
+      if (hasOpenIntent(text)) return 'massnahmen-ohne-zeitangabe-finden';
+      if (hasCreateIntent(text) || /\bmachen\b/.test(text)) return 'massnahmen-ohne-zeitangabe';
+    }
 
     if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(text) && hasOpenIntent(text)) {
       return 'durchfuehrungsnachweis-oeffnen';
