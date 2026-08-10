@@ -4,6 +4,7 @@
   const STYLE_ID = 'dokohilf-mobile-polish-v29';
   const CHAT_VIEWPORT_REVISION = '20260810-mobile-chat-viewport-v38-1';
   let previousMode = '';
+  let lastMessageCount = 0;
   const css = `
 html[data-dokohilf-ui="v29"] .app-shell:not([data-mode="start"]) .legal-note{display:none!important}
 html[data-dokohilf-ui="v29"] .message.v29-mobile-welcome{display:none!important}
@@ -164,6 +165,31 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
     shell.style.setProperty('--dokohilf-chat-viewport-height', `${Math.max(240, Math.round(viewportHeight))}px`);
   }
 
+  function polishCommandCopy() {
+    const commandRow = document.getElementById('commandRow');
+    const next = commandRow?.querySelector('[data-command="weiter"]');
+    const help = commandRow?.querySelector('[data-command="ich finde das nicht"]');
+    if (next && next.textContent !== 'Erledigt, weiter') next.textContent = 'Erledigt, weiter';
+    if (help && help.textContent !== 'Hilfe zum Schritt') help.textContent = 'Hilfe zum Schritt';
+    const input = document.getElementById('chatInput');
+    if (input && input.getAttribute('enterkeyhint') !== 'send') input.setAttribute('enterkeyhint', 'send');
+  }
+
+  function syncLatestMessage() {
+    const shell = document.getElementById('appShell');
+    const messages = document.getElementById('messages');
+    if (!shell || !messages) return;
+    const count = messages.children.length;
+    if (shell.dataset.mode === 'chat' && count > lastMessageCount) {
+      requestAnimationFrame(() => {
+        const commandRow = document.getElementById('commandRow');
+        const target = commandRow && !commandRow.hidden ? commandRow : messages.lastElementChild;
+        target?.scrollIntoView({ block: 'end', inline: 'nearest', behavior: 'smooth' });
+      });
+    }
+    lastMessageCount = count;
+  }
+
   function polishChat() {
     const shell = document.getElementById('appShell');
     const chatHead = document.getElementById('chatHead');
@@ -175,6 +201,7 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
     const messages = document.getElementById('messages');
 
     syncChatViewport();
+    polishCommandCopy();
 
     if (messages && initialChat) {
       [...messages.querySelectorAll('.message.assistant')].forEach(message => {
@@ -189,9 +216,19 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
       if (commandRow.hidden !== !activeGuide) commandRow.hidden = !activeGuide;
     }
 
+    syncLatestMessage();
+
     if (previousMode !== mode) {
       previousMode = mode;
-      if (mode === 'chat') requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }));
+      if (mode === 'chat') {
+        requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }));
+        if (window.matchMedia?.('(max-width:700px)').matches) {
+          window.setTimeout(() => {
+            const input = document.getElementById('chatInput');
+            if (document.activeElement === input) input.blur();
+          }, 120);
+        }
+      }
     }
   }
 
