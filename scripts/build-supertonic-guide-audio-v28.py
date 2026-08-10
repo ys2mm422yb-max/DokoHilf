@@ -13,6 +13,7 @@ EXPECTED_SOURCE_COUNTS = {
     'navigation': 17,
     'context': 10,
 }
+EXPECTED_COMPLETION_COUNT = 44
 
 LONG_VOICE_GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.'
 SHORT_VOICE_GREETING = 'Hey! Wobei brauchst du Hilfe?'
@@ -147,6 +148,7 @@ def main() -> None:
     parser.add_argument('--ui-catalog', default='assets/voice-ui-catalog-v29.json')
     parser.add_argument('--navigation-catalog', default='assets/voice-navigation-catalog-v29.json')
     parser.add_argument('--context-catalog', default='assets/voice-context-help-catalog-v29.json')
+    parser.add_argument('--completion-catalog', default='assets/voice-completion-catalog-v40.json')
     parser.add_argument('--output-root', default='assets/audio/guides')
     parser.add_argument('--voice', default='F1')
     parser.add_argument('--steps', type=int, default=8)
@@ -165,16 +167,20 @@ def main() -> None:
         'navigation': load_catalog(args.navigation_catalog),
         'context': load_catalog(args.context_catalog),
     }
+    completion_catalog = load_catalog(args.completion_catalog)
 
     source_counts = {name: len(catalog.get('entries') or []) for name, catalog in catalogs.items()}
     for name, expected in EXPECTED_SOURCE_COUNTS.items():
         actual = source_counts.get(name, 0)
         if actual != expected:
             raise SystemExit(f'expected {expected} {name} speech sentences, found {actual}')
+    completion_count = len(completion_catalog.get('entries') or [])
+    if completion_count != EXPECTED_COMPLETION_COUNT:
+        raise SystemExit(f'expected {EXPECTED_COMPLETION_COUNT} completion speech sentences, found {completion_count}')
 
     validate_base_catalog(catalogs['base'])
 
-    entries = merged_entries(*catalogs.values())
+    entries = merged_entries(*catalogs.values(), completion_catalog)
     static_speech_count = len(entries)
     if not static_speech_count:
         raise SystemExit('static speech catalog is empty')
@@ -186,7 +192,7 @@ def main() -> None:
 
     if args.validate_only:
         parts = ' + '.join(f'{source_counts[name]} {name}' for name in catalogs)
-        print(f'Validated {parts}; {static_speech_count} unique static Supertonic sentences')
+        print(f'Validated {parts} + {completion_count} completion; {static_speech_count} unique static Supertonic sentences')
         return
     if args.limit > 0:
         entries = entries[:args.limit]
@@ -238,6 +244,7 @@ def main() -> None:
         'voice': f'Supertonic-{args.voice}',
         'generatedWith': 'Supertonic 3 static GitHub build',
         'sourceCounts': source_counts,
+        'completionSourceCount': completion_count,
         'staticSpeechCount': len(published_entries),
         'entries': published_entries,
     }
@@ -251,6 +258,7 @@ def main() -> None:
             'steps': args.steps,
             'speed': args.speed,
             'sourceCounts': source_counts,
+            'completionSourceCount': completion_count,
             'staticSpeechCount': len(generated),
             'count': len(generated),
             'entries': generated,

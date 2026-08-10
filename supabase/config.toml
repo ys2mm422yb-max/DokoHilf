@@ -24,3 +24,6 @@ verify_jwt = true
 
 [functions.dokohilf-chat-router]
 verify_jwt = false
+
+[functions.dokohilf-conversation-router]
+verify_jwt = false
