@@ -27,7 +27,7 @@
 1. Nie direkt auf `main` arbeiten.
 2. Änderungen über Branch + PR integrieren.
 3. Nur einen vollständig geprüften **exakten PR-Head** mergen.
-4. Alle acht etablierten Pflichtworkflows müssen auf genau diesem Head grün sein.
+4. Bei Produkt-/Releaseänderungen müssen alle acht etablierten Pflichtworkflows auf genau diesem Head grün sein. Bei einem reinen Docs-only-Abschluss müssen alle für diesen exakten Head durch die vorhandenen Workflow-Pfadfilter tatsächlich ausgelösten Pflichtworkflows grün sein; nicht ausgelöste UI-Workflows werden nicht künstlich als fehlgeschlagen behandelt.
 5. Kein Auto-Merge und keine automatische Branch-Löschung.
 6. Bei Supabase-Änderungen zuerst Dry-Run in Transaktion mit Rollback; produktive Migration erst nach Merge.
 7. Nach Merge `main`, `gh-pages` und öffentlichen Build konkret prüfen.
