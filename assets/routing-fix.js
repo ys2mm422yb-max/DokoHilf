@@ -3,8 +3,8 @@
 
   const root = typeof window !== 'undefined' ? window : globalThis;
   const AI_ROUTER_MARKER = '/functions/v1/dokohilf-ai';
-  const CHAT_ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-chat-router';
-  const ROUTING_REVISION = '20260810-natural-guide-routing-v39-1';
+  const CHAT_ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-conversation-router';
+  const ROUTING_REVISION = '20260810-natural-guide-completions-v40-1';
   const GREETINGS = [
     'guten morgen',
     'guten abend',
