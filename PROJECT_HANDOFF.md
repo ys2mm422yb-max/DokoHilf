@@ -3,7 +3,8 @@
 **Status:** verbindliche Arbeitsquelle  
 **Stand:** 10. August 2026  
 **Aktueller Releaseblock:** `v29` / Build `20260809-36`  
-**Aktiver Arbeitsbranch:** `fix/static-short-greeting-build36-20260810`  
+**Letzter abgeschlossener Produkt-PR:** `#120`  
+**Aktiver Produkt-Arbeitsbranch:** keiner  
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
 > Jeder neue Chat liest zuerst vollständig `README.md`, `PROJECT_RULES.md`, `CONFIRMED_WORKFLOWS.md`, diese Datei und alle `ACTIVE_WORK_*.md`. Danach werden GitHub, Actions, `main`, `gh-pages` und bei Supabase-Bezug ausschließlich das Projekt `efifbuqctylsujiauabg` live geprüft. Veränderliche Zustände niemals nur aus Dokumentation ableiten.
@@ -26,40 +27,52 @@
 1. Nie direkt auf `main` arbeiten.
 2. Änderungen über Branch + PR integrieren.
 3. Nur einen vollständig geprüften **exakten PR-Head** mergen.
-4. Alle acht etablierten Pflichtworkflows müssen auf genau diesem Head grün sein.
+4. Bei Produkt-/Releaseänderungen müssen alle acht etablierten Pflichtworkflows auf genau diesem Head grün sein. Bei einem reinen Docs-only-Abschluss müssen alle für diesen exakten Head durch die vorhandenen Workflow-Pfadfilter tatsächlich ausgelösten Pflichtworkflows grün sein; nicht ausgelöste UI-Workflows werden nicht künstlich als fehlgeschlagen behandelt.
 5. Kein Auto-Merge und keine automatische Branch-Löschung.
 6. Bei Supabase-Änderungen zuerst Dry-Run in Transaktion mit Rollback; produktive Migration erst nach Merge.
 7. Nach Merge `main`, `gh-pages` und öffentlichen Build konkret prüfen.
 8. Gegenüber dem Nutzer nie `live` behaupten, solange `gh-pages` und der feste öffentliche Hauptlink nicht real verifiziert wurden.
 9. Sichtbare Versionsbezeichnungen in Actions/Tests/Statushinweisen aktuell halten; wo die Versionsnummer keinen fachlichen Nutzen hat, versionsneutral benennen.
 
-## 3. Live geprüfter Ausgangsstand am 10. August 2026
+## 3. Aktueller GitHub-/Release-Stand
 
-- `main` vor dem aktuellen Arbeitsbranch: `be510d67463f23c3b6559940c670abb347188f3e` – Merge von PR #119.
+Live verifiziert am 10. August 2026:
+
+- Produkt-PR #120 **„Fix static short greeting catalog key on current main“** ist gemergt.
+- Exakter freigegebener PR-Head: `120707c06df10372e0b622bbb431480d4dbff86d`.
+- Alle acht Pflichtworkflows waren auf genau diesem Head erfolgreich:
+  - Context and Voice Hotfix v28
+  - Validate exact PR head
+  - Validate context-aware guide help v28
+  - Validate detailed help iOS Android
+  - Validate dark iPhone UI v27
+  - Validate static voice iOS Android
+  - Validate report conditional iOS Android
+  - Deploy DokoHilf
+- Merge-Commit auf `main`: `5182aaf641222ca83b9d2c4e3e71f543afe0acb7`.
+- `gh-pages`-Publish-Commit: `2ea35851495d06fd5729c8ee3ac0d8417a4b7ce4` mit Nachricht `Publish DokoHilf 5182aaf641222ca83b9d2c4e3e71f543afe0acb7`.
 - `main/version.json` und `gh-pages/version.json` zeigen beide Build `20260809-36`.
-- PR #119 ist gemergt und enthält die bestätigte Pfeil-Anleitung für „Maßnahmen ohne Zeitangabe“ über Guide-, Finden-, Sprach- und Supabase-Schichten.
-- PR #118 ist gemergt und enthält den mobilen Voice-Fokusbildschirm für Build 36.
-- PR #117 ist gemergt und enthält die gegliederte Anleitungsbibliothek und mobile Icon-Überarbeitung.
-- PR #116 ist gemergt und synchronisiert den statischen Basis-Sprachbestand mit 40 freigegebenen Guides / 129 eindeutigen Schritttexten.
-- Ein alter PR #110 (`fix/v29-short-greeting-static-catalog-20260809`) ist fachlich relevant, aber technisch überholt: sein Branch liegt 76 Commits hinter dem aktuellen `main`. Er darf nicht blind gemergt werden. Der noch benötigte Greeting-Fix wird deshalb auf dem aktuellen Hauptstand neu umgesetzt.
+- Der ausgelieferte `gh-pages/assets/guide-audio-catalog.json` enthält als ersten statischen Sprachsatz **„Hey! Wobei brauchst du Hilfe?“** und verweist auf `assets/audio/guides/000.wav`.
+- Der erfolgreiche Release-Build erzeugte für Eintrag 0 denselben Text und denselben synthetisierten Satz `Hey! Wobei brauchst du Hilfe?`.
+- Der überholte PR #110 wurde nach erfolgreichem Ersatz durch #120 **geschlossen, nicht gemergt**. Sein Branch wurde nicht automatisch gelöscht.
 - Offenes Fach-Issue #103 bleibt bewusst offen: Berichtssuche ist noch nicht final bestätigt.
 
-## 4. Aktiver Arbeitsblock: kurzer Sprachstart / statischer Katalogschlüssel
+## 4. Abgeschlossener Fix: kurzer Sprachstart / statischer Katalogschlüssel
 
-Bestätigter Fehler auf dem aktuellen Build-36-Stand:
+Bestätigte Ursache vor PR #120:
 
-- Die sichtbare und angeforderte Begrüßung lautet bereits **„Hey! Wobei brauchst du Hilfe?“**.
-- Der Supertonic-Builder wandelte den alten langen Begrüßungstext nur für die Synthese in den kurzen Satz um.
-- Im veröffentlichten Katalogschlüssel konnte dadurch weiterhin der alte lange Text stehen, obwohl die zugehörige WAV-Datei den kurzen Satz spricht.
-- `assets/local-voice-gate-v28.js` indexiert statische WAVs anhand des veröffentlichten `entry.text`. Dadurch kann die kurze Begrüßungsanfrage den vorhandenen Begrüßungseintrag verfehlen und die Sprachausgabe stumm beziehungsweise auf den neutralen Fallback laufen.
+- Die sichtbare und angeforderte Begrüßung lautete bereits **„Hey! Wobei brauchst du Hilfe?“**.
+- Der Supertonic-Builder wandelte den alten langen Begrüßungstext aber nur für die Synthese in den kurzen Satz um.
+- Im veröffentlichten Katalogschlüssel blieb dadurch der alte lange Text stehen, obwohl die zugehörige WAV-Datei den kurzen Satz sprach.
+- `assets/local-voice-gate-v28.js` indexiert statische WAVs anhand des veröffentlichten `entry.text`. Dadurch konnte die kurze Begrüßungsanfrage den vorhandenen Begrüßungseintrag verfehlen und die Sprachausgabe stumm beziehungsweise auf den neutralen statischen Fallback laufen.
 
-Aktueller Fix auf `fix/static-short-greeting-build36-20260810`:
+Umsetzung in PR #120:
 
 - `scripts/build-supertonic-guide-audio-v28.py` verwendet für Zusammenführung, Normalisierung, Synthese und veröffentlichten Manifesttext denselben kanonischen Begrüßungstext.
 - Der Builder bricht ab, wenn die kurze Begrüßung im veröffentlichten statischen Katalog fehlt oder der alte lange Begrüßungstext als veröffentlichter Schlüssel übrig bleibt.
 - `tests/local-voice-v28.test.mjs` sichert diesen Vertrag als Regressionstest ab.
-- Keine fachlichen Klickwege werden verändert.
-- Keine Supabase-Migration und kein Edge-Function-Deploy sind für diesen Fix erforderlich.
+- Keine fachlichen Klickwege wurden verändert.
+- Keine Supabase-Migration und kein Edge-Function-Deploy waren für diesen Fix erforderlich.
 
 ## 5. Verbindliche Spracharchitektur
 
@@ -121,23 +134,14 @@ Live geprüft am 10. August 2026 für ausschließlich Projekt `efifbuqctylsujiau
 - `dokohilf_guides` enthält ausschließlich allgemeine, unpersönliche Anleitungen; keine Konten, Profile oder Falldaten.
 - Security Advisor: keine offenen Lints.
 - Performance Advisor: ein reiner INFO-Hinweis auf den bisher ungenutzten Index `dokohilf_guide_versions_guide_version_idx`; kein akuter Fehler und deshalb nicht ungeprüft entfernen.
-- Aktuelle Edge-Function-Logs zeigen erfolgreiche `200`-Antworten von `dokohilf-ai-router` und `dokohilf-chat-router`.
-- Für den aktuellen Greeting-Fix ist **keine** Datenbankmigration und **kein** Funktionsdeploy erforderlich.
+- Aktuelle Edge-Function-Logs zeigten erfolgreiche `200`-Antworten von `dokohilf-ai-router` und `dokohilf-chat-router`.
+- Für PR #120 wurde **keine** Datenbankmigration und **kein** Funktionsdeploy ausgeführt.
 
-## 9. Freigabeschritte für den aktuellen Greeting-Fix
+## 9. Nächster ausführbarer Schritt
 
-1. Frischen Branch auf Basis des aktuellen `main` verwenden; keine Übernahme des 76 Commits alten PR-#110-Branches.
-2. Builder- und Regressionsteständerung in PR gegen `main` prüfen.
-3. Exakten finalen PR-Head bestimmen.
-4. Alle acht Pflichtworkflows auf genau diesem Head grün bekommen.
-5. Erst dann mit `expected_head_sha` manuell mergen.
-6. Der Main-Deploy muss die statischen Supertonic-F1-Dateien neu erzeugen und denselben exakten Release-Stand auf `gh-pages` veröffentlichen.
-7. Danach `main`, `gh-pages`, `version.json`, Service Worker und den veröffentlichten `guide-audio-catalog.json` prüfen.
-8. Der veröffentlichte Katalog muss **„Hey! Wobei brauchst du Hilfe?“** als Greeting-Schlüssel enthalten und darf den alten langen Greeting-Schlüssel nicht mehr enthalten.
-9. Erst nach realer `gh-pages`-/Hauptlink-Verifikation den Fix als live melden.
-10. Den alten PR #110 danach als durch den aktuellen Main-basierten Fix ersetzt schließen; Branch nicht automatisch löschen.
+Der Greeting-Katalogfix ist technisch abgeschlossen und veröffentlicht. Der nächste sinnvolle Schritt ist ein realer iPhone-Praxistest des Sprachstarts und der wichtigsten Orientierungsfragen. Neue fachliche Klickwege nur übernehmen, wenn sie ausdrücklich bestätigt wurden und anschließend sofort in `CONFIRMED_WORKFLOWS.md` dokumentiert werden.
 
-## 10. Empfohlene reale iPhone-Tests nach Live-Freigabe
+## 10. Empfohlene reale iPhone-Tests
 
 - Sprechmodus starten → muss kurz **„Hey! Wobei brauchst du Hilfe?“** sprechen.
 - „Ich finde Doku-Erweitert nicht.“
