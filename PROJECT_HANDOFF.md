@@ -2,8 +2,8 @@
 
 **Status:** verbindliche Arbeitsquelle  
 **Stand:** 10. August 2026  
-**Aktueller Releaseblock:** `v29` / Build `20260809-36` / Bibliothekslayout `20260810-health-medicine-library-v37-1` / Chat-UI `20260810-ios-keyboard-chat-v37-1`  
-**Letzter abgeschlossener Produkt-PR:** `#126`  
+**Aktueller Releaseblock:** `v29` / Build `20260809-36` / Bibliothekslayout `20260810-health-medicine-library-v37-1` / Chat-UI `20260810-mobile-chat-viewport-v38-1`  
+**Letzter abgeschlossener Produkt-PR:** `#128`  
 **Aktiver Produkt-Arbeitsbranch:** keiner  
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
@@ -39,8 +39,8 @@
 
 Live auf Repository- und `gh-pages`-Ebene verifiziert am 10. August 2026:
 
-- Produkt-PR #126 **„Fix iPhone chat keyboard zoom and compact active chat“** ist gemergt.
-- Exakter freigegebener PR-Head: `374ee454c03f455e9856858299d2c20ab34fd998`.
+- Produkt-PR #128 **„Stabilize mobile chat viewport and keyboard UX“** ist gemergt.
+- Exakter freigegebener PR-Head: `4abcb5f617855e24c957abd5c655ccf7a0d3ef5c`.
 - Alle acht Pflichtworkflows waren auf genau diesem Head erfolgreich:
   - Context and Voice Hotfix v28
   - Validate exact PR head
@@ -50,45 +50,62 @@ Live auf Repository- und `gh-pages`-Ebene verifiziert am 10. August 2026:
   - Validate static voice iOS Android
   - Validate report conditional iOS Android
   - Deploy DokoHilf
-- Im vollständigen Deploy war insbesondere **„Render and interact with iOS and Android layouts“** erfolgreich.
-- Merge-Commit auf `main`: `61ae43fa73a14ed2269c355eda15aafbcbf6f8c8`.
-- `gh-pages/assets/ui-polish-v35.css` enthält den finalen 16-px-Composer-Schutz und die kompakte aktive Chatdarstellung.
-- `gh-pages/assets/ui-polish-v35.js` enthält `CHAT_UI_REVISION = '20260810-ios-keyboard-chat-v37-1'` und `syncChatState()`.
-- `gh-pages/service-worker.js` enthält dieselbe `CHAT_UI_REVISION` und meldet sie beim PWA-Update mit aus.
+- Im vollständigen Deploy war **„Render and interact with iOS and Android layouts“** erfolgreich.
+- Merge-Commit auf `main`: `73e22cc249db8bb9c17ecd6c8af2a377d6998711`.
+- `main/assets/mobile-polish-v29.js` und `gh-pages/assets/mobile-polish-v29.js` enthalten `CHAT_VIEWPORT_REVISION = '20260810-mobile-chat-viewport-v38-1'`.
+- `main/service-worker.js` und `gh-pages/service-worker.js` enthalten `CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1'`.
+- Die finale Mobile-Schicht verwendet für das Chat-Textarea `font-size:16px!important`; die frühere wirksame 15-px-Regel ist dort entfernt.
+- Der automatisierte Browser-Render misst auf iOS und Android 16 px berechnete Eingabeschrift, einen Composer direkt am sichtbaren unteren Chat-Rand und keinen ungefragten Fokus beim Chat-Einstieg.
 - Die Bibliotheksgruppierung aus PR #123 bleibt vollständig enthalten und veröffentlicht.
 - Die verbindliche iPhone-/Android-Freigaberegel aus PR #125 bleibt vollständig enthalten.
-- PR #120 mit dem kurzen statischen Sprachstart bleibt vollständig enthalten und veröffentlicht.
+- Der kurze statische Sprachstart aus PR #120 bleibt vollständig enthalten und veröffentlicht.
 - Der überholte PR #110 ist geschlossen und wurde nicht gemergt. Sein Branch wurde nicht automatisch gelöscht.
 - Offenes Fach-Issue #103 bleibt bewusst offen: Berichtssuche ist noch nicht final bestätigt.
 
-## 4. Mobiler Chat: iPhone-Tastatur und kompakte aktive Unterhaltung
+## 4. Mobiler Chat: Tastatur, sichtbarer Viewport und aktive Unterhaltung
 
-### Fehlerursache vor PR #126
+### Fehlerkette vor PR #128
 
-- Die Basisschicht setzte das Chat-Textarea korrekt auf `font-size: 16px`.
-- Die später geladene v29-UI-Schicht überschrieb den Wert jedoch mit `15px`.
-- Auf iOS Safari können fokussierte Formularelemente unter 16 CSS-Pixeln einen automatischen Fokuszoom auslösen. Das passte zum real beobachteten Verhalten: Beim Öffnen der iPhone-Tastatur wirkte die gesamte Ansicht minimal herangezoomt und verschoben; nach dem Schließen konnte die Geometrie kurz versetzt bleiben.
+PR #126 hatte den zuerst sichtbaren iPhone-Fokuszoom bereits an einer späten CSS-Schicht korrigiert. Beim anschließenden vollständigen Chat-Review zeigte sich jedoch, dass noch eine **später per JavaScript injizierte Mobile-Schicht** existierte:
 
-### Verbindlicher Fix
+- `assets/mobile-polish-v29.js` setzte das Textarea weiterhin mit höherer Spezifität auf `15px!important`.
+- Damit konnte der 16-px-Schutz trotz korrekt aussehender CSS-Datei auf dem tatsächlichen Mobilgerät wieder überstimmt werden.
+- Zusätzlich war der Composer mobil als `position:sticky` Teil des Dokumentflusses. Bei kurzen Gesprächen stand die Eingabeleiste dadurch sichtbar zu weit oben und ließ unnötigen Leerraum unter sich.
 
-- Die späteste UI-Schicht erzwingt im Composer `font-size: 16px !important`.
-- `-webkit-text-size-adjust: 100%` und `text-size-adjust: 100%` verhindern zusätzliche Textskalierung.
-- Composer und Textarea haben `min-width: 0`, damit sie beim kleineren sichtbaren Tastatur-Viewport sauber schrumpfen können.
-- Mikrofon- und Senden-Taste bleiben feste Touchziele (`flex: 0 0 auto`).
-- Horizontaler Composer-Überlauf wird abgefangen.
-- `tests/mobile-layout-contract.test.mjs` sperrt diese Regeln als Regression.
-- Die Änderung wurde im vollständigen Produktgate auf iPhone/iOS und Android gerendert und interaktiv geprüft.
+### Verbindlicher Fix ab PR #128
 
-### Chat-Aufräumung nach der ersten Nachricht
+- Die **final wirksame Mobile-Schicht** setzt das Textarea auf `font-size:16px!important`, `min-width:0` und 100 % Text-Scaling.
+- Die Chat-Shell orientiert sich über `visualViewport.height` an der tatsächlich sichtbaren mobilen Höhe und aktualisiert sich bei Resize, Rotation, `pageshow` und Visual-Viewport-Änderungen.
+- Der Chat ist mobil eine Viewport-Spalte: Topbar oben, dazwischen ein eigener vertikal scrollbarer Gesprächsbereich, Composer als unteres Flex-Element.
+- Der Composer ist nicht mehr `sticky`; er bleibt durch das Flexlayout am unteren Rand des sichtbaren Chatbereichs.
+- Kurze aktive Gespräche werden mit `margin-top:auto` direkt über den Composer gezogen; lange Verläufe belegen den verfügbaren Bereich und scrollen normal.
+- Neue Antworten beziehungsweise Schrittaktionen werden automatisch in Sicht gebracht.
+- Der Guide-Fortschritt bleibt im inneren Chat-Scroller erreichbar.
+- Die Schrittbuttons heißen verständlicher **„Erledigt, weiter“** und **„Hilfe zum Schritt“**.
+- Die mobile Enter-Taste erhält `enterkeyhint="send"`. Das vorhandene Hauptskript sendet bereits mit Enter; `Shift+Enter` bleibt Zeilenumbruch.
+- Nutzer- und aktuelle Assistentenblasen haben auf Mobilgeräten etwas klareren Textkontrast.
+- Der Datenschutzhinweis unter dem Composer ist mit 10,5 px besser lesbar als zuvor mit 9 px.
+- Beim Eintritt in den mobilen Schreibmodus wird ein ungefragt gesetzter Fokus wieder gelöst, damit die Tastatur nicht sofort den Einstieg verdeckt.
 
-Vor der ersten Nutzernachricht bleiben der Starterblock **„Was möchtest du erledigen?“** und die Schnellbuttons sichtbar. Sobald eine echte Nutzernachricht im Chat vorhanden ist:
+### Reale Freigabeprüfung
 
-- setzt `syncChatState()` am App-Shell `data-v35-chat-started="true"`;
-- der große Starterblock wird ausgeblendet;
-- die technische Versions-/Credit-Zeile wird im laufenden Chat ausgeblendet;
-- der eigentliche Gesprächsbereich bekommt dadurch mehr nutzbaren Platz.
+Der Release-Render prüft den Chat nicht mehr nur über Quelltextmarker, sondern misst die **berechnete Browser-Geometrie** auf beiden Pflichtprofilen:
 
-Beim Zurücksetzen des Gesprächs wird der Zustand anhand der vorhandenen Nutzernachrichten wieder zurückgenommen. Diese UX-Änderung verändert keine fachlichen Guides, kein Routing und keine Supabase-Inhalte.
+- iOS: 393 × 852
+- Android: 412 × 915
+- berechnete Textarea-Schrift mindestens 16 px
+- Composer `position:relative`
+- Abstand Composer → sichtbarer unterer Chat-Rand höchstens 3 px; im finalen Evidence-Run 0 px
+- `chatInput` ist beim Einstieg nicht automatisch fokussiert
+- nach einer Antwort bleiben Composer und Schrittaktionen korrekt sichtbar
+- die beiden Schrittbuttons tragen die bestätigten neuen UI-Beschriftungen
+- keine Console- oder Page-Fehler im finalen Render
+
+Diese UX-Änderung verändert **keinen** fachlichen Guide, **keinen** bestätigten Klickweg, **kein** Routing und **keine** Supabase-Inhalte.
+
+### Noch sinnvoller echter Gerätetest
+
+Die CI simuliert iPhone- und Android-Viewport, Touch und Interaktionen, aber keine physisch eingeblendete iOS-Systemtastatur. Deshalb bleibt ein kurzer Praxistest auf einem echten iPhone sinnvoll: Eingabefeld fokussieren → Tastatur öffnen → Text schreiben → Tastatur schließen → prüfen, dass Skalierung, unterer Composer und Scrollposition stabil bleiben. Das ist ein QA-Test, kein derzeit bekannter offener Produktfehler.
 
 ## 5. Verbindliche Bibliotheksgruppierung
 
@@ -190,11 +207,11 @@ Letzter bestätigter Stand für ausschließlich Projekt `efifbuqctylsujiauabg`:
 - `dokohilf_guides` enthält ausschließlich allgemeine, unpersönliche Anleitungen; keine Konten, Profile oder Falldaten.
 - Security Advisor: keine offenen Lints.
 - Performance Advisor: ein reiner INFO-Hinweis auf den bisher ungenutzten Index `dokohilf_guide_versions_guide_version_idx`; kein akuter Fehler und deshalb nicht ungeprüft entfernen.
-- Für PR #123, #125 und #126 wurde **keine** Datenbankmigration und **kein** Edge-Function-Deploy ausgeführt.
+- Für PR #123, #125, #126 und #128 wurde **keine** Datenbankmigration und **kein** Edge-Function-Deploy ausgeführt.
 
 ## 11. Nächster ausführbarer Schritt
 
-Der iPhone-Chat-Fokuszoom-Fix aus PR #126 ist technisch abgeschlossen, auf iPhone/iOS und Android geprüft und auf `gh-pages` veröffentlicht. Sinnvoll ist als nächster Praxistest auf einem echten iPhone: Chat öffnen → Eingabefeld fokussieren → Tastatur öffnen/schließen → prüfen, dass die Seite ihre Skalierung behält; danach eine Nachricht senden und prüfen, dass Starterblock und technische Versionszeile verschwinden. Auf Android denselben Chatfluss kurz gegenprüfen.
+Chat-UI v38 aus PR #128 ist technisch abgeschlossen, auf iPhone/iOS und Android im Browser-Render geprüft und auf `gh-pages` veröffentlicht. Der nächste sinnvolle Schritt ist ein kurzer echter Gerätetest mit geöffneter Bildschirmtastatur auf iPhone und Android. Nur wenn dabei noch ein reproduzierbarer Layoutfehler sichtbar wird, wird die Viewport-Härtung weiter angepasst; nicht auf Verdacht.
 
 Neue fachliche Klickwege nur übernehmen, wenn sie ausdrücklich bestätigt wurden und anschließend sofort in `CONFIRMED_WORKFLOWS.md` dokumentiert werden.
 
