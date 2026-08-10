@@ -69,7 +69,7 @@ test('nur die letzte Nutzernachricht wird für das Backend bereinigt und eindeut
   assert.equal(rewritten.messages[0].content, 'Hallo! Wobei brauchst du Hilfe?');
   assert.equal(rewritten.messages[1].content, 'wie lege ich eine visite an');
   assert.equal(rewritten.selectedGuideSlug, 'visite-anlegen');
-  assert.equal(rewritten.clientRoutingRevision, '20260810-natural-guide-routing-v39-1');
+  assert.equal(rewritten.clientRoutingRevision, '20260810-natural-guide-completions-v40-1');
 });
 
 test('ein laufender Guide wird durch lokale Intent-Erkennung nicht ungefragt überschrieben', () => {
@@ -80,7 +80,8 @@ test('ein laufender Guide wird durch lokale Intent-Erkennung nicht ungefragt üb
   assert.equal(rewriteRequestBody(body), body);
 });
 
-test('alte KI-Endpunkte werden direkt auf den Chat-Router umgebogen', () => {
+test('alte KI-Endpunkte werden direkt auf den completion-aware Conversation-Router umgebogen', () => {
+  assert.match(chatRouterEndpoint, /dokohilf-conversation-router$/);
   assert.equal(
     rewriteRouterInput('https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai'),
     chatRouterEndpoint,
@@ -97,3 +98,5 @@ test('ungültige oder fremde Request-Bodies bleiben unverändert', () => {
   const body = JSON.stringify({ messages: [{ role: 'assistant', content: 'Hallo' }] });
   assert.equal(rewriteRequestBody(body), body);
 });
+
+await import('./guide-completion-v40.test.mjs');
