@@ -95,6 +95,7 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .quick-prompts{margin-top:8px!important;gap:5px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .quick-prompts button{min-height:32px!important;padding:0 10px!important;font-size:11px!important;border-radius:10px!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"] .conversation{min-height:0!important;margin:0!important;overflow:visible!important}
+  html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"][data-v35-chat-started="true"] .workspace:not([hidden]) .conversation{margin-top:auto!important}
   html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"]:not([data-v29-guide-active="true"]) .conversation{
     border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;
   }
