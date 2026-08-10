@@ -98,5 +98,3 @@ test('ungültige oder fremde Request-Bodies bleiben unverändert', () => {
   const body = JSON.stringify({ messages: [{ role: 'assistant', content: 'Hallo' }] });
   assert.equal(rewriteRequestBody(body), body);
 });
-
-await import('./guide-completion-v40.test.mjs');
