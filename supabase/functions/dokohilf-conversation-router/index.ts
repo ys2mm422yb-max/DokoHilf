@@ -39,6 +39,23 @@ function normalize(value: unknown): string {
     .trim();
 }
 
+function containsSensitiveData(text: string): boolean {
+  const raw = String(text || '').trim();
+  const n = normalize(raw);
+  const direct = [
+    /\b[\w.+-]+@[\w.-]+\.[a-z]{2,}\b/i,
+    /\b(?:\+49|0)[\d\s/()-]{7,}\b/,
+    /\b\d{1,2}\.\d{1,2}\.\d{2,4}\b/,
+    /\b(?:herr|frau|bewohner(?:in)?|klient(?:in)?|patient(?:in)?)\s+[a-zäöüß-]{2,}/i,
+    /\b(?:geburtsdatum|telefonnummer|adresse|aktenzeichen|versichertennummer|bewohnernummer)\b/i,
+    /\b\d{6,}\b/,
+  ];
+  if (direct.some(pattern => pattern.test(raw))) return true;
+  const health = /\b(diagnose|blutdruck|puls|temperatur|medikament|dosis|insulin|schmerz|wunde|berichtstext|ubergabeinhalt|mg|ml)\b/i.test(n);
+  const caseLanguage = /\b(hat|bekommt|nimmt|leidet|war heute|ist gesturzt|verweigert|bewohner|klient|patient)\b/i.test(n);
+  return health && (caseLanguage || /\d/.test(raw));
+}
+
 function corsHeaders(origin: string | null): Record<string, string> {
   const allowedOrigin = origin && ALLOWED_ORIGINS.has(origin)
     ? origin
@@ -231,6 +248,9 @@ Deno.serve(async (req: Request) => {
 
   const messages = sanitizeMessages(parsed.messages);
   if (!messages.length || messages.at(-1)?.role !== 'user') return forwardToChatRouter(rawBody, origin);
+  if (messages.some(message => message.role === 'user' && containsSensitiveData(message.content))) {
+    return forwardToChatRouter(rawBody, origin);
+  }
 
   const userText = latestUser(messages);
   const assistantText = previousAssistant(messages);
