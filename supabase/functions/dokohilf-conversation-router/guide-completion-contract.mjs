@@ -106,7 +106,7 @@ function isNegative(value) {
 
 function isSingleVital(value) {
   const n = normalizeCompletionText(value);
-  return /\b(einzel|einzeln|einzelwert|einen wert|ein wert|nur einen|ein vitalwert)\b/.test(n);
+  return /\b(einzel|einzeln|einzelwert|einen einzelnen wert|einen einzelnen|einzelnen wert|einen wert|ein wert|nur einen|ein vitalwert)\b/.test(n);
 }
 
 function isBatchVital(value) {
