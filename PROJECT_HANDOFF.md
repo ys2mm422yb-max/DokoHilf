@@ -2,8 +2,8 @@
 
 **Status:** verbindliche Arbeitsquelle  
 **Stand:** 10. August 2026  
-**Aktueller Releaseblock:** `v29` / Build `20260809-36`  
-**Letzter abgeschlossener Produkt-PR:** `#120`  
+**Aktueller Releaseblock:** `v29` / Build `20260809-36` / Bibliothekslayout `20260810-health-medicine-library-v37-1`  
+**Letzter abgeschlossener Produkt-PR:** `#123`  
 **Aktiver Produkt-Arbeitsbranch:** keiner  
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
@@ -22,24 +22,25 @@
 - Keine erfundenen Klickwege oder Feldnamen. `CONFIRMED_WORKFLOWS.md` ist fachliche Source of Truth.
 - Berichtssuche bleibt fachlich offen / Draft. Issue #103 nicht durch erfundene Details schließen.
 
-## 2. Verbindlicher GitHub-Ablauf
+## 2. Verbindlicher GitHub-, Mobile- und Veröffentlichungsablauf
 
 1. Nie direkt auf `main` arbeiten.
 2. Änderungen über Branch + PR integrieren.
 3. Nur einen vollständig geprüften **exakten PR-Head** mergen.
 4. Bei Produkt-/Releaseänderungen müssen alle acht etablierten Pflichtworkflows auf genau diesem Head grün sein. Bei einem reinen Docs-only-Abschluss müssen alle für diesen exakten Head durch die vorhandenen Workflow-Pfadfilter tatsächlich ausgelösten Pflichtworkflows grün sein; nicht ausgelöste UI-Workflows werden nicht künstlich als fehlgeschlagen behandelt.
-5. Kein Auto-Merge und keine automatische Branch-Löschung.
-6. Bei Supabase-Änderungen zuerst Dry-Run in Transaktion mit Rollback; produktive Migration erst nach Merge.
-7. Nach Merge `main`, `gh-pages` und öffentlichen Build konkret prüfen.
-8. Gegenüber dem Nutzer nie `live` behaupten, solange `gh-pages` und der feste öffentliche Hauptlink nicht real verifiziert wurden.
-9. Sichtbare Versionsbezeichnungen in Actions/Tests/Statushinweisen aktuell halten; wo die Versionsnummer keinen fachlichen Nutzen hat, versionsneutral benennen.
+5. **Dauerhafte Nutzerregel: DokoHilf muss auf iPhone/iOS und Android gleichwertig funktionieren. Jede endnutzerwirksame Produkt-, UI-, Guide-, Sprach- oder Navigationsänderung wird auf beiden mobilen Plattformen geprüft. Wenn iPhone/iOS oder Android fehlschlägt, wird nicht gemergt oder veröffentlicht.**
+6. Kein Auto-Merge und keine automatische Branch-Löschung.
+7. Bei Supabase-Änderungen zuerst Dry-Run in Transaktion mit Rollback; produktive Migration erst nach Merge.
+8. Nach Merge `main`, `gh-pages` und den festen öffentlichen Stand konkret prüfen.
+9. Gegenüber dem Nutzer nie `live` behaupten, solange der veröffentlichte `gh-pages`-Stand nicht real verifiziert wurde.
+10. Sichtbare Versionsbezeichnungen in Actions/Tests/Statushinweisen aktuell halten; wo die Versionsnummer keinen fachlichen Nutzen hat, versionsneutral benennen.
 
 ## 3. Aktueller GitHub-/Release-Stand
 
 Live verifiziert am 10. August 2026:
 
-- Produkt-PR #120 **„Fix static short greeting catalog key on current main“** ist gemergt.
-- Exakter freigegebener PR-Head: `120707c06df10372e0b622bbb431480d4dbff86d`.
+- Produkt-PR #123 **„Regroup guide library into clear purpose areas“** ist gemergt.
+- Exakter freigegebener PR-Head: `95947cfeaed1bdf99d70ea8583dade9d38ac75eb`.
 - Alle acht Pflichtworkflows waren auf genau diesem Head erfolgreich:
   - Context and Voice Hotfix v28
   - Validate exact PR head
@@ -49,30 +50,53 @@ Live verifiziert am 10. August 2026:
   - Validate static voice iOS Android
   - Validate report conditional iOS Android
   - Deploy DokoHilf
-- Merge-Commit auf `main`: `5182aaf641222ca83b9d2c4e3e71f543afe0acb7`.
-- `gh-pages`-Publish-Commit: `2ea35851495d06fd5729c8ee3ac0d8417a4b7ce4` mit Nachricht `Publish DokoHilf 5182aaf641222ca83b9d2c4e3e71f543afe0acb7`.
-- `main/version.json` und `gh-pages/version.json` zeigen beide Build `20260809-36`.
-- Der ausgelieferte `gh-pages/assets/guide-audio-catalog.json` enthält als ersten statischen Sprachsatz **„Hey! Wobei brauchst du Hilfe?“** und verweist auf `assets/audio/guides/000.wav`.
-- Der erfolgreiche Release-Build erzeugte für Eintrag 0 denselben Text und denselben synthetisierten Satz `Hey! Wobei brauchst du Hilfe?`.
-- Der überholte PR #110 wurde nach erfolgreichem Ersatz durch #120 **geschlossen, nicht gemergt**. Sein Branch wurde nicht automatisch gelöscht.
+- Im vollständigen Deploy war insbesondere **„Render and interact with iOS and Android layouts“** erfolgreich.
+- Merge-Commit auf `main`: `960d8ce6c7aaf4570a6a36e49aa70aad6cae8e54`.
+- `main` und der veröffentlichte `gh-pages`-Stand enthalten das Bibliothekslayout `20260810-health-medicine-library-v37-1`.
+- `gh-pages/assets/ui-polish-v35.js` enthält die neue Gruppierung; die alte aktive Sammelgruppe „Weitere Bereiche“ ist entfernt.
+- `gh-pages/service-worker.js` enthält `LIBRARY_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1'`, damit installierte PWAs die neue Sortierung nachziehen.
+- Build-ID bleibt `20260809-36`; die Layoutänderung wird über die eigene PWA-Layoutrevision aktualisiert.
+- PR #120 mit dem kurzen statischen Sprachstart bleibt vollständig enthalten und veröffentlicht.
+- Der überholte PR #110 ist geschlossen und wurde nicht gemergt. Sein Branch wurde nicht automatisch gelöscht.
 - Offenes Fach-Issue #103 bleibt bewusst offen: Berichtssuche ist noch nicht final bestätigt.
 
-## 4. Abgeschlossener Fix: kurzer Sprachstart / statischer Katalogschlüssel
+## 4. Verbindliche Bibliotheksgruppierung
 
-Bestätigte Ursache vor PR #120:
+Die Ansicht **„Alle Anleitungen“** ist nicht mehr über die unspezifische Sammelgruppe „Weitere Bereiche“ sortiert. Aktuell gilt:
 
-- Die sichtbare und angeforderte Begrüßung lautete bereits **„Hey! Wobei brauchst du Hilfe?“**.
-- Der Supertonic-Builder wandelte den alten langen Begrüßungstext aber nur für die Synthese in den kurzen Satz um.
-- Im veröffentlichten Katalogschlüssel blieb dadurch der alte lange Text stehen, obwohl die zugehörige WAV-Datei den kurzen Satz sprach.
-- `assets/local-voice-gate-v28.js` indexiert statische WAVs anhand des veröffentlichten `entry.text`. Dadurch konnte die kurze Begrüßungsanfrage den vorhandenen Begrüßungseintrag verfehlen und die Sprachausgabe stumm beziehungsweise auf den neutralen statischen Fallback laufen.
+### Berichte
+- Bericht anlegen
+- Bericht korrigieren
+- Folgebericht erstellen
 
-Umsetzung in PR #120:
+### Gesundheit & Medizin
+- Visite anlegen
+- Visiten öffnen
+- Visitenstatus richtig setzen
+- Vitalwerte erfassen
+- Medikation ansehen
+- Notfallblatt öffnen
 
-- `scripts/build-supertonic-guide-audio-v28.py` verwendet für Zusammenführung, Normalisierung, Synthese und veröffentlichten Manifesttext denselben kanonischen Begrüßungstext.
-- Der Builder bricht ab, wenn die kurze Begrüßung im veröffentlichten statischen Katalog fehlt oder der alte lange Begrüßungstext als veröffentlichter Schlüssel übrig bleibt.
-- `tests/local-voice-v28.test.mjs` sichert diesen Vertrag als Regressionstest ab.
-- Keine fachlichen Klickwege wurden verändert.
-- Keine Supabase-Migration und kein Edge-Function-Deploy waren für diesen Fix erforderlich.
+### Organisation & Dokumente
+- An-/Abwesenheit
+- Formular anlegen
+- Stammdaten öffnen
+
+### Übergabe & Übersicht
+- Übergabe anzeigen / „Was war los?“
+
+### Durchführung
+- Durchführung stornieren
+- Durchführungsnachweis öffnen
+- Bedarfsmedikation dokumentieren
+- Wirksamkeitskontrolle
+- Maßnahmen ohne Zeitangabe
+
+### In Vorbereitung
+- fachlich noch nicht freigegebene Inhalte bleiben deutlich als später/in Vorbereitung gekennzeichnet.
+- Berichtssuche bleibt hier fachlich offen und darf nicht als fertiger Guide behandelt werden.
+
+Die Gruppierung verändert **keinen** bestätigten Klickweg und **keinen** Guide-Inhalt. Sie ist ausschließlich eine verständlichere Sortierung der vorhandenen Anleitungen.
 
 ## 5. Verbindliche Spracharchitektur
 
@@ -89,14 +113,7 @@ Umsetzung in PR #120:
 - Sprachstart im Sprechmodus: **„Hey! Wobei brauchst du Hilfe?“**
 - Der Supertonic-Build leitet die Gesamtzahl der WAV-Dateien aus allen kontrollierten Sprachkatalogen ab. Katalogzahl, WAV-Zahl und Build-Summary müssen exakt übereinstimmen.
 
-Kontrollierte Sprachquellen:
-- Basis-Katalog
-- feste Dialogsätze
-- Release-Sätze
-- Bedarfsmedikation / Wirksamkeitskontrolle / Maßnahmen ohne Zeitangabe
-- UI-Startsatz
-- grüne Navigationshierarchie
-- kontextuelle `stuck`-Hilfe
+Der kurze Sprachstart wurde in PR #120 korrigiert. `gh-pages/assets/guide-audio-catalog.json` verwendet dafür denselben veröffentlichten Textschlüssel wie die WAV-Datei.
 
 ## 6. Bestätigte Navigationshierarchie
 
@@ -125,33 +142,28 @@ Bei einer direkten Frage zur Wirksamkeitskontrolle nicht wieder bei der ursprün
 
 Doku oben → darunter Durchführungsnachweis → **kleiner Pfeil links neben „Maßnahmen ohne Zeitangabe“** → gewünschte Maßnahme wählen, zum Beispiel Klienten-Team Sitzung oder Krise → Pop-up-Fenster: Datum/Uhrzeit prüfen → Kategorie wählen → im großen Textfeld dokumentieren → optionale zusätzliche Zeitangabe oben rechts → unten OK.
 
-## 8. Aktueller Supabase-Stand
+## 8. Weitere harte Fachregeln
 
-Live geprüft am 10. August 2026 für ausschließlich Projekt `efifbuqctylsujiauabg`:
+- Visiten werden immer als **durchgeführt** dokumentiert, niemals als abgeschlossen.
+- Berichte werden nicht endgültig gelöscht, sondern nachvollziehbar durchgestrichen.
+- Falsch abgezeichnete Durchführungen werden im Durchführungsnachweis storniert.
+- Medikation ist ausschließlich ein Leseweg. Keine Änderung, Dosierung, Pause, Fortsetzung, Absetzung, Korrektur, Ergänzung oder Löschung anleiten.
+- Bei An- und Abwesenheiten wird `Von` immer eingetragen. `Bis` nur, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist; niemals schätzen.
+- Nicht bestätigte Formularfelder oder interne Abläufe werden nicht erfunden.
+
+## 9. Aktueller Supabase-Stand
+
+Letzter bestätigter Stand für ausschließlich Projekt `efifbuqctylsujiauabg`:
 
 - Projektstatus: `ACTIVE_HEALTHY`.
 - Öffentliche DokoHilf-Tabellen haben RLS aktiviert.
 - `dokohilf_guides` enthält ausschließlich allgemeine, unpersönliche Anleitungen; keine Konten, Profile oder Falldaten.
 - Security Advisor: keine offenen Lints.
 - Performance Advisor: ein reiner INFO-Hinweis auf den bisher ungenutzten Index `dokohilf_guide_versions_guide_version_idx`; kein akuter Fehler und deshalb nicht ungeprüft entfernen.
-- Aktuelle Edge-Function-Logs zeigten erfolgreiche `200`-Antworten von `dokohilf-ai-router` und `dokohilf-chat-router`.
-- Für PR #120 wurde **keine** Datenbankmigration und **kein** Funktionsdeploy ausgeführt.
+- Für PR #123 wurde **keine** Datenbankmigration und **kein** Edge-Function-Deploy ausgeführt.
 
-## 9. Nächster ausführbarer Schritt
+## 10. Nächster ausführbarer Schritt
 
-Der Greeting-Katalogfix ist technisch abgeschlossen und veröffentlicht. Der nächste sinnvolle Schritt ist ein realer iPhone-Praxistest des Sprachstarts und der wichtigsten Orientierungsfragen. Neue fachliche Klickwege nur übernehmen, wenn sie ausdrücklich bestätigt wurden und anschließend sofort in `CONFIRMED_WORKFLOWS.md` dokumentiert werden.
-
-## 10. Empfohlene reale iPhone-Tests
-
-- Sprechmodus starten → muss kurz **„Hey! Wobei brauchst du Hilfe?“** sprechen.
-- „Ich finde Doku-Erweitert nicht.“
-- „Wo finde ich Vitalwerte?“
-- „Wo ist Planung?“
-- „Wo finde ich Bedarfsmedikation?“
-- „Wie dokumentiere ich eine Bedarfsmedikation?“
-- „Wie dokumentiere ich die Wirksamkeitskontrolle?“
-- „Maßnahmen ohne Zeitangabe dokumentieren.“
-- Update-Hinweis auf Sichtdauer prüfen.
-- Version nur dezent ganz unten prüfen.
+Die Bibliotheksgruppierung aus PR #123 ist technisch abgeschlossen, auf iPhone/iOS und Android geprüft und auf `gh-pages` veröffentlicht. Der nächste sinnvolle Schritt ist ein realer Praxistest der neuen „Alle Anleitungen“-Sortierung auf den tatsächlichen Endgeräten. Neue fachliche Klickwege nur übernehmen, wenn sie ausdrücklich bestätigt wurden und anschließend sofort in `CONFIRMED_WORKFLOWS.md` dokumentiert werden.
 
 Diese Datei ist das dauerhafte Handoff, ersetzt aber nie die Live-Prüfung veränderlicher Zustände.
