@@ -27,7 +27,7 @@ Nach dem letzten bestätigten Schritt eines freigegebenen Guides darf der Chat n
 - `assets/routing-fix.js` routet die bisherigen AI-Endpunkte nach Veröffentlichung auf den Wrapper.
 - `assets/voice-completion-catalog-v40.json` katalogisiert alle neuen hörbaren Sätze.
 - Der bestehende Supertonic-Builder nimmt diesen Katalog in den statischen Releasebestand auf.
-- `tests/guide-completion-v40.test.mjs` deckt alle 40 freigegebenen Slugs, natürliche Folgefragen, gesperrte Ziele und statische Sprache ab und wird über `tests/greeting-routing.test.mjs` in die etablierte Pflichtsuite eingebunden.
+- `tests/guide-completion-v40.test.mjs` deckt alle 40 freigegebenen Slugs, natürliche Folgefragen, gesperrte Ziele und statische Sprache ab. Die etablierte Exact-Head-Suite führt `tests/*.test.mjs` direkt aus; der Completion-Test wird deshalb genau einmal als eigener Test geladen.
 
 ## Freigabe
 
