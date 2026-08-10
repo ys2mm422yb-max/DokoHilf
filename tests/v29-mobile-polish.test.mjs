@@ -57,6 +57,7 @@ test('typed chat fills the visual viewport and keeps minimum mobile touch target
   assert.match(polish, /data-mode="chat"\] \.main-content\{[\s\S]*min-height:0!important;[\s\S]*overflow-y:auto!important/);
   assert.match(polish, /\.composer-wrap\{[\s\S]*position:relative!important;[\s\S]*flex:0 0 auto!important/);
   assert.doesNotMatch(polish, /\.composer-wrap\{[^}]*position:sticky!important/);
+  assert.match(polish, /data-mode="chat"\]\[data-v35-chat-started="true"\] \.workspace:not\(\[hidden\]\) \.conversation\{margin-top:auto!important\}/);
   assert.match(polish, /\.composer\{gap:5px!important;padding:3px!important/);
   assert.match(polish, /\.composer textarea\{[\s\S]*min-height:44px!important;[\s\S]*font-size:16px!important/);
   assert.doesNotMatch(polish, /\.composer textarea\{[^}]*font-size:15px!important/);
