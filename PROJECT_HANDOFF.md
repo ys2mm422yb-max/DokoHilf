@@ -2,8 +2,8 @@
 
 **Status:** verbindliche Arbeitsquelle  
 **Stand:** 10. August 2026  
-**Aktueller Releaseblock:** `v29` / Build `20260809-36` / Bibliothekslayout `20260810-health-medicine-library-v37-1` / Chat-UI `20260810-mobile-chat-viewport-v38-1`  
-**Letzter abgeschlossener Produkt-PR:** `#128`  
+**Aktueller Releaseblock:** `v29` / Build `20260809-36` / Bibliothekslayout `20260810-health-medicine-library-v37-1` / Chat-UI `20260810-mobile-chat-viewport-v38-1` / Routing `20260810-natural-guide-routing-v39-1`  
+**Letzter abgeschlossener Produkt-PR:** `#130`  
 **Aktiver Produkt-Arbeitsbranch:** keiner  
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
@@ -37,10 +37,10 @@
 
 ## 3. Aktueller GitHub-/Release-Stand
 
-Live auf Repository- und `gh-pages`-Ebene verifiziert am 10. August 2026:
+Live auf Repository-, Supabase- und `gh-pages`-Ebene verifiziert am 10. August 2026:
 
-- Produkt-PR #128 **„Stabilize mobile chat viewport and keyboard UX“** ist gemergt.
-- Exakter freigegebener PR-Head: `4abcb5f617855e24c957abd5c655ccf7a0d3ef5c`.
+- Produkt-PR #130 **„Route natural chat questions to concrete guides“** ist gemergt.
+- Exakter freigegebener PR-Head: `0eb5fd3cebfc7d5d3f81a8ee7d655f95e192366c`.
 - Alle acht Pflichtworkflows waren auf genau diesem Head erfolgreich:
   - Context and Voice Hotfix v28
   - Validate exact PR head
@@ -50,19 +50,49 @@ Live auf Repository- und `gh-pages`-Ebene verifiziert am 10. August 2026:
   - Validate static voice iOS Android
   - Validate report conditional iOS Android
   - Deploy DokoHilf
-- Im vollständigen Deploy war **„Render and interact with iOS and Android layouts“** erfolgreich.
-- Merge-Commit auf `main`: `73e22cc249db8bb9c17ecd6c8af2a377d6998711`.
-- `main/assets/mobile-polish-v29.js` und `gh-pages/assets/mobile-polish-v29.js` enthalten `CHAT_VIEWPORT_REVISION = '20260810-mobile-chat-viewport-v38-1'`.
-- `main/service-worker.js` und `gh-pages/service-worker.js` enthalten `CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1'`.
-- Die finale Mobile-Schicht verwendet für das Chat-Textarea `font-size:16px!important`; die frühere wirksame 15-px-Regel ist dort entfernt.
-- Der automatisierte Browser-Render misst auf iOS und Android 16 px berechnete Eingabeschrift, einen Composer direkt am sichtbaren unteren Chat-Rand und keinen ungefragten Fokus beim Chat-Einstieg.
-- Die Bibliotheksgruppierung aus PR #123 bleibt vollständig enthalten und veröffentlicht.
-- Die verbindliche iPhone-/Android-Freigaberegel aus PR #125 bleibt vollständig enthalten.
-- Der kurze statische Sprachstart aus PR #120 bleibt vollständig enthalten und veröffentlicht.
+- Im vollständigen Deploy waren insbesondere **„Render and interact with iOS and Android layouts“** und **„Check active DokoHilf router“** erfolgreich.
+- Merge-Commit auf `main`: `2332abbfb1d09555f084d05f64aa699cf3398a82`.
+- `main/assets/routing-fix.js` und `gh-pages/assets/routing-fix.js` enthalten `ROUTING_REVISION = '20260810-natural-guide-routing-v39-1'` und führen alte `dokohilf-ai*`-Requests zum `dokohilf-chat-router`.
+- `main/service-worker.js` und `gh-pages/service-worker.js` enthalten dieselbe Routing-Revision, damit der neue Router-Patch über den PWA-Updateweg ausgeliefert wird.
+- Der Live-Router-Test enthält den real gemeldeten Satz **„Wie lege ich eine Visite an?“** und erwartet den freigegebenen Guide `visite-anlegen`, Schritt 1, mit kurzer Antwort statt allgemeinem Themenblock.
+- Supabase-Migration `shorten_visiten_topic_after_routing_v39` ist nach vorherigem Transaktions-Dry-Run produktiv angewendet.
+- Der allgemeine Themenblock `visiten` ist jetzt kurz und verweist nicht mehr fälschlich darauf, dass nur der Einstieg bestätigt sei.
+- `visite-anlegen` bleibt in Supabase `approved`, Version 11; Schritt 1 lautet weiterhin **„Öffne „Doku-Erweitert“ und wähle „Visiten“.“**, Schritt 2 **„Klicke oben links auf das grüne Plus beziehungsweise „Neu“.“**.
+- Supabase Security Advisor: keine offenen Lints nach der Migration.
+- Chat-UI v38 aus PR #128 bleibt vollständig enthalten und veröffentlicht.
+- Die Bibliotheksgruppierung aus PR #123, die iPhone-/Android-Freigaberegel aus PR #125 und der kurze statische Sprachstart aus PR #120 bleiben vollständig enthalten und veröffentlicht.
 - Der überholte PR #110 ist geschlossen und wurde nicht gemergt. Sein Branch wurde nicht automatisch gelöscht.
 - Offenes Fach-Issue #103 bleibt bewusst offen: Berichtssuche ist noch nicht final bestätigt.
 
-## 4. Mobiler Chat: Tastatur, sichtbarer Viewport und aktive Unterhaltung
+## 4. Schreib-Chat: natürliche Bedienfragen und konkrete Guides
+
+### Fehlerbild vor PR #130
+
+Ein realer iPhone-Test zeigte bei **„Wie lege ich eine Visite an?“** einen langen allgemeinen Visiten-Text statt der vorhandenen Schritt-für-Schritt-Anleitung. Die Oberfläche war dabei korrekt; die Antwortlogik war falsch.
+
+### Bestätigte Ursache
+
+- Der freigegebene Guide `visite-anlegen` war bereits vollständig vorhanden.
+- Die Router erkannten hauptsächlich Grundformen wie `anlegen`, `eintragen`, `dokumentieren`.
+- Natürliche deutsche Formulierungen mit konjugierten oder trennbaren Verben wie **„lege … an“**, **„trage … ein“** oder **„rufe … auf“** konnten deshalb am konkreten Guide vorbeifallen.
+- Bei einem solchen Fehlrouting konnte die allgemeine Themenantwort aus `dokohilf_topics` zurückgegeben werden.
+- Der Visiten-Themenblock enthielt zusätzlich eine veraltete Aussage, wonach nur das Öffnen des Visitenbereichs bestätigt sei, obwohl der komplette `visite-anlegen`-Guide inzwischen freigegeben war.
+
+### Verbindlicher Fix ab PR #130
+
+- `assets/routing-fix.js` erkennt eindeutige natürliche deutsche Aktionsformulierungen und setzt nur für **bereits freigegebene konkrete Guides** einen `selectedGuideSlug`.
+- Der sichtbare Nutzersatz wird dadurch nicht umformuliert; die Erkennung dient nur dem Routing.
+- Alte AI-Endpunkte werden im produktiven Browserpfad direkt zum bestehenden `dokohilf-chat-router` geführt.
+- Abgedeckte natürliche Aktionsformen umfassen unter anderem `lege … an`, `trage … ein`, `erstelle`, `dokumentiere`, `erfasse`, `öffne`, `rufe … auf`, `sehe … an`.
+- Mehrdeutige Vitalwert-Fragen werden **nicht** lokal erzwungen; die bestehende Auswahl Einzelwert/Sammelerfassung bleibt zuständig.
+- Medikationsänderungen werden **nicht** lokal geroutet; die verbindliche View-only-Sicherheitslogik bleibt zuständig.
+- Easy-Plan wird nicht lokal erzwungen, solange der genaue fachliche Ablauf offen ist.
+- Ein bereits aktiver Guide wird durch die neue lokale Erkennung nicht ungefragt überschrieben.
+- Die Regressionstests sperren diese Grenzen und den exakten Visiten-Satz dauerhaft ab.
+
+Für **„Wie lege ich eine Visite an?“** muss DokoHilf damit direkt den Guide `visite-anlegen` starten und mit dem bestätigten ersten Schritt beginnen, statt allgemeine Möglichkeiten oder interne Freigabehinweise aufzuzählen.
+
+## 5. Mobiler Chat: Tastatur, sichtbarer Viewport und aktive Unterhaltung
 
 ### Fehlerkette vor PR #128
 
@@ -101,13 +131,11 @@ Der Release-Render prüft den Chat nicht mehr nur über Quelltextmarker, sondern
 - die beiden Schrittbuttons tragen die bestätigten neuen UI-Beschriftungen
 - keine Console- oder Page-Fehler im finalen Render
 
-Diese UX-Änderung verändert **keinen** fachlichen Guide, **keinen** bestätigten Klickweg, **kein** Routing und **keine** Supabase-Inhalte.
-
 ### Noch sinnvoller echter Gerätetest
 
 Die CI simuliert iPhone- und Android-Viewport, Touch und Interaktionen, aber keine physisch eingeblendete iOS-Systemtastatur. Deshalb bleibt ein kurzer Praxistest auf einem echten iPhone sinnvoll: Eingabefeld fokussieren → Tastatur öffnen → Text schreiben → Tastatur schließen → prüfen, dass Skalierung, unterer Composer und Scrollposition stabil bleiben. Das ist ein QA-Test, kein derzeit bekannter offener Produktfehler.
 
-## 5. Verbindliche Bibliotheksgruppierung
+## 6. Verbindliche Bibliotheksgruppierung
 
 Die Ansicht **„Alle Anleitungen“** ist nicht mehr über die unspezifische Sammelgruppe „Weitere Bereiche“ sortiert. Aktuell gilt:
 
@@ -145,7 +173,7 @@ Die Ansicht **„Alle Anleitungen“** ist nicht mehr über die unspezifische Sa
 
 Die Gruppierung verändert **keinen** bestätigten Klickweg und **keinen** Guide-Inhalt. Sie ist ausschließlich eine verständlichere Sortierung der vorhandenen Anleitungen.
 
-## 6. Verbindliche Spracharchitektur
+## 7. Verbindliche Spracharchitektur
 
 `STATIC_VOICE_POLICY.md` ist verbindlich.
 
@@ -162,7 +190,7 @@ Die Gruppierung verändert **keinen** bestätigten Klickweg und **keinen** Guide
 
 Der kurze Sprachstart wurde in PR #120 korrigiert. `gh-pages/assets/guide-audio-catalog.json` verwendet dafür denselben veröffentlichten Textschlüssel wie die WAV-Datei.
 
-## 7. Bestätigte Navigationshierarchie
+## 8. Bestätigte Navigationshierarchie
 
 - Ganz oben befindet sich die **feste grüne Hauptleiste**.
 - Bestätigte Hauptbereiche dort: **Berichte, Doku, Doku-Erweitert, Planung, Analyse**.
@@ -173,7 +201,7 @@ Der kurze Sprachstart wurde in PR #120 korrigiert. `gh-pages/assets/guide-audio-
 - **Planung** als Hauptbereich ist bestätigt; der genaue Easy-Plan-Ablauf bleibt offen.
 - Orientierung muss bei „Ich finde X nicht“ eine Ebene zurück erklären und darf nicht nur denselben Schritt wiederholen.
 
-## 8. Bestätigte Durchführung-Abläufe
+## 9. Bestätigte Durchführung-Abläufe
 
 ### Bedarfsmedikation dokumentieren
 
@@ -189,7 +217,7 @@ Bei einer direkten Frage zur Wirksamkeitskontrolle nicht wieder bei der ursprün
 
 Doku oben → darunter Durchführungsnachweis → **kleiner Pfeil links neben „Maßnahmen ohne Zeitangabe“** → gewünschte Maßnahme wählen, zum Beispiel Klienten-Team Sitzung oder Krise → Pop-up-Fenster: Datum/Uhrzeit prüfen → Kategorie wählen → im großen Textfeld dokumentieren → optionale zusätzliche Zeitangabe oben rechts → unten OK.
 
-## 9. Weitere harte Fachregeln
+## 10. Weitere harte Fachregeln
 
 - Visiten werden immer als **durchgeführt** dokumentiert, niemals als abgeschlossen.
 - Berichte werden nicht endgültig gelöscht, sondern nachvollziehbar durchgestrichen.
@@ -198,20 +226,24 @@ Doku oben → darunter Durchführungsnachweis → **kleiner Pfeil links neben �
 - Bei An- und Abwesenheiten wird `Von` immer eingetragen. `Bis` nur, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist; niemals schätzen.
 - Nicht bestätigte Formularfelder oder interne Abläufe werden nicht erfunden.
 
-## 10. Aktueller Supabase-Stand
+## 11. Aktueller Supabase-Stand
 
 Letzter bestätigter Stand für ausschließlich Projekt `efifbuqctylsujiauabg`:
 
-- Projektstatus: `ACTIVE_HEALTHY`.
+- Projektstatus zuletzt `ACTIVE_HEALTHY`.
 - Öffentliche DokoHilf-Tabellen haben RLS aktiviert.
 - `dokohilf_guides` enthält ausschließlich allgemeine, unpersönliche Anleitungen; keine Konten, Profile oder Falldaten.
-- Security Advisor: keine offenen Lints.
-- Performance Advisor: ein reiner INFO-Hinweis auf den bisher ungenutzten Index `dokohilf_guide_versions_guide_version_idx`; kein akuter Fehler und deshalb nicht ungeprüft entfernen.
-- Für PR #123, #125, #126 und #128 wurde **keine** Datenbankmigration und **kein** Edge-Function-Deploy ausgeführt.
+- `visite-anlegen` ist `approved`, Version 11, und der bestätigte vollständige Ablauf bleibt unverändert.
+- `dokohilf_topics.visiten` wurde nach PR #130 mit Migration `shorten_visiten_topic_after_routing_v39` an die inzwischen freigegebenen Detailguides angepasst; der veraltete Hinweis auf angeblich unbestätigte Detailwege ist entfernt.
+- Security Advisor: keine offenen Lints nach der Migration.
+- Performance Advisor hatte zuletzt nur den INFO-Hinweis auf den bisher ungenutzten Index `dokohilf_guide_versions_guide_version_idx`; kein akuter Fehler und deshalb nicht ungeprüft entfernen.
+- Für PR #123, #125, #126 und #128 wurde keine Datenbankmigration und kein Edge-Function-Deploy ausgeführt. PR #130 enthält ausschließlich die oben dokumentierte allgemeine Visiten-Themenmigration; kein Edge-Function-Deploy war nötig.
 
-## 11. Nächster ausführbarer Schritt
+## 12. Nächster ausführbarer Schritt
 
-Chat-UI v38 aus PR #128 ist technisch abgeschlossen, auf iPhone/iOS und Android im Browser-Render geprüft und auf `gh-pages` veröffentlicht. Der nächste sinnvolle Schritt ist ein kurzer echter Gerätetest mit geöffneter Bildschirmtastatur auf iPhone und Android. Nur wenn dabei noch ein reproduzierbarer Layoutfehler sichtbar wird, wird die Viewport-Härtung weiter angepasst; nicht auf Verdacht.
+Routing v39 aus PR #130 ist technisch abgeschlossen, auf iPhone/iOS und Android geprüft, mit dem konkreten real gemeldeten Visiten-Satz im Live-Router-Test abgesichert und auf `gh-pages` veröffentlicht. Sinnvoll ist jetzt ein echter Praxistest im Schreib-Chat mit **„Wie lege ich eine Visite an?“**. Erwartet wird direkt der bestätigte Schritt 1 des Guides und anschließend die normale schrittweise Führung – keine allgemeine Visiten-Textwand.
+
+Für die mobile Oberfläche bleibt zusätzlich der kurze echte Gerätetest mit geöffneter Bildschirmtastatur sinnvoll. Nur reproduzierbare Restfehler werden weiter angepasst; nicht auf Verdacht.
 
 Neue fachliche Klickwege nur übernehmen, wenn sie ausdrücklich bestätigt wurden und anschließend sofort in `CONFIRMED_WORKFLOWS.md` dokumentiert werden.
 
