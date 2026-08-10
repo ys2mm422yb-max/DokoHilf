@@ -12,6 +12,7 @@ EXPECTED_SOURCE_COUNTS = {
     'ui': 1,
     'navigation': 17,
     'context': 10,
+    'completion': 44,
 }
 
 LONG_VOICE_GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.'
@@ -147,6 +148,7 @@ def main() -> None:
     parser.add_argument('--ui-catalog', default='assets/voice-ui-catalog-v29.json')
     parser.add_argument('--navigation-catalog', default='assets/voice-navigation-catalog-v29.json')
     parser.add_argument('--context-catalog', default='assets/voice-context-help-catalog-v29.json')
+    parser.add_argument('--completion-catalog', default='assets/voice-completion-catalog-v40.json')
     parser.add_argument('--output-root', default='assets/audio/guides')
     parser.add_argument('--voice', default='F1')
     parser.add_argument('--steps', type=int, default=8)
@@ -164,6 +166,7 @@ def main() -> None:
         'ui': load_catalog(args.ui_catalog),
         'navigation': load_catalog(args.navigation_catalog),
         'context': load_catalog(args.context_catalog),
+        'completion': load_catalog(args.completion_catalog),
     }
 
     source_counts = {name: len(catalog.get('entries') or []) for name, catalog in catalogs.items()}
