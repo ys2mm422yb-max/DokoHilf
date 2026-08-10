@@ -1,6 +1,7 @@
 const BUILD_ID = '20260809-36';
 const HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3';
 const LIBRARY_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1';
+const CHAT_UI_REVISION = '20260810-ios-keyboard-chat-v37-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
@@ -80,6 +81,7 @@ self.addEventListener('activate', event => {
         buildId: BUILD_ID,
         hotfixRevision: HOTFIX_REVISION,
         libraryLayoutRevision: LIBRARY_LAYOUT_REVISION,
+        chatUiRevision: CHAT_UI_REVISION,
         hardRefresh: true,
       });
     }
@@ -89,13 +91,24 @@ self.addEventListener('activate', event => {
 self.addEventListener('message', event => {
   if (event.data?.type === 'SKIP_WAITING') return void self.skipWaiting();
   if (event.data?.type === 'GET_BUILD_ID') {
-    event.ports?.[0]?.postMessage({ buildId: BUILD_ID, hotfixRevision: HOTFIX_REVISION, libraryLayoutRevision: LIBRARY_LAYOUT_REVISION });
+    event.ports?.[0]?.postMessage({
+      buildId: BUILD_ID,
+      hotfixRevision: HOTFIX_REVISION,
+      libraryLayoutRevision: LIBRARY_LAYOUT_REVISION,
+      chatUiRevision: CHAT_UI_REVISION,
+    });
   }
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
     event.waitUntil((async () => {
       const keys = await caches.keys();
       await Promise.all(keys.filter(key => key.startsWith('dokohilf-')).map(key => caches.delete(key)));
-      event.ports?.[0]?.postMessage({ cleared: true, buildId: BUILD_ID, hotfixRevision: HOTFIX_REVISION, libraryLayoutRevision: LIBRARY_LAYOUT_REVISION });
+      event.ports?.[0]?.postMessage({
+        cleared: true,
+        buildId: BUILD_ID,
+        hotfixRevision: HOTFIX_REVISION,
+        libraryLayoutRevision: LIBRARY_LAYOUT_REVISION,
+        chatUiRevision: CHAT_UI_REVISION,
+      });
     })());
   }
 });

@@ -1,4 +1,9 @@
-/* DokoHilf v29 build 35: focused mobile UI polish */
+/* DokoHilf v29 build 37: focused mobile UI, library and chat polish */
+
+html[data-dokohilf-ui="v29"]{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
 
 html[data-dokohilf-ui="v29"] .mode-switch button{
   display:flex!important;
@@ -67,8 +72,9 @@ html[data-dokohilf-ui="v29"] .mode-switch button{
   letter-spacing:.035em;
 }
 .v29-library-card[data-v35-group="reports"]>.v29-guide-icon,
-.v29-library-card[data-v35-group="visits-values"]>.v29-guide-icon,
-.v29-library-card[data-v35-group="more"]>.v29-guide-icon,
+.v29-library-card[data-v35-group="health-medicine"]>.v29-guide-icon,
+.v29-library-card[data-v35-group="organization-documents"]>.v29-guide-icon,
+.v29-library-card[data-v35-group="handover-overview"]>.v29-guide-icon,
 .v29-library-card[data-v35-group="execution"]>.v29-guide-icon{
   border-radius:12px;
 }
@@ -89,6 +95,36 @@ html[data-dokohilf-ui="v29"] .mode-switch button{
 .v29-library-card.is-later>b{
   background:rgba(224,194,112,.085);
   color:#cfbd86;
+}
+
+/* Mobile chat: iOS Safari zooms focused form controls below 16px. Keep the
+   composer at >=16px and let the text field shrink instead of pushing actions
+   outside the visual viewport when the software keyboard opens. */
+html[data-dokohilf-ui="v29"] .composer-wrap{
+  overflow-x:clip!important;
+}
+html[data-dokohilf-ui="v29"] .composer{
+  min-width:0!important;
+}
+html[data-dokohilf-ui="v29"] .composer textarea{
+  min-width:0!important;
+  font-size:16px!important;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+html[data-dokohilf-ui="v29"] .composer .small-mic,
+html[data-dokohilf-ui="v29"] .composer .send-button{
+  flex:0 0 auto!important;
+}
+
+/* Once the user has started a conversation, the large starter card and
+   technical footer no longer compete with the actual chat on small screens. */
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"][data-v35-chat-started="true"] .chat-head,
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"][data-v35-chat-started="true"] .footer-version-wrap{
+  display:none!important;
+}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"][data-v35-chat-started="true"] .conversation{
+  margin-top:2px!important;
 }
 
 html[data-dokohilf-ui="v29"] .legal-note{

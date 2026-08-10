@@ -5,6 +5,7 @@
   window.__DOKOHILF_UI_POLISH_V35__ = true;
 
   const GROUP_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1';
+  const CHAT_UI_REVISION = '20260810-ios-keyboard-chat-v37-1';
   // Historische Bezeichnungen nur als inerte Regression-Kompatibilität: Visiten & Vitalwerte / Weitere Bereiche.
   const GROUPS = Object.freeze([
     {
@@ -71,6 +72,14 @@
       const desired = `<span class="v35-mode-icon">${icon}</span><span>${label}</span>`;
       if (button.innerHTML !== desired) button.innerHTML = desired;
     }
+  }
+
+  function syncChatState() {
+    const app = document.getElementById('appShell');
+    if (!app) return;
+    const started = Boolean(document.querySelector('#messages > .message.user'));
+    const desired = started ? 'true' : 'false';
+    if (app.dataset.v35ChatStarted !== desired) app.dataset.v35ChatStarted = desired;
   }
 
   function sectionNode(group) {
@@ -157,6 +166,7 @@
   function sync() {
     scheduled = false;
     polishModeSwitch();
+    syncChatState();
     decorateLibrary();
   }
 
@@ -177,9 +187,11 @@
 
   window.DokoHilfUiPolishV35 = {
     sync,
+    syncChatState,
     decorateLibrary,
     polishModeSwitch,
     groupLayoutRevision: GROUP_LAYOUT_REVISION,
+    chatUiRevision: CHAT_UI_REVISION,
     getGroups: () => GROUPS.map(group => ({ ...group, slugs: [...group.slugs] })),
   };
 })();
