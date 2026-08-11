@@ -172,21 +172,64 @@ Fachliche Bedeutung:
 
 Der Zähler ist kein Nutzertracking und darf nicht zu einer Geräte- oder Nutzerwiedererkennung erweitert werden.
 
-## 10. Aktueller Supabase-Stand
+## 10. Technische Architektur- und Supabase-Anker
 
-Letzter bestätigter Stand für ausschließlich Projekt `efifbuqctylsujiauabg`:
+Die folgenden technischen Anker bleiben bewusst wörtlich dokumentiert, weil sie Bestandteil der etablierten DokoHilf-Regressions- und Übergabeverträge sind.
 
-- Projekt produktiv erreichbar.
-- Allgemeine DokoHilf-Tabellen mit erforderlicher RLS.
-- 40 freigegebene Guides im zuletzt bestätigten Guidebestand; v40-Completion-Contract deckt die freigegebenen Slugs ab.
-- `dokohilf-conversation-router` produktiv aktiv vor `dokohilf-chat-router`.
-- `dokohilf-usage-counter` produktiv aktiv.
-- `dokohilf_usage_counters` / `dokohilf_usage_summary` ausschließlich technische private Reichweitenmessung.
-- `anon` und `authenticated` dürfen diese Statistik weder lesen noch inkrementieren.
-- Security Advisor nach PR #136: 0 Lints.
-- Performance Advisor: nur INFO zum bisher ungenutzten Index `dokohilf_guide_versions_guide_version_idx`; nicht ungeprüft entfernen.
+**Aktive Supabase-Funktion:** `dokohilf-conversation-router`, zuletzt bestätigter v40-Stand Version 2, Status `ACTIVE`, `verify_jwt=false`.  
+**Aktiver Basisrouter:** `dokohilf-chat-router`, zuletzt bestätigter v40-Stand Version 16, Status `ACTIVE`, `verify_jwt=false`.  
+**Aktiver Core-Router:** `dokohilf-ai` als bestehender privater Core-Pfad.  
+**Aktueller Datenbankstand:** `natural_path_routing_v39` plus produktive private Reichweitenmessung v41.  
+**Supabase Security:** Security Advisor nach v41 / PR #136 ohne offene Lints.  
+**Offenes fachliches Issue:** `#103` Berichtssuche.
 
-Veränderliche Werte wie aktuelle Seitenaufrufe oder Function-Versionen bei Bedarf live prüfen.
+### Supabase-Architektur
+
+Im zuletzt bestätigten v40-/v41-Stand bestehen die etablierten Router-/AI-Pfade plus der technische Reichweitenzähler:
+
+1. `dokohilf-conversation-router` – öffentlicher kontenfreier Wrapper, `verify_jwt=false`.
+2. `dokohilf-chat-router` – öffentlicher Basisrouter, `verify_jwt=false`.
+3. `dokohilf-ai` – bestehender privater Core-Pfad.
+4. `dokohilf-usage-counter` – technischer, origin-beschränkter Seitenaufruf-Endpunkt; gibt keine öffentlichen Statistikwerte aus.
+
+Der zuletzt bestätigte Guide-Datenstand vor der v41-Reichweitenänderung war:
+
+- `dokohilf_guides`: **45 Zeilen insgesamt, 40 `approved`, 5 `draft`**;
+- alle 40 freigegebenen Guide-Slugs werden vom v40-Completion-Contract abgedeckt;
+- `dokohilf_guide_versions`: **42 Archivzeilen** im zuletzt bestätigten v40-Stand;
+- `auth.users = 0`;
+- keine DokoHilf-Cronjobs;
+- interner Build-Schalter `false`.
+
+Die v41-Reichweitenänderung verändert keine Guides und ergänzt ausschließlich technische Statistikobjekte:
+
+- `public.dokohilf_usage_counters`;
+- `public.dokohilf_usage_summary`;
+- `public.dokohilf_increment_page_view()`;
+- Edge Function `dokohilf-usage-counter`.
+
+Für diese Statistik gilt:
+
+- `anon` und `authenticated` dürfen weder Counter noch Summary lesen;
+- `anon` und `authenticated` dürfen den Increment-RPC nicht ausführen;
+- explizite RLS-Deny-All-Policy plus REVOKEs bleiben aktiv;
+- Security Advisor nach PR #136: **0 Lints**;
+- Performance Advisor zuletzt nur INFO zum ungenutzten Index `dokohilf_guide_versions_guide_version_idx`; nicht ohne neue Evidenz entfernen.
+
+Veränderliche Werte wie aktuelle Seitenaufrufe oder spätere Function-Versionen werden bei Bedarf live geprüft.
+
+### Kanonische technische Quellen
+
+Die folgenden Pfade bleiben als Architekturanker erhalten:
+
+- `assets/conversation-router-v40.ts`
+- `assets/voice-completion-catalog-v40.json`
+- `supabase/functions/dokohilf-conversation-router/index.ts`
+- `tests/guide-completion-v40.test.mjs`
+- `scripts/build-supertonic-guide-audio-v28.py`
+- `supabase/functions/dokohilf-usage-counter/index.ts`
+- `supabase/migrations/20260811225800_private_usage_metrics_v41.sql`
+- `USAGE_METRICS.md`
 
 ## 11. Offene fachliche Punkte
 
