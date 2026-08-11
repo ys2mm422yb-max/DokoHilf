@@ -1,5 +1,5 @@
 const BUILD_ID = '20260809-36';
-const HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3';
+const HOTFIX_REVISION = '20260811-private-usage-metrics-v41-1';
 const LIBRARY_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1';
 const CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1';
 const ROUTING_REVISION = '20260810-natural-guide-completions-v40-1';
