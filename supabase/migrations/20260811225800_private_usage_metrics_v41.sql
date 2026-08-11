@@ -14,7 +14,7 @@ comment on column public.dokohilf_usage_counters.page_views is
 
 alter table public.dokohilf_usage_counters enable row level security;
 revoke all on table public.dokohilf_usage_counters from public, anon, authenticated;
-grant select, insert, update on table public.dokohilf_usage_counters to service_role;
+grant select, insert, update, delete on table public.dokohilf_usage_counters to service_role;
 
 create or replace function public.dokohilf_increment_page_view()
 returns void
@@ -23,7 +23,9 @@ security invoker
 set search_path = public
 as $$
 declare
-  day_bucket text := to_char(timezone('Europe/Berlin', now()), 'YYYY-MM-DD');
+  berlin_today date := timezone('Europe/Berlin', now())::date;
+  day_bucket text := to_char(berlin_today, 'YYYY-MM-DD');
+  oldest_kept_bucket text := to_char(berlin_today - 399, 'YYYY-MM-DD');
 begin
   insert into public.dokohilf_usage_counters (bucket, page_views)
   values ('all', 1)
@@ -34,11 +36,15 @@ begin
   values (day_bucket, 1)
   on conflict (bucket) do update
     set page_views = public.dokohilf_usage_counters.page_views + 1;
+
+  delete from public.dokohilf_usage_counters
+  where bucket <> 'all'
+    and bucket < oldest_kept_bucket;
 end;
 $$;
 
 comment on function public.dokohilf_increment_page_view() is
-  'Atomically increments only anonymous aggregate DokoHilf page-view counters; callable only with service_role.';
+  'Atomically increments only anonymous aggregate DokoHilf page-view counters and removes daily buckets older than 400 calendar days; callable only with service_role.';
 revoke all on function public.dokohilf_increment_page_view() from public, anon, authenticated;
 grant execute on function public.dokohilf_increment_page_view() to service_role;
 
