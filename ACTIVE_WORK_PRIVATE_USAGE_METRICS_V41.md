@@ -79,10 +79,16 @@ DDL-Dry-Run wurde vollständig in einer Transaktion mit `ROLLBACK` ausgeführt:
 - ein künstlicher alter Tagesbucket wurde durch die 400-Tage-Retention entfernt;
 - nach `ROLLBACK` waren Tabelle, View und Funktion produktiv weiterhin nicht vorhanden.
 
+### GitHub-Freigabe
+
+Auf PR-Head `562629fed82993ace0d1ccede4ae3e72c631479d` waren sieben der acht Pflichtworkflows erfolgreich, darunter Exact Head, Datenschutz-/Fachtests sowie iOS- und Android-Prüfungen. Nur `Deploy DokoHilf` blieb nach allen vorherigen grünen Schritten ungewöhnlich lange im unveränderten Pflichtschritt `Generate all confirmed static speech with Supertonic` aktiv. Der unmittelbar vorherige erfolgreiche Release benötigte für denselben Sprachbuild knapp vier Minuten; dieser Lauf überschritt das deutlich ohne Fehlermeldung oder Fortschrittsdaten.
+
+Da `pages.yml` pro PR `cancel-in-progress: true` verwendet, wird dieser Status-Commit bewusst als sauberer neuer exakter PR-Head genutzt. Dadurch beendet GitHub den festhängenden alten Deploylauf und startet die vollständige Freigabe erneut, ohne Produkt-, Datenschutz- oder Sprachlogik zu verändern.
+
 ## Noch erforderlich
 
-1. Exakten PR-#135-Head feststellen.
-2. Alle durch die Änderung erforderlichen Pflichtworkflows auf exakt diesem Head grün prüfen; als Produktänderung gilt weiterhin die iOS-/Android-Freigaberegel.
+1. Neuen exakten PR-#135-Head feststellen.
+2. Alle acht Pflichtworkflows auf exakt diesem Head grün prüfen; als Produktänderung gilt weiterhin die iOS-/Android-Freigaberegel.
 3. Erst danach manuell mergen.
 4. Produktive Supabase-Migration erst nach Merge anwenden.
 5. Edge Function erst nach Merge produktiv deployen.
