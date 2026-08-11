@@ -98,7 +98,9 @@ test('private Reichweitenmessung zählt nur anonyme Aggregate ohne Gerätewieder
   assert.match(usageMigration, /page_views bigint not null/);
   assert.match(usageMigration, /alter table public\.dokohilf_usage_counters enable row level security/);
   assert.match(usageMigration, /revoke all on table public\.dokohilf_usage_counters from public, anon, authenticated/);
-  assert.match(usageMigration, /grant select, insert, update on table public\.dokohilf_usage_counters to service_role/);
+  assert.match(usageMigration, /grant select, insert, update, delete on table public\.dokohilf_usage_counters to service_role/);
+  assert.match(usageMigration, /oldest_kept_bucket text := to_char\(berlin_today - 399/);
+  assert.match(usageMigration, /delete from public\.dokohilf_usage_counters/);
   assert.match(usageMigration, /security invoker/);
   assert.doesNotMatch(usageMigration, /security definer/);
   assert.match(usageMigration, /with \(security_invoker = true\)/);
@@ -107,4 +109,5 @@ test('private Reichweitenmessung zählt nur anonyme Aggregate ohne Gerätewieder
   assert.match(supabaseConfig, /\[functions\.dokohilf-usage-counter\]\s+verify_jwt = false/);
   assert.match(projectRules, /anonyme aggregierte Reichweitenmessung/i);
   assert.match(projectRules, /keine Gerätekennung/i);
+  assert.match(projectRules, /höchstens 400 Kalendertage/i);
 });
