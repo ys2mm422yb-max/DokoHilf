@@ -3,11 +3,16 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { routingCases } from './fixtures/routing-fixtures.mjs';
 
-const [app, router, aiCore, tts] = await Promise.all([
+const [app, router, aiCore, tts, releasePolish, usageCounter, usageMigration, supabaseConfig, projectRules] = await Promise.all([
   readFile(new URL('../assets/app.js', import.meta.url), 'utf8'),
   readFile(new URL('../supabase/functions/dokohilf-ai-router/index.ts', import.meta.url), 'utf8'),
   readFile(new URL('../supabase/functions/dokohilf-ai/index.ts', import.meta.url), 'utf8'),
   readFile(new URL('../supabase/functions/dokohilf-tts/index.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../assets/release-polish-v29.js', import.meta.url), 'utf8'),
+  readFile(new URL('../supabase/functions/dokohilf-usage-counter/index.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../supabase/migrations/20260811225800_private_usage_metrics_v41.sql', import.meta.url), 'utf8'),
+  readFile(new URL('../supabase/config.toml', import.meta.url), 'utf8'),
+  readFile(new URL('../PROJECT_RULES.md', import.meta.url), 'utf8'),
 ]);
 
 function looksSensitive(value) {
@@ -72,4 +77,34 @@ test('Gesprächsverläufe werden nicht dauerhaft gespeichert', () => {
   assert.doesNotMatch(app, /indexedDB/);
   assert.match(app, /window\.addEventListener\('pagehide'/);
   assert.match(app, /state\.history = \[\]/);
+});
+
+test('private Reichweitenmessung zählt nur anonyme Aggregate ohne Gerätewiedererkennung', () => {
+  assert.match(releasePolish, /dokohilf-usage-counter/);
+  assert.match(releasePolish, /window\.location\.origin !== PRODUCTION_ORIGIN/);
+  assert.match(releasePolish, /credentials: 'omit'/);
+  assert.match(releasePolish, /keepalive: true/);
+  assert.match(releasePolish, /body: '\{\}'/);
+  assert.doesNotMatch(releasePolish, /localStorage|indexedDB|crypto\.randomUUID|navigator\.userAgent|document\.referrer|canvas\.toDataURL/i);
+
+  assert.match(usageCounter, /ALLOWED_ORIGIN = 'https:\/\/ys2mm422yb-max\.github\.io'/);
+  assert.match(usageCounter, /SUPABASE_SERVICE_ROLE_KEY/);
+  assert.match(usageCounter, /dokohilf_increment_page_view/);
+  assert.match(usageCounter, /isGloballyRateLimited/);
+  assert.doesNotMatch(usageCounter, /x-forwarded-for|cf-connecting-ip|user-agent|referer|fingerprint|localStorage|sessionStorage|indexedDB|randomUUID|console\./i);
+
+  assert.match(usageMigration, /create table public\.dokohilf_usage_counters/);
+  assert.match(usageMigration, /bucket text primary key/);
+  assert.match(usageMigration, /page_views bigint not null/);
+  assert.match(usageMigration, /alter table public\.dokohilf_usage_counters enable row level security/);
+  assert.match(usageMigration, /revoke all on table public\.dokohilf_usage_counters from public, anon, authenticated/);
+  assert.match(usageMigration, /grant select, insert, update on table public\.dokohilf_usage_counters to service_role/);
+  assert.match(usageMigration, /security invoker/);
+  assert.doesNotMatch(usageMigration, /security definer/);
+  assert.match(usageMigration, /with \(security_invoker = true\)/);
+  assert.match(usageMigration, /Europe\/Berlin/);
+
+  assert.match(supabaseConfig, /\[functions\.dokohilf-usage-counter\]\s+verify_jwt = false/);
+  assert.match(projectRules, /anonyme aggregierte Reichweitenmessung/i);
+  assert.match(projectRules, /keine Gerätekennung/i);
 });
