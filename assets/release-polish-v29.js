@@ -5,6 +5,9 @@
   const VERSION_LABEL = 'v29';
   const UPDATE_NOTICE_MS = 10000;
   const RELOAD_KEY = 'dokohilf-build-reload';
+  const PRODUCTION_ORIGIN = 'https://ys2mm422yb-max.github.io';
+  const USAGE_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-usage-counter';
+  let usageCountRequested = false;
 
   function installStyles() {
     if (document.getElementById('releasePolishV29Styles')) return;
@@ -72,10 +75,25 @@
     }, UPDATE_NOTICE_MS);
   }
 
+  function countAnonymousPageView() {
+    if (usageCountRequested || window.location.origin !== PRODUCTION_ORIGIN) return;
+    usageCountRequested = true;
+    window.fetch(USAGE_ENDPOINT, {
+      method: 'POST',
+      mode: 'cors',
+      credentials: 'omit',
+      cache: 'no-store',
+      keepalive: true,
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+    }).catch(() => {});
+  }
+
   function init() {
     installStyles();
     moveVersionToFooter();
     showUpdateNotice();
+    countAnonymousPageView();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
@@ -87,6 +105,7 @@
     updateNoticeMs: UPDATE_NOTICE_MS,
     moveVersionToFooter,
     showUpdateNotice,
+    countAnonymousPageView,
   };
   window.__DOKOHILF_RELEASE_POLISH_V29__ = true;
 })();

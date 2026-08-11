@@ -1,7 +1,7 @@
 # DokoHilf – verbindliche Projektregeln
 
 **Status:** Verbindlich  
-**Stand:** 9. August 2026
+**Stand:** 11. August 2026
 
 > Diese Datei ist vor jeder Arbeit an DokoHilf vollständig zu lesen. Bei rechtlicher, datenschutzrechtlicher oder technischer Unsicherheit gilt: stoppen, nichts veröffentlichen, keine Daten importieren und keine Echtdaten verwenden.
 
@@ -67,10 +67,12 @@ DokoHilf führt grundsätzlich keinerlei App-Konten, Anmeldungen oder Personenpr
 
 Eine spätere Freigabe darf dieses Verbot **nicht** aufheben oder abschwächen. Soll DokoHilf jemals in einem realen betrieblichen Kontext eingesetzt werden, bleibt die Anwendung trotzdem strikt von Echtdaten getrennt und weiterhin reine Erklärungshilfe.
 
-## 7. Datenschutz, lokale Speicherung und Audio
+## 7. Datenschutz, lokale Speicherung, Reichweitenmessung und Audio
 
 - Datensparsamkeit, Zweckbindung und definierte Löschfristen.
-- Keine Werbung, Nutzertracking, Analyse-SDKs, Social-Media-Pixel oder unnötigen Cookies.
+- Keine Werbung, kein Nutzer- oder Gerätetracking, kein Fingerprinting, keine Analyse-SDKs, keine Social-Media-Pixel und keine unnötigen Cookies.
+- Zulässig ist ausschließlich eine **anonyme aggregierte Reichweitenmessung** der DokoHilf-Seitenaufrufe als eigene technische Infrastruktur. Gespeichert werden nur ein Allzeit-Gesamtzähler und Tageszähler; niemals IP-Adresse, User-Agent, Referrer, Session-ID, Gerätekennung, Fingerprint, Konto, Identität oder sonstige Nutzungsinformation. Eine Wiedererkennung desselben Geräts ist ausdrücklich ausgeschlossen.
+- Tageszähler der anonymen Reichweitenmessung werden höchstens 400 Kalendertage aufbewahrt. Der reine Allzeit-Gesamtzähler darf nur solange bestehen, wie die Reichweitenmessung für DokoHilf aktiviert ist; bei Abschaltung der Funktion ist er zu löschen. Die Statistik ist ausschließlich intern über die technische Supabase-Verwaltung einsehbar und wird nicht öffentlich in DokoHilf angezeigt.
 - Gesprächsverläufe, Nutzerstimmen, Diktate, freie Sprachantworten und personenbezogene Audioinhalte werden nicht dauerhaft im Browser, Repository oder in Supabase gespeichert.
 - Flüchtige Caches für dynamische Sprachantworten dürfen ausschließlich im Arbeitsspeicher existieren und müssen mit dem Prozess enden.
 - Allgemeine, fachlich freigegebene Guide-Anweisungen dürfen als statische Audiodateien technisch bereitgestellt und im PWA-Cache gespeichert werden, wenn sie ausschließlich aus den freigegebenen, selbst formulierten Guide-Texten entstehen.
