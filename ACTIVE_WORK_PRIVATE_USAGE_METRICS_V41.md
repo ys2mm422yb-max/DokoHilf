@@ -3,7 +3,7 @@
 **Stand:** 11. August 2026  
 **Status:** in Arbeit / noch nicht veröffentlicht  
 **Branch:** `agent/private-usage-metrics-v41`  
-**Pull Request:** noch anzulegen  
+**Pull Request:** `#135`  
 **PWA-Revision:** `20260811-private-usage-metrics-v41-1`
 
 ## Nutzerentscheidung
@@ -81,7 +81,7 @@ DDL-Dry-Run wurde vollständig in einer Transaktion mit `ROLLBACK` ausgeführt:
 
 ## Noch erforderlich
 
-1. PR anlegen und exakten Head feststellen.
+1. Exakten PR-#135-Head feststellen.
 2. Alle durch die Änderung erforderlichen Pflichtworkflows auf exakt diesem Head grün prüfen; als Produktänderung gilt weiterhin die iOS-/Android-Freigaberegel.
 3. Erst danach manuell mergen.
 4. Produktive Supabase-Migration erst nach Merge anwenden.
