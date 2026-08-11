@@ -27,3 +27,6 @@ verify_jwt = false
 
 [functions.dokohilf-conversation-router]
 verify_jwt = false
+
+[functions.dokohilf-usage-counter]
+verify_jwt = false
