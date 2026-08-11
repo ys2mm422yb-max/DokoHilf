@@ -108,6 +108,7 @@ test('private Reichweitenmessung zählt nur anonyme Aggregate ohne Gerätewieder
 
   assert.match(supabaseConfig, /\[functions\.dokohilf-usage-counter\]\s+verify_jwt = false/);
   assert.match(projectRules, /anonyme aggregierte Reichweitenmessung/i);
-  assert.match(projectRules, /keine Gerätekennung/i);
+  assert.match(projectRules, /Gerätekennung/i);
+  assert.match(projectRules, /Wiedererkennung desselben Geräts ist ausdrücklich ausgeschlossen/i);
   assert.match(projectRules, /höchstens 400 Kalendertage/i);
 });
