@@ -114,7 +114,15 @@ for (const pattern of [/\/functions\/v1\/dokohilf-chat-router(?:\?.*)?$/, /\/fun
 
 try {
   await page.goto(BASE_URL, { waitUntil: 'networkidle' });
-  assert((await page.locator('#buildPill').innerText()).includes('v29'), 'Die gerenderte App ist nicht v29.');
+  const publicVersion = await page.evaluate(async () => {
+    const response = await fetch(`./version.json?render-version=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) return '';
+    const payload = await response.json();
+    return String(payload?.appVersion || '').trim();
+  });
+  const versionMarker = await page.locator('#buildPill').innerText();
+  assert(/^v[1-9][0-9]*$/.test(publicVersion), `Ungültige öffentliche App-Version: ${publicVersion || '<leer>'}`);
+  assert(versionMarker.includes(publicVersion), `Die gerenderte App zeigt nicht ${publicVersion}: ${versionMarker}`);
   await page.locator('[data-select-mode="voice"]').click();
   await page.locator('.voice-focus-stage').waitFor({ state: 'visible' });
   await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('000.wav'));
@@ -196,6 +204,6 @@ try {
   assert(geometry.scrollWidth <= geometry.viewportWidth + 1, `Horizontaler Overflow: ${geometry.scrollWidth} > ${geometry.viewportWidth}`);
   assert(!/Sofortstimme|Gerätestimme|Gacrux/i.test(`${geometry.status} ${geometry.hint}`), 'Voice-UI erwähnt eine alte/abweichende Stimme.');
   await page.screenshot({path:`${OUTPUT_DIR}/static-voice-v29-${PROFILE}.png`,fullPage:false});
-  await writeFile(`${OUTPUT_DIR}/summary.json`,JSON.stringify({profile:PROFILE,viewport:{width:WIDTH,height:HEIGHT},systemCalls,cloudTtsRequests,routerRequests,routerBodies:routerBodies.map(body=>({guideSlug:body.guideSlug||null,guideStep:body.guideStep||null,selectedGuideSlug:body.selectedGuideSlug||null,smartHelpIntent:body.smartHelpIntent===true})),staticManifestRequests,staticAudioRequests,localState,staticState,fallback,finalProgress,geometry,consoleErrors,pageErrors},null,2));
+  await writeFile(`${OUTPUT_DIR}/summary.json`,JSON.stringify({profile:PROFILE,publicVersion,versionMarker,viewport:{width:WIDTH,height:HEIGHT},systemCalls,cloudTtsRequests,routerRequests,routerBodies:routerBodies.map(body=>({guideSlug:body.guideSlug||null,guideStep:body.guideStep||null,selectedGuideSlug:body.selectedGuideSlug||null,smartHelpIntent:body.smartHelpIntent===true})),staticManifestRequests,staticAudioRequests,localState,staticState,fallback,finalProgress,geometry,consoleErrors,pageErrors},null,2));
   assert(consoleErrors.length===0,`Console-Fehler: ${consoleErrors.join(' | ')}`); assert(pageErrors.length===0,`Page-Fehler: ${pageErrors.join(' | ')}`);
 } finally { await context.close(); await browser.close(); }
