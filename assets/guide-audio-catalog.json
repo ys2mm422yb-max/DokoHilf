@@ -114,7 +114,7 @@
     {"text":"Wähle die benötigten Vitalwerte aus und trage die Werte ein."},
     {"text":"Wähle die benötigten Vitalwerte für die gemeinsame Erfassung aus."},
     {"text":"Wähle die gewünschte Maßnahme aus, zum Beispiel „Klienten-Team Sitzung“ oder „Krise“."},
-    {"text":"Wähle die passende Berichtskategorie aus. Danach öffnet sich das Fenster für den Berichtseintrag; oben siehst du die ausgewählte Kategorie."},
+    {"text":"Wähle die passende Berichtskategorie aus. Das große Textfeld für den Bericht ist in dieser Maske bereits unten sichtbar; es öffnet sich durch die Kategorieauswahl nicht erst neu."},
     {"text":"Wähle die passende Kategorie aus."},
     {"text":"Wähle direkt darunter „Durchführungsnachweis“."},
     {"text":"Wähle direkt darunter „Visiten“."},
