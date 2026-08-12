@@ -1,0 +1,59 @@
+name: Validate app version policy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  version-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact repository head
+        uses: actions/checkout@v4
+
+      - name: Validate public app version and footer
+        run: |
+          set -euo pipefail
+          test -s VERSIONING_POLICY.md
+          test -s version.json
+          test -s assets/release-polish-v29.js
+
+          node <<'NODE'
+          const fs = require('fs');
+          const version = JSON.parse(fs.readFileSync('version.json', 'utf8'));
+          const release = fs.readFileSync('assets/release-polish-v29.js', 'utf8');
+          const policy = fs.readFileSync('VERSIONING_POLICY.md', 'utf8');
+
+          const appVersion = String(version.appVersion || '').trim();
+          if (!/^v[1-9][0-9]*$/.test(appVersion)) {
+            throw new Error(`Ungültige oder fehlende appVersion in version.json: ${appVersion || '<leer>'}`);
+          }
+
+          const match = release.match(/const VERSION_LABEL = '([^']+)'/);
+          if (!match) throw new Error('VERSION_LABEL für die sichtbare App-Fußzeile fehlt.');
+          if (match[1] !== appVersion) {
+            throw new Error(`Versions-Mismatch: version.json=${appVersion}, Footer=${match[1]}`);
+          }
+
+          if (!release.includes('pill.textContent = `DokoHilf ${VERSION_LABEL} · Build ${BUILD_ID}`')) {
+            throw new Error('Die sichtbare Fußzeile verwendet VERSION_LABEL nicht wie vorgeschrieben.');
+          }
+
+          for (const required of [
+            'Bei einem **größeren Update** wird die App-Version erhöht',
+            'version.json` enthält mit `appVersion`',
+            'unten in der App angezeigte Versionsbezeichnung',
+            'Ein Versions-Mismatch ist ein Release-Fehler',
+          ]) {
+            if (!policy.includes(required)) throw new Error(`Versionsregel unvollständig: ${required}`);
+          }
+
+          console.log(`DokoHilf ${appVersion}: Versionsregel und sichtbare Fußzeile stimmen überein.`);
+          NODE
