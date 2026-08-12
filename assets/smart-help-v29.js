@@ -49,7 +49,7 @@
 
   function hasEntryAction(text) {
     const n = normalize(text);
-    return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren|geben|gabe|abhaken|kontrollieren)\b/.test(n);
+    return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren|geben|gabe|abhaken|kontrollieren|hochladen|uploaden|upload|loschen|loeschen|umbenennen|andern|aendern|bearbeiten|verschieben|ersetzen)\b/.test(n);
   }
 
   function hasNavigationIntent(text) {
