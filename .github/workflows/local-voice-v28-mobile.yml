@@ -27,18 +27,27 @@ jobs:
           set -euo pipefail
           test -s assets/local-voice-v28.js
           test -s assets/local-voice-gate-v28.js
+          test -s assets/voice-file-storage-catalog-v46.json
+          test -s assets/file-storage-guide-v46.js
           test -s scripts/apply-local-voice-v28.mjs
           test -s scripts/local-voice-render-v28.mjs
+          test -s scripts/build-supertonic-guide-audio-v28.py
           test -s tests/local-voice-v28.test.mjs
+          test -s tests/dateiablage-v46.test.mjs
           node --check assets/local-voice-v28.js
           node --check assets/local-voice-gate-v28.js
+          node --check assets/file-storage-guide-v46.js
           node --check scripts/apply-local-voice-v28.mjs
           node --check scripts/local-voice-render-v28.mjs
-          node --test tests/local-voice-v28.test.mjs tests/ios-static-first-voice-v28.test.mjs
+          python3 -m py_compile scripts/build-supertonic-guide-audio-v28.py
+          python3 scripts/build-supertonic-guide-audio-v28.py --validate-only
+          node --test tests/local-voice-v28.test.mjs tests/ios-static-first-voice-v28.test.mjs tests/dateiablage-v46.test.mjs
           grep -q '__DOKOHILF_LOCAL_VOICE_RETIRED_V29__' assets/local-voice-v28.js
           grep -q '__DOKOHILF_STATIC_SUPERTONIC_ONLY_V29__' assets/local-voice-v28.js
           grep -q "STATIC_VOICE = 'Supertonic-F1'" assets/local-voice-gate-v28.js
           grep -q 'static-supertonic-only-v29' assets/local-voice-gate-v28.js
+          grep -q '"voice": "Supertonic-F1"' assets/voice-file-storage-catalog-v46.json
+          grep -q 'Dateiablage' assets/voice-file-storage-catalog-v46.json
           ! grep -q 'IOS_LOCAL_TIMEOUT_MS\|OTHER_LOCAL_TIMEOUT_MS\|local_voice_timeout' assets/local-voice-gate-v28.js
           ! grep -q 'loadTextToSpeech\|loadVoiceStyle\|navigator.gpu\|onnxruntime' assets/local-voice-v28.js
 
@@ -66,6 +75,9 @@ jobs:
           grep -q '__DOKOHILF_LOCAL_VOICE_RETIRED_V29__' _local_voice_site/assets/local-voice-v28.js
           grep -q "STATIC_VOICE = 'Supertonic-F1'" _local_voice_site/assets/local-voice-gate-v28.js
           grep -q 'static-supertonic-only-v29' _local_voice_site/assets/local-voice-gate-v28.js
+          grep -q 'file-storage-guide-v46.js' _local_voice_site/assets/smart-help-v29.js
+          test -s _local_voice_site/assets/file-storage-guide-v46.js
+          test -s _local_voice_site/assets/voice-file-storage-catalog-v46.json
           ! grep -q 'IOS_LOCAL_TIMEOUT_MS\|OTHER_LOCAL_TIMEOUT_MS\|local_voice_timeout' _local_voice_site/assets/local-voice-gate-v28.js
           ! grep -q 'voice-diagnostics.js' _local_voice_site/index.html
           ! grep -q 'dokohilf-guide-audio?manifest=' _local_voice_site/service-worker.js
@@ -85,15 +97,13 @@ jobs:
           done
 
           DOKOHILF_MOBILE_PROFILE=ios \
-          DOKOHILF_VIEWPORT_WIDTH=393 \
-          DOKOHILF_VIEWPORT_HEIGHT=852 \
+          DOKOHILF_VIEWPORT_WIDTH=393 DOKOHILF_VIEWPORT_HEIGHT=852 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
           DOKOHILF_RENDER_OUTPUT=artifacts/static-voice/ios \
           node scripts/local-voice-render-v28.mjs
 
           DOKOHILF_MOBILE_PROFILE=android \
-          DOKOHILF_VIEWPORT_WIDTH=412 \
-          DOKOHILF_VIEWPORT_HEIGHT=915 \
+          DOKOHILF_VIEWPORT_WIDTH=412 DOKOHILF_VIEWPORT_HEIGHT=915 \
           DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ \
           DOKOHILF_RENDER_OUTPUT=artifacts/static-voice/android \
           node scripts/local-voice-render-v28.mjs
