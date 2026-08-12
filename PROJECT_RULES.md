@@ -1,7 +1,7 @@
 # DokoHilf – verbindliche Projektregeln
 
 **Status:** Verbindlich  
-**Stand:** 11. August 2026
+**Stand:** 13. August 2026
 
 > Diese Datei ist vor jeder Arbeit an DokoHilf vollständig zu lesen. Bei rechtlicher, datenschutzrechtlicher oder technischer Unsicherheit gilt: stoppen, nichts veröffentlichen, keine Daten importieren und keine Echtdaten verwenden.
 
@@ -165,7 +165,7 @@ Dann darf nur eine sichere, datenfreie Alternative vorbereitet werden.
 
 Diese Regeln sind ein technisches und organisatorisches Schutzkonzept, keine anwaltliche Rechtsberatung und keine betriebliche Datenschutzfreigabe.
 
-## 15. Dauerhafte GitHub-Dokumentationspflicht
+## 15. Dauerhafte GitHub-Dokumentations- und Versionspflicht
 
 - GitHub ist das dauerhafte Arbeitsgedächtnis für DokoHilf. Ein neuer Chat muss den Projektstand aus dem Repository nachvollziehen und fortsetzen können, ohne alte Chats rekonstruieren zu müssen.
 - Nach jedem relevanten Arbeitsblock werden mindestens dokumentiert: Nutzerentscheidung, fachlicher Stand, betroffene Komponenten/Dateien, tatsächliche Tests und Ergebnisse, Fehler/Blocker, aktueller Branch/PR/Exact Head, Veröffentlichungsstand sowie der nächste ausführbare Schritt.
@@ -173,5 +173,11 @@ Diese Regeln sind ein technisches und organisatorisches Schutzkonzept, keine anw
 - Der aktuelle Gesamtstand und alle Übergaben werden in `PROJECT_HANDOFF.md` gepflegt.
 - Laufende größere Aufgaben erhalten bei Bedarf eine eigene `ACTIVE_WORK_*.md`, die im Handoff verlinkt wird.
 - PR-Beschreibungen und relevante Statusdokumente müssen bei Head- oder Scope-Wechseln aktualisiert werden; veraltete Aussagen dürfen nicht als aktueller Stand stehen bleiben.
+- **`VERSIONING_POLICY.md` ist für die öffentliche DokoHilf-App-Version verbindlich und muss vor einem Versionssprung berücksichtigt werden.**
+- **`version.json.appVersion` ist die einzige aktuelle öffentliche App-Version. Die unten in der App sichtbare Angabe `DokoHilf v… · Build …` muss exakt diese Version verwenden.**
+- **Bei einem größeren nutzerseitigen Update muss `appVersion` vor Merge und Veröffentlichung erhöht werden.** Dazu zählen insbesondere größere Änderungen an Anleitungen/Funktionen, Sprachbedienung, Navigation, Chatlogik oder UI sowie mehrere zusammengehörige nutzerseitige Änderungen in einem Release. Kleine reine Fehler-, Text- oder technische Hotfixes benötigen nicht automatisch einen Versionssprung.
+- Der GitHub-Workflow **`Validate app version policy`** ist Teil der Release-Prüfung. Ein Mismatch zwischen `version.json.appVersion` und der unten sichtbaren App-Version ist ein Release-Fehler und darf nicht gemergt oder veröffentlicht werden.
+- Historische interne Dateinamen und Kompatibilitätsmarker wie `*-v27.js`, `*-v28.js` oder `*-v29.js` sind keine öffentliche App-Version und müssen bei einem reinen Versionssprung nicht riskant umbenannt werden.
 - Sichtbare Versionsbezeichnungen in GitHub-Actions-Namen, Testüberschriften, Statusdokumenten und Release-Hinweisen müssen bei jedem Versionssprung auf den aktuellen Stand gebracht werden. Wo eine konkrete Versionsnummer keinen fachlichen Nutzen hat, ist eine versionsneutrale Bezeichnung zu bevorzugen, damit keine veralteten `v27`-/`v28`-/`Build 29`-Titel stehen bleiben.
+- Nach einem Versions-Release muss der feste öffentliche Hauptlink geprüft werden; die unten sichtbare Versionsangabe muss dort den freigegebenen `appVersion`-Stand zeigen.
 - Datenschutz-, Echtdaten- und Veröffentlichungsgrenzen bleiben vorrangig. Öffentlich dokumentiert werden ausschließlich anonymisierte, selbst formulierte und veröffentlichungsfähige Ergebnisse.
