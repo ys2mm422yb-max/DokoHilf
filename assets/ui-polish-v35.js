@@ -6,7 +6,6 @@
 
   const GROUP_LAYOUT_REVISION = '20260812-dateiablage-organisation-v46-1';
   const CHAT_UI_REVISION = '20260810-ios-keyboard-chat-v37-1';
-  const FEEDBACK_REVISION = '20260812-feedback-v47-1';
   // Historische Bezeichnungen nur als inerte Regression-Kompatibilität: Visiten & Vitalwerte / Weitere Bereiche.
   const GROUPS = Object.freeze([
     {
@@ -165,14 +164,6 @@
     updateLibraryCount(grid);
   }
 
-  function loadFeedback() {
-    if (window.__DOKOHILF_FEEDBACK_V47__ || document.querySelector('script[data-dokohilf-feedback-v47]')) return;
-    const script = document.createElement('script');
-    script.src = `assets/feedback-report-v47.js?v=${FEEDBACK_REVISION}`;
-    script.dataset.dokohilfFeedbackV47 = 'true';
-    document.head.append(script);
-  }
-
   function sync() {
     scheduled = false;
     polishModeSwitch();
@@ -188,7 +179,6 @@
 
   function init() {
     sync();
-    loadFeedback();
     const target = document.getElementById('appShell') || document.body;
     new MutationObserver(schedule).observe(target, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden', 'data-mode'] });
   }
@@ -201,10 +191,8 @@
     syncChatState,
     decorateLibrary,
     polishModeSwitch,
-    loadFeedback,
     groupLayoutRevision: GROUP_LAYOUT_REVISION,
     chatUiRevision: CHAT_UI_REVISION,
-    feedbackRevision: FEEDBACK_REVISION,
     getGroups: () => GROUPS.map(group => ({ ...group, slugs: [...group.slugs] })),
   };
 })();
