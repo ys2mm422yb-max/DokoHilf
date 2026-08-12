@@ -8,8 +8,11 @@ const PROFILE = process.env.DOKOHILF_MOBILE_PROFILE || 'ios';
 const VIEWPORT_WIDTH = Number(process.env.DOKOHILF_VIEWPORT_WIDTH || (PROFILE === 'android' ? 412 : 393));
 const VIEWPORT_HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE === 'android' ? 915 : 852));
 const DEVICE_SCALE_FACTOR = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
-const BUILD_ID = JSON.parse(await readFile(new URL('../version.json', import.meta.url), 'utf8')).buildId;
+const VERSION_META = JSON.parse(await readFile(new URL('../version.json', import.meta.url), 'utf8'));
+const BUILD_ID = String(VERSION_META.buildId || '').trim();
+const APP_VERSION = String(VERSION_META.appVersion || '').trim();
 if (!BUILD_ID) throw new Error('buildId fehlt in version.json');
+if (!/^v[1-9][0-9]*$/.test(APP_VERSION)) throw new Error(`appVersion fehlt oder ist ungültig in version.json: ${APP_VERSION || '<leer>'}`);
 const GREETING = 'Hey! Wobei brauchst du Hilfe?';
 const VISIT_REPLY = 'Öffne „Doku-Erweitert“. Bist du in Doku-Erweitert?';
 const VISIT_SPEECH = 'Öffne Doku-Erweitert.';
@@ -211,8 +214,8 @@ try {
     ui: document.documentElement.dataset.dokohilfUi,
     bg: getComputedStyle(document.body).backgroundImage,
   }));
-  assert(identity.build === BUILD_ID, `Gerenderte Seite hat nicht Build v29: ${identity.build}`);
-  assert(identity.version === `DokoHilf v29 · Build ${BUILD_ID}`, `Falscher sichtbarer Marker: ${identity.version}`);
+  assert(identity.build === BUILD_ID, `Gerenderte Seite hat falschen Build: ${identity.build} statt ${BUILD_ID}`);
+  assert(identity.version === `DokoHilf ${APP_VERSION} · Build ${BUILD_ID}`, `Falscher sichtbarer Marker: ${identity.version}`);
   assert(identity.ui === 'v29', `v29-UI-Layer fehlt: ${identity.ui}`);
   assert(identity.bg !== 'none', 'Dunkle v29-Hintergrundgestaltung fehlt.');
 
@@ -396,6 +399,7 @@ try {
   await writeFile(`${OUTPUT_DIR}/summary.json`, JSON.stringify({
     profile: PROFILE,
     viewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT },
+    appVersion: APP_VERSION,
     identity,
     libraryHome,
     fullLibrary,
