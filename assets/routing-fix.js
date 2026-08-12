@@ -4,7 +4,7 @@
   const root = typeof window !== 'undefined' ? window : globalThis;
   const AI_ROUTER_MARKER = '/functions/v1/dokohilf-ai';
   const CHAT_ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-conversation-router';
-  const ROUTING_REVISION = '20260812-navigation-safe-guide-audit-v44-1';
+  const ROUTING_REVISION = '20260812-dateiablage-routing-v45-1';
   const GREETINGS = [
     'guten morgen',
     'guten abend',
@@ -68,11 +68,21 @@
       || /\bbericht.*\babfrage\b/.test(text);
   }
 
+  function isDocumentLookup(value) {
+    const text = normalize(value);
+    return /\b(dateiablage|dokument|dokumente|vertrag|vertrage|wohnassistent-vertrag|wohnassistent vertrag|betreuerausweis|arztbrief|arztbriefe|entlassungsbrief|entlassungsbriefe|laborwert|laborwerte)\b/.test(text);
+  }
+
   function inferSelectedGuideSlug(value) {
     const text = normalize(value);
     if (!text) return '';
 
     if (/\bfolgebericht\b/.test(text)) return 'bericht-folgebericht';
+
+    if (isDocumentLookup(text)) {
+      if (hasCreateIntent(text)) return '';
+      if (hasOpenIntent(text) || text.split(' ').length <= 5) return 'dateiablage-dokumente';
+    }
 
     if (/\b(visite|visiten|sprechstunde|arztvisite)\b/.test(text)) {
       if (hasCreateIntent(text)) return 'visite-anlegen';
@@ -224,6 +234,7 @@
     hasCreateIntent,
     hasOpenIntent,
     isUnconfirmedReportSearch,
+    isDocumentLookup,
     inferSelectedGuideSlug,
     rewriteRequestBody,
     rewriteRouterInput,
