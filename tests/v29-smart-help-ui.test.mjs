@@ -13,7 +13,7 @@ test('v29 build is cache-busted consistently and version badge starts hidden', a
     read('assets/local-voice-gate-v28.js'),
   ]);
   const buildId = JSON.parse(version).buildId;
-  assert.equal(buildId, '20260812-39');
+  assert.equal(buildId, '20260812-40');
   assert.match(html, /KI · v29/);
   assert.match(html, /id="buildPill" type="button" hidden/);
   assert.match(html, new RegExp(`dokohilf-build" content="${buildId}`));
@@ -183,16 +183,17 @@ test('active-guide help keeps the guide and approved area details', async () => 
   assert.match(migration, /„Notfallblatt aufrufen“/);
 });
 
-test('Hallo ich suche den Blutdruck keeps the approved single-value task intent', async () => {
+test('searching for a concrete vital value stays in the confirmed navigation guide until an entry action is requested', async () => {
   const [smart, router] = await Promise.all([
     read('assets/smart-help-v29.js'),
     read('supabase/functions/dokohilf-chat-router/index.ts'),
   ]);
   assert.match(smart, /blutdruck\|puls\|temperatur/);
-  assert.match(smart, /!isLocationQuestion\(n\)\) return 'vitalwerte-einzelwert'/);
+  assert.match(smart, /return 'vitalwerte-finden'/);
+  assert.doesNotMatch(smart, /!isLocationQuestion\(n\)\) return 'vitalwerte-einzelwert'/);
   assert.match(smart, /selectedGuideSlug/);
   assert.match(router, /selectedGuideSlug/);
-  assert.match(router, /approved-guide-smart-start-v29-1/);
+  assert.match(router, /approved-guide-smart-start-v44/);
 });
 
 test('v29 redesign covers home, written chat and distinct voice states', async () => {
