@@ -16,13 +16,15 @@ const locationText = 'Den Ort auswählen: Einrichtung, beim Arzt, telefonisch od
 const specialText = 'Sonderfall · Arzt nicht beim Bewohner hinterlegt?';
 const voiceLocationText = 'Trage den Grund ein, zum Beispiel „Kontrollbesuch“, und wähle den Ort: Einrichtung, beim Arzt, telefonisch oder per Mail.';
 
-test('direkte Visitenanleitung trennt normalen Arzt-Schritt vom seltenen Filter-Sonderfall', () => {
+test('direkte Visitenanleitung trennt normalen Arzt-Schritt vom seltenen Filter-Sonderfall genau einmal', () => {
   assert.match(copy, /function polishVisit\(view\)/);
   assert.ok(copy.includes(doctorText));
-  assert.ok(copy.includes(specialText));
-  assert.match(copy, /insertSpecialAfter/);
-  assert.match(copy, /paragraphs\[7\]/);
+  assert.ok(library.includes(specialText));
+  assert.match(library, /specialAfter: 8/);
   assert.match(library, /Im Normalfall bleibt das Filtersymbol aus/);
+  assert.doesNotMatch(copy, /function\s+insertSpecialAfter|insertSpecialAfter\s*\(/);
+  assert.match(copy, /dedupeSpecialCallouts/);
+  assert.match(copy, /v29VisitDoctorFilter = 'canonical-special'/);
 });
 
 test('direkte Visitenanleitung enthält alle vier Ortsoptionen', () => {

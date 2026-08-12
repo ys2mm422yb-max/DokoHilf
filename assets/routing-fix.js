@@ -4,7 +4,7 @@
   const root = typeof window !== 'undefined' ? window : globalThis;
   const AI_ROUTER_MARKER = '/functions/v1/dokohilf-ai';
   const CHAT_ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-conversation-router';
-  const ROUTING_REVISION = '20260810-natural-guide-completions-v40-1';
+  const ROUTING_REVISION = '20260812-navigation-safe-guide-audit-v44-1';
   const GREETINGS = [
     'guten morgen',
     'guten abend',
@@ -52,12 +52,20 @@
 
   function hasOpenIntent(value) {
     const text = normalize(value);
-    return /\b(offnen|ansehen|anschauen|nachsehen|aufrufen|finden|zeigen|suchen)\b/.test(text)
+    return /\b(offnen|ansehen|anschauen|nachsehen|aufrufen|finden|zeigen|suchen|anzeigen)\b/.test(text)
       || /\b(offne|offnest|offnet|offn)\b/.test(text)
       || /\b(rufe|rufst|ruft|ruf)\b.*\bauf\b/.test(text)
       || /\b(sehe|siehst|sieht|seh)\b.*\ban\b/.test(text)
       || /\b(schaue|schaust|schaut|schau)\b.*\ban\b/.test(text)
       || /\b(wo|wie)\b.*\b(finde|findest|finden|komme)\b/.test(text);
+  }
+
+  function isUnconfirmedReportSearch(value) {
+    const text = normalize(value);
+    return /\bberichtssuche\b/.test(text)
+      || /\bberichte (durchsuchen|auswerten|filtern)\b/.test(text)
+      || /\bnach (einem |dem |einem bestimmten |dem bestimmten )?bericht suchen\b/.test(text)
+      || /\bbericht.*\babfrage\b/.test(text);
   }
 
   function inferSelectedGuideSlug(value) {
@@ -66,20 +74,29 @@
 
     if (/\bfolgebericht\b/.test(text)) return 'bericht-folgebericht';
 
-    if (/\b(visite|visiten|sprechstunde|arztvisite)\b/.test(text) && hasCreateIntent(text)) {
-      return 'visite-anlegen';
+    if (/\b(visite|visiten|sprechstunde|arztvisite)\b/.test(text)) {
+      if (hasCreateIntent(text)) return 'visite-anlegen';
+      if (hasOpenIntent(text) || /^visiten?$/.test(text)) return 'visiten-finden';
     }
 
-    if (/\b(bericht|berichtseintrag|pflegebericht)\b/.test(text) && hasCreateIntent(text)) {
-      return 'bericht-neu';
+    if (/\b(bericht|berichte|berichtseintrag|pflegebericht)\b/.test(text)) {
+      if (hasCreateIntent(text)) return 'bericht-neu';
+      if (!isUnconfirmedReportSearch(text) && (hasOpenIntent(text) || /^berichte?$/.test(text))) return 'berichte-finden';
     }
 
-    if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(text) && hasCreateIntent(text)) {
-      return 'anwesenheit';
+    if (/\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(text)) {
+      if (hasCreateIntent(text)) return '';
+      if (hasOpenIntent(text) || /^vitalwerte?$/.test(text)) return 'vitalwerte-finden';
     }
 
-    if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(text) && hasCreateIntent(text)) {
-      return 'formulare-anlegen';
+    if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(text)) {
+      if (hasCreateIntent(text)) return 'anwesenheit';
+      if (hasOpenIntent(text) || /\b(anwesenheit|abwesenheit)\b/.test(text)) return 'anwesenheiten-finden';
+    }
+
+    if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(text)) {
+      if (hasCreateIntent(text)) return 'formulare-anlegen';
+      if (hasOpenIntent(text) || /\b(formular|formulare)\b/.test(text)) return 'formulare-finden';
     }
 
     if (/\bbedarfsmedikation\b/.test(text)) {
@@ -99,23 +116,31 @@
       if (hasCreateIntent(text) || /\bmachen\b/.test(text)) return 'massnahmen-ohne-zeitangabe';
     }
 
-    if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(text) && hasOpenIntent(text)) {
-      return 'durchfuehrungsnachweis-oeffnen';
+    if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(text) && (hasOpenIntent(text) || /\bdurchfuhrungsnachweis\b/.test(text))) {
+      return 'durchfuehrungsnachweis-finden';
     }
 
     if (/\b(medikation|medikationsplan|medikamente)\b/.test(text)
-      && hasOpenIntent(text)
+      && (hasOpenIntent(text) || /^medikation$/.test(text))
       && !/\b(andern|verandern|absetzen|pausieren|fortsetzen|loschen|korrigieren|dosieren|erhohen|senken)\b/.test(text)) {
-      return 'medikation-ansehen';
+      return 'medikation-finden';
     }
 
-    if (/\b(notfallblatt|notfallbogen)\b/.test(text) && (hasOpenIntent(text) || /^notfallblatt$/.test(text))) {
-      return 'notfallblatt';
+    if (/\b(notfallblatt|notfallbogen)\b/.test(text)) {
+      if (hasCreateIntent(text)) return 'notfallblatt';
+      if (hasOpenIntent(text) || /^notfallblatt$/.test(text)) return 'notfallblatt-finden';
     }
 
-    if (/\b(ubergabe|was war los|schichtubergabe)\b/.test(text) && (hasOpenIntent(text) || /\bubergabe\b/.test(text))) {
-      return 'uebergabeformular';
+    if (/\b(ubergabe|was war los|schichtubergabe)\b/.test(text)) {
+      if (hasCreateIntent(text)) return 'uebergabeformular';
+      if (hasOpenIntent(text) || /\bubergabe\b/.test(text)) return 'uebergabe-finden';
     }
+
+    if (/\bstammdaten\b/.test(text) && (hasOpenIntent(text) || /^stammdaten$/.test(text))) return 'stammdaten-finden';
+    if (/\bdoku-erweitert\b/.test(text) && (hasOpenIntent(text) || /^doku-erweitert$/.test(text))) return 'doku-erweitert-finden';
+    if (/\bdoku\b/.test(text) && (hasOpenIntent(text) || /^doku$/.test(text))) return 'doku-finden';
+    if (/\banalyse\b/.test(text) && (hasOpenIntent(text) || /^analyse$/.test(text))) return 'analyse-finden';
+    if (/\bplanung\b/.test(text) && (hasOpenIntent(text) || /^planung$/.test(text))) return 'planung-finden';
 
     return '';
   }
@@ -198,6 +223,7 @@
     stripLeadingGreeting,
     hasCreateIntent,
     hasOpenIntent,
+    isUnconfirmedReportSearch,
     inferSelectedGuideSlug,
     rewriteRequestBody,
     rewriteRouterInput,

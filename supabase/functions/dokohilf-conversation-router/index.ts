@@ -10,7 +10,7 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:3000',
 ]);
 
-const ROUTER_VERSION = 'natural-guide-completions-v40';
+const ROUTER_VERSION = 'natural-guide-completions-v44';
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 24;
 const MAX_BODY_CHARS = 16_000;
@@ -122,7 +122,7 @@ function previousAssistant(messages: ChatMessage[]): string {
 function isPositiveConfirmation(text: string): boolean {
   const n = normalize(text);
   if (!n || /\b(nicht|nichts|nix|noch nicht|falsch|keine|kein|geht nicht|klappt nicht)\b/.test(n)) return false;
-  if (/^(weiter|ja|jap|jo|genau|ok|okay|gemacht|fertig|passt|erledigt|hab ich|habe ich|bin dort|ich bin da|ist offen|ist geoffnet|gefunden|geschafft|bin drin)$/.test(n)) return true;
+  if (/^(weiter|mach weiter|weiter bitte|nachster schritt|ja|jap|jo|genau|ok|okay|gemacht|fertig|passt|erledigt|hab ich|habe ich|bin dort|ich bin da|ist offen|ist geoffnet|gefunden|geschafft|bin drin)$/.test(n)) return true;
   return /\b(geoffnet|ausgewahlt|angeklickt|geklickt|eingetragen|erfasst|eingegeben|ausgefullt|gespeichert|bestatigt|sichtbar|durchgefuhrt|entfernt|gefunden)\b/.test(n)
     && /\b(ich|habe|hab|ist|sind|wurde|wurden|jetzt)\b/.test(n);
 }
@@ -141,17 +141,28 @@ async function loadGuide(slug: string): Promise<GuideRecord | null> {
   return Array.isArray(rows) && rows[0] ? rows[0] as GuideRecord : null;
 }
 
-function atFinalStep(guide: GuideRecord, suppliedStep: unknown, assistantText: string): boolean {
-  if (!guide.steps?.length) return false;
+function currentGuideIndex(guide: GuideRecord, suppliedStep: unknown, assistantText: string): number {
+  if (!guide.steps?.length) return 0;
   const numeric = Number(suppliedStep);
-  if (Number.isInteger(numeric) && numeric >= guide.steps.length) return true;
-  const last = guide.steps[guide.steps.length - 1] || {};
+  if (Number.isInteger(numeric) && numeric >= 1 && numeric <= guide.steps.length) return numeric - 1;
+
   const assistant = normalize(assistantText);
-  const check = normalize(last.check || '');
-  const instruction = normalize(last.text || '');
-  if (check && assistant.includes(check)) return true;
-  const anchor = instruction.split(' ').slice(0, 8).join(' ');
-  return Boolean(anchor.length >= 18 && assistant.includes(anchor));
+  let bestIndex = 0;
+  let bestScore = 0;
+  guide.steps.forEach((step, index) => {
+    const check = normalize(step.check || '');
+    const instruction = normalize(step.text || '');
+    let score = 0;
+    if (check && assistant.includes(check)) score += 100;
+    if (instruction && assistant.includes(instruction)) score += 80;
+    const anchor = instruction.split(' ').slice(0, 8).join(' ');
+    if (anchor.length >= 18 && assistant.includes(anchor)) score += 30;
+    if (score > bestScore) {
+      bestScore = score;
+      bestIndex = index;
+    }
+  });
+  return bestIndex;
 }
 
 function spokenStep(step: GuideStep | undefined): string {
@@ -174,7 +185,7 @@ function renderGuideStep(origin: string | null, guide: GuideRecord, index: numbe
     guideStep: safeIndex + 1,
     guideStepCount: guide.steps.length,
     completed: false,
-    model: 'approved-guide-stateful-v40',
+    model: 'approved-guide-stateful-v44',
     completionRevision: COMPLETION_REVISION,
     source,
   });
@@ -194,7 +205,7 @@ function renderCompletion(origin: string | null, guide: GuideRecord): Response {
     guideStepCount: guide.steps.length,
     completed: true,
     completionRevision: COMPLETION_REVISION,
-    source: 'approved-guide-natural-completion-v40',
+    source: 'approved-guide-natural-completion-v44',
   });
 }
 
@@ -206,12 +217,12 @@ async function renderContinuation(origin: string | null, continuation: Continuat
       guideSlug: null,
       completed: true,
       completionRevision: COMPLETION_REVISION,
-      source: 'approved-guide-completion-followup-v40',
+      source: 'approved-guide-completion-followup-v44',
     });
   }
   const guide = await loadGuide(String(continuation.guideSlug || ''));
   if (!guide?.steps?.length) return null;
-  return renderGuideStep(origin, guide, Number(continuation.stepIndex) || 0, 'approved-guide-completion-followup-v40');
+  return renderGuideStep(origin, guide, Number(continuation.stepIndex) || 0, 'approved-guide-completion-followup-v44');
 }
 
 async function forwardToChatRouter(rawBody: string, origin: string | null): Promise<Response> {
@@ -264,8 +275,10 @@ Deno.serve(async (req: Request) => {
   const guideSlug = typeof parsed.guideSlug === 'string' ? parsed.guideSlug.trim() : '';
   if (guideSlug && isPositiveConfirmation(userText)) {
     const guide = await loadGuide(guideSlug);
-    if (guide?.steps?.length && atFinalStep(guide, parsed.guideStep, assistantText)) {
-      return renderCompletion(origin, guide);
+    if (guide?.steps?.length) {
+      const currentIndex = currentGuideIndex(guide, parsed.guideStep, assistantText);
+      if (currentIndex >= guide.steps.length - 1) return renderCompletion(origin, guide);
+      return renderGuideStep(origin, guide, currentIndex + 1, 'approved-guide-positive-advance-v44');
     }
   }
 

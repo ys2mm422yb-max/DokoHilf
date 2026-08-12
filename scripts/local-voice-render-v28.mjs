@@ -7,8 +7,8 @@ const HEIGHT = Number(process.env.DOKOHILF_VIEWPORT_HEIGHT || (PROFILE === 'andr
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/local-voice-v29/${PROFILE}`;
 const GREETING = 'Hey! Wobei brauchst du Hilfe?';
-const FIRST_SPEECH = 'Wähle zuerst den gewünschten Bewohner aus.';
-const HELP_SPEECH = 'Bleib beim ausgewählten Bewohner und prüfe, ob der richtige Bewohner geöffnet ist.';
+const FIRST_SPEECH = 'Öffne beim gewünschten Bewohner „Doku-Erweitert“ in der festen Leiste und wähle dort „Vitalwerte“.';
+const HELP_SPEECH = 'Erst „Doku-Erweitert“ in der festen Leiste öffnen, danach darin „Vitalwerte“ wählen.';
 const FALLBACK_SPEECH = 'Ich habe die Antwort im Chat angezeigt.';
 
 function assert(condition, message) { if (!condition) throw new Error(message); }
@@ -26,12 +26,12 @@ function routePayload(body) {
   const userText = [...(Array.isArray(body?.messages) ? body.messages : [])].reverse().find(message => message?.role === 'user')?.content || '';
   const contextual = body?.smartHelpIntent === true || (body?.guideSlug && /weiß nicht|weiss nicht|keine ahnung|wo finde/i.test(userText));
   if (contextual) return {
-    reply: `${HELP_SPEECH}\n\nIst der richtige Bewohner geöffnet?`, spokenText: HELP_SPEECH,
-    guideSlug:'vitalwerte-einzelwert',guideTitle:'Einzelnen Vitalwert erfassen',guideVersion:7,guideStep:Number(body.guideStep)||1,guideStepCount:7,completed:false,source:'approved-guide-context-help-v29-4',
+    reply: `${HELP_SPEECH}\n\nIst der Bereich „Vitalwerte“ geöffnet?`, spokenText: HELP_SPEECH,
+    guideSlug:'vitalwerte-finden',guideTitle:'Vitalwerte finden',guideVersion:1,guideStep:1,guideStepCount:1,completed:false,source:'approved-guide-context-help-v29-4',
   };
   return {
-    reply:`${FIRST_SPEECH}\n\nIst der richtige Bewohner ausgewählt?`,spokenText:FIRST_SPEECH,
-    guideSlug:'vitalwerte-einzelwert',guideTitle:'Einzelnen Vitalwert erfassen',guideVersion:7,guideStep:1,guideStepCount:7,completed:false,source:'approved-guide-smart-start-v29-1',
+    reply:`${FIRST_SPEECH}\n\nIst der Bereich „Vitalwerte“ geöffnet?`,spokenText:FIRST_SPEECH,
+    guideSlug:'vitalwerte-finden',guideTitle:'Vitalwerte finden',guideVersion:1,guideStep:1,guideStepCount:1,completed:false,source:'approved-guide-smart-start-v44',
   };
 }
 
@@ -113,13 +113,13 @@ try {
   await page.evaluate(() => window.DokoHilf?.sendMessage?.('Hallo ich suche den Blutdruck', { fromVoice: true }));
   await page.waitForFunction(text => document.querySelector('#voiceFocusText')?.textContent?.includes(text), FIRST_SPEECH);
   await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('001.wav'));
-  assert(routerBodies[0]?.selectedGuideSlug === 'vitalwerte-einzelwert', 'Blutdruck wurde nicht direkt zum Einzelwert-Guide geroutet.');
+  assert(routerBodies[0]?.selectedGuideSlug === 'vitalwerte-finden', 'Blutdruck-Suche wurde nicht zum bestätigten Vitalwerte-Finden-Guide geroutet.');
 
   for (const text of ['ich weiß nicht', 'wo finde ich das?', 'keine Ahnung']) {
     await page.evaluate(textValue => window.DokoHilf?.sendMessage?.(textValue, { fromVoice: true }), text);
     await page.waitForFunction(speech => document.querySelector('#voiceFocusText')?.textContent?.includes(speech), HELP_SPEECH);
     await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('002.wav'));
-    assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 1 von 7'), `Hilferuf „${text}“ hat den Guide-Schritt verschoben.`);
+    assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 1 von 1'), `Hilferuf „${text}“ hat den Guide-Schritt verschoben.`);
   }
   assert(routerBodies.slice(1).some(body=>body.smartHelpIntent===true), 'Natürliche Hilferufe wurden nicht kontextuell markiert.');
   assert(!await page.locator('#voiceDetailHelpOptionsV27').count(), 'Alter Vier-Button-Hilfemodus ist noch sichtbar.');
