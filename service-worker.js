@@ -11,6 +11,7 @@ const GUIDE_AUDIT_REVISION = '20260812-full-guide-audit-v44-1';
 const VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-2';
 const FILE_STORAGE_REVISION = '20260812-file-storage-guide-v46-1';
 const USER_FACING_HOTFIX_REVISION = '20260812-voice-copy-progress-report-v48-1';
+const FEEDBACK_REVISION = '20260812-feedback-v47-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
@@ -60,6 +61,7 @@ const CORE_FILES = [
   './assets/guide-library-v29.js?v=20260812-41-library1',
   './assets/report-guide-hotfix-v43.js?v=20260812-41',
   './assets/ui-polish-v35.js?v=20260812-41-ui1',
+  './assets/feedback-report-v47.js?v=20260812-feedback-v47-1',
   './assets/voice-polish-v36.js?v=20260812-41-voice1',
   './assets/ux-polish-v42.js?v=20260812-41-ux42',
   './assets/app.js?v=20260812-41',
@@ -104,6 +106,7 @@ self.addEventListener('activate', event => {
         voiceReplyMatchRevision: VOICE_REPLY_MATCH_REVISION,
         fileStorageRevision: FILE_STORAGE_REVISION,
         userFacingHotfixRevision: USER_FACING_HOTFIX_REVISION,
+        feedbackRevision: FEEDBACK_REVISION,
         hardRefresh: true,
       });
     }
@@ -127,6 +130,7 @@ self.addEventListener('message', event => {
       voiceReplyMatchRevision: VOICE_REPLY_MATCH_REVISION,
       fileStorageRevision: FILE_STORAGE_REVISION,
       userFacingHotfixRevision: USER_FACING_HOTFIX_REVISION,
+      feedbackRevision: FEEDBACK_REVISION,
     });
   }
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
@@ -148,6 +152,7 @@ self.addEventListener('message', event => {
         voiceReplyMatchRevision: VOICE_REPLY_MATCH_REVISION,
         fileStorageRevision: FILE_STORAGE_REVISION,
         userFacingHotfixRevision: USER_FACING_HOTFIX_REVISION,
+        feedbackRevision: FEEDBACK_REVISION,
       });
     })());
   }
