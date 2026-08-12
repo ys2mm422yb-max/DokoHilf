@@ -39,19 +39,22 @@ test('Hilferückfragen bleiben exakt auf dem aktuellen Guide-Schritt', () => {
   assert.doesNotMatch(router, /contextEvidenceStep|bestEvidence|questionTerms/);
 });
 
-test('kurze Suchfragen starten direkt einen freigegebenen Guide statt einer langen Übersicht', () => {
+test('kurze Suchfragen starten bestätigte Finden-Guides statt Dokumentationsabläufe', () => {
   assert.match(router, /inferNavigationGuide/);
   assert.match(router, /blutdruck\|puls\|temperatur/);
-  assert.match(router, /return 'vitalwerte-einzelwert'/);
+  assert.match(router, /return 'vitalwerte-finden'/);
+  assert.match(router, /return 'berichte-finden'/);
+  assert.match(router, /return 'visiten-finden'/);
   assert.match(router, /selectedGuideSlug/);
-  assert.match(router, /approved-guide-smart-start-v29-1/);
+  assert.match(router, /approved-guide-smart-start-v44/);
 });
 
-test('Bestätigungen und echte Themenwechsel bleiben beim bestehenden Stateful-Router', () => {
+test('Bestätigungen und echte Themenwechsel bleiben im geschützten Stateful-Pfad', () => {
   assert.match(router, /isControlOrConfirmation/);
   assert.match(router, /explicitDifferentGoal/);
   assert.match(router, /forwardToExistingRouter/);
   assert.match(router, /dokohilf-ai-router/);
+  assert.match(conversationRouter, /approved-guide-positive-advance-v44/);
 });
 
 test('auch Wechsel zwischen verwandten Guides derselben Kategorie werden nicht als Hilfe verschluckt', () => {
