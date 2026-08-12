@@ -10,6 +10,7 @@
   ]);
   const REPORT_ENTRY_REPLY = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach **Berichte**. Siehst du **Berichte**?';
   const REPORT_ENTRY_SPEECH = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach Berichte. Siehst du Berichte?';
+  const VOICE_PROGRESS_REVISION = '20260812-final-step-progress-v48-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -40,6 +41,30 @@
       .replace(
         'DokoHilf darf bei diesem Ablauf nicht zu Änderungen an der Medikation anleiten.',
         'Hier geht es nur um das Ansehen der Medikation. Änderungen klärst du bitte über den dafür vorgesehenen Weg.',
+      )
+      .replace(
+        'Bleibe in den geöffneten Stammdaten und suche in der grauen Leiste nach „Dateiablage“. Einen anderen Klickweg erfindet DokoHilf nicht.',
+        'Bleibe in den geöffneten Stammdaten. Suche in der grauen Leiste nach „Dateiablage“.',
+      )
+      .replace(
+        'Bleibe in „Dateiablage“. Der bestätigte Bereich heißt „Dokumente“ und erscheint unten mittig.',
+        'Bleibe in „Dateiablage“. Der Bereich „Dokumente“ erscheint unten mittig.',
+      )
+      .replace(
+        'DokoHilf kann nicht garantieren, dass ein bestimmtes Dokument hinterlegt ist. Suche nur nach bereits vorhandenen Dokumenten; nichts hochladen, löschen, umbenennen oder verändern.',
+        'Suche nur nach einem bereits vorhandenen Dokument. Wenn das gewünschte Dokument nicht angezeigt wird, ist nicht bestätigt, dass es dort hinterlegt ist.',
+      )
+      .replace(
+        'Warte kurz auf Word und starte den Doppelklick nicht mehrfach. DokoHilf hilft hier nur beim Öffnen vorhandener Dokumente.',
+        'Warte kurz, bis sich Word öffnet, und führe den Doppelklick nicht mehrfach aus.',
+      )
+      .replace(
+        'Du legst die Wirksamkeitskontrolle nicht selbst an. DokoHilf nennt keine erfundene Wartezeit.',
+        'Du legst die Wirksamkeitskontrolle nicht selbst an. Eine konkrete Wartezeit ist hier nicht festgelegt.',
+      )
+      .replace(
+        'Die Wirksamkeitskontrolle erscheint erst zum vorgesehenen Zeitpunkt im Durchführungsnachweis. DokoHilf nennt keine erfundene Wartezeit.',
+        'Die Wirksamkeitskontrolle erscheint erst zum vorgesehenen Zeitpunkt im Durchführungsnachweis. Eine konkrete Wartezeit ist hier nicht festgelegt.',
       )
       .replace('Dafür habe ich keinen bestätigten Weg.', 'Dazu habe ich keine passende Anleitung.')
       .replace('Hast du den bestätigten Einstieg gefunden?', 'Hast du den Einstieg gefunden?')
@@ -140,7 +165,7 @@
     if (fixed === payload) return response;
     const headers = new Headers(response.headers);
     headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers.set('X-DokoHilf-Context-Hotfix', 'natural-copy-static-voice-v29-2');
+    headers.set('X-DokoHilf-Context-Hotfix', 'natural-copy-static-voice-v48-1');
     return new Response(JSON.stringify(fixed), {
       status: response.status,
       statusText: response.statusText,
@@ -152,6 +177,23 @@
     const response = await previousFetch(input, init);
     return isAiRequest(input, init) ? rewriteAiResponse(response) : response;
   };
+
+  function syncVoiceProgress() {
+    const track = document.querySelector('#voiceFocusStage .v42-voice-progress');
+    const fill = track?.querySelector('i');
+    if (!track || !fill) return;
+    let guide = null;
+    try { guide = window.DokoHilfGuideProgress?.getCurrentGuide?.() || null; } catch { guide = null; }
+    const step = Number(guide?.guideStep || 0);
+    const count = Number(guide?.guideStepCount || 0);
+    const active = Number.isFinite(step) && Number.isFinite(count) && step > 0 && count > 0;
+    const progress = active
+      ? (step >= count ? 100 : Math.min(100, Math.max(0, (step / count) * 100)))
+      : 0;
+    track.style.setProperty('--v42-progress', `${progress}%`);
+    fill.style.setProperty('width', `${progress}%`, 'important');
+    track.dataset.v48Progress = active ? `${step}/${count}:${progress}` : 'empty';
+  }
 
   function syncRenderedLabels() {
     const slug = currentGuideSlug();
@@ -169,6 +211,7 @@
         if (button.dataset.detailHelpLabel !== label) button.dataset.detailHelpLabel = label;
       }
     }
+    syncVoiceProgress();
   }
 
   function installRenderSync() {
@@ -180,8 +223,10 @@
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['hidden', 'data-detail-help'],
+      attributeFilter: ['hidden', 'data-detail-help', 'data-mode', 'data-voice-state'],
     });
+    window.addEventListener('dokohilf:guide-state', syncVoiceProgress);
+    window.addEventListener('pageshow', syncVoiceProgress);
     window.__DOKOHILF_CONTEXT_VOICE_HOTFIX_OBSERVER__ = observer;
   }
 
@@ -196,8 +241,10 @@
     fixHelpOptions,
     contextualOptionLabel,
     naturalizeUserCopy,
+    syncVoiceProgress,
     reportSpeech: REPORT_ENTRY_SPEECH,
     voiceMode: 'static-supertonic-only',
+    voiceProgressRevision: VOICE_PROGRESS_REVISION,
   };
   window.__DOKOHILF_CONTEXT_VOICE_HOTFIX_V28__ = true;
 })();
