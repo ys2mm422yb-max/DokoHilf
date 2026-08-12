@@ -120,27 +120,27 @@ const cases = [
 
 const chatRouterCases = [
   {
-    name: 'v29 Blutdruck-Suche startet kurz direkt im Einzelwert-Guide',
+    name: 'v44 Blutdruck-Suche startet den bestätigten Finden-Guide',
     body: { messages: [{ role: 'user', content: 'Hallo ich suche den Blutdruck' }] },
-    validate: payload => payload.guideSlug === 'vitalwerte-einzelwert'
+    validate: payload => payload.guideSlug === 'vitalwerte-finden'
       && Number(payload.guideStep) === 1
-      && payload.source === 'approved-guide-smart-start-v29-1'
+      && payload.source === 'approved-guide-smart-start-v44'
       && String(payload.reply || '').length < 350,
   },
   {
-    name: 'v39 natürlicher Visiten-Satz startet den bestätigten Guide',
+    name: 'v44 natürlicher Visiten-Satz startet den bestätigten Guide',
     body: {
       selectedGuideSlug: 'visite-anlegen',
       messages: [{ role: 'user', content: 'Wie lege ich eine Visite an?' }],
     },
     validate: payload => payload.guideSlug === 'visite-anlegen'
       && Number(payload.guideStep) === 1
-      && payload.source === 'approved-guide-smart-start-v29-1'
+      && payload.source === 'approved-guide-smart-start-v44'
       && /Doku-Erweitert/i.test(payload.reply || '')
       && String(payload.reply || '').length < 350,
   },
   {
-    name: 'v29 Ich-weiß-nicht bleibt exakt auf dem aktuellen Bericht-Schritt',
+    name: 'v44 Ich-weiß-nicht bleibt exakt auf dem aktuellen Bericht-Schritt',
     body: {
       guideSlug: 'bericht-folgebericht',
       guideStep: 1,
@@ -150,7 +150,7 @@ const chatRouterCases = [
     },
     validate: payload => payload.guideSlug === 'bericht-folgebericht'
       && Number(payload.guideStep) === 1
-      && payload.source === 'approved-guide-context-help-v29-5'
+      && payload.source === 'approved-guide-navigation-safe-v44'
       && !Array.isArray(payload.helpOptions),
   },
 ];
