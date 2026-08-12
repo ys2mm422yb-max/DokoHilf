@@ -8,28 +8,29 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DokoHilf">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="dokohilf-build" content="20260809-36">
+  <meta name="dokohilf-build" content="20260812-37">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>DokoHilf – KI-Bedienungshilfe</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="assets/styles.css?v=20260809-36">
-  <link rel="stylesheet" href="assets/premium-ui-v25.css?v=20260809-36" data-dokohilf-premium-v25>
-  <link rel="stylesheet" href="assets/premium-ui-v26.css?v=20260809-36" data-dokohilf-premium-v26>
-  <link rel="stylesheet" href="assets/premium-ui-v27.css?v=20260809-36" data-dokohilf-premium-v27>
-  <link rel="stylesheet" href="assets/ux-v27.css?v=20260809-36" data-dokohilf-ux-v27>
-  <link rel="stylesheet" href="assets/voice-stage-balance-v27.css?v=20260809-36" data-dokohilf-voice-stage-balance-v27>
-  <link rel="stylesheet" href="assets/direct-guides-chat-v27.css?v=20260809-36" data-dokohilf-direct-guides-chat-v27>
-  <link rel="stylesheet" href="assets/v29-ui.css?v=20260809-36" data-dokohilf-v29-ui>
-  <link rel="stylesheet" href="assets/card-axis-fix-v29.css?v=20260809-36-cardaxis1" data-dokohilf-card-axis-fix-v29>
-  <link rel="stylesheet" href="assets/guide-library-v29.css?v=20260809-36-library1" data-dokohilf-guide-library-v29>
-  <link rel="stylesheet" href="assets/ui-polish-v35.css?v=20260809-36-ui1" data-dokohilf-ui-polish-v35>
-  <link rel="stylesheet" href="assets/voice-polish-v36.css?v=20260809-36-voice1" data-dokohilf-voice-polish-v36>
+  <link rel="stylesheet" href="assets/styles.css?v=20260812-37">
+  <link rel="stylesheet" href="assets/premium-ui-v25.css?v=20260812-37" data-dokohilf-premium-v25>
+  <link rel="stylesheet" href="assets/premium-ui-v26.css?v=20260812-37" data-dokohilf-premium-v26>
+  <link rel="stylesheet" href="assets/premium-ui-v27.css?v=20260812-37" data-dokohilf-premium-v27>
+  <link rel="stylesheet" href="assets/ux-v27.css?v=20260812-37" data-dokohilf-ux-v27>
+  <link rel="stylesheet" href="assets/voice-stage-balance-v27.css?v=20260812-37" data-dokohilf-voice-stage-balance-v27>
+  <link rel="stylesheet" href="assets/direct-guides-chat-v27.css?v=20260812-37" data-dokohilf-direct-guides-chat-v27>
+  <link rel="stylesheet" href="assets/v29-ui.css?v=20260812-37" data-dokohilf-v29-ui>
+  <link rel="stylesheet" href="assets/card-axis-fix-v29.css?v=20260812-37-cardaxis1" data-dokohilf-card-axis-fix-v29>
+  <link rel="stylesheet" href="assets/guide-library-v29.css?v=20260812-37-library1" data-dokohilf-guide-library-v29>
+  <link rel="stylesheet" href="assets/ui-polish-v35.css?v=20260812-37-ui1" data-dokohilf-ui-polish-v35>
+  <link rel="stylesheet" href="assets/voice-polish-v36.css?v=20260812-37-voice1" data-dokohilf-voice-polish-v36>
+  <link rel="stylesheet" href="assets/ux-polish-v42.css?v=20260812-37-ux42" data-dokohilf-ux-polish-v42>
   <script>
     (() => {
       'use strict';
-      const BUILD_ID = '20260809-36';
+      const BUILD_ID = '20260812-37';
       const ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai-router';
       const CORE_ENDPOINT_MARKER = '/functions/v1/dokohilf-ai';
       const nativeFetch = window.fetch.bind(window);
@@ -77,11 +78,11 @@
   </script>
 </head>
 <body>
-  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260809-36">
+  <div class="app-shell" id="appShell" data-mode="start" data-voice-state="idle" data-build-id="20260812-37">
     <header class="topbar">
       <div class="brand" aria-label="DokoHilf"><img src="icon.svg" alt="" width="48" height="48"><span><strong>DokoHilf</strong><small>KI-Bedienungshilfe</small></span></div>
       <div class="top-actions">
-        <button class="build-pill" id="buildPill" type="button" hidden aria-label="Version 20260809-36 und Updateprüfung">KI · v29</button>
+        <button class="build-pill" id="buildPill" type="button" hidden aria-label="Version 20260812-37 und Updateprüfung">KI · v29</button>
         <button class="home-button" id="homeButton" type="button" hidden aria-label="Zum Hauptmenü"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></svg><span>Hauptmenü</span></button>
         <button class="new-button" id="resetButton" type="button" hidden aria-label="Neues Gespräch starten">Neu</button>
       </div>
@@ -116,37 +117,38 @@
     <footer class="composer-wrap" id="composerWrap" hidden><form class="composer" id="chatForm"><label class="sr-only" for="chatInput">Nachricht an DokoHilf</label><textarea id="chatInput" rows="1" maxlength="350" placeholder="Bedienfrage schreiben …" autocomplete="off" autocapitalize="sentences"></textarea><button class="small-mic" id="smallMicButton" type="button" aria-label="Frage diktieren"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="4" width="10" height="15" rx="5"/><path d="M7 15v1c0 5 4 9 9 9s9-4 9-9v-1M16 25v4"/></svg></button><button class="send-button" type="submit">Senden</button></form><p>Gespräch und Audio werden nicht dauerhaft gespeichert.</p></footer>
     <div class="update-toast" id="updateToast" hidden aria-live="polite">DokoHilf wurde aktualisiert.</div>
   </div>
-  <script src="assets/update-manager.js?v=20260809-36"></script>
-  <script src="assets/mobile-audio-fix.js?v=20260809-36"></script>
-  <script src="assets/routing-fix.js?v=20260809-36"></script>
-  <script src="assets/conversation-intelligence.js?v=20260809-36"></script>
-  <script src="assets/clarification-ui.js?v=20260809-36"></script>
-  <script src="assets/detail-help-v27.js?v=20260809-36"></script>
-  <script src="assets/smart-help-v29.js?v=20260809-36"></script>
-  <script src="assets/guide-progress.js?v=20260809-36"></script>
-  <script src="assets/orientation-help-v29.js?v=20260809-36"></script>
-  <script src="assets/release-polish-v29.js?v=20260809-36"></script>
-  <script src="assets/durchfuehrungs-workflows-v29.js?v=20260809-36"></script>
-  <script src="assets/voice-focus-mode.js?v=20260809-36"></script>
-  <script src="assets/local-voice-v28.js?v=20260809-36"></script>
-  <script src="assets/experience-v27.js?v=20260809-36"></script>
-  <script src="assets/detail-help-polish-v27.js?v=20260809-36"></script>
-  <script src="assets/detail-help-render-sync-v27.js?v=20260809-36"></script>
-  <script src="assets/context-voice-hotfix-v28.js?v=20260809-36"></script>
-  <script src="assets/ux-v27.js?v=20260809-36"></script>
-  <script src="assets/v29-ui.js?v=20260809-36"></script>
-  <script src="assets/mobile-polish-v29.js?v=20260809-36-cardaxis1"></script>
-  <script src="assets/local-voice-gate-v28.js?v=20260809-36"></script>
-  <script src="assets/direct-guides-v27.js?v=20260809-36"></script>
-  <script src="assets/direct-guide-copy-v29.js?v=20260809-36"></script>
-  <script src="assets/guide-library-v29.js?v=20260809-36-library1" data-dokohilf-guide-library-v29></script>
-  <script src="assets/ui-polish-v35.js?v=20260809-36-ui1" data-dokohilf-ui-polish-v35></script>
-  <script src="assets/voice-polish-v36.js?v=20260809-36-voice1" data-dokohilf-voice-polish-v36></script>
-  <script src="assets/app.js?v=20260809-36" defer></script>
+  <script src="assets/update-manager.js?v=20260812-37"></script>
+  <script src="assets/mobile-audio-fix.js?v=20260812-37"></script>
+  <script src="assets/routing-fix.js?v=20260812-37"></script>
+  <script src="assets/conversation-intelligence.js?v=20260812-37"></script>
+  <script src="assets/clarification-ui.js?v=20260812-37"></script>
+  <script src="assets/detail-help-v27.js?v=20260812-37"></script>
+  <script src="assets/smart-help-v29.js?v=20260812-37"></script>
+  <script src="assets/guide-progress.js?v=20260812-37"></script>
+  <script src="assets/orientation-help-v29.js?v=20260812-37"></script>
+  <script src="assets/release-polish-v29.js?v=20260812-37"></script>
+  <script src="assets/durchfuehrungs-workflows-v29.js?v=20260812-37"></script>
+  <script src="assets/voice-focus-mode.js?v=20260812-37"></script>
+  <script src="assets/local-voice-v28.js?v=20260812-37"></script>
+  <script src="assets/experience-v27.js?v=20260812-37"></script>
+  <script src="assets/detail-help-polish-v27.js?v=20260812-37"></script>
+  <script src="assets/detail-help-render-sync-v27.js?v=20260812-37"></script>
+  <script src="assets/context-voice-hotfix-v28.js?v=20260812-37"></script>
+  <script src="assets/ux-v27.js?v=20260812-37"></script>
+  <script src="assets/v29-ui.js?v=20260812-37"></script>
+  <script src="assets/mobile-polish-v29.js?v=20260812-37-cardaxis1"></script>
+  <script src="assets/local-voice-gate-v28.js?v=20260812-37"></script>
+  <script src="assets/direct-guides-v27.js?v=20260812-37"></script>
+  <script src="assets/direct-guide-copy-v29.js?v=20260812-37"></script>
+  <script src="assets/guide-library-v29.js?v=20260812-37-library1" data-dokohilf-guide-library-v29></script>
+  <script src="assets/ui-polish-v35.js?v=20260812-37-ui1" data-dokohilf-ui-polish-v35></script>
+  <script src="assets/voice-polish-v36.js?v=20260812-37-voice1" data-dokohilf-voice-polish-v36></script>
+  <script src="assets/ux-polish-v42.js?v=20260812-37-ux42" data-dokohilf-ux-polish-v42></script>
+  <script src="assets/app.js?v=20260812-37" defer></script>
   <script>
     document.getElementById('buildPill')?.addEventListener('click', () => {
       if (window.DokoHilfUpdate?.checkForUpdate) window.DokoHilfUpdate.checkForUpdate('manual');
-      else window.DokoHilfHardRefresh?.('20260809-36');
+      else window.DokoHilfHardRefresh?.('20260812-37');
     });
   </script>
 </body>
