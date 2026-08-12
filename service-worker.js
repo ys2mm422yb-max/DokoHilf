@@ -1,4 +1,4 @@
-const BUILD_ID = '20260812-38';
+const BUILD_ID = '20260812-39';
 const HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3';
 const LIBRARY_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1';
 const CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1';
@@ -6,6 +6,7 @@ const ROUTING_REVISION = '20260810-natural-guide-completions-v40-1';
 const CONVERSATION_COMPLETION_REVISION = '20260810-natural-guide-completions-v40-1';
 const USAGE_METRICS_REVISION = '20260811-private-usage-metrics-v41-1';
 const UX_POLISH_REVISION = '20260812-voice-library-ux-v42-2';
+const REPORT_GUIDE_VOICE_RESET_REVISION = '20260812-report-textfield-voice-reset-v43-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
@@ -14,48 +15,49 @@ const CORE_FILES = [
   './',
   './index.html',
   './version.json',
-  './assets/guide-audio-catalog.json?v=20260812-38',
-  './assets/styles.css?v=20260812-38',
-  './assets/premium-ui-v25.css?v=20260812-38',
-  './assets/premium-ui-v26.css?v=20260812-38',
-  './assets/premium-ui-v27.css?v=20260812-38',
-  './assets/ux-v27.css?v=20260812-38',
-  './assets/voice-stage-balance-v27.css?v=20260812-38',
-  './assets/direct-guides-chat-v27.css?v=20260812-38',
-  './assets/v29-ui.css?v=20260812-38',
-  './assets/card-axis-fix-v29.css?v=20260812-38-cardaxis1',
-  './assets/guide-library-v29.css?v=20260812-38-library1',
-  './assets/ui-polish-v35.css?v=20260812-38-ui1',
-  './assets/voice-polish-v36.css?v=20260812-38-voice1',
-  './assets/ux-polish-v42.css?v=20260812-38-ux42',
-  './assets/update-manager.js?v=20260812-38',
-  './assets/mobile-audio-fix.js?v=20260812-38',
-  './assets/routing-fix.js?v=20260812-38',
-  './assets/conversation-intelligence.js?v=20260812-38',
-  './assets/clarification-ui.js?v=20260812-38',
-  './assets/detail-help-v27.js?v=20260812-38',
-  './assets/smart-help-v29.js?v=20260812-38',
-  './assets/guide-progress.js?v=20260812-38',
-  './assets/orientation-help-v29.js?v=20260812-38',
-  './assets/release-polish-v29.js?v=20260812-38',
-  './assets/durchfuehrungs-workflows-v29.js?v=20260812-38',
-  './assets/voice-focus-mode.js?v=20260812-38',
-  './assets/local-voice-v28.js?v=20260812-38',
-  './assets/experience-v27.js?v=20260812-38',
-  './assets/detail-help-polish-v27.js?v=20260812-38',
-  './assets/detail-help-render-sync-v27.js?v=20260812-38',
-  './assets/context-voice-hotfix-v28.js?v=20260812-38',
-  './assets/ux-v27.js?v=20260812-38',
-  './assets/v29-ui.js?v=20260812-38',
-  './assets/mobile-polish-v29.js?v=20260812-38-cardaxis1',
-  './assets/local-voice-gate-v28.js?v=20260812-38',
-  './assets/direct-guides-v27.js?v=20260812-38',
-  './assets/direct-guide-copy-v29.js?v=20260812-38',
-  './assets/guide-library-v29.js?v=20260812-38-library1',
-  './assets/ui-polish-v35.js?v=20260812-38-ui1',
-  './assets/voice-polish-v36.js?v=20260812-38-voice1',
-  './assets/ux-polish-v42.js?v=20260812-38-ux42',
-  './assets/app.js?v=20260812-38',
+  './assets/guide-audio-catalog.json?v=20260812-39',
+  './assets/styles.css?v=20260812-39',
+  './assets/premium-ui-v25.css?v=20260812-39',
+  './assets/premium-ui-v26.css?v=20260812-39',
+  './assets/premium-ui-v27.css?v=20260812-39',
+  './assets/ux-v27.css?v=20260812-39',
+  './assets/voice-stage-balance-v27.css?v=20260812-39',
+  './assets/direct-guides-chat-v27.css?v=20260812-39',
+  './assets/v29-ui.css?v=20260812-39',
+  './assets/card-axis-fix-v29.css?v=20260812-39-cardaxis1',
+  './assets/guide-library-v29.css?v=20260812-39-library1',
+  './assets/ui-polish-v35.css?v=20260812-39-ui1',
+  './assets/voice-polish-v36.css?v=20260812-39-voice1',
+  './assets/ux-polish-v42.css?v=20260812-39-ux42',
+  './assets/update-manager.js?v=20260812-39',
+  './assets/mobile-audio-fix.js?v=20260812-39',
+  './assets/routing-fix.js?v=20260812-39',
+  './assets/conversation-intelligence.js?v=20260812-39',
+  './assets/clarification-ui.js?v=20260812-39',
+  './assets/detail-help-v27.js?v=20260812-39',
+  './assets/smart-help-v29.js?v=20260812-39',
+  './assets/guide-progress.js?v=20260812-39',
+  './assets/orientation-help-v29.js?v=20260812-39',
+  './assets/release-polish-v29.js?v=20260812-39',
+  './assets/durchfuehrungs-workflows-v29.js?v=20260812-39',
+  './assets/voice-focus-mode.js?v=20260812-39',
+  './assets/local-voice-v28.js?v=20260812-39',
+  './assets/experience-v27.js?v=20260812-39',
+  './assets/detail-help-polish-v27.js?v=20260812-39',
+  './assets/detail-help-render-sync-v27.js?v=20260812-39',
+  './assets/context-voice-hotfix-v28.js?v=20260812-39',
+  './assets/ux-v27.js?v=20260812-39',
+  './assets/v29-ui.js?v=20260812-39',
+  './assets/mobile-polish-v29.js?v=20260812-39-cardaxis1',
+  './assets/local-voice-gate-v28.js?v=20260812-39',
+  './assets/direct-guides-v27.js?v=20260812-39',
+  './assets/direct-guide-copy-v29.js?v=20260812-39',
+  './assets/guide-library-v29.js?v=20260812-39-library1',
+  './assets/report-guide-hotfix-v43.js?v=20260812-39',
+  './assets/ui-polish-v35.js?v=20260812-39-ui1',
+  './assets/voice-polish-v36.js?v=20260812-39-voice1',
+  './assets/ux-polish-v42.js?v=20260812-39-ux42',
+  './assets/app.js?v=20260812-39',
   './manifest.webmanifest',
   './icon.svg',
 ];
@@ -92,6 +94,7 @@ self.addEventListener('activate', event => {
         conversationCompletionRevision: CONVERSATION_COMPLETION_REVISION,
         usageMetricsRevision: USAGE_METRICS_REVISION,
         uxPolishRevision: UX_POLISH_REVISION,
+        reportGuideVoiceResetRevision: REPORT_GUIDE_VOICE_RESET_REVISION,
         hardRefresh: true,
       });
     }
@@ -110,6 +113,7 @@ self.addEventListener('message', event => {
       conversationCompletionRevision: CONVERSATION_COMPLETION_REVISION,
       usageMetricsRevision: USAGE_METRICS_REVISION,
       uxPolishRevision: UX_POLISH_REVISION,
+      reportGuideVoiceResetRevision: REPORT_GUIDE_VOICE_RESET_REVISION,
     });
   }
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
@@ -126,6 +130,7 @@ self.addEventListener('message', event => {
         conversationCompletionRevision: CONVERSATION_COMPLETION_REVISION,
         usageMetricsRevision: USAGE_METRICS_REVISION,
         uxPolishRevision: UX_POLISH_REVISION,
+        reportGuideVoiceResetRevision: REPORT_GUIDE_VOICE_RESET_REVISION,
       });
     })());
   }
