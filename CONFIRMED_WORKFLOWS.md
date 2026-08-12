@@ -5,7 +5,7 @@
 
 Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien.
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt. Am 12. August 2026 wurde für „Bericht anlegen“ bestätigt, dass das große Textfeld bereits in der Berichtseingabemaske unten sichtbar ist und sich nicht erst durch die Auswahl der Berichtskategorie öffnet.
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt. Am 12. August 2026 wurde für „Bericht anlegen“ bestätigt, dass das große Textfeld bereits in der Berichtseingabemaske unten sichtbar ist und sich nicht erst durch die Auswahl der Berichtskategorie öffnet. Ebenfalls am 12. August 2026 wurde der Zugriff auf bereits hinterlegte Dokumente über die Stammdaten bestätigt: In der grauen Reiterleiste wird **Dateiablage** gewählt, anschließend erscheint im unteren mittleren Bereich **Dokumente**; das gewünschte Dokument wird per Doppelklick geöffnet und kann mit kurzer Verzögerung in Word erscheinen.
 
 ## Allgemeine Regeln
 
@@ -21,6 +21,7 @@ Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durch
 - Bei An- und Abwesenheit wird **Von immer** eingetragen. **Bis nur**, wenn der genaue Endzeitpunkt zu 100 Prozent bekannt ist. Niemals schätzen.
 - Wenn ein Nutzer einen Menüpunkt oder Schritt nicht findet, bleibt der aktuelle Guide-Schritt aktiv. DokoHilf darf nicht so tun, als sei der Schritt erledigt.
 - Detailhilfe darf nur aus bestätigten lokalen Bezeichnungen und bestätigten Alternativen bestehen. Keine Klickwege oder Feldnamen erfinden.
+- Die Dateiablage wird in DokoHilf ausschließlich zum Finden und Öffnen bereits hinterlegter Dokumente erklärt. DokoHilf behauptet niemals, dass ein bestimmtes Dokument beim Bewohner vorhanden ist, und leitet dort weder Upload, Löschen, Umbenennen noch eine inhaltliche Bewertung an.
 - Die bisherige Anleitung „Berichtssuche / Analyse → Abfrage“ ist **nicht final** und wird später fachlich neu geprüft. Bis dahin nicht als fertige Anleitung ausgeben.
 
 ## Bestätigte Navigationsstruktur
@@ -31,6 +32,7 @@ Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durch
 - Unter **Doku-Erweitert** befinden sich die bestätigten Bereiche **Vitalwerte**, **Visiten**, **Medikation**, **Formulare** und **An-/Abwesenheiten**.
 - Unter **Doku** befindet sich der bestätigte Bereich **Durchführungsnachweis**.
 - Unter **Analyse** befindet sich der bestätigte Einstieg **Was war los?** für die Übergabeansicht.
+- In den geöffneten **Stammdaten** befindet sich in der grauen Reiterleiste der bestätigte Reiter **Dateiablage**. Nach Auswahl erscheint im unteren mittleren Bereich **Dokumente**.
 - **Planung** selbst ist als Hauptbereich in der festen grünen Leiste bestätigt. Der genaue Ablauf von **Easy-Plan** bleibt weiterhin fachlich offen und wird nicht erfunden.
 - Wenn ein Nutzer einen Unterbereich nicht findet, erklärt DokoHilf deshalb zuerst den übergeordneten Hauptbereich in der grünen Leiste und anschließend die darunter erscheinende Funktion.
 
@@ -60,6 +62,7 @@ Bestätigte Orientierungsanker:
 - **Vitalwerte, Visiten, Medikation, Formulare und An-/Abwesenheiten** liegen unter **Doku-Erweitert**.
 - **Bedarfsmedikation** und **Maßnahmen ohne Zeitangabe** werden im **Durchführungsnachweis** gefunden.
 - Die Wirksamkeitskontrolle einer Bedarfsmedikation wird nach der dafür vorgesehenen Zeit automatisch im **Durchführungsnachweis** fällig.
+- **Dateiablage** liegt in den geöffneten Stammdaten in der grauen Reiterleiste; danach erscheint **Dokumente** im unteren mittleren Bereich.
 
 Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` dokumentiert.
 
@@ -229,6 +232,20 @@ Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, er
 6. Mit OK bestätigen.
 7. Das geöffnete Formular wie gewohnt ausfüllen.
 8. Wenn das Formular fertig bearbeitet ist, oben links in der Leiste speichern.
+
+## Dokumente in der Dateiablage öffnen
+
+Dieser Ablauf dient ausschließlich dazu, bereits hinterlegte Dokumente zu finden und zu öffnen.
+
+1. Die **Stammdaten des gewünschten Bewohners** öffnen.
+2. In den geöffneten Stammdaten in der **grauen Reiterleiste** auf **Dateiablage** klicken.
+3. Im **unteren mittleren Bereich** erscheint **Dokumente**. Dort das gewünschte Dokument in der Liste suchen.
+4. Das gewünschte Dokument mit einem **Doppelklick** öffnen.
+5. Kurz warten, bis sich das Dokument in **Word** geöffnet hat. Den Vorgang währenddessen nicht mehrfach starten.
+
+Als bestätigte Suchbegriffe beziehungsweise Beispiele gelten **Dokumente**, **Dateiablage**, **Verträge**, **Wohnassistent-Vertrag**, **Betreuerausweis**, **Arztbrief**, **Entlassungsbrief** und **Laborwerte**. Diese Beispiele bedeuten nur, dass solche Dokumentarten über diesen Weg gesucht werden. DokoHilf darf niemals behaupten, dass ein bestimmtes Dokument beim Bewohner tatsächlich hinterlegt ist.
+
+DokoHilf erklärt hier nur **Finden und Öffnen**. Upload, Löschen, Umbenennen oder eine fachliche beziehungsweise medizinische Bewertung des Dokumentinhalts sind nicht Bestandteil dieses bestätigten Ablaufs.
 
 ## Notfallblatt öffnen
 
