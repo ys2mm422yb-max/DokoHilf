@@ -44,8 +44,18 @@ test('Dateiablage aliases route deterministically to the approved guide', () => 
   ]) {
     assert.equal(runtime.inferNavigationGuide(phrase), 'dateiablage', phrase);
   }
-  assert.equal(runtime.inferNavigationGuide('Laborwerte eintragen'), '');
-  assert.equal(runtime.inferNavigationGuide('Dokument hochladen'), '');
+  for (const phrase of [
+    'Laborwerte eintragen',
+    'Dokumente hochladen',
+    'Dokumente löschen',
+    'Dokumente umbenennen',
+    'Dokumente ändern',
+    'Dokumente bearbeiten',
+    'Dokumente verschieben',
+    'Dokumente ersetzen',
+  ]) {
+    assert.equal(runtime.inferNavigationGuide(phrase), '', phrase);
+  }
 });
 
 test('direct guide contains only the confirmed find/open path', () => {
