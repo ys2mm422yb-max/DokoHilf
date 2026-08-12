@@ -10,7 +10,7 @@
   ]);
   const REPORT_ENTRY_REPLY = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach **Berichte**. Siehst du **Berichte**?';
   const REPORT_ENTRY_SPEECH = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach Berichte. Siehst du Berichte?';
-  const VOICE_PROGRESS_REVISION = '20260812-final-step-progress-v48-1';
+  const VOICE_PROGRESS_REVISION = '20260812-final-step-progress-v48-2';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -192,8 +192,17 @@
       ? (finalStep ? 100 : Math.min(100, Math.max(0, (step / count) * 100)))
       : 0;
     track.style.setProperty('--v42-progress', `${progress}%`);
-    fill.style.setProperty('transition', finalStep ? 'none' : 'width .28s ease', 'important');
-    fill.style.setProperty('width', `${progress}%`, 'important');
+    if (finalStep) {
+      fill.style.setProperty('transition', 'none', 'important');
+      try {
+        for (const animation of fill.getAnimations?.() || []) animation.cancel();
+      } catch {}
+      void fill.offsetWidth;
+      fill.style.setProperty('width', '100%', 'important');
+    } else {
+      fill.style.removeProperty('transition');
+      fill.style.setProperty('width', `${progress}%`, 'important');
+    }
     track.dataset.v48Progress = active ? `${step}/${count}:${progress}` : 'empty';
     track.dataset.v48Final = finalStep ? 'true' : 'false';
   }
