@@ -2,6 +2,7 @@
   'use strict';
 
   const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
+  const DISPLAY_VERSION = document.querySelector('meta[name="dokohilf-release"]')?.content || 'unknown';
   const VERSION_URL = './version.json';
   const RELOAD_KEY = 'dokohilf-build-reload';
   const CHECK_INTERVAL_MS = 5 * 60 * 1000;
@@ -32,7 +33,7 @@
     status.dataset.state = 'current';
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
-    status.innerHTML = `<strong>Version ${BUILD_ID}</strong><span>Aktuell</span>`;
+    status.innerHTML = `<strong>DokoHilf ${DISPLAY_VERSION}</strong><span>Build ${BUILD_ID} · Aktuell</span>`;
 
     const legal = document.querySelector('.legal-note');
     if (legal) legal.insertAdjacentElement('afterend', status);
@@ -43,7 +44,7 @@
   function setStatus(state, text) {
     const status = ensureStatusElement();
     status.dataset.state = state;
-    status.innerHTML = `<strong>Version ${BUILD_ID}</strong><span>${text}</span>`;
+    status.innerHTML = `<strong>DokoHilf ${DISPLAY_VERSION}</strong><span>Build ${BUILD_ID} · ${text}</span>`;
   }
 
   async function fetchRemoteVersion() {
@@ -180,6 +181,7 @@
 
   window.DokoHilfUpdate = {
     buildId: BUILD_ID,
+    displayVersion: DISPLAY_VERSION,
     checkForUpdate,
     getRegistration: () => registration,
   };
