@@ -14,8 +14,8 @@ const [confirmed, migration, directHotfix, audioCatalog, mobileAudio] = await Pr
 const approvedReportText = 'Das große Textfeld für den Bericht ist in dieser Maske bereits unten sichtbar';
 
 test('Bericht anlegen sagt nicht mehr, dass das Textfeld erst nach der Kategorieauswahl geöffnet wird', () => {
-  assert.match(confirmed, /Das große Textfeld für den Bericht ist unten in derselben Maske bereits sichtbar/);
-  assert.match(confirmed, /sich nicht erst durch die Auswahl der Berichtskategorie öffnet/);
+  assert.match(confirmed, /Das große Textfeld für den Bericht ist (?:in dieser Maske bereits unten sichtbar|unten in derselben Maske bereits sichtbar)/);
+  assert.match(confirmed, /(?:Es öffnet sich durch die Kategorieauswahl nicht erst neu|sich nicht erst durch die Auswahl der Berichtskategorie öffnet)/);
   assert.doesNotMatch(confirmed, /Danach öffnet sich die Eingabemaske für den Bericht/);
 
   assert.match(migration, new RegExp(approvedReportText));
