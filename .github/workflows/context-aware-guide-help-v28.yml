@@ -25,10 +25,14 @@ jobs:
         run: deno check supabase/functions/dokohilf-chat-router/index.ts
 
       - name: Validate frontend routing shim
-        run: node --check assets/routing-fix.js
+        run: |
+          node --check assets/routing-fix.js
+          node --check assets/smart-help-v29.js
+          node --check assets/file-storage-guide-v46.js
 
       - name: Run context regressions
         run: |
           node --test \
             tests/greeting-routing.test.mjs \
-            tests/context-aware-guide-help-v28.test.mjs
+            tests/context-aware-guide-help-v28.test.mjs \
+            tests/dateiablage-v46.test.mjs
