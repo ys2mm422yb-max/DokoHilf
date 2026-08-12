@@ -13,7 +13,7 @@ test('v29 build is cache-busted consistently and version badge starts hidden', a
     read('assets/local-voice-gate-v28.js'),
   ]);
   const buildId = JSON.parse(version).buildId;
-  assert.equal(buildId, '20260812-40');
+  assert.equal(buildId, '20260812-41');
   assert.match(html, /KI · v29/);
   assert.match(html, /id="buildPill" type="button" hidden/);
   assert.match(html, new RegExp(`dokohilf-build" content="${buildId}`));
