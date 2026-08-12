@@ -67,13 +67,14 @@ try {
   const conditionText = await condition.innerText();
   assert(conditionText.includes('Fallgespräch'), 'Fallgespräch fehlt im sichtbaren Sonderfall.');
   assert(conditionText.includes('Sturzprotokoll'), 'Sturzprotokoll fehlt im sichtbaren Sonderfall.');
-  assert(conditionText.includes('Schritte 6–9'), 'Überspringbereich 6–9 fehlt.');
-  assert(conditionText.includes('Schritt 10'), 'Sprungziel Schritt 10 fehlt.');
+  assert(conditionText.includes('Schritte 5–8'), 'Überspringbereich 5–8 fehlt.');
+  assert(conditionText.includes('Schritt 9'), 'Sprungziel Schritt 9 fehlt.');
+  assert(!conditionText.includes('Schritte 6–9') && !conditionText.includes('Schritt 10'), 'Alter Sonderfall-Bereich ist noch sichtbar.');
 
   const conditionalSteps = view.locator('.direct-guide-step.report-protocol-step');
-  assert(await conditionalSteps.count() === 4, 'Es müssen genau vier Sonderfall-Schritte 6–9 markiert sein.');
+  assert(await conditionalSteps.count() === 4, 'Es müssen genau vier Sonderfall-Schritte 5–8 markiert sein.');
   const numbers = await conditionalSteps.locator('.direct-guide-number').allInnerTexts();
-  assert(JSON.stringify(numbers) === JSON.stringify(['6', '7', '8', '9']), `Falsche Sonderfall-Schritte: ${numbers.join(', ')}`);
+  assert(JSON.stringify(numbers) === JSON.stringify(['5', '6', '7', '8']), `Falsche Sonderfall-Schritte: ${numbers.join(', ')}`);
 
   const geometry = await page.evaluate(() => ({
     scrollWidth: document.documentElement.scrollWidth,
