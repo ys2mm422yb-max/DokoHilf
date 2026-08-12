@@ -140,6 +140,14 @@
     return null;
   }
 
+  function loadFileStorageGuide() {
+    if (window.__DOKOHILF_FILE_STORAGE_GUIDE_V46__ || document.querySelector('script[data-dokohilf-file-storage-v46]')) return;
+    const script = document.createElement('script');
+    script.src = 'assets/file-storage-guide-v46.js?v=20260812-file-storage-v46-1';
+    script.dataset.dokohilfFileStorageV46 = 'true';
+    document.head.append(script);
+  }
+
   window.fetch = async (input, init = {}) => {
     if (!isAiRequest(input, init)) return previousFetch(input, init);
     const parsed = parseBody(init.body);
@@ -158,4 +166,5 @@
     preparedBody,
   };
   window.__DOKOHILF_SMART_HELP_V29__ = true;
+  loadFileStorageGuide();
 })();
