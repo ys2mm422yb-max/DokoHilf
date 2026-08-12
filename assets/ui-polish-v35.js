@@ -195,6 +195,7 @@
     polishModeSwitch,
     groupLayoutRevision: GROUP_LAYOUT_REVISION,
     chatUiRevision: CHAT_UI_REVISION,
+    feedbackRevision: FEEDBACK_REVISION,
     feedbackModuleMarker: FEEDBACK_MODULE_MARKER,
     getGroups: () => GROUPS.map(group => ({ ...group, slugs: [...group.slugs] })),
   };
