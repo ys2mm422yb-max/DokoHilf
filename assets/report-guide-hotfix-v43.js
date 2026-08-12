@@ -15,9 +15,16 @@
     if (title !== 'Bericht anlegen') return;
 
     for (const paragraph of view.querySelectorAll('.direct-guide-step p')) {
-      if (paragraph.textContent?.trim() !== WRONG) continue;
-      paragraph.textContent = CORRECT;
-      paragraph.dataset.dokohilfReportMaskV43 = 'corrected';
+      if (paragraph.textContent?.trim() === WRONG) {
+        paragraph.textContent = CORRECT;
+        paragraph.dataset.dokohilfReportMaskV43 = 'corrected';
+      }
+      const current = paragraph.textContent || '';
+      const corrected = current.replaceAll(OLD_TARGET, NEW_TARGET);
+      if (corrected !== current) {
+        paragraph.textContent = corrected;
+        paragraph.dataset.dokohilfReportContinuationV48 = 'step-9';
+      }
     }
 
     const condition = view.querySelector('.report-protocol-condition');
@@ -36,7 +43,7 @@
   new MutationObserver(run).observe(document.documentElement, { childList: true, subtree: true });
 
   window.DokoHilfReportGuideHotfixV43 = Object.freeze({
-    revision: 'report-textfield-visible-v44-2',
+    revision: 'report-textfield-visible-v48-1',
     correctText: CORRECT,
     conditionalRange: '5-8',
     continuationStep: 9,
