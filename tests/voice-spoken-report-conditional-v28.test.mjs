@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [gate, confirmed] = await Promise.all([
+const [gate, sw, confirmed] = await Promise.all([
   readFile(new URL('../assets/local-voice-gate-v28.js', import.meta.url), 'utf8'),
+  readFile(new URL('../service-worker.js', import.meta.url), 'utf8'),
   readFile(new URL('../CONFIRMED_WORKFLOWS.md', import.meta.url), 'utf8'),
 ]);
 
@@ -33,6 +34,8 @@ test('fehlender statischer spokenText nutzt nur einen bereits sichtbaren freigeg
   assert.match(gate, /approvedReplyMatches \+= 1/);
   assert.match(gate, /STATIC_FALLBACK_TEXT = 'Ich habe die Antwort im Chat angezeigt\.'/);
   assert.ok(gate.indexOf('findStaticEntry(visibleReply, manifest)') < gate.indexOf('findStaticEntry(STATIC_FALLBACK_TEXT, manifest)'), 'Sichtbarer freigegebener Satz muss vor dem generischen Fallback geprüft werden.');
+  assert.match(sw, /VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-1'/);
+  assert.match(sw, /voiceReplyMatchRevision: VOICE_REPLY_MATCH_REVISION/);
   assert.doesNotMatch(gate, /SpeechSynthesisUtterance|DokoHilfLocalVoiceV28\.synthesize|loadTextToSpeech|loadVoiceStyle/);
 });
 
