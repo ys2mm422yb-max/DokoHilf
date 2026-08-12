@@ -9,6 +9,8 @@ const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/local-voice-
 const GREETING = 'Hey! Wobei brauchst du Hilfe?';
 const FIRST_SPEECH = 'Öffne beim gewünschten Bewohner „Doku-Erweitert“ in der festen Leiste und wähle dort „Vitalwerte“.';
 const HELP_SPEECH = 'Erst „Doku-Erweitert“ in der festen Leiste öffnen, danach darin „Vitalwerte“ wählen.';
+const FILE_STUCK_SPEECH = 'Bleibe in den geöffneten Stammdaten. Suche in der grauen Leiste nach „Dateiablage“.';
+const FILE_FINAL_SPEECH = 'Warte kurz, bis sich Word öffnet, und führe den Doppelklick nicht mehrfach aus.';
 const FALLBACK_SPEECH = 'Ich habe die Antwort im Chat angezeigt.';
 const UNPREPARED_SPOKEN = 'Dieser absichtlich nicht vorbereitete gesprochene Testsatz besitzt kein statisches Audio.';
 
@@ -28,6 +30,14 @@ function routePayload(body) {
   if (/^ich möchte bitte$/i.test(userText.trim())) return {
     reply: `${GREETING}\n\nBitte nenne dein Ziel.`, spokenText: UNPREPARED_SPOKEN,
     guideSlug:null,guideTitle:null,guideVersion:null,guideStep:null,guideStepCount:null,completed:false,source:'synthetic-visible-reply-match-v45',
+  };
+  if (/^dateiablage testhilfe$/i.test(userText.trim())) return {
+    reply: `${FILE_STUCK_SPEECH}\n\nIst „Dateiablage“ geöffnet?`, spokenText: FILE_STUCK_SPEECH,
+    guideSlug:'dateiablage',guideTitle:'Dateiablage öffnen',guideVersion:1,guideStep:2,guideStepCount:5,completed:false,source:'synthetic-dateiablage-stuck-v48',
+  };
+  if (/^dateiablage letzter schritt test$/i.test(userText.trim())) return {
+    reply: `${FILE_FINAL_SPEECH}\n\nHat sich das Dokument in Word geöffnet?`, spokenText: FILE_FINAL_SPEECH,
+    guideSlug:'dateiablage',guideTitle:'Dateiablage öffnen',guideVersion:1,guideStep:5,guideStepCount:5,completed:false,source:'synthetic-dateiablage-final-progress-v48',
   };
   const contextual = body?.smartHelpIntent === true || (body?.guideSlug && /weiß nicht|weiss nicht|keine ahnung|wo finde/i.test(userText));
   if (contextual) return {
@@ -87,6 +97,8 @@ await page.route('**/assets/guide-audio-catalog.json*', async route => {
       { file: 'assets/audio/guides/001.wav', text: FIRST_SPEECH },
       { file: 'assets/audio/guides/002.wav', text: HELP_SPEECH },
       { file: 'assets/audio/guides/003.wav', text: FALLBACK_SPEECH },
+      { file: 'assets/audio/guides/004.wav', text: FILE_STUCK_SPEECH },
+      { file: 'assets/audio/guides/005.wav', text: FILE_FINAL_SPEECH },
     ],
   }) });
 });
@@ -129,6 +141,31 @@ try {
   assert(routerBodies.slice(1).some(body=>body.smartHelpIntent===true), 'Natürliche Hilferufe wurden nicht kontextuell markiert.');
   assert(!await page.locator('#voiceDetailHelpOptionsV27').count(), 'Alter Vier-Button-Hilfemodus ist noch sichtbar.');
 
+  const stuckBefore = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
+  await page.evaluate(() => window.DokoHilf?.sendMessage?.('Dateiablage Testhilfe', { fromVoice: true }));
+  await page.waitForFunction(text => document.querySelector('#voiceFocusText')?.textContent?.includes(text), FILE_STUCK_SPEECH);
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('004.wav'));
+  const stuckAfter = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
+  assert(stuckAfter.staticMisses === stuckBefore.staticMisses, 'Dateiablage-Hilfe ist fälschlich in den generischen Sprachfallback gefallen.');
+  const stuckVisible = await page.locator('#voiceFocusText').innerText();
+  assert(!/erfindet DokoHilf nicht|bestätigte Bereich|DokoHilf kann nicht garantieren/i.test(stuckVisible), `Interne Produktformulierung sichtbar: ${stuckVisible}`);
+
+  await page.evaluate(() => window.DokoHilf?.sendMessage?.('Dateiablage letzter Schritt Test', { fromVoice: true }));
+  await page.waitForFunction(text => document.querySelector('#voiceFocusText')?.textContent?.includes(text), FILE_FINAL_SPEECH);
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('005.wav'));
+  await page.waitForFunction(() => document.getElementById('voiceFocusStep')?.textContent?.includes('Schritt 5 von 5'));
+  await page.waitForFunction(() => document.querySelector('.v42-voice-progress')?.dataset?.v48Progress === '5/5:100');
+  const finalProgress = await page.evaluate(() => {
+    const track = document.querySelector('.v42-voice-progress');
+    const fill = track?.querySelector('i');
+    if (!track || !fill) return null;
+    const trackWidth = track.getBoundingClientRect().width;
+    const fillWidth = fill.getBoundingClientRect().width;
+    return { trackWidth, fillWidth, ratio: trackWidth > 0 ? fillWidth / trackWidth : 0, marker: track.dataset.v48Progress || '' };
+  });
+  assert(finalProgress?.marker === '5/5:100', `Finaler Fortschrittsmarker falsch: ${finalProgress?.marker}`);
+  assert(finalProgress?.ratio >= 0.995, `Fortschrittsbalken bei 5/5 nicht voll: ${JSON.stringify(finalProgress)}`);
+
   const replyMatchBefore = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
   await page.evaluate(() => window.DokoHilf?.sendMessage?.('Ich möchte bitte', { fromVoice: true }));
   await page.waitForFunction(() => (window.DokoHilfStaticFirstVoiceV28?.getState?.().approvedReplyMatches || 0) >= 1);
@@ -149,7 +186,7 @@ try {
   const systemCalls = await page.evaluate(() => [...window.__DOKOHILF_SYSTEM_SPEECH_TEST_CALLS__]);
   assert(systemCalls.length === 0, `Systemstimme wurde ${systemCalls.length}x aufgerufen.`);
   assert(cloudTtsRequests === 0, `TTS-Netzwerkpfad wurde ${cloudTtsRequests}x erreicht.`);
-  assert(routerRequests >= 5, `Kontext-Hilfe hat nur ${routerRequests} Router-Aufrufe erzeugt.`);
+  assert(routerRequests >= 7, `Kontext-Hilfe hat nur ${routerRequests} Router-Aufrufe erzeugt.`);
   const localState = await page.evaluate(() => window.DokoHilfLocalVoiceV28?.getState?.());
   assert(localState?.state === 'retired' && localState?.backend === 'none' && localState?.armed === false, 'Lokale Voice-Kompatibilität ist nicht vollständig stillgelegt.');
   const staticState = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
@@ -159,6 +196,6 @@ try {
   assert(geometry.scrollWidth <= geometry.viewportWidth + 1, `Horizontaler Overflow: ${geometry.scrollWidth} > ${geometry.viewportWidth}`);
   assert(!/Sofortstimme|Gerätestimme|Gacrux/i.test(`${geometry.status} ${geometry.hint}`), 'Voice-UI erwähnt eine alte/abweichende Stimme.');
   await page.screenshot({path:`${OUTPUT_DIR}/static-voice-v29-${PROFILE}.png`,fullPage:false});
-  await writeFile(`${OUTPUT_DIR}/summary.json`,JSON.stringify({profile:PROFILE,viewport:{width:WIDTH,height:HEIGHT},systemCalls,cloudTtsRequests,routerRequests,routerBodies:routerBodies.map(body=>({guideSlug:body.guideSlug||null,guideStep:body.guideStep||null,selectedGuideSlug:body.selectedGuideSlug||null,smartHelpIntent:body.smartHelpIntent===true})),staticManifestRequests,staticAudioRequests,localState,staticState,fallback,geometry,consoleErrors,pageErrors},null,2));
+  await writeFile(`${OUTPUT_DIR}/summary.json`,JSON.stringify({profile:PROFILE,viewport:{width:WIDTH,height:HEIGHT},systemCalls,cloudTtsRequests,routerRequests,routerBodies:routerBodies.map(body=>({guideSlug:body.guideSlug||null,guideStep:body.guideStep||null,selectedGuideSlug:body.selectedGuideSlug||null,smartHelpIntent:body.smartHelpIntent===true})),staticManifestRequests,staticAudioRequests,localState,staticState,fallback,finalProgress,geometry,consoleErrors,pageErrors},null,2));
   assert(consoleErrors.length===0,`Console-Fehler: ${consoleErrors.join(' | ')}`); assert(pageErrors.length===0,`Page-Fehler: ${pageErrors.join(' | ')}`);
 } finally { await context.close(); await browser.close(); }
