@@ -153,13 +153,14 @@ assert.equal(completionCatalog.entries.length, 44, 'completion voice source coun
 assert.deepEqual(catalogTexts, allCompletionSpokenTexts(), 'every audible completion/follow-up must be present in the static Supertonic catalog');
 
 const conversationRouter = await readFile(new URL('../supabase/functions/dokohilf-conversation-router/index.ts', import.meta.url), 'utf8');
-assert.match(conversationRouter, /approved-guide-natural-completion-v40/);
-assert.match(conversationRouter, /approved-guide-completion-followup-v40/);
+assert.match(conversationRouter, /approved-guide-natural-completion-v44/);
+assert.match(conversationRouter, /approved-guide-completion-followup-v44/);
+assert.match(conversationRouter, /approved-guide-positive-advance-v44/);
 assert.match(conversationRouter, /dokohilf-chat-router/, 'all non-completion behavior must continue through the existing chat router');
 assert.doesNotMatch(conversationRouter, /Der Ablauf ist erledigt/);
 
 const routingFix = await readFile(new URL('../assets/routing-fix.js', import.meta.url), 'utf8');
 assert.match(routingFix, /dokohilf-conversation-router/);
-assert.match(routingFix, /20260810-natural-guide-completions-v40-1/);
+assert.match(routingFix, /20260812-navigation-safe-guide-audit-v44-1/);
 
-console.log('Guide completion v40 regression tests passed.');
+console.log('Guide completion v40/v44 regression tests passed.');
