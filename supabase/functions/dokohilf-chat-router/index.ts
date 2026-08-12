@@ -11,7 +11,7 @@ const LEGACY_CONTEXT_HELP_MARKER = 'approved-guide-context-help-v29-4';
 const ROUTER_CONTRACT_MARKERS = [
   'approved-guide-context-help-v28',
   LEGACY_CONTEXT_HELP_MARKER,
-  'approved-guide-context-help-v29-5',
+  'approved-guide-navigation-safe-v44',
 ] as const;
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
 
@@ -57,7 +57,7 @@ function jsonResponse(origin: string | null, status: number, body: unknown): Res
     headers: {
       ...corsHeaders(origin),
       'Content-Type': 'application/json; charset=utf-8',
-      'X-DokoHilf-Chat-Router': 'context-aware-v29-5',
+      'X-DokoHilf-Chat-Router': 'context-aware-v29-6',
     },
   });
 }
@@ -153,7 +153,7 @@ function explicitDifferentGoal(text: string, guide: GuideRecord): boolean {
   const relatedGuideSwitches: Array<[RegExp, RegExp]> = [
     [/\b(durchstreichen|bericht loschen|bericht korrigieren)\b/, /bericht-durchstreichen|durchstreichen/],
     [/\bfolgebericht\b/, /bericht-folgebericht|folgebericht/],
-    [/\b(berichtssuche|berichte suchen|bericht suchen|nach berichten suchen)\b/, /berichtssuche|berichte suchen/],
+    [/\b(berichtssuche|berichte durchsuchen|nach einem bestimmten bericht suchen)\b/, /berichtssuche|berichte durchsuchen/],
     [/\b(neuen bericht|bericht anlegen|bericht schreiben|bericht erfassen)\b/, /bericht-neu|neuen bericht/],
     [/\b(sammelerfassung|mehrere vitalwerte|vitalwerte zusammen)\b/, /sammelerfassung/],
     [/\b(einzelwert|einzelnen vitalwert|einen vitalwert)\b/, /einzelwert/],
@@ -180,22 +180,39 @@ function hasNavigationIntent(text: string): boolean {
     || n.split(' ').length <= 5;
 }
 
+function isUnconfirmedReportSearch(text: string): boolean {
+  const n = normalize(text);
+  return /\bberichtssuche\b/.test(n)
+    || /\bberichte (durchsuchen|auswerten|filtern)\b/.test(n)
+    || /\bnach (einem |dem |einem bestimmten |dem bestimmten )?bericht suchen\b/.test(n)
+    || /\bbericht.*\babfrage\b/.test(n);
+}
+
 function inferNavigationGuide(text: string): string {
   const n = normalize(text);
   if (!hasNavigationIntent(n) || hasEntryAction(n)) return '';
-  if (/\b(berichtssuche|berichte auswerten|berichte suchen|nach berichten suchen|abfrage)\b/.test(n)) return 'berichtssuche';
-  if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-einzelwert';
-  if (/\b(bericht|berichte|berichtseintrag)\b/.test(n)) return 'bericht-neu';
-  if (/\b(visite|visiten|sprechstunde)\b/.test(n)) return 'visiten-oeffnen';
-  if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n)) return 'medikation-ansehen';
-  if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)) return 'formulare-anlegen';
-  if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n)) return 'anwesenheit';
-  if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabeformular';
-  if (/\b(notfallblatt|notfallbogen)\b/.test(n)) return 'notfallblatt';
-  if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis|durchfuhrung|durchfuehrung)\b/.test(n)) return 'durchfuehrungsnachweis-oeffnen';
-  if (/\b(aufgaben|aktuelles)\b/.test(n)) return 'aufgaben-aktuelles';
-  if (/\b(easy plan|easy-plan|easyplan)\b/.test(n)) return 'easyplan';
-  if (/\b(stammdaten)\b/.test(n)) return 'stammdaten';
+  if (isUnconfirmedReportSearch(n)) return '';
+
+  if (/\b(wirksamkeitskontrolle|wirkungskontrolle)\b/.test(n)) return 'bedarfsmedikation-wirksamkeitskontrolle-finden';
+  if (/\bbedarfsmedikation\b/.test(n)) return 'bedarfsmedikation-finden';
+  if (/\bmassnahmen ohne zeitangabe\b/.test(n)) return 'massnahmen-ohne-zeitangabe-finden';
+  if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis|durchfuhrung|durchfuehrung)\b/.test(n)) return 'durchfuehrungsnachweis-finden';
+  if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-finden';
+  if (/\b(bericht|berichte|berichtseintrag)\b/.test(n)) return 'berichte-finden';
+  if (/\b(visite|visiten|sprechstunde)\b/.test(n)) return 'visiten-finden';
+  if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n)) return 'medikation-finden';
+  if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)) return 'formulare-finden';
+  if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n)) return 'anwesenheiten-finden';
+  if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabe-finden';
+  if (/\b(notfallblatt|notfallbogen)\b/.test(n)) return 'notfallblatt-finden';
+  if (/\bstammdaten\b/.test(n)) return 'stammdaten-finden';
+  if (/\bdoku-erweitert\b/.test(n)) return 'doku-erweitert-finden';
+  if (/\bdoku\b/.test(n)) return 'doku-finden';
+  if (/\banalyse\b/.test(n)) return 'analyse-finden';
+  if (/\bplanung\b/.test(n)) return 'planung-finden';
+
+  // Fachlich noch nicht bestätigte Ziele werden nicht auf einen ähnlichen Ablauf umgebogen.
+  if (/\b(aufgaben|aktuelles|easy plan|easy-plan|easyplan)\b/.test(n)) return '';
   return '';
 }
 
@@ -307,7 +324,7 @@ Deno.serve(async (req: Request) => {
     if (requestedSlug) {
       const guide = await loadGuide(requestedSlug);
       if (guide?.steps?.length) {
-        return stepResponse(origin, guide, 0, 'approved-guide-smart-start-v29-1');
+        return stepResponse(origin, guide, 0, 'approved-guide-smart-start-v44');
       }
     }
   }
