@@ -126,7 +126,7 @@ test('Kontext-Hilfe spricht nur den statisch katalogisierten Basissatz', () => {
   assert.match(chatRouter, /const visibleInstruction = extra \? `\$\{instruction\} \$\{extra\}`\.trim\(\) : instruction/);
   assert.match(chatRouter, /reply: `\$\{visibleInstruction\}/);
   assert.match(chatRouter, /spokenText: instruction/);
-  assert.match(chatRouter, /approved-guide-context-help-v29-5/);
+  assert.match(chatRouter, /approved-guide-navigation-safe-v44/);
   assert.doesNotMatch(chatRouter, /spokenText: visibleInstruction/);
 });
 
@@ -199,7 +199,7 @@ test('Versionsplakette ist oben verborgen und nur unten dezent verfügbar', () =
 });
 
 test('Build-ID, PWA und neue Assets sind konsistent', () => {
-  assert.equal(buildId, '20260812-39');
+  assert.equal(buildId, '20260812-40');
   assert.match(index, new RegExp(`dokohilf-build" content="${buildId}`));
   assert.match(index, new RegExp(`orientation-help-v29\\.js\\?v=${buildId}`));
   assert.match(index, new RegExp(`release-polish-v29\\.js\\?v=${buildId}`));
