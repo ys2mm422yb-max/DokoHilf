@@ -8,8 +8,8 @@ const SCALE = Number(process.env.DOKOHILF_DEVICE_SCALE_FACTOR || 2);
 const BASE_URL = process.env.DOKOHILF_RENDER_URL || 'http://127.0.0.1:4173/';
 const OUTPUT_DIR = process.env.DOKOHILF_RENDER_OUTPUT || `artifacts/detail-help-v29/${PROFILE}`;
 const GREETING = 'Hey! Wobei brauchst du Hilfe?';
-const FIRST_SPEECH = 'Wähle zuerst den gewünschten Bewohner aus.';
-const HELP_SPEECH = 'Bleib beim ausgewählten Bewohner und prüfe, ob der richtige Bewohner geöffnet ist.';
+const FIRST_SPEECH = 'Öffne beim gewünschten Bewohner „Doku-Erweitert“ in der festen Leiste und wähle dort „Vitalwerte“.';
+const HELP_SPEECH = 'Erst „Doku-Erweitert“ in der festen Leiste öffnen, danach darin „Vitalwerte“ wählen.';
 
 function assert(condition, message) { if (!condition) throw new Error(message); }
 function silentWav() {
@@ -24,27 +24,27 @@ function responseFor(body) {
   const contextual = body?.smartHelpIntent === true || /weiß nicht|weiss nicht|keine ahnung|wo finde/i.test(userText) && body?.guideSlug;
   if (contextual) {
     return {
-      reply: `${HELP_SPEECH}\n\nIst der richtige Bewohner geöffnet?`,
+      reply: `${HELP_SPEECH}\n\nIst der Bereich „Vitalwerte“ geöffnet?`,
       spokenText: HELP_SPEECH,
-      guideSlug: 'vitalwerte-einzelwert',
-      guideTitle: 'Einzelnen Vitalwert erfassen',
-      guideVersion: 7,
-      guideStep: Number(body.guideStep) || 1,
-      guideStepCount: 7,
+      guideSlug: 'vitalwerte-finden',
+      guideTitle: 'Vitalwerte finden',
+      guideVersion: 1,
+      guideStep: 1,
+      guideStepCount: 1,
       completed: false,
       source: 'approved-guide-context-help-v29-4',
     };
   }
   return {
-    reply: `${FIRST_SPEECH}\n\nIst der richtige Bewohner ausgewählt?`,
+    reply: `${FIRST_SPEECH}\n\nIst der Bereich „Vitalwerte“ geöffnet?`,
     spokenText: FIRST_SPEECH,
-    guideSlug: 'vitalwerte-einzelwert',
-    guideTitle: 'Einzelnen Vitalwert erfassen',
-    guideVersion: 7,
+    guideSlug: 'vitalwerte-finden',
+    guideTitle: 'Vitalwerte finden',
+    guideVersion: 1,
     guideStep: 1,
-    guideStepCount: 7,
+    guideStepCount: 1,
     completed: false,
-    source: 'approved-guide-smart-start-v29-1',
+    source: 'approved-guide-smart-start-v44',
   };
 }
 
@@ -93,15 +93,15 @@ try{
   await page.locator('#chatInput').fill('Hallo ich suche den Blutdruck');await page.getByRole('button',{name:'Senden'}).click();
   await page.waitForFunction(text=>[...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes(text),FIRST_SPEECH);
   const firstReply=await page.locator('.message.assistant .bubble p').last().innerText();
-  assert(firstReply.length<180,'Erste Blutdruck-Antwort ist wieder eine Textwand.');
-  assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 1 von 7'),'Einzelwert-Guide startet nicht bei Schritt 1.');
+  assert(firstReply.length<220,'Erste Blutdruck-Suchantwort ist wieder eine Textwand.');
+  assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 1 von 1'),'Vitalwerte-Finden-Guide startet nicht bei Schritt 1 von 1.');
   assert(!await page.locator('#detailHelpOptionsV27').count(),'Alter Vier-Button-Hilfemodus ist noch sichtbar.');
-  assert(routerBodies[0]?.selectedGuideSlug==='vitalwerte-einzelwert','Blutdruck-Suche wurde nicht direkt dem Einzelwert-Guide zugeordnet.');
+  assert(routerBodies[0]?.selectedGuideSlug==='vitalwerte-finden','Blutdruck-Suche wurde nicht dem bestätigten Vitalwerte-Finden-Guide zugeordnet.');
 
   for(const text of ['ich weiß nicht','wo finde ich das?','keine Ahnung']){
     await page.locator('#chatInput').fill(text);await page.getByRole('button',{name:'Senden'}).click();
     await page.waitForFunction(s=>[...document.querySelectorAll('.message.assistant .bubble p')].at(-1)?.textContent?.includes(s),HELP_SPEECH);
-    assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 1 von 7'),`Hilferuf „${text}“ hat den Guide-Schritt verändert.`);
+    assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 1 von 1'),`Hilferuf „${text}“ hat den Guide-Schritt verändert.`);
     assert(!await page.locator('#detailHelpOptionsV27').count(),`Hilferuf „${text}“ hat den alten Sonderdialog geöffnet.`);
   }
   assert(routerBodies.slice(1).some(body=>body.smartHelpIntent===true),'Freie Hilferufe wurden nicht als kontextuelle Hilfe markiert.');
@@ -111,7 +111,7 @@ try{
   await page.evaluate(()=>window.DokoHilf?.sendMessage?.('Hallo ich suche den Blutdruck',{fromVoice:true}));await page.waitForFunction(text=>document.querySelector('#voiceFocusText')?.textContent?.includes(text),FIRST_SPEECH);await page.waitForFunction(()=>window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('001.wav'));
   await page.evaluate(()=>window.DokoHilf?.sendMessage?.('ich weiß nicht',{fromVoice:true}));await page.waitForFunction(text=>document.querySelector('#voiceFocusText')?.textContent?.includes(text),HELP_SPEECH);await page.waitForFunction(()=>window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('002.wav'));
   assert(!await page.locator('#voiceDetailHelpOptionsV27').count(),'Voice zeigt noch den alten Vier-Button-Hilfemodus.');
-  assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 1 von 7'),'Voice-Hilfe hat den aktuellen Schritt verändert.');
+  assert((await page.locator('#guideProgressStep').innerText()).includes('Schritt 1 von 1'),'Voice-Hilfe hat den aktuellen Schritt verändert.');
   assert(await page.evaluate(()=>window.__DOKOHILF_LOCAL_VOICE_TEST_CALLS__.length)===0,'Bestätigte v29-Hilfe fiel unnötig in lokale Inferenz.');
   const systemCalls=await page.evaluate(()=>[...window.__DOKOHILF_SYSTEM_SPEECH_TEST_CALLS__]);assert(systemCalls.length===0,'Systemstimme aufgerufen.');assert(cloudTtsRequests===0,'TTS-Netzwerkpfad erreicht.');assert(routerRequests>=5,'Kontext-Hilfe lief nicht über den Router.');
   const geometry=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,viewportWidth:window.innerWidth,orb:document.querySelector('.voice-focus-stage .voice-orb')?.getBoundingClientRect(),state:document.getElementById('appShell')?.dataset?.voiceState||''}));
