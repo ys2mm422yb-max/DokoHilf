@@ -25,7 +25,7 @@ test('bestätigte Supertonic-Sätze werden ausschließlich aus dem statischen Ka
   assert.doesNotMatch(gate, /localFallback|DokoHilfLocalVoiceV28\.synthesize|Gacrux|dokohilf-guide-audio\?manifest=1/);
 });
 
-test('Bericht zeigt Schritte 6 bis 9 als klaren Sonderfall für genau zwei Kategorien', () => {
+test('Legacy-Voice-Quelle markiert den Bericht-Sonderfall, der im finalen v44-Render normalisiert wird', () => {
   assert.match(gate, /Sonderfall · nur bei 2 Kategorien/);
   assert.match(gate, /Kontakt – alles außer Arzt[^\n]*Fallgespräch/);
   assert.match(gate, /Sturzereignis[^\n]*Sturzprotokoll/);
@@ -33,9 +33,9 @@ test('Bericht zeigt Schritte 6 bis 9 als klaren Sonderfall für genau zwei Kateg
   assert.match(gate, /report-protocol-step/);
 });
 
-test('verbindliche Fachquelle enthält dieselbe bedingte Berichtlogik', () => {
+test('verbindliche Fachquelle enthält die bestätigte Bericht-Sonderfalllogik', () => {
   assert.match(confirmed, /Kontakt – alles außer Arzt\*\* ist automatisch das \*\*Fallgespräch/);
   assert.match(confirmed, /Sturzereignis\*\* ist automatisch das \*\*Sturzprotokoll/);
-  assert.match(confirmed, /allen anderen Berichtskategorien die Schritte 6–9 überspringen und direkt mit Schritt 10 fortfahren/);
+  assert.match(confirmed, /(?:allen anderen Berichtskategorien die Schritte 6–9 überspringen und direkt mit Schritt 10 fortfahren|Bei allen anderen Berichtskategorien gelten die Schritte 5–8 nicht; direkt mit Schritt 9 fortfahren)/);
   assert.match(confirmed, /Das rote X entfernt nur die Protokollverknüpfung, nicht den Bericht/);
 });
