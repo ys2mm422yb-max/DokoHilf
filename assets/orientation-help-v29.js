@@ -54,6 +54,9 @@
     if (/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) {
       return 'Die feste grüne Leiste ist ganz oben. Dort findest du die Hauptbereiche Berichte, Doku-Erweitert, Doku, Planung und Analyse. Wenn du einen Hauptbereich auswählst, erscheinen direkt darunter die dazugehörigen Unterpunkte beziehungsweise Symbole.';
     }
+    if (/\b(dateiablage|dokument|dokumente|vertrag|vertrage|wohnassistent-vertrag|wohnassistent vertrag|betreuerausweis|arztbrief|arztbriefe|entlassungsbrief|entlassungsbriefe|laborwert|laborwerte)\b/.test(n)) {
+      return 'Öffne die Stammdaten des gewünschten Bewohners. Klicke dort in der grauen Reiterleiste auf Dateiablage. Im unteren mittleren Bereich erscheint Dokumente. Dort kannst du ein bereits hinterlegtes Dokument auswählen und mit Doppelklick öffnen.';
+    }
     if (/\b(wirksamkeitskontrolle|wirksamkeit).*\b(bedarf|bedarfsmedikation|medikation)\b|\b(bedarf|bedarfsmedikation).*\b(wirksamkeitskontrolle|wirksamkeit)\b/.test(n)) {
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.';
     }
@@ -130,7 +133,7 @@
       ...(guide.guideStep ? { guideStep: guide.guideStep } : {}),
       ...(guide.guideStepCount ? { guideStepCount: guide.guideStepCount } : {}),
       completed: false,
-      source: 'confirmed-area-orientation-v29-4',
+      source: 'confirmed-area-orientation-v45-1',
     };
   }
 
@@ -157,7 +160,7 @@
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-store',
-        'X-DokoHilf-Orientation': 'confirmed-v29-4',
+        'X-DokoHilf-Orientation': 'confirmed-v45-1',
       },
     });
   };
