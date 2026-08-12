@@ -10,13 +10,22 @@
   ]);
   const REPORT_ENTRY_REPLY = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach **Berichte**. Siehst du **Berichte**?';
   const REPORT_ENTRY_SPEECH = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach Berichte. Siehst du Berichte?';
+  const STATIC_SPEECH_BY_SOURCE = new Map([
+    ['clarification-v14', 'Ich habe dich noch nicht sicher verstanden. Was möchtest du in der Dokumentation öffnen oder erledigen?'],
+    ['context-required-clarification-v9', 'Was möchtest du erfassen oder ansehen? Nenne bitte den Bereich, zum Beispiel Vitalwerte oder Berichte.'],
+    ['structured-clarification-v9', 'Was möchtest du korrigieren: einen Bericht oder eine Durchführung?'],
+    ['speech-recognition-clarification-v9', 'Ich habe „Albert erfassen“ verstanden. Meinst du Vitalwerte erfassen?'],
+    ['guide-context-clarification-v9', 'Ich bleibe beim aktuellen Schritt. Ist er erledigt, soll ich ihn wiederholen oder brauchst du Hilfe dabei?'],
+    ['guide-cancel-v9', 'Okay, ich stoppe diesen Ablauf. Was möchtest du stattdessen erledigen?'],
+    ['ai-dialogue-cancel-v9', 'Okay, ich stoppe diesen Ablauf. Was möchtest du stattdessen erledigen?'],
+    ['neutral-unavailable-guide-v9', 'Dafür ist aktuell noch keine bestätigte Schritt-für-Schritt-Anleitung hinterlegt. Beschreibe bitte genauer, welche vorhandene Funktion du nutzen möchtest.'],
+  ]);
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
     return String(value || '')
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
       .replace(/ß/g, 'ss')
       .replace(/\s+/g, ' ')
       .trim();
@@ -53,6 +62,11 @@
       .replace(/Werden die gesuchten Fantasie-Einträge angezeigt\?/gi, 'Werden die gesuchten Einträge angezeigt?')
       .replace(/[ \t]{2,}/g, ' ')
       .trim();
+  }
+
+  function approvedStaticSpokenText(payload) {
+    if (!payload || typeof payload !== 'object') return '';
+    return STATIC_SPEECH_BY_SOURCE.get(String(payload.source || '').trim()) || '';
   }
 
   function isAiRequest(input, init = {}) {
@@ -129,6 +143,11 @@
       };
     }
 
+    const staticSpeech = approvedStaticSpokenText(fixed);
+    if (staticSpeech && staticSpeech !== fixed.spokenText) {
+      fixed = { ...fixed, spokenText: staticSpeech };
+    }
+
     return fixed;
   }
 
@@ -140,7 +159,7 @@
     if (fixed === payload) return response;
     const headers = new Headers(response.headers);
     headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers.set('X-DokoHilf-Context-Hotfix', 'natural-copy-static-voice-v29-2');
+    headers.set('X-DokoHilf-Context-Hotfix', 'natural-copy-static-voice-v45-1');
     return new Response(JSON.stringify(fixed), {
       status: response.status,
       statusText: response.statusText,
@@ -196,6 +215,7 @@
     fixHelpOptions,
     contextualOptionLabel,
     naturalizeUserCopy,
+    approvedStaticSpokenText,
     reportSpeech: REPORT_ENTRY_SPEECH,
     voiceMode: 'static-supertonic-only',
   };
