@@ -13,6 +13,8 @@ const ROUTER_CONTRACT_MARKERS = [
   LEGACY_CONTEXT_HELP_MARKER,
   'approved-guide-navigation-safe-v44',
 ] as const;
+const SAFE_ACK = 'Alles klar. Wenn du noch etwas brauchst, sag einfach Bescheid.';
+const LEGACY_FALSE_COMPLETION = /Der Ablauf ist erledigt|vorgesehenen Übersicht|Kontrolliere zum Schluss den Eintrag/i;
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
@@ -271,6 +273,20 @@ async function loadGuide(slug: string): Promise<GuideRecord | null> {
   return Array.isArray(rows) && rows[0] ? rows[0] as GuideRecord : null;
 }
 
+function guardLegacyCompletion(origin: string | null, status: number, payload: Record<string, unknown>): Response | null {
+  const reply = typeof payload.reply === 'string' ? payload.reply : '';
+  const spokenText = typeof payload.spokenText === 'string' ? payload.spokenText : '';
+  if (!LEGACY_FALSE_COMPLETION.test(`${reply}\n${spokenText}`)) return null;
+  return jsonResponse(origin, status, {
+    ...payload,
+    reply: SAFE_ACK,
+    spokenText: SAFE_ACK,
+    guideSlug: null,
+    completed: true,
+    source: 'legacy-completion-guard-v44',
+  });
+}
+
 async function forwardToExistingRouter(rawBody: string, origin: string | null): Promise<Response> {
   const url = Deno.env.get('SUPABASE_URL');
   if (!url) return jsonResponse(origin, 503, { error: 'Die KI-Verbindung ist gerade nicht verfügbar.' });
@@ -283,7 +299,20 @@ async function forwardToExistingRouter(rawBody: string, origin: string | null): 
     signal: AbortSignal.timeout(12_000),
   }).catch(() => null);
   if (!response) return jsonResponse(origin, 503, { error: 'Die KI-Verbindung ist gerade nicht verfügbar.' });
-  return response;
+
+  const raw = await response.text();
+  try {
+    const payload = JSON.parse(raw);
+    if (payload && typeof payload === 'object') {
+      const guarded = guardLegacyCompletion(origin, response.status, payload as Record<string, unknown>);
+      if (guarded) return guarded;
+    }
+  } catch { }
+
+  const responseHeaders = new Headers(response.headers);
+  responseHeaders.set('X-DokoHilf-Chat-Router', 'context-aware-v29-6');
+  responseHeaders.set('Cache-Control', 'no-store');
+  return new Response(raw, { status: response.status, headers: responseHeaders });
 }
 
 Deno.serve(async (req: Request) => {
