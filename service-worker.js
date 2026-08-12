@@ -101,7 +101,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('message', event => {
   if (event.data?.type === 'SKIP_WAITING') return void self.skipWaiting();
   if (event.data?.type === 'GET_BUILD_ID') {
-    event.ports?.[0].postMessage({
+    event.ports?.[0]?.postMessage({
       buildId: BUILD_ID,
       hotfixRevision: HOTFIX_REVISION,
       libraryLayoutRevision: LIBRARY_LAYOUT_REVISION,
@@ -116,7 +116,7 @@ self.addEventListener('message', event => {
     event.waitUntil((async () => {
       const keys = await caches.keys();
       await Promise.all(keys.filter(key => key.startsWith('dokohilf-')).map(key => caches.delete(key)));
-      event.ports?.[0].postMessage({
+      event.ports?.[0]?.postMessage({
         cleared: true,
         buildId: BUILD_ID,
         hotfixRevision: HOTFIX_REVISION,
