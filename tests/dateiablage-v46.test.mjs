@@ -97,7 +97,9 @@ test('all five approved guide sentences are statically prebuilt with Supertonic-
   assert.match(builder, /appended last so every previously published numbered WAV keeps its meaning/);
 });
 
-test('PWA refreshes and precaches the Dateiablage module without changing the build id', () => {
+test('PWA refreshes the grouping and voice fixes while keeping the existing build id', () => {
+  assert.match(worker, /LIBRARY_LAYOUT_REVISION = '20260812-dateiablage-organisation-v46-1'/);
+  assert.match(worker, /VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-2'/);
   assert.match(worker, /FILE_STORAGE_REVISION = '20260812-file-storage-guide-v46-1'/);
   assert.match(worker, /file-storage-guide-v46\.js\?v=20260812-file-storage-v46-1/);
   assert.match(worker, /fileStorageRevision: FILE_STORAGE_REVISION/);
