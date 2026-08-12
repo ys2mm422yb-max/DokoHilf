@@ -73,9 +73,12 @@
   }
 
   function isVoiceControl(target) {
-    return target instanceof Element && Boolean(target.closest(
+    if (!(target instanceof Element)) return false;
+    if (target.closest(
       '[data-select-mode="voice"], [data-switch-mode="voice"], #voiceButton, #smallMicButton, #pauseVoiceButton',
-    ));
+    )) return true;
+    return document.getElementById('appShell')?.dataset.mode === 'voice'
+      && Boolean(target.closest('#resetButton'));
   }
 
   function primeFromTrustedGesture(event) {
