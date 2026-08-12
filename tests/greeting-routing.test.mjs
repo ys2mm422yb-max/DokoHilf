@@ -39,10 +39,6 @@ test('natürliche deutsche Aktionsformen starten nur bestätigte konkrete Guides
     ['Wie dokumentiere ich eine Bedarfsmedikation?', 'bedarfsmedikation-gabe'],
     ['Wo finde ich die Wirksamkeitskontrolle?', 'bedarfsmedikation-wirksamkeitskontrolle-finden'],
     ['Wie dokumentiere ich die Wirksamkeitskontrolle?', 'bedarfsmedikation-wirksamkeitskontrolle'],
-    ['Wie öffne ich den Durchführungsnachweis?', 'durchfuehrungsnachweis-oeffnen'],
-    ['Wie sehe ich die Medikation an?', 'medikation-ansehen'],
-    ['Wie rufe ich das Notfallblatt auf?', 'notfallblatt'],
-    ['Wie rufe ich die Übergabe auf?', 'uebergabeformular'],
   ];
 
   for (const [input, expected] of cases) {
@@ -50,10 +46,25 @@ test('natürliche deutsche Aktionsformen starten nur bestätigte konkrete Guides
   }
 });
 
+test('reine Navigation startet niemals versehentlich einen Dokumentationsablauf', () => {
+  const cases = [
+    ['Bericht suchen', 'berichte-finden'],
+    ['Wie öffne ich den Durchführungsnachweis?', 'durchfuehrungsnachweis-finden'],
+    ['Wie sehe ich die Medikation an?', 'medikation-finden'],
+    ['Wie rufe ich das Notfallblatt auf?', 'notfallblatt-finden'],
+    ['Wie rufe ich die Übergabe auf?', 'uebergabe-finden'],
+    ['Wo finde ich die Vitalwerte?', 'vitalwerte-finden'],
+    ['Wo finde ich Visiten?', 'visiten-finden'],
+    ['Wo finde ich Formulare?', 'formulare-finden'],
+  ];
+  for (const [input, expected] of cases) assert.equal(inferSelectedGuideSlug(input), expected, input);
+});
+
 test('mehrdeutige oder fachlich gesperrte Ziele werden nicht lokal erzwungen', () => {
   assert.equal(inferSelectedGuideSlug('Wie trage ich Vitalwerte ein?'), '');
   assert.equal(inferSelectedGuideSlug('Wie ändere ich die Medikation?'), '');
   assert.equal(inferSelectedGuideSlug('Wie benutze ich Easy-Plan?'), '');
+  assert.equal(inferSelectedGuideSlug('Berichtssuche'), '');
 });
 
 test('nur die letzte Nutzernachricht wird für das Backend bereinigt und eindeutig geroutet', () => {
@@ -69,7 +80,7 @@ test('nur die letzte Nutzernachricht wird für das Backend bereinigt und eindeut
   assert.equal(rewritten.messages[0].content, 'Hallo! Wobei brauchst du Hilfe?');
   assert.equal(rewritten.messages[1].content, 'wie lege ich eine visite an');
   assert.equal(rewritten.selectedGuideSlug, 'visite-anlegen');
-  assert.equal(rewritten.clientRoutingRevision, '20260810-natural-guide-completions-v40-1');
+  assert.equal(rewritten.clientRoutingRevision, '20260812-navigation-safe-guide-audit-v44-1');
 });
 
 test('ein laufender Guide wird durch lokale Intent-Erkennung nicht ungefragt überschrieben', () => {
