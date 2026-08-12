@@ -43,9 +43,12 @@ test('internal product-rule wording is converted to normal user-facing help', ()
   assert.match(contextHotfix, /Eine konkrete Wartezeit ist hier nicht festgelegt\./);
 });
 
-test('voice progress is forced to exactly 100 percent at the final step', () => {
-  assert.match(contextHotfix, /step >= count \? 100/);
+test('voice progress is forced immediately to exactly 100 percent at the final step', () => {
+  assert.match(contextHotfix, /const finalStep = active && step >= count/);
+  assert.match(contextHotfix, /finalStep \? 100/);
+  assert.match(contextHotfix, /fill\.style\.setProperty\('transition', finalStep \? 'none' : 'width \.28s ease', 'important'\)/);
   assert.match(contextHotfix, /fill\.style\.setProperty\('width', `\$\{progress\}%`, 'important'\)/);
+  assert.match(contextHotfix, /track\.dataset\.v48Final = finalStep \? 'true' : 'false'/);
   assert.match(contextHotfix, /VOICE_PROGRESS_REVISION = '20260812-final-step-progress-v48-1'/);
 });
 
