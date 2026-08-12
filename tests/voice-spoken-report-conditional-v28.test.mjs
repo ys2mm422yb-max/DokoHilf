@@ -33,9 +33,9 @@ test('Legacy-Voice-Quelle markiert den Bericht-Sonderfall, der im finalen v44-Re
   assert.match(gate, /report-protocol-step/);
 });
 
-test('verbindliche Fachquelle enthält die finale v44-Berichtlogik', () => {
+test('verbindliche Fachquelle enthält die bestätigte Bericht-Sonderfalllogik', () => {
   assert.match(confirmed, /Kontakt – alles außer Arzt\*\* ist automatisch das \*\*Fallgespräch/);
   assert.match(confirmed, /Sturzereignis\*\* ist automatisch das \*\*Sturzprotokoll/);
-  assert.match(confirmed, /Bei allen anderen Berichtskategorien gelten die Schritte 5–8 nicht; direkt mit Schritt 9 fortfahren/);
+  assert.match(confirmed, /(?:allen anderen Berichtskategorien die Schritte 6–9 überspringen und direkt mit Schritt 10 fortfahren|Bei allen anderen Berichtskategorien gelten die Schritte 5–8 nicht; direkt mit Schritt 9 fortfahren)/);
   assert.match(confirmed, /Das rote X entfernt nur die Protokollverknüpfung, nicht den Bericht/);
 });
