@@ -37,6 +37,7 @@ Vor neuer DokoHilf-Arbeit mindestens lesen beziehungsweise prüfen:
 - Einziges Supabase-Projekt: `efifbuqctylsujiauabg`, Region `eu-central-1`.
 - Andere GitHub- oder Supabase-Projekte werden nicht geöffnet, verändert, verbunden oder als Deployment-Ziel genutzt.
 - DokoHilf ist eine öffentliche, accountfreie Schritt-für-Schritt-Bedienhilfe.
+- DokoHilf führt keinerlei Konten oder Anmeldung; auch interne App-, Redaktions-, Mitarbeiter- oder Administrationskonten sind nicht Teil des Produkts.
 - Keine App-Konten, Anmeldung, Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken.
 - Keine echten Bewohner-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in App, Repository, Supabase, Tests oder Artefakten.
 - Tests und sonstige synthetische Prüfzustände bleiben vollständig künstlich; keine reale Person und kein realer Fall werden nachgebildet.
