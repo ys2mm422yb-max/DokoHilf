@@ -120,14 +120,6 @@ try {
   await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('001.wav'));
   assert(routerBodies[0]?.selectedGuideSlug === 'vitalwerte-finden', 'Blutdruck-Suche wurde nicht zum bestätigten Vitalwerte-Finden-Guide geroutet.');
 
-  const replyMatchBefore = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
-  await page.evaluate(() => window.DokoHilf?.sendMessage?.('Ich möchte bitte', { fromVoice: true }));
-  await page.waitForFunction(() => (window.DokoHilfStaticFirstVoiceV28?.getState?.().approvedReplyMatches || 0) >= 1);
-  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('000.wav'));
-  const replyMatchAfter = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
-  assert(replyMatchAfter.approvedReplyMatches === replyMatchBefore.approvedReplyMatches + 1, 'Sichtbare freigegebene Antwort wurde nicht als statischer Voice-Treffer gezählt.');
-  assert(replyMatchAfter.staticMisses === replyMatchBefore.staticMisses, 'Sichtbare freigegebene Antwort ist fälschlich in den generischen Fallback gefallen.');
-
   for (const text of ['ich weiß nicht', 'wo finde ich das?', 'keine Ahnung']) {
     await page.evaluate(textValue => window.DokoHilf?.sendMessage?.(textValue, { fromVoice: true }), text);
     await page.waitForFunction(speech => document.querySelector('#voiceFocusText')?.textContent?.includes(speech), HELP_SPEECH);
@@ -136,6 +128,14 @@ try {
   }
   assert(routerBodies.slice(1).some(body=>body.smartHelpIntent===true), 'Natürliche Hilferufe wurden nicht kontextuell markiert.');
   assert(!await page.locator('#voiceDetailHelpOptionsV27').count(), 'Alter Vier-Button-Hilfemodus ist noch sichtbar.');
+
+  const replyMatchBefore = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
+  await page.evaluate(() => window.DokoHilf?.sendMessage?.('Ich möchte bitte', { fromVoice: true }));
+  await page.waitForFunction(() => (window.DokoHilfStaticFirstVoiceV28?.getState?.().approvedReplyMatches || 0) >= 1);
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('000.wav'));
+  const replyMatchAfter = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
+  assert(replyMatchAfter.approvedReplyMatches === replyMatchBefore.approvedReplyMatches + 1, 'Sichtbare freigegebene Antwort wurde nicht als statischer Voice-Treffer gezählt.');
+  assert(replyMatchAfter.staticMisses === replyMatchBefore.staticMisses, 'Sichtbare freigegebene Antwort ist fälschlich in den generischen Fallback gefallen.');
 
   const uniqueFreeText = 'Dies ist ein absichtlich nicht vorbereiteter freier Testsatz.';
   const fallback = await page.evaluate(async text => {
