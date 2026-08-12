@@ -1,11 +1,11 @@
 # DokoHilf – bestätigte Arbeitsabläufe
 
 **Status:** verbindliche fachliche Quelle  
-**Stand:** 9. August 2026
+**Stand:** 12. August 2026
 
 Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien.
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt.
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt. Am 12. August 2026 wurde für „Bericht anlegen“ bestätigt, dass das große Textfeld bereits in der Berichtseingabemaske unten sichtbar ist und sich nicht erst durch die Auswahl der Berichtskategorie öffnet.
 
 ## Allgemeine Regeln
 
@@ -69,7 +69,7 @@ Die technische Umsetzung dieser Detailhilfe ist in `ACTIVE_WORK_DETAIL_HELP.md` 
 2. Bereich **Berichte** öffnen.
 3. Oben links auf das grüne Plus klicken.
 4. In der geöffneten Auswahl die Berichtskategorie wählen.
-5. Danach öffnet sich die Eingabemaske für den Bericht.
+5. Das große Textfeld für den Bericht ist in dieser Maske bereits unten sichtbar. Es öffnet sich durch die Kategorieauswahl nicht erst neu.
 6. **Nur bei zwei Kategorien gilt der folgende Protokollblock:** Bei **Kontakt – alles außer Arzt** ist automatisch das **Fallgespräch** verknüpft. Bei **Sturzereignis** ist automatisch das **Sturzprotokoll** verknüpft. Bei allen anderen Berichtskategorien die Schritte 6–9 überspringen und direkt mit Schritt 10 fortfahren.
 7. Nur in diesem Sonderfall: Wird das automatisch verknüpfte Protokoll benötigt, bleibt es verknüpft.
 8. Nur in diesem Sonderfall: Wird es nicht benötigt, den angezeigten Protokollnamen anklicken und anschließend oben rechts auf das kleine rote X klicken.
