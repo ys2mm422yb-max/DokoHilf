@@ -21,6 +21,7 @@ jobs:
       - name: Validate public app version and footer
         run: |
           set -euo pipefail
+          test -s PROJECT_RULES.md
           test -s VERSIONING_POLICY.md
           test -s version.json
           test -s assets/release-polish-v29.js
@@ -30,6 +31,7 @@ jobs:
           const version = JSON.parse(fs.readFileSync('version.json', 'utf8'));
           const release = fs.readFileSync('assets/release-polish-v29.js', 'utf8');
           const policy = fs.readFileSync('VERSIONING_POLICY.md', 'utf8');
+          const projectRules = fs.readFileSync('PROJECT_RULES.md', 'utf8');
 
           const appVersion = String(version.appVersion || '').trim();
           if (!/^v[1-9][0-9]*$/.test(appVersion)) {
@@ -55,5 +57,15 @@ jobs:
             if (!policy.includes(required)) throw new Error(`Versionsregel unvollständig: ${required}`);
           }
 
-          console.log(`DokoHilf ${appVersion}: Versionsregel und sichtbare Fußzeile stimmen überein.`);
+          for (const required of [
+            '`VERSIONING_POLICY.md` ist für die öffentliche DokoHilf-App-Version verbindlich',
+            '`version.json.appVersion` ist die einzige aktuelle öffentliche App-Version',
+            'Bei einem größeren nutzerseitigen Update muss `appVersion` vor Merge und Veröffentlichung erhöht werden',
+            'Validate app version policy',
+            'Mismatch zwischen `version.json.appVersion` und der unten sichtbaren App-Version ist ein Release-Fehler',
+          ]) {
+            if (!projectRules.includes(required)) throw new Error(`PROJECT_RULES Versionspflicht unvollständig: ${required}`);
+          }
+
+          console.log(`DokoHilf ${appVersion}: Versionsregel, PROJECT_RULES und sichtbare Fußzeile stimmen überein.`);
           NODE
