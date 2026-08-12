@@ -42,11 +42,7 @@
     else grid.append(button);
 
     const view = document.getElementById('directGuideView');
-    if (view) {
-      const current = Number(view.dataset.v29LibraryGuideCount || 0);
-      view.dataset.v29LibraryGuideCount = String(current + 1);
-      view.dataset.v46FileStorageGuide = 'available';
-    }
+    if (view) view.dataset.v46FileStorageGuide = 'available';
     return true;
   }
 
