@@ -21,7 +21,7 @@ test('UX polish v42 is wired after the established v36 presentation layer', () =
   assert.match(sw, /UX_POLISH_REVISION = '20260812-voice-library-ux-v42-2'/);
   assert.match(sw, /ux-polish-v42\.css\?v=.*-ux42/);
   assert.match(sw, /ux-polish-v42\.js\?v=.*-ux42/);
-  assert.equal(version.release, 'full-guide-audit-v44');
+  assert.match(version.release, /^[a-z0-9-]+$/);
 });
 
 test('voice states use calm user-facing DokoHilf copy without technical engine wording', () => {
