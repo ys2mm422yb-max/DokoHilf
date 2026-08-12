@@ -49,7 +49,7 @@
 
   function hasEntryAction(text) {
     const n = normalize(text);
-    return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren|geben|gabe|abhaken|kontrollieren)\b/.test(n);
+    return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren|geben|gabe|abhaken|kontrollieren|hochladen|uploaden|upload|loschen|loeschen|umbenennen|andern|aendern|bearbeiten|verschieben|ersetzen)\b/.test(n);
   }
 
   function hasNavigationIntent(text) {
@@ -95,6 +95,7 @@
     if (/\b(bedarfsmedikation|bedarfsgabe|bedarfsmedikament|bedarf medikament)\b/.test(n)) return 'bedarfsmedikation-finden';
     if (/\b(massnahmen ohne zeitangabe|massnahme ohne zeitangabe)\b/.test(n)) return 'massnahmen-ohne-zeitangabe-finden';
 
+    if (/\b(dateiablage|dokumente|vertrag|vertraege|wohnassistent vertrag|betreuerausweis|arztbrief|entlassungsbrief|laborwerte)\b/.test(n)) return 'dateiablage';
     if (/\b(doku erweitert|doku-erweitert)\b/.test(n)) return 'doku-erweitert-finden';
     if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(n)) return 'durchfuehrungsnachweis-finden';
     if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-finden';
@@ -139,6 +140,14 @@
     return null;
   }
 
+  function loadFileStorageGuide() {
+    if (window.__DOKOHILF_FILE_STORAGE_GUIDE_V46__ || document.querySelector('script[data-dokohilf-file-storage-v46]')) return;
+    const script = document.createElement('script');
+    script.src = 'assets/file-storage-guide-v46.js?v=20260812-file-storage-v46-1';
+    script.dataset.dokohilfFileStorageV46 = 'true';
+    document.head.append(script);
+  }
+
   window.fetch = async (input, init = {}) => {
     if (!isAiRequest(input, init)) return previousFetch(input, init);
     const parsed = parseBody(init.body);
@@ -157,4 +166,5 @@
     preparedBody,
   };
   window.__DOKOHILF_SMART_HELP_V29__ = true;
+  loadFileStorageGuide();
 })();
