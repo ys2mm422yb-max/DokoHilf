@@ -4,9 +4,9 @@
   if (window.__DOKOHILF_UX_POLISH_V42__) return;
   window.__DOKOHILF_UX_POLISH_V42__ = true;
 
-  const REVISION = '20260812-voice-library-ux-v42-1';
+  const REVISION = '20260812-voice-library-ux-v42-2';
   const SEARCH_PLACEHOLDER = 'Anleitung suchen …';
-  const CHAT_PLACEHOLDER = 'Beschreibe kurz, wobei du Hilfe brauchst …';
+  const CHAT_PLACEHOLDER = 'Frag einfach …';
   let scheduled = false;
 
   function setText(node, value) {

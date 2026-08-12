@@ -69,8 +69,8 @@ test('v29 spielt ausschließlich vorab erzeugtes Supertonic-F1 ab', () => {
   assert.match(activeVoice, /keine hörbare `speechSynthesis`-\/Gerätestimme als Fallback/);
 });
 
-test('Router v9 hält Ziele, erkennt neue Ziele und schützt Medikation', () => {
-  assert.match(router, /conversational-guide-router-v9/);
+test('Router v10 hält Ziele, erkennt neue Ziele und schützt Medikation', () => {
+  assert.match(router, /conversational-guide-router-v10/);
   assert.match(router, /explicitGuideRoute/);
   assert.match(router, /isMedicationChangeRequest/);
   assert.match(router, /medication-view-only-safety-v9/);
