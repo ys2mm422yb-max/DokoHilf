@@ -1,6 +1,6 @@
 const BUILD_ID = '20260812-41';
 const HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3';
-const LIBRARY_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1';
+const LIBRARY_LAYOUT_REVISION = '20260812-dateiablage-organisation-v46-1';
 const CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1';
 const ROUTING_REVISION = '20260812-navigation-safe-guide-audit-v44-1';
 const CONVERSATION_COMPLETION_REVISION = '20260812-guide-progress-completion-v44-1';
@@ -8,7 +8,7 @@ const USAGE_METRICS_REVISION = '20260811-private-usage-metrics-v41-1';
 const UX_POLISH_REVISION = '20260812-voice-library-ux-v42-2';
 const REPORT_GUIDE_VOICE_RESET_REVISION = '20260812-report-textfield-voice-reset-v43-1';
 const GUIDE_AUDIT_REVISION = '20260812-full-guide-audit-v44-1';
-const VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-1';
+const VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-2';
 const FILE_STORAGE_REVISION = '20260812-file-storage-guide-v46-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];

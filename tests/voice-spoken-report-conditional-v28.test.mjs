@@ -26,15 +26,17 @@ test('bestätigte Supertonic-Sätze werden ausschließlich aus dem statischen Ka
   assert.doesNotMatch(gate, /localFallback|DokoHilfLocalVoiceV28\.synthesize|Gacrux|dokohilf-guide-audio\?manifest=1/);
 });
 
-test('fehlender statischer spokenText nutzt nur einen bereits sichtbaren freigegebenen Satz vor dem generischen Fallback', () => {
-  assert.match(gate, /VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-1'/);
+test('generischer spokenText nutzt zuerst einen sichtbaren freigegebenen Satz und erst danach den Fallback', () => {
+  assert.match(gate, /VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-2'/);
   assert.match(gate, /async function loadStaticSupertonicVoice\(text, visibleReply = ''\)/);
+  assert.match(gate, /spokenKey === fallbackKey/);
   assert.match(gate, /replyKey && replyKey !== spokenKey/);
   assert.match(gate, /findStaticEntry\(visibleReply, manifest\)/);
+  assert.match(gate, /normalizeAudioKey\(replyEntry\.text\) !== fallbackKey/);
   assert.match(gate, /approvedReplyMatches \+= 1/);
   assert.match(gate, /STATIC_FALLBACK_TEXT = 'Ich habe die Antwort im Chat angezeigt\.'/);
-  assert.ok(gate.indexOf('findStaticEntry(visibleReply, manifest)') < gate.indexOf('findStaticEntry(STATIC_FALLBACK_TEXT, manifest)'), 'Sichtbarer freigegebener Satz muss vor dem generischen Fallback geprüft werden.');
-  assert.match(sw, /VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-1'/);
+  assert.ok(gate.indexOf('findStaticEntry(visibleReply, manifest)') < gate.indexOf('const entry = findStaticEntry(text, manifest)'), 'Beim generischen spokenText muss die sichtbare freigegebene Antwort vor dessen WAV geprüft werden.');
+  assert.match(sw, /VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-2'/);
   assert.match(sw, /voiceReplyMatchRevision: VOICE_REPLY_MATCH_REVISION/);
   assert.doesNotMatch(gate, /SpeechSynthesisUtterance|DokoHilfLocalVoiceV28\.synthesize|loadTextToSpeech|loadVoiceStyle/);
 });

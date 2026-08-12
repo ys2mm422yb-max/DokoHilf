@@ -8,7 +8,7 @@
   const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2';
   const STATIC_VOICE = 'Supertonic-F1';
   const STATIC_FALLBACK_TEXT = 'Ich habe die Antwort im Chat angezeigt.';
-  const VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-1';
+  const VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-2';
   const MANIFEST_TIMEOUT_MS = 3500;
   const AUDIO_TIMEOUT_MS = 8000;
   const previousFetch = window.fetch.bind(window);
@@ -183,11 +183,21 @@
 
   async function loadStaticSupertonicVoice(text, visibleReply = '') {
     const manifest = await loadStaticManifest();
+    const spokenKey = normalizeAudioKey(text);
+    const replyKey = normalizeAudioKey(visibleReply);
+    const fallbackKey = normalizeAudioKey(STATIC_FALLBACK_TEXT);
+
+    if (spokenKey === fallbackKey && replyKey && replyKey !== spokenKey) {
+      const replyEntry = findStaticEntry(visibleReply, manifest);
+      if (replyEntry && normalizeAudioKey(replyEntry.text) !== fallbackKey) {
+        approvedReplyMatches += 1;
+        return responseForEntry(replyEntry);
+      }
+    }
+
     const entry = findStaticEntry(text, manifest);
     if (entry) return responseForEntry(entry);
 
-    const spokenKey = normalizeAudioKey(text);
-    const replyKey = normalizeAudioKey(visibleReply);
     if (replyKey && replyKey !== spokenKey) {
       const replyEntry = findStaticEntry(visibleReply, manifest);
       if (replyEntry) {
