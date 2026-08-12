@@ -8,6 +8,7 @@ const USAGE_METRICS_REVISION = '20260811-private-usage-metrics-v41-1';
 const UX_POLISH_REVISION = '20260812-voice-library-ux-v42-2';
 const REPORT_GUIDE_VOICE_RESET_REVISION = '20260812-report-textfield-voice-reset-v43-1';
 const GUIDE_AUDIT_REVISION = '20260812-full-guide-audit-v44-1';
+const VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
@@ -97,6 +98,7 @@ self.addEventListener('activate', event => {
         uxPolishRevision: UX_POLISH_REVISION,
         reportGuideVoiceResetRevision: REPORT_GUIDE_VOICE_RESET_REVISION,
         guideAuditRevision: GUIDE_AUDIT_REVISION,
+        voiceReplyMatchRevision: VOICE_REPLY_MATCH_REVISION,
         hardRefresh: true,
       });
     }
@@ -117,6 +119,7 @@ self.addEventListener('message', event => {
       uxPolishRevision: UX_POLISH_REVISION,
       reportGuideVoiceResetRevision: REPORT_GUIDE_VOICE_RESET_REVISION,
       guideAuditRevision: GUIDE_AUDIT_REVISION,
+      voiceReplyMatchRevision: VOICE_REPLY_MATCH_REVISION,
     });
   }
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
@@ -135,6 +138,7 @@ self.addEventListener('message', event => {
         uxPolishRevision: UX_POLISH_REVISION,
         reportGuideVoiceResetRevision: REPORT_GUIDE_VOICE_RESET_REVISION,
         guideAuditRevision: GUIDE_AUDIT_REVISION,
+        voiceReplyMatchRevision: VOICE_REPLY_MATCH_REVISION,
       });
     })());
   }
