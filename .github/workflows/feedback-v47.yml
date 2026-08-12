@@ -22,7 +22,7 @@ jobs:
       - name: Checkout exact repository head
         uses: actions/checkout@v4
 
-      - name: Validate feedback privacy contracts
+      - name: Validate feedback privacy and release contracts
         run: |
           set -euo pipefail
           test -s assets/feedback-report-v47.js
@@ -30,11 +30,13 @@ jobs:
           test -s supabase/functions/dokohilf-feedback/deno.json
           test -s supabase/migrations/20260812205500_dokohilf_private_feedback_reports.sql
           test -s tests/feedback-report-v47.test.mjs
+          test -s tests/display-version-policy.test.mjs
           test -s scripts/feedback-render-v47.mjs
           node --check assets/feedback-report-v47.js
           node --check assets/ui-polish-v35.js
+          node --check assets/update-manager.js
           node --check scripts/feedback-render-v47.mjs
-          node --test tests/feedback-report-v47.test.mjs
+          node --test tests/feedback-report-v47.test.mjs tests/display-version-policy.test.mjs
           grep -q '\[functions.dokohilf-feedback\]' supabase/config.toml
           grep -q 'verify_jwt = false' supabase/config.toml
           grep -q 'private.dokohilf_feedback_reports' supabase/migrations/20260812205500_dokohilf_private_feedback_reports.sql
@@ -54,6 +56,7 @@ jobs:
           bash scripts/build-static-site-v27.sh _feedback_site
           test -s _feedback_site/assets/feedback-report-v47.js
           grep -q 'feedback-report-v47.js' _feedback_site/assets/ui-polish-v35.js
+          grep -q 'dokohilf-release" content="v30' _feedback_site/index.html
 
       - name: Render feedback modal on iOS and Android
         run: |
