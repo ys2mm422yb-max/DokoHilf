@@ -1,0 +1,81 @@
+name: Validate private feedback v47
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dokohilf-feedback-v47-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  feedback-v47:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact repository head
+        uses: actions/checkout@v4
+
+      - name: Validate feedback privacy contracts
+        run: |
+          set -euo pipefail
+          test -s assets/feedback-report-v47.js
+          test -s supabase/functions/dokohilf-feedback/index.ts
+          test -s supabase/functions/dokohilf-feedback/deno.json
+          test -s supabase/migrations/20260812205500_dokohilf_private_feedback_reports.sql
+          test -s tests/feedback-report-v47.test.mjs
+          test -s scripts/feedback-render-v47.mjs
+          node --check assets/feedback-report-v47.js
+          node --check assets/ui-polish-v35.js
+          node --check scripts/feedback-render-v47.mjs
+          node --test tests/feedback-report-v47.test.mjs
+          grep -q '\[functions.dokohilf-feedback\]' supabase/config.toml
+          grep -q 'verify_jwt = false' supabase/config.toml
+          grep -q 'private.dokohilf_feedback_reports' supabase/migrations/20260812205500_dokohilf_private_feedback_reports.sql
+          ! grep -Eqi '^\s*(ip_address|user_agent|session_id|user_id|device_id|chat_transcript|messages?)\s+' supabase/migrations/20260812205500_dokohilf_private_feedback_reports.sql
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Typecheck public feedback endpoint
+        run: deno check supabase/functions/dokohilf-feedback/index.ts
+
+      - name: Build feedback UI test site
+        run: |
+          set -euo pipefail
+          bash scripts/build-static-site-v27.sh _feedback_site
+          test -s _feedback_site/assets/feedback-report-v47.js
+          grep -q 'feedback-report-v47.js' _feedback_site/assets/ui-polish-v35.js
+
+      - name: Render feedback modal on iOS and Android
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/feedback-v47/ios artifacts/feedback-v47/android
+          npm install --no-save --package-lock=false playwright@1.54.2
+          npx playwright install --with-deps chromium
+          python3 -m http.server 4173 --directory _feedback_site >artifacts/feedback-v47-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+          DOKOHILF_VIEWPORT_WIDTH=393 DOKOHILF_VIEWPORT_HEIGHT=852 DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ DOKOHILF_RENDER_OUTPUT=artifacts/feedback-v47/ios node scripts/feedback-render-v47.mjs
+          DOKOHILF_VIEWPORT_WIDTH=412 DOKOHILF_VIEWPORT_HEIGHT=915 DOKOHILF_RENDER_URL=http://127.0.0.1:4173/ DOKOHILF_RENDER_OUTPUT=artifacts/feedback-v47/android node scripts/feedback-render-v47.mjs
+
+      - name: Upload feedback evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dokohilf-feedback-v47-${{ github.run_number }}
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 30
