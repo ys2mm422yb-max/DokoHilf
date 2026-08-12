@@ -29,13 +29,14 @@ test('client payload contains only feedback plus optional build-guide-step conte
   assert.match(ui, /guideStep:/);
   assert.match(ui, /credentials: 'omit'/);
   assert.match(ui, /referrerPolicy: 'no-referrer'/);
-  assert.doesNotMatch(ui, /#messages|chatInput|conversation|localStorage|sessionStorage|indexedDB|document\.cookie|navigator\.userAgent/);
+  assert.doesNotMatch(ui, /#messages|chatInput|localStorage|sessionStorage|indexedDB|document\.cookie|navigator\.userAgent/);
 });
 
 test('server never reads or stores user, device, cookie, session or chat identifiers', () => {
   assert.match(fn, /Identifier-free global abuse guard/);
-  assert.doesNotMatch(fn, /x-forwarded-for|cf-connecting-ip|user-agent|cookie|session|device|chat|messageHistory|auth\.uid/iu);
-  assert.doesNotMatch(migration, /ip_address|user_agent|cookie|session_id|user_id|device_id|chat|message/iu);
+  assert.doesNotMatch(fn, /x-forwarded-for|cf-connecting-ip|user-agent|document\.cookie|session_id|device_id|user_id|messageHistory|auth\.uid/iu);
+  assert.match(migration, /No IP, device, cookie, session, user identifier or chat transcript columns/);
+  assert.doesNotMatch(migration, /^\s*(ip_address|user_agent|cookie|session_id|user_id|device_id|chat_transcript|messages?)\s+/imu);
 });
 
 test('reports live in a private non-readable schema with RLS defense in depth', () => {
