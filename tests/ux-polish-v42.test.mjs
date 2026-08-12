@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
-const [index, sw, version, ux, css, routing] = await Promise.all([
+const [index, sw, version, ux, v29, css, routing] = await Promise.all([
   read('index.html'),
   read('service-worker.js'),
   read('version.json').then(JSON.parse),
   read('assets/ux-polish-v42.js'),
+  read('assets/v29-ui.js'),
   read('assets/ux-polish-v42.css'),
   read('tests/helpers/routing-contract.mjs'),
 ]);
@@ -17,10 +18,10 @@ test('UX polish v42 is wired after the established v36 presentation layer', () =
   assert.match(index, /ux-polish-v42\.js\?v=.*-ux42/);
   assert.ok(index.indexOf('voice-polish-v36.css') < index.indexOf('ux-polish-v42.css'));
   assert.ok(index.indexOf('voice-polish-v36.js') < index.indexOf('ux-polish-v42.js'));
-  assert.match(sw, /UX_POLISH_REVISION = '20260812-voice-library-ux-v42-1'/);
+  assert.match(sw, /UX_POLISH_REVISION = '20260812-voice-library-ux-v42-2'/);
   assert.match(sw, /ux-polish-v42\.css\?v=.*-ux42/);
   assert.match(sw, /ux-polish-v42\.js\?v=.*-ux42/);
-  assert.equal(version.release, 'voice-library-ux-polish-v42');
+  assert.equal(version.release, 'placeholder-stuck-help-fix-v42');
 });
 
 test('voice states use calm user-facing DokoHilf copy without technical engine wording', () => {
@@ -71,8 +72,10 @@ test('library gains ephemeral search while automatic frequent-use ordering stays
   assert.doesNotMatch(ux, /localStorage|sessionStorage|indexedDB|document\.cookie/);
 });
 
-test('chat placeholder is clearer and v42 adds no persistence, network or new speech path', () => {
-  assert.match(ux, /Beschreibe kurz, wobei du Hilfe brauchst …/);
+test('chat placeholder has one owner value and v42 adds no persistence, network or new speech path', () => {
+  assert.match(ux, /const CHAT_PLACEHOLDER = 'Frag einfach …'/);
+  assert.match(v29, /input\.placeholder !== 'Frag einfach …'/);
+  assert.doesNotMatch(ux, /Beschreibe kurz, wobei du Hilfe brauchst …/);
   assert.doesNotMatch(ux, /fetch\(|XMLHttpRequest|WebSocket|speechSynthesis|AudioContext/);
   assert.doesNotMatch(ux, /localStorage|sessionStorage|indexedDB|document\.cookie/);
 });
