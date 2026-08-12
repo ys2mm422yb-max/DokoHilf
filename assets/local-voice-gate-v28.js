@@ -8,6 +8,7 @@
   const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2';
   const STATIC_VOICE = 'Supertonic-F1';
   const STATIC_FALLBACK_TEXT = 'Ich habe die Antwort im Chat angezeigt.';
+  const VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-1';
   const MANIFEST_TIMEOUT_MS = 3500;
   const AUDIO_TIMEOUT_MS = 8000;
   const previousFetch = window.fetch.bind(window);
@@ -19,6 +20,7 @@
   let lastStaticError = '';
   let lastSpokenMapping = '';
   let staticMisses = 0;
+  let approvedReplyMatches = 0;
 
   function requestUrl(input) { return typeof input === 'string' ? input : input?.url; }
   function requestMethod(input, init = {}) { return String(init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase(); }
@@ -179,10 +181,21 @@
     });
   }
 
-  async function loadStaticSupertonicVoice(text) {
+  async function loadStaticSupertonicVoice(text, visibleReply = '') {
     const manifest = await loadStaticManifest();
     const entry = findStaticEntry(text, manifest);
     if (entry) return responseForEntry(entry);
+
+    const spokenKey = normalizeAudioKey(text);
+    const replyKey = normalizeAudioKey(visibleReply);
+    if (replyKey && replyKey !== spokenKey) {
+      const replyEntry = findStaticEntry(visibleReply, manifest);
+      if (replyEntry) {
+        approvedReplyMatches += 1;
+        return responseForEntry(replyEntry);
+      }
+    }
+
     staticMisses += 1;
     const fallback = findStaticEntry(STATIC_FALLBACK_TEXT, manifest);
     if (!fallback) return null;
@@ -219,7 +232,7 @@
     if (!requestedText) return staticError(new Error('empty_static_voice_text'));
     const text = mappedSpokenText(requestedText);
     try {
-      const staticVoice = await loadStaticSupertonicVoice(text);
+      const staticVoice = await loadStaticSupertonicVoice(text, requestedText);
       if (staticVoice) return staticVoice;
       updateVoiceStatus('Sprachausgabe nicht verfügbar', 'Die Antwort bleibt im Chat sichtbar.');
       return staticError(new Error('static_sentence_and_fallback_missing'));
@@ -297,6 +310,7 @@
     cacheName: STATIC_AUDIO_CACHE,
     voice: STATIC_VOICE,
     mode: 'static-only',
+    replyMatchRevision: VOICE_REPLY_MATCH_REVISION,
     getState: () => ({
       approvedEntries: approvedByText.size,
       lastStaticHit,
@@ -304,6 +318,7 @@
       lastSpokenMapping,
       spokenMappings: spokenByReply.size,
       staticMisses,
+      approvedReplyMatches,
     }),
   };
   window.DokoHilfStaticSupertonicV29 = window.DokoHilfStaticFirstVoiceV28;
