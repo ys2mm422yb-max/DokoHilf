@@ -187,12 +187,15 @@
     const step = Number(guide?.guideStep || 0);
     const count = Number(guide?.guideStepCount || 0);
     const active = Number.isFinite(step) && Number.isFinite(count) && step > 0 && count > 0;
+    const finalStep = active && step >= count;
     const progress = active
-      ? (step >= count ? 100 : Math.min(100, Math.max(0, (step / count) * 100)))
+      ? (finalStep ? 100 : Math.min(100, Math.max(0, (step / count) * 100)))
       : 0;
     track.style.setProperty('--v42-progress', `${progress}%`);
+    fill.style.setProperty('transition', finalStep ? 'none' : 'width .28s ease', 'important');
     fill.style.setProperty('width', `${progress}%`, 'important');
     track.dataset.v48Progress = active ? `${step}/${count}:${progress}` : 'empty';
+    track.dataset.v48Final = finalStep ? 'true' : 'false';
   }
 
   function syncRenderedLabels() {
