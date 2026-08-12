@@ -10,6 +10,7 @@ const direct = await read('assets/file-storage-guide-v46.js');
 const speech = JSON.parse(await read('assets/voice-file-storage-catalog-v46.json'));
 const worker = await read('service-worker.js');
 const builder = await read('scripts/build-supertonic-guide-audio-v28.py');
+const uiPolish = await read('assets/ui-polish-v35.js');
 
 function smartHelpRuntime() {
   const context = {
@@ -56,6 +57,12 @@ test('Dateiablage aliases route deterministically to the approved guide', () => 
   ]) {
     assert.equal(runtime.inferNavigationGuide(phrase), '', phrase);
   }
+});
+
+test('Dateiablage is grouped under Organisation & Dokumente instead of Weitere Anleitungen', () => {
+  assert.match(uiPolish, /key: 'organization-documents'[\s\S]*label: 'Organisation & Dokumente'[\s\S]*slugs: \['anwesenheit', 'formulare-anlegen', 'stammdaten', 'dateiablage'\]/);
+  assert.match(uiPolish, /card\?\.dataset\?\.v46FileStorage === 'true'\) return 'dateiablage'/);
+  assert.match(uiPolish, /GROUP_LAYOUT_REVISION = '20260812-dateiablage-organisation-v46-1'/);
 });
 
 test('direct guide contains only the confirmed find/open path', () => {
