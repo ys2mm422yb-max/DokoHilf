@@ -6,10 +6,16 @@ const migration = await readFile(
   new URL('../supabase/migrations/20260806153000_confirmed_workflows_blocks_1_4.sql', import.meta.url),
   'utf8',
 );
+const reportCorrection = await readFile(
+  new URL('../supabase/migrations/20260812131000_correct_report_textfield_visibility_v43.sql', import.meta.url),
+  'utf8',
+);
 
-test('Berichtskategorie wird vor der Eingabemaske gewählt', () => {
+test('Berichtskategorie wird gewählt, während das Textfeld bereits in der Maske sichtbar ist', () => {
   assert.match(migration, /Auswahl der Berichtskategorie/);
-  assert.match(migration, /Danach öffnet sich die Eingabemaske/);
+  assert.match(reportCorrection, /Das große Textfeld für den Bericht ist in dieser Maske bereits unten sichtbar/);
+  assert.match(reportCorrection, /es öffnet sich durch die Kategorieauswahl nicht erst neu/);
+  assert.doesNotMatch(reportCorrection, /Danach öffnet sich die Eingabemaske/);
   assert.match(migration, /bericht-folgebericht/);
   assert.match(migration, /Bemerkung zur Bearbeitung/);
 });
