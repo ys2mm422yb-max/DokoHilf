@@ -3,10 +3,11 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
-const [extraText, uiText, gate, router, core, app] = await Promise.all([
+const [extraText, uiText, gate, contextHotfix, router, core, app] = await Promise.all([
   read('assets/voice-extra-catalog-v28.json'),
   read('assets/voice-ui-catalog-v29.json'),
   read('assets/local-voice-gate-v28.js'),
+  read('assets/context-voice-hotfix-v28.js'),
   read('supabase/functions/dokohilf-ai-router/index.ts'),
   read('supabase/functions/dokohilf-ai/index.ts'),
   read('assets/app.js'),
@@ -65,6 +66,7 @@ test('Voice-Gate liest nur exakte oder enthaltene freigegebene statische Sätze 
 });
 
 test('freie nicht katalogisierte Antworten werden nicht in einen anderen fachlichen Satz umgeschrieben', () => {
-  assert.doesNotMatch(gate, /replace.*reply.*spokenText/is);
+  assert.match(gate, /if \(!mapped\) return stripExerciseNotice\(text\)/);
+  assert.doesNotMatch(contextHotfix, /STATIC_SPEECH_BY_SOURCE|approvedStaticSpokenText|natural-copy-static-voice-v45/);
   assert.doesNotMatch(gate, /Gemini|generateContent|generativelanguage\.googleapis\.com/);
 });
