@@ -6,6 +6,8 @@
 
   const GROUP_LAYOUT_REVISION = '20260812-dateiablage-organisation-v46-1';
   const CHAT_UI_REVISION = '20260810-ios-keyboard-chat-v37-1';
+  const FEEDBACK_REVISION = '20260812-feedback-v47-1';
+  const FEEDBACK_MODULE_MARKER = `feedback-report-v47.js?v=${FEEDBACK_REVISION}`;
   // Historische Bezeichnungen nur als inerte Regression-Kompatibilität: Visiten & Vitalwerte / Weitere Bereiche.
   const GROUPS = Object.freeze([
     {
@@ -193,6 +195,7 @@
     polishModeSwitch,
     groupLayoutRevision: GROUP_LAYOUT_REVISION,
     chatUiRevision: CHAT_UI_REVISION,
+    feedbackModuleMarker: FEEDBACK_MODULE_MARKER,
     getGroups: () => GROUPS.map(group => ({ ...group, slugs: [...group.slugs] })),
   };
 })();
