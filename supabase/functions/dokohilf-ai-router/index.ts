@@ -5,7 +5,7 @@ const ALLOWED_ORIGINS = new Set([
 ]);
 
 const MODEL = 'gemini-3.6-flash';
-const ROUTER_VERSION = 'conversational-guide-router-v9';
+const ROUTER_VERSION = 'conversational-guide-router-v10';
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 24;
 const MAX_BODY_CHARS = 16_000;
@@ -433,9 +433,9 @@ function runGuideCommand(
 function stuckHelp(origin: string | null, parsed: Record<string, unknown>, messages: ChatMessage[], guide: GuideRecord): Response {
   const index = currentGuideIndex(parsed, messages, guide);
   const step = guide.steps[index] || guide.steps[0] || {};
-  const fallback = Object.values(guide.troubleshooting || {})[0]
-    || `Bleibe beim aktuellen Schritt und suche genau nach der genannten Stelle: ${step.text || ''}`;
-  const help = String(step.stuck || fallback).trim();
+  const stepHelp = String(step.stuck || '').trim();
+  const fallback = 'Für diesen Schritt ist noch keine genauere Positionsangabe bestätigt. Bleib bitte bei diesem Schritt und sag mir nur, welche Menü-, Button- oder Feldbezeichnungen du dort siehst. Ich erfinde keinen alternativen Klickweg.';
+  const help = stepHelp || fallback;
   return jsonResponse(origin, 200, {
     reply: `${help}\n\nKlappt es so?`,
     spokenText: help,
@@ -444,7 +444,7 @@ function stuckHelp(origin: string | null, parsed: Record<string, unknown>, messa
     guideTitle: guide.title,
     guideStep: index + 1,
     guideStepCount: guide.steps.length,
-    source: 'approved-guide-router-stuck-v9',
+    source: stepHelp ? 'approved-guide-router-stuck-v10' : 'approved-guide-router-stuck-gap-v10',
   });
 }
 
