@@ -21,8 +21,19 @@ test('bestätigte Supertonic-Sätze werden ausschließlich aus dem statischen Ka
   assert.match(gate, /STATIC_VOICE = 'Supertonic-F1'/);
   assert.match(gate, /static-supertonic-only-v29/);
   assert.match(gate, /static-supertonic-cache-v29-2/);
-  assert.match(gate, /loadStaticSupertonicVoice\(text\)/);
+  assert.match(gate, /loadStaticSupertonicVoice\(text, requestedText\)/);
   assert.doesNotMatch(gate, /localFallback|DokoHilfLocalVoiceV28\.synthesize|Gacrux|dokohilf-guide-audio\?manifest=1/);
+});
+
+test('fehlender statischer spokenText nutzt nur einen bereits sichtbaren freigegebenen Satz vor dem generischen Fallback', () => {
+  assert.match(gate, /VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-1'/);
+  assert.match(gate, /async function loadStaticSupertonicVoice\(text, visibleReply = ''\)/);
+  assert.match(gate, /replyKey && replyKey !== spokenKey/);
+  assert.match(gate, /findStaticEntry\(visibleReply, manifest\)/);
+  assert.match(gate, /approvedReplyMatches \+= 1/);
+  assert.match(gate, /STATIC_FALLBACK_TEXT = 'Ich habe die Antwort im Chat angezeigt\.'/);
+  assert.ok(gate.indexOf('findStaticEntry(visibleReply, manifest)') < gate.indexOf('findStaticEntry(STATIC_FALLBACK_TEXT, manifest)'), 'Sichtbarer freigegebener Satz muss vor dem generischen Fallback geprüft werden.');
+  assert.doesNotMatch(gate, /SpeechSynthesisUtterance|DokoHilfLocalVoiceV28\.synthesize|loadTextToSpeech|loadVoiceStyle/);
 });
 
 test('Legacy-Voice-Quelle markiert den Bericht-Sonderfall, der im finalen v44-Render normalisiert wird', () => {
@@ -36,6 +47,6 @@ test('Legacy-Voice-Quelle markiert den Bericht-Sonderfall, der im finalen v44-Re
 test('verbindliche Fachquelle enthält die bestätigte Bericht-Sonderfalllogik', () => {
   assert.match(confirmed, /Kontakt – alles außer Arzt\*\* ist automatisch das \*\*Fallgespräch/);
   assert.match(confirmed, /Sturzereignis\*\* ist automatisch das \*\*Sturzprotokoll/);
-  assert.match(confirmed, /(?:allen anderen Berichtskategorien die Schritte 6–9 überspringen und direkt mit Schritt 10 fortfahren|Bei allen anderen Berichtskategorien gelten die Schritte 5–8 nicht; direkt mit Schritt 9 fortfahren)/);
+  assert.match(confirmed, /Bei allen anderen Berichtskategorien gelten die Schritte 5–8 nicht; direkt mit Schritt 9 fortfahren/);
   assert.match(confirmed, /Das rote X entfernt nur die Protokollverknüpfung, nicht den Bericht/);
 });
