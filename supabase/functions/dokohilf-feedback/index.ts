@@ -171,8 +171,8 @@ Deno.serve(async (req: Request) => {
         throw error;
       }
     }
-  } catch (error) {
-    console.error("DokoHilf feedback insert failed", error instanceof Error ? error.message : "unknown");
+  } catch {
+    console.error("DokoHilf feedback insert failed");
     return json(origin, 500, { error: "STORE_FAILED" });
   }
 
