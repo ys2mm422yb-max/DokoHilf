@@ -10,6 +10,7 @@ const GREETING = 'Hey! Wobei brauchst du Hilfe?';
 const FIRST_SPEECH = 'Öffne beim gewünschten Bewohner „Doku-Erweitert“ in der festen Leiste und wähle dort „Vitalwerte“.';
 const HELP_SPEECH = 'Erst „Doku-Erweitert“ in der festen Leiste öffnen, danach darin „Vitalwerte“ wählen.';
 const FALLBACK_SPEECH = 'Ich habe die Antwort im Chat angezeigt.';
+const UNPREPARED_SPOKEN = 'Dieser absichtlich nicht vorbereitete gesprochene Testsatz besitzt kein statisches Audio.';
 
 function assert(condition, message) { if (!condition) throw new Error(message); }
 function silentWav() {
@@ -24,6 +25,10 @@ function silentWav() {
 
 function routePayload(body) {
   const userText = [...(Array.isArray(body?.messages) ? body.messages : [])].reverse().find(message => message?.role === 'user')?.content || '';
+  if (/^ich möchte bitte$/i.test(userText.trim())) return {
+    reply: `${GREETING}\n\nBitte nenne dein Ziel.`, spokenText: UNPREPARED_SPOKEN,
+    guideSlug:null,guideTitle:null,guideVersion:null,guideStep:null,guideStepCount:null,completed:false,source:'synthetic-visible-reply-match-v45',
+  };
   const contextual = body?.smartHelpIntent === true || (body?.guideSlug && /weiß nicht|weiss nicht|keine ahnung|wo finde/i.test(userText));
   if (contextual) return {
     reply: `${HELP_SPEECH}\n\nIst der Bereich „Vitalwerte“ geöffnet?`, spokenText: HELP_SPEECH,
@@ -115,6 +120,14 @@ try {
   await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('001.wav'));
   assert(routerBodies[0]?.selectedGuideSlug === 'vitalwerte-finden', 'Blutdruck-Suche wurde nicht zum bestätigten Vitalwerte-Finden-Guide geroutet.');
 
+  const replyMatchBefore = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
+  await page.evaluate(() => window.DokoHilf?.sendMessage?.('Ich möchte bitte', { fromVoice: true }));
+  await page.waitForFunction(() => (window.DokoHilfStaticFirstVoiceV28?.getState?.().approvedReplyMatches || 0) >= 1);
+  await page.waitForFunction(() => window.DokoHilfStaticFirstVoiceV28?.getState?.().lastStaticHit?.includes('000.wav'));
+  const replyMatchAfter = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
+  assert(replyMatchAfter.approvedReplyMatches === replyMatchBefore.approvedReplyMatches + 1, 'Sichtbare freigegebene Antwort wurde nicht als statischer Voice-Treffer gezählt.');
+  assert(replyMatchAfter.staticMisses === replyMatchBefore.staticMisses, 'Sichtbare freigegebene Antwort ist fälschlich in den generischen Fallback gefallen.');
+
   for (const text of ['ich weiß nicht', 'wo finde ich das?', 'keine Ahnung']) {
     await page.evaluate(textValue => window.DokoHilf?.sendMessage?.(textValue, { fromVoice: true }), text);
     await page.waitForFunction(speech => document.querySelector('#voiceFocusText')?.textContent?.includes(speech), HELP_SPEECH);
@@ -136,11 +149,12 @@ try {
   const systemCalls = await page.evaluate(() => [...window.__DOKOHILF_SYSTEM_SPEECH_TEST_CALLS__]);
   assert(systemCalls.length === 0, `Systemstimme wurde ${systemCalls.length}x aufgerufen.`);
   assert(cloudTtsRequests === 0, `TTS-Netzwerkpfad wurde ${cloudTtsRequests}x erreicht.`);
-  assert(routerRequests >= 4, `Kontext-Hilfe hat nur ${routerRequests} Router-Aufrufe erzeugt.`);
+  assert(routerRequests >= 5, `Kontext-Hilfe hat nur ${routerRequests} Router-Aufrufe erzeugt.`);
   const localState = await page.evaluate(() => window.DokoHilfLocalVoiceV28?.getState?.());
   assert(localState?.state === 'retired' && localState?.backend === 'none' && localState?.armed === false, 'Lokale Voice-Kompatibilität ist nicht vollständig stillgelegt.');
   const staticState = await page.evaluate(() => window.DokoHilfStaticFirstVoiceV28?.getState?.());
   assert(staticState?.staticMisses >= 1, 'Unbekannter freier Text wurde nicht als statischer Katalog-Miss erkannt.');
+  assert(staticState?.approvedReplyMatches >= 1, 'Sichtbarer freigegebener Satz wurde nicht als statischer Reply-Treffer abgespielt.');
   const geometry = await page.evaluate(() => ({scrollWidth:document.documentElement.scrollWidth,viewportWidth:window.innerWidth,status:document.getElementById('voiceStatus')?.textContent||'',hint:document.getElementById('voiceHint')?.textContent||'',voiceState:document.getElementById('appShell')?.dataset?.voiceState||''}));
   assert(geometry.scrollWidth <= geometry.viewportWidth + 1, `Horizontaler Overflow: ${geometry.scrollWidth} > ${geometry.viewportWidth}`);
   assert(!/Sofortstimme|Gerätestimme|Gacrux/i.test(`${geometry.status} ${geometry.hint}`), 'Voice-UI erwähnt eine alte/abweichende Stimme.');
