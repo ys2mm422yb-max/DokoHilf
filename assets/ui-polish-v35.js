@@ -4,7 +4,7 @@
   if (window.__DOKOHILF_UI_POLISH_V35__) return;
   window.__DOKOHILF_UI_POLISH_V35__ = true;
 
-  const GROUP_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1';
+  const GROUP_LAYOUT_REVISION = '20260812-dateiablage-library-v45-1';
   const CHAT_UI_REVISION = '20260810-ios-keyboard-chat-v37-1';
   // Historische Bezeichnungen nur als inerte Regression-Kompatibilität: Visiten & Vitalwerte / Weitere Bereiche.
   const GROUPS = Object.freeze([
@@ -23,8 +23,8 @@
     {
       key: 'organization-documents',
       label: 'Organisation & Dokumente',
-      hint: 'An-/Abwesenheit, Formulare und Stammdaten',
-      slugs: ['anwesenheit', 'formulare-anlegen', 'stammdaten'],
+      hint: 'An-/Abwesenheit, Formulare, Stammdaten und Dateiablage',
+      slugs: ['anwesenheit', 'formulare-anlegen', 'stammdaten', 'dateiablage-dokumente'],
     },
     {
       key: 'handover-overview',
