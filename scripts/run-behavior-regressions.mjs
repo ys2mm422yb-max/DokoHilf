@@ -20,12 +20,14 @@ const CONFIRMED_WORKFLOW_MIGRATION = await readFile(
 const UI_POLISH = await readFile(new URL('../assets/ui-polish-v35.js', import.meta.url), 'utf8');
 
 const REQUIRED_LIBRARY_GROUP_MARKERS = [
-  "GROUP_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1'",
+  "GROUP_LAYOUT_REVISION = '20260812-dateiablage-organisation-v46-1'",
   "label: 'Gesundheit & Medizin'",
   "hint: 'Visiten, Vitalwerte, Medikation und Notfallblatt'",
   "slugs: ['visite-anlegen', 'visiten-oeffnen', 'visite-status-durchgefuehrt', 'vitalwerte', 'medikation-ansehen', 'notfallblatt']",
   "label: 'Organisation & Dokumente'",
-  "slugs: ['anwesenheit', 'formulare-anlegen', 'stammdaten']",
+  "hint: 'An-/Abwesenheit, Formulare, Stammdaten und Dateiablage'",
+  "slugs: ['anwesenheit', 'formulare-anlegen', 'stammdaten', 'dateiablage']",
+  "card?.dataset?.v46FileStorage === 'true') return 'dateiablage'",
   "label: 'Übergabe & Übersicht'",
   "slugs: ['uebergabeformular']",
   "label: 'Durchführung'",
@@ -126,7 +128,7 @@ function buildMarkdown(caseResults, sequences, guideFailures, dataFailures, work
       ? libraryGroupingFailures.map(marker => `- ❌ ${marker}`)
       : [
           '- ✅ Gesundheit & Medizin: Visiten, Vitalwerte, Medikation und Notfallblatt',
-          '- ✅ Organisation & Dokumente: An-/Abwesenheit, Formulare und Stammdaten',
+          '- ✅ Organisation & Dokumente: An-/Abwesenheit, Formulare, Stammdaten und Dateiablage',
           '- ✅ Übergabe & Übersicht separat',
           '- ✅ Keine aktive Sammelgruppe „Weitere Bereiche“',
         ]),
