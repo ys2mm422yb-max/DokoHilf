@@ -48,7 +48,15 @@ await page.route('**/functions/v1/dokohilf-tts', async route => {
 
 try {
   await page.goto(BASE_URL, { waitUntil: 'networkidle' });
-  assert((await page.locator('#buildPill').innerText()).includes('v29'), 'Test läuft nicht auf v29.');
+  const publicVersion = await page.evaluate(async () => {
+    const response = await fetch(`./version.json?render-version=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) return '';
+    const payload = await response.json();
+    return String(payload?.appVersion || '').trim();
+  });
+  const versionMarker = await page.locator('#buildPill').innerText();
+  assert(/^v[1-9][0-9]*$/.test(publicVersion), `Ungültige öffentliche App-Version: ${publicVersion || '<leer>'}`);
+  assert(versionMarker.includes(publicVersion), `Test läuft nicht auf der öffentlichen App-Version ${publicVersion}: ${versionMarker}`);
 
   await page.waitForFunction(() => {
     const examples = document.querySelector('.examples');
@@ -110,7 +118,7 @@ try {
 
   assert(consoleErrors.length === 0, `Console-Fehler: ${consoleErrors.join(' | ')}`);
   assert(pageErrors.length === 0, `Page-Fehler: ${pageErrors.join(' | ')}`);
-  await writeFile(`${OUTPUT_DIR}/summary.json`, JSON.stringify({ profile: PROFILE, viewport: { width: WIDTH, height: HEIGHT }, conditionText, conditionalStepNumbers: numbers, geometry, voiceResult, staticAudioRequests, rawTtsRequests, consoleErrors, pageErrors }, null, 2));
+  await writeFile(`${OUTPUT_DIR}/summary.json`, JSON.stringify({ profile: PROFILE, publicVersion, versionMarker, viewport: { width: WIDTH, height: HEIGHT }, conditionText, conditionalStepNumbers: numbers, geometry, voiceResult, staticAudioRequests, rawTtsRequests, consoleErrors, pageErrors }, null, 2));
 } finally {
   await context.close();
   await browser.close();
