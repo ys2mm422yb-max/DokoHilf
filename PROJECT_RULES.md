@@ -1,7 +1,7 @@
 # DokoHilf – verbindliche Projektregeln
 
 **Status:** Verbindlich  
-**Stand:** 11. August 2026
+**Stand:** 13. August 2026
 
 > Diese Datei ist vor jeder Arbeit an DokoHilf vollständig zu lesen. Bei rechtlicher, datenschutzrechtlicher oder technischer Unsicherheit gilt: stoppen, nichts veröffentlichen, keine Daten importieren und keine Echtdaten verwenden.
 
@@ -80,6 +80,8 @@ Eine spätere Freigabe darf dieses Verbot **nicht** aufheben oder abschwächen. 
 - Statische Guide-Audios müssen eindeutig dem freigegebenen Text zugeordnet sein. Ändert sich der Text, muss das Audio neu erzeugt werden.
 - Die Sprachausgabe soll ohne kostenpflichtige TTS-API auskommen. Bestätigte Guide-Sätze werden mit der kostenlosen lokalen/offenen Sprachengine **Supertonic 3** als statische Audios erzeugt; eine System-/Gerätestimme ist kein regulärer Fallback.
 - Lokal dauerhaft gespeichert werden darf genau ein unpersönliches Ja/Nein-Merkmal: `dokohilf-privacy-ack-v1=yes`. Es zeigt ausschließlich an, dass der zentrale Datenschutz-Hinweis bereits bestätigt wurde. Keine Zeit, Identität, Gerätekennung oder weitere Nutzungsinformation speichern.
+- Die öffentliche Funktion **„Fehler oder Hinweis melden“** darf nur Kategorie und kurze Beschreibung speichern. Optional darf der Nutzer ausdrücklich „Aktuelle Stelle mitsenden“ aktivieren; dann dürfen ausschließlich Build-ID, aktueller Guide und aktueller Schritt zusätzlich übertragen werden. Chatnachrichten, Audio, Screenshots, IP-Adresse, User-Agent, Geräte-, Cookie-, Session- oder Nutzerkennung dürfen durch die DokoHilf-Meldelogik weder gelesen noch gespeichert werden.
+- Vor dem Absenden einer Fehlermeldung muss sichtbar darauf hingewiesen werden, keine Namen, Bewohner-/Klienten- oder Gesundheitsdaten einzugeben. Fehlermeldungen werden ausschließlich privat in Supabase gespeichert; es gibt keine öffentliche Lesemöglichkeit. Nach erfolgreichem Speichern erhält der Nutzer nur eine technische Meldungsnummer zum Wiederfinden des Hinweises.
 
 ## 8. Supabase-Sicherheit
 
@@ -174,4 +176,5 @@ Diese Regeln sind ein technisches und organisatorisches Schutzkonzept, keine anw
 - Laufende größere Aufgaben erhalten bei Bedarf eine eigene `ACTIVE_WORK_*.md`, die im Handoff verlinkt wird.
 - PR-Beschreibungen und relevante Statusdokumente müssen bei Head- oder Scope-Wechseln aktualisiert werden; veraltete Aussagen dürfen nicht als aktueller Stand stehen bleiben.
 - Sichtbare Versionsbezeichnungen in GitHub-Actions-Namen, Testüberschriften, Statusdokumenten und Release-Hinweisen müssen bei jedem Versionssprung auf den aktuellen Stand gebracht werden. Wo eine konkrete Versionsnummer keinen fachlichen Nutzen hat, ist eine versionsneutrale Bezeichnung zu bevorzugen, damit keine veralteten `v27`-/`v28`-/`Build 29`-Titel stehen bleiben.
+- Die **in der App sichtbare DokoHilf-Releaseversion** ist ebenfalls verbindlich zu pflegen. Die sichtbare Kennzeichnung `KI · vXX`, der untere Versionsstatus und `version.json.displayVersion` müssen dieselbe Releaseversion anzeigen. Bei einem größeren, für Nutzer klar sichtbaren Funktions- oder Oberflächenupdate wird die Releaseversion vor dem Merge erhöht und in PR/Release-Dokumentation festgehalten. Reine kleine Fehlerkorrekturen müssen die sichtbare Releaseversion nicht automatisch erhöhen. Eine nach einem größeren Release offensichtlich veraltete sichtbare Versionsnummer ist ein Merge-Blocker.
 - Datenschutz-, Echtdaten- und Veröffentlichungsgrenzen bleiben vorrangig. Öffentlich dokumentiert werden ausschließlich anonymisierte, selbst formulierte und veröffentlichungsfähige Ergebnisse.
