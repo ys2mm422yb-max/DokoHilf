@@ -31,6 +31,39 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
     return [...view.querySelectorAll('.direct-guide-step')].map(step => step.querySelector('p'));
   }
 
+  function normalizeCopy(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+
+  function renumberSteps(view) {
+    const steps = [...view.querySelectorAll('.direct-guide-step')];
+    steps.forEach((step, index) => {
+      const number = step.querySelector('.direct-guide-number');
+      if (number) number.textContent = String(index + 1);
+    });
+    const count = view.querySelector('.direct-guide-count');
+    if (count) count.textContent = `${steps.length} Schritte`;
+  }
+
+  function dedupeSpecialCallouts(view) {
+    const seen = new Set();
+    let removed = 0;
+    for (const item of [...view.querySelectorAll('.v29-guide-special')]) {
+      const title = normalizeCopy(item.querySelector('strong')?.textContent);
+      const text = normalizeCopy(item.querySelector('p')?.textContent);
+      const key = `${title}\n${text}`;
+      if (!title && !text) continue;
+      if (seen.has(key)) {
+        item.remove();
+        removed += 1;
+      } else {
+        seen.add(key);
+      }
+    }
+    if (removed) view.dataset.v44DeduplicatedSpecials = String(removed);
+    return removed;
+  }
+
   function polishPresence(view) {
     if (view.querySelector('.direct-guide-heading h1')?.textContent?.trim() !== 'An-/Abwesenheit') return false;
     const paragraphs = stepParagraphs(view);
@@ -68,8 +101,7 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
       item.dataset.v29FormSaveStep = 'true';
       item.innerHTML = '<span class="direct-guide-number" aria-hidden="true">8</span><div><p>Wenn du mit dem Formular fertig bist, oben links in der Leiste speichern.</p></div>';
       list.append(item);
-      const count = view.querySelector('.direct-guide-count');
-      if (count) count.textContent = '8 Schritte';
+      renumberSteps(view);
     }
     view.dataset.v29FormSave = 'true';
     return true;
@@ -86,25 +118,32 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
 
   function polishReport(view) {
     if (view.querySelector('.direct-guide-heading h1')?.textContent?.trim() !== 'Bericht anlegen') return false;
-    const paragraphs = stepParagraphs(view);
-    if (paragraphs.length >= 12) {
-      const entryText = 'Wenn der Bericht für die nächste Schicht wichtig ist, „Wichtig für Schichtübergabe“ anhaken. Danach in das Textfeld darunter den Bericht eintragen.';
-      if (paragraphs[10] && paragraphs[10].textContent !== entryText) paragraphs[10].textContent = entryText;
+
+    const redundantTexts = new Set([
+      normalizeCopy('Danach öffnet sich die Eingabemaske für den Bericht.'),
+      normalizeCopy('Das große Textfeld für den Bericht ist in dieser Maske bereits unten sichtbar. Es öffnet sich durch die Kategorieauswahl nicht erst neu.'),
+    ]);
+    for (const step of [...view.querySelectorAll('.direct-guide-step')]) {
+      const paragraph = step.querySelector('p');
+      if (redundantTexts.has(normalizeCopy(paragraph?.textContent))) step.remove();
     }
+
+    const paragraphs = stepParagraphs(view);
+    const category = paragraphs.find(paragraph => /berichtskategorie/i.test(paragraph?.textContent || ''));
+    const categoryText = 'In der geöffneten Auswahl die passende Berichtskategorie wählen. Das große Textfeld für den Bericht ist unten in derselben Maske bereits sichtbar.';
+    if (category && category.textContent !== categoryText) category.textContent = categoryText;
+
+    const reportText = paragraphs.find(paragraph => normalizeCopy(paragraph?.textContent) === normalizeCopy('Berichtstext eintragen.'));
+    const entryText = 'Wenn der Bericht für die nächste Schicht wichtig ist, „Wichtig für Schichtübergabe“ anhaken. In das große Textfeld darunter den Bericht eintragen.';
+    if (reportText && reportText.textContent !== entryText) reportText.textContent = entryText;
+
     const note = view.querySelector('.direct-guide-callout:not(.warning) p');
     const natural = 'Nur bei „Kontakt – alles außer Arzt“ und „Sturzereignis“ gibt es den zusätzlichen Protokoll-Schritt. Bei allen anderen Kategorien kannst du direkt mit dem Bericht weitermachen.';
     if (note && note.textContent !== natural) note.textContent = natural;
+    renumberSteps(view);
     view.dataset.v29NaturalReport = 'true';
+    view.dataset.v44ReportMaskConsolidated = 'true';
     return true;
-  }
-
-  function insertSpecialAfter(step, marker, title, text) {
-    if (!step || step.nextElementSibling?.dataset?.[marker]) return;
-    const item = document.createElement('li');
-    item.className = 'v29-guide-special';
-    item.dataset[marker] = 'true';
-    item.innerHTML = `<div class="v29-guide-special-icon">!</div><div><strong>${title}</strong><p>${text}</p></div>`;
-    step.after(item);
   }
 
   function polishVisit(view) {
@@ -116,8 +155,7 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
     const place = 'Den Ort auswählen: Einrichtung, beim Arzt, telefonisch oder per Mail.';
     if (paragraphs[7] && paragraphs[7].textContent !== doctor) paragraphs[7].textContent = doctor;
     if (paragraphs[11] && paragraphs[11].textContent !== place) paragraphs[11].textContent = place;
-    insertSpecialAfter(steps[7], 'v29VisitDoctorSpecial', 'Sonderfall · Arzt nicht beim Bewohner hinterlegt?', 'Nur dann rechts neben der Arztauswahl das kleine Filtersymbol aktivieren. Danach stehen alle im System hinterlegten Ärzte zur Auswahl. Im Normalfall bleibt das Filtersymbol aus.');
-    view.dataset.v29VisitDoctorFilter = 'special-case';
+    view.dataset.v29VisitDoctorFilter = 'canonical-special';
     view.dataset.v29VisitMailLocation = 'true';
     return true;
   }
@@ -131,8 +169,7 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
     const value = 'Den gemessenen Wert eintragen. Je nach ausgewähltem Vitalwert erscheinen die passenden Eingabefelder.';
     if (paragraphs[4] && paragraphs[4].textContent !== selection) paragraphs[4].textContent = selection;
     if (paragraphs[6] && paragraphs[6].textContent !== value) paragraphs[6].textContent = value;
-    insertSpecialAfter(steps[6], 'v29VitalExamples', 'Beispiele', 'Blutdruck: Systole und Diastole. Außerdem können bei euch Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz und Atemalkohol erfasst werden. Zusätzliche Felder oder Einheiten so übernehmen, wie sie in der geöffneten Maske angezeigt werden.');
-    view.dataset.v29VitalExamples = 'true';
+    view.dataset.v29VitalExamples = 'canonical-special';
     return true;
   }
 
@@ -147,6 +184,7 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
     polishReport(view);
     polishVisit(view);
     polishVital(view);
+    dedupeSpecialCallouts(view);
   }
 
   function schedule() {
@@ -164,5 +202,6 @@ html[data-dokohilf-ui="v29"] .examples .v29-all-guides-trigger:after{content:non
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true });
   else initialize();
 
+  window.DokoHilfDirectGuideAuditV44 = Object.freeze({ normalizeCopy, dedupeSpecialCallouts, renumberSteps });
   window.__DOKOHILF_DIRECT_GUIDE_COPY_V29__ = true;
 })();
