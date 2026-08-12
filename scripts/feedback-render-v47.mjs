@@ -13,6 +13,13 @@ const page = await context.newPage();
 
 try {
   await page.goto(url, { waitUntil: 'networkidle' });
+
+  const privacyAck = page.getByRole('button', { name: 'Verstanden' });
+  if (await privacyAck.isVisible().catch(() => false)) {
+    await privacyAck.click();
+    await page.locator('#privacyAckV27').waitFor({ state: 'detached' });
+  }
+
   const trigger = page.getByRole('button', { name: 'Fehler oder Hinweis melden' });
   await trigger.waitFor({ state: 'visible' });
   await trigger.click();
