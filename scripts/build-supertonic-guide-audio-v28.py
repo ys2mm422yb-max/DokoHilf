@@ -15,6 +15,7 @@ EXPECTED_SOURCE_COUNTS = {
 }
 EXPECTED_COMPLETION_COUNT = 44
 EXPECTED_FILE_STORAGE_COUNT = 5
+EXPECTED_CONTEXT_STUCK_COUNT = 62
 
 LONG_VOICE_GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.'
 SHORT_VOICE_GREETING = 'Hey! Wobei brauchst du Hilfe?'
@@ -151,6 +152,7 @@ def main() -> None:
     parser.add_argument('--context-catalog', default='assets/voice-context-help-catalog-v29.json')
     parser.add_argument('--completion-catalog', default='assets/voice-completion-catalog-v40.json')
     parser.add_argument('--file-storage-catalog', default='assets/voice-file-storage-catalog-v46.json')
+    parser.add_argument('--context-stuck-catalog', default='assets/voice-context-stuck-catalog-v48.json')
     parser.add_argument('--output-root', default='assets/audio/guides')
     parser.add_argument('--voice', default='F1')
     parser.add_argument('--steps', type=int, default=8)
@@ -171,6 +173,7 @@ def main() -> None:
     }
     completion_catalog = load_catalog(args.completion_catalog)
     file_storage_catalog = load_catalog(args.file_storage_catalog)
+    context_stuck_catalog = load_catalog(args.context_stuck_catalog)
 
     source_counts = {name: len(catalog.get('entries') or []) for name, catalog in catalogs.items()}
     for name, expected in EXPECTED_SOURCE_COUNTS.items():
@@ -183,12 +186,16 @@ def main() -> None:
     file_storage_count = len(file_storage_catalog.get('entries') or [])
     if file_storage_count != EXPECTED_FILE_STORAGE_COUNT:
         raise SystemExit(f'expected {EXPECTED_FILE_STORAGE_COUNT} file-storage speech sentences, found {file_storage_count}')
+    context_stuck_count = len(context_stuck_catalog.get('entries') or [])
+    if context_stuck_count != EXPECTED_CONTEXT_STUCK_COUNT:
+        raise SystemExit(f'expected {EXPECTED_CONTEXT_STUCK_COUNT} context-stuck speech sentences, found {context_stuck_count}')
 
     validate_base_catalog(catalogs['base'])
 
-    # Keep the established catalog and completion order untouched. Dateiablage is
-    # appended last so every previously published numbered WAV keeps its meaning.
-    entries = merged_entries(*catalogs.values(), completion_catalog, file_storage_catalog)
+    # Keep every established catalog, completion and Dateiablage position untouched.
+    # Context-stuck help is appended last so every previously published numbered WAV
+    # keeps exactly the same meaning.
+    entries = merged_entries(*catalogs.values(), completion_catalog, file_storage_catalog, context_stuck_catalog)
     static_speech_count = len(entries)
     if not static_speech_count:
         raise SystemExit('static speech catalog is empty')
@@ -200,7 +207,7 @@ def main() -> None:
 
     if args.validate_only:
         parts = ' + '.join(f'{source_counts[name]} {name}' for name in catalogs)
-        print(f'Validated {parts} + {completion_count} completion + {file_storage_count} file-storage; {static_speech_count} unique static Supertonic sentences')
+        print(f'Validated {parts} + {completion_count} completion + {file_storage_count} file-storage + {context_stuck_count} context-stuck; {static_speech_count} unique static Supertonic sentences')
         return
     if args.limit > 0:
         entries = entries[:args.limit]
@@ -254,6 +261,7 @@ def main() -> None:
         'sourceCounts': source_counts,
         'completionSourceCount': completion_count,
         'fileStorageSourceCount': file_storage_count,
+        'contextStuckSourceCount': context_stuck_count,
         'staticSpeechCount': len(published_entries),
         'entries': published_entries,
     }
@@ -269,6 +277,7 @@ def main() -> None:
             'sourceCounts': source_counts,
             'completionSourceCount': completion_count,
             'fileStorageSourceCount': file_storage_count,
+            'contextStuckSourceCount': context_stuck_count,
             'staticSpeechCount': len(generated),
             'count': len(generated),
             'entries': generated,
