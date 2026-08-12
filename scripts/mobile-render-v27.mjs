@@ -273,7 +273,7 @@ try {
   assert(fullLibrary.guideCount === 18, `Es müssen 18 fertige Guides anklickbar sein: ${fullLibrary.guideCount}`);
   assert(fullLibrary.laterCount === 3, `Es müssen genau drei Später-Karten sichtbar sein: ${fullLibrary.laterCount}`);
   for (const expected of ['Aufgaben · Aktuelles', 'Easy-Plan öffnen', 'Berichtssuche']) {
-    assert(fullLibrary.laterTexts.some(text => text.includes(expected) && text.includes('kommt später')), `${expected} ist nicht korrekt als später markiert.`);
+    assert(fullLibrary.laterTexts.some(text => text.includes(expected) && text.includes('Noch nicht verfügbar')), `${expected} ist nicht korrekt als später markiert.`);
   }
   assert(fullLibrary.activeIconVariants >= 12, `Die fertigen Guides verwenden zu viele wiederholte Icons: ${fullLibrary.activeIconVariants}`);
   await page.locator('[data-v29-guide-home]').click();

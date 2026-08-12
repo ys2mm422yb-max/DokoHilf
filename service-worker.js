@@ -1,10 +1,11 @@
-const BUILD_ID = '20260809-36';
+const BUILD_ID = '20260812-37';
 const HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3';
 const LIBRARY_LAYOUT_REVISION = '20260810-health-medicine-library-v37-1';
 const CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1';
 const ROUTING_REVISION = '20260810-natural-guide-completions-v40-1';
 const CONVERSATION_COMPLETION_REVISION = '20260810-natural-guide-completions-v40-1';
 const USAGE_METRICS_REVISION = '20260811-private-usage-metrics-v41-1';
+const UX_POLISH_REVISION = '20260812-voice-library-ux-v42-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
@@ -13,46 +14,48 @@ const CORE_FILES = [
   './',
   './index.html',
   './version.json',
-  './assets/guide-audio-catalog.json?v=20260809-36',
-  './assets/styles.css?v=20260809-36',
-  './assets/premium-ui-v25.css?v=20260809-36',
-  './assets/premium-ui-v26.css?v=20260809-36',
-  './assets/premium-ui-v27.css?v=20260809-36',
-  './assets/ux-v27.css?v=20260809-36',
-  './assets/voice-stage-balance-v27.css?v=20260809-36',
-  './assets/direct-guides-chat-v27.css?v=20260809-36',
-  './assets/v29-ui.css?v=20260809-36',
-  './assets/card-axis-fix-v29.css?v=20260809-36-cardaxis1',
-  './assets/guide-library-v29.css?v=20260809-36-library1',
-  './assets/ui-polish-v35.css?v=20260809-36-ui1',
-  './assets/voice-polish-v36.css?v=20260809-36-voice1',
-  './assets/update-manager.js?v=20260809-36',
-  './assets/mobile-audio-fix.js?v=20260809-36',
-  './assets/routing-fix.js?v=20260809-36',
-  './assets/conversation-intelligence.js?v=20260809-36',
-  './assets/clarification-ui.js?v=20260809-36',
-  './assets/detail-help-v27.js?v=20260809-36',
-  './assets/smart-help-v29.js?v=20260809-36',
-  './assets/guide-progress.js?v=20260809-36',
-  './assets/orientation-help-v29.js?v=20260809-36',
-  './assets/release-polish-v29.js?v=20260809-36',
-  './assets/durchfuehrungs-workflows-v29.js?v=20260809-36',
-  './assets/voice-focus-mode.js?v=20260809-36',
-  './assets/local-voice-v28.js?v=20260809-36',
-  './assets/experience-v27.js?v=20260809-36',
-  './assets/detail-help-polish-v27.js?v=20260809-36',
-  './assets/detail-help-render-sync-v27.js?v=20260809-36',
-  './assets/context-voice-hotfix-v28.js?v=20260809-36',
-  './assets/ux-v27.js?v=20260809-36',
-  './assets/v29-ui.js?v=20260809-36',
-  './assets/mobile-polish-v29.js?v=20260809-36-cardaxis1',
-  './assets/local-voice-gate-v28.js?v=20260809-36',
-  './assets/direct-guides-v27.js?v=20260809-36',
-  './assets/direct-guide-copy-v29.js?v=20260809-36',
-  './assets/guide-library-v29.js?v=20260809-36-library1',
-  './assets/ui-polish-v35.js?v=20260809-36-ui1',
-  './assets/voice-polish-v36.js?v=20260809-36-voice1',
-  './assets/app.js?v=20260809-36',
+  './assets/guide-audio-catalog.json?v=20260812-37',
+  './assets/styles.css?v=20260812-37',
+  './assets/premium-ui-v25.css?v=20260812-37',
+  './assets/premium-ui-v26.css?v=20260812-37',
+  './assets/premium-ui-v27.css?v=20260812-37',
+  './assets/ux-v27.css?v=20260812-37',
+  './assets/voice-stage-balance-v27.css?v=20260812-37',
+  './assets/direct-guides-chat-v27.css?v=20260812-37',
+  './assets/v29-ui.css?v=20260812-37',
+  './assets/card-axis-fix-v29.css?v=20260812-37-cardaxis1',
+  './assets/guide-library-v29.css?v=20260812-37-library1',
+  './assets/ui-polish-v35.css?v=20260812-37-ui1',
+  './assets/voice-polish-v36.css?v=20260812-37-voice1',
+  './assets/ux-polish-v42.css?v=20260812-37-ux42',
+  './assets/update-manager.js?v=20260812-37',
+  './assets/mobile-audio-fix.js?v=20260812-37',
+  './assets/routing-fix.js?v=20260812-37',
+  './assets/conversation-intelligence.js?v=20260812-37',
+  './assets/clarification-ui.js?v=20260812-37',
+  './assets/detail-help-v27.js?v=20260812-37',
+  './assets/smart-help-v29.js?v=20260812-37',
+  './assets/guide-progress.js?v=20260812-37',
+  './assets/orientation-help-v29.js?v=20260812-37',
+  './assets/release-polish-v29.js?v=20260812-37',
+  './assets/durchfuehrungs-workflows-v29.js?v=20260812-37',
+  './assets/voice-focus-mode.js?v=20260812-37',
+  './assets/local-voice-v28.js?v=20260812-37',
+  './assets/experience-v27.js?v=20260812-37',
+  './assets/detail-help-polish-v27.js?v=20260812-37',
+  './assets/detail-help-render-sync-v27.js?v=20260812-37',
+  './assets/context-voice-hotfix-v28.js?v=20260812-37',
+  './assets/ux-v27.js?v=20260812-37',
+  './assets/v29-ui.js?v=20260812-37',
+  './assets/mobile-polish-v29.js?v=20260812-37-cardaxis1',
+  './assets/local-voice-gate-v28.js?v=20260812-37',
+  './assets/direct-guides-v27.js?v=20260812-37',
+  './assets/direct-guide-copy-v29.js?v=20260812-37',
+  './assets/guide-library-v29.js?v=20260812-37-library1',
+  './assets/ui-polish-v35.js?v=20260812-37-ui1',
+  './assets/voice-polish-v36.js?v=20260812-37-voice1',
+  './assets/ux-polish-v42.js?v=20260812-37-ux42',
+  './assets/app.js?v=20260812-37',
   './manifest.webmanifest',
   './icon.svg',
 ];
@@ -88,6 +91,7 @@ self.addEventListener('activate', event => {
         routingRevision: ROUTING_REVISION,
         conversationCompletionRevision: CONVERSATION_COMPLETION_REVISION,
         usageMetricsRevision: USAGE_METRICS_REVISION,
+        uxPolishRevision: UX_POLISH_REVISION,
         hardRefresh: true,
       });
     }
@@ -105,6 +109,7 @@ self.addEventListener('message', event => {
       routingRevision: ROUTING_REVISION,
       conversationCompletionRevision: CONVERSATION_COMPLETION_REVISION,
       usageMetricsRevision: USAGE_METRICS_REVISION,
+      uxPolishRevision: UX_POLISH_REVISION,
     });
   }
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
@@ -120,6 +125,7 @@ self.addEventListener('message', event => {
         routingRevision: ROUTING_REVISION,
         conversationCompletionRevision: CONVERSATION_COMPLETION_REVISION,
         usageMetricsRevision: USAGE_METRICS_REVISION,
+        uxPolishRevision: UX_POLISH_REVISION,
       });
     })());
   }
