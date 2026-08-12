@@ -87,7 +87,16 @@ await page.route('**/assets/guide-audio-catalog.json*',async r=>{staticManifestR
 await page.route('**/assets/audio/guides/*.wav',async r=>{staticAudioRequests+=1;await r.fulfill({status:200,contentType:'audio/wav',body:silentWav()});});
 
 try{
-  await page.goto(BASE_URL,{waitUntil:'networkidle'});assert((await page.locator('#buildPill').innerText()).includes('v29'),'Detailhilfe-Test läuft nicht auf v29.');
+  await page.goto(BASE_URL,{waitUntil:'networkidle'});
+  const publicVersion=await page.evaluate(async()=>{
+    const response=await fetch(`./version.json?render-version=${Date.now()}`,{cache:'no-store'});
+    if(!response.ok)return'';
+    const payload=await response.json();
+    return String(payload?.appVersion||'').trim();
+  });
+  const versionMarker=await page.locator('#buildPill').innerText();
+  assert(/^v[1-9][0-9]*$/.test(publicVersion),`Ungültige öffentliche App-Version: ${publicVersion||'<leer>'}`);
+  assert(versionMarker.includes(publicVersion),`Detailhilfe-Test zeigt nicht ${publicVersion}: ${versionMarker}`);
 
   await page.locator('[data-select-mode="chat"]').click();await page.locator('#workspace').waitFor({state:'visible'});
   await page.locator('#chatInput').fill('Hallo ich suche den Blutdruck');await page.getByRole('button',{name:'Senden'}).click();
@@ -117,5 +126,5 @@ try{
   const geometry=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,viewportWidth:window.innerWidth,orb:document.querySelector('.voice-focus-stage .voice-orb')?.getBoundingClientRect(),state:document.getElementById('appShell')?.dataset?.voiceState||''}));
   assert(geometry.scrollWidth<=geometry.viewportWidth+1,'Voice horizontaler Overflow.');assert(geometry.orb?.width<=150,`Mikrofon zu groß: ${geometry.orb?.width}`);
   await page.screenshot({path:`${OUTPUT_DIR}/detail-help-voice-${PROFILE}.png`,fullPage:false});assert(consoleErrors.length===0,`Console-Fehler: ${consoleErrors.join(' | ')}`);assert(pageErrors.length===0,`Page-Fehler: ${pageErrors.join(' | ')}`);
-  await writeFile(`${OUTPUT_DIR}/detail-help-summary.json`,JSON.stringify({profile:PROFILE,viewport:{width:WIDTH,height:HEIGHT},routerRequests,routerBodies:routerBodies.map(body=>({guideSlug:body.guideSlug||null,guideStep:body.guideStep||null,selectedGuideSlug:body.selectedGuideSlug||null,smartHelpIntent:body.smartHelpIntent===true})),cloudTtsRequests,staticManifestRequests,staticAudioRequests,systemCalls,geometry,consoleErrors,pageErrors},null,2));
+  await writeFile(`${OUTPUT_DIR}/detail-help-summary.json`,JSON.stringify({profile:PROFILE,publicVersion,versionMarker,viewport:{width:WIDTH,height:HEIGHT},routerRequests,routerBodies:routerBodies.map(body=>({guideSlug:body.guideSlug||null,guideStep:body.guideStep||null,selectedGuideSlug:body.selectedGuideSlug||null,smartHelpIntent:body.smartHelpIntent===true})),cloudTtsRequests,staticManifestRequests,staticAudioRequests,systemCalls,geometry,consoleErrors,pageErrors},null,2));
 }finally{await context.close();await browser.close();}
