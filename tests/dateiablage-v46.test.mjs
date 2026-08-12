@@ -93,8 +93,11 @@ test('all five approved guide sentences are statically prebuilt with Supertonic-
   ]) assert.ok(texts.includes(expected), expected);
 
   assert.match(builder, /EXPECTED_FILE_STORAGE_COUNT = 5/);
-  assert.match(builder, /completion_catalog, file_storage_catalog/);
-  assert.match(builder, /appended last so every previously published numbered WAV keeps its meaning/);
+  assert.match(builder, /file_storage_catalog = load_catalog\(args\.file_storage_catalog\)/);
+  assert.match(builder, /context_stuck_catalog = load_catalog\(args\.context_stuck_catalog\)/);
+  assert.match(builder, /completion_catalog, file_storage_catalog, context_stuck_catalog/);
+  assert.match(builder, /Keep every established catalog, completion and Dateiablage position untouched/);
+  assert.match(builder, /Context-stuck help is appended last so every previously published numbered WAV/);
 });
 
 test('PWA refreshes the grouping and voice fixes while keeping the existing build id', () => {
