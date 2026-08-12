@@ -21,6 +21,7 @@
     'durchfuehrung-storno': { label: 'Durchführung stornieren', subtitle: 'Falsch abgezeichnete Durchführung', icon: 'undo' },
     'durchfuehrungsnachweis-oeffnen': { label: 'Durchführungsnachweis', subtitle: 'Nachweis öffnen', icon: 'checklist' },
     stammdaten: { label: 'Stammdaten öffnen', subtitle: 'Bewohner-Stammdaten aufrufen', icon: 'person' },
+    'dateiablage-dokumente': { label: 'Dateiablage öffnen', subtitle: 'Hinterlegte Dokumente finden', icon: 'folder' },
     'visiten-oeffnen': { label: 'Visiten öffnen', subtitle: 'Zum Bereich Visiten wechseln', icon: 'visitList' },
     'visite-status-durchgefuehrt': { label: 'Visitenstatus', subtitle: 'Status „durchgeführt“ verwenden', icon: 'status' },
   });
@@ -179,6 +180,18 @@
         'In der Bewohnerübersicht den gewünschten Bewohner doppelklicken. Dadurch öffnen sich die Stammdaten.',
       ],
     },
+    'dateiablage-dokumente': {
+      title: 'Dokumente in der Dateiablage öffnen', subtitle: 'Hinterlegte Dokumente finden und in Word öffnen', icon: 'folder',
+      steps: [
+        'Die Stammdaten des gewünschten Bewohners öffnen.',
+        'In den geöffneten Stammdaten in der grauen Reiterleiste auf „Dateiablage“ klicken.',
+        'Im unteren mittleren Bereich erscheint „Dokumente“. Dort das gewünschte Dokument in der Liste suchen.',
+        'Das gewünschte Dokument mit einem Doppelklick öffnen.',
+        'Kurz warten, bis sich das Dokument in Word geöffnet hat. Den Vorgang währenddessen nicht mehrfach starten.',
+      ],
+      note: 'Dort können, wenn beim Bewohner hinterlegt, zum Beispiel Verträge, Wohnassistent-Vertrag, Betreuerausweis, Arztbrief, Entlassungsbrief oder Laborwerte liegen. DokoHilf kann nicht bestätigen, ob ein bestimmtes Dokument vorhanden ist.',
+      warning: 'Nur vorhandene Dokumente finden und öffnen. Kein Upload, Löschen, Umbenennen oder Bewerten von Dokumentinhalten.',
+    },
     'visiten-oeffnen': {
       title: 'Visiten öffnen', subtitle: 'Zum Bereich Visiten wechseln', icon: 'visitList',
       steps: ['„Doku-Erweitert“ öffnen.', '„Visiten“ wählen.'],
@@ -193,7 +206,7 @@
   const LIBRARY_ORDER = [
     'bericht-neu', 'bericht-durchstreichen', 'bericht-folgebericht', 'visite-anlegen', 'visiten-oeffnen', 'visite-status-durchgefuehrt',
     'vitalwerte', 'anwesenheit', 'medikation-ansehen', 'formulare-anlegen', 'uebergabeformular', 'notfallblatt',
-    'durchfuehrung-storno', 'durchfuehrungsnachweis-oeffnen', 'stammdaten',
+    'durchfuehrung-storno', 'durchfuehrungsnachweis-oeffnen', 'stammdaten', 'dateiablage-dokumente',
   ];
 
   const LEGACY_KEY_TO_SLUG = Object.freeze({
@@ -218,6 +231,7 @@
     tasks: '<circle cx="7" cy="7" r="2"/><path d="m6 7 1 1 2-3M12 7h7M5 13h14M5 17h10"/>',
     plan: '<path d="M4 5h16v14H4zM8 3v4M16 3v4M4 9h16"/><path d="M8 13h3M13 13h3M8 16h3"/>',
     person: '<circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/>',
+    folder: '<path d="M3 6h7l2 2h9v11H3z"/><path d="M3 9h18"/>',
     status: '<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
     reportSearch: '<path d="M6 3h9l4 4v7M15 3v5h4M9 12h5M9 16h3"/><circle cx="16.5" cy="17.5" r="3"/><path d="m19 20 2 2"/>',
   });
