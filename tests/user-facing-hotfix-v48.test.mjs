@@ -46,10 +46,13 @@ test('internal product-rule wording is converted to normal user-facing help', ()
 test('voice progress is forced immediately to exactly 100 percent at the final step', () => {
   assert.match(contextHotfix, /const finalStep = active && step >= count/);
   assert.match(contextHotfix, /finalStep \? 100/);
-  assert.match(contextHotfix, /fill\.style\.setProperty\('transition', finalStep \? 'none' : 'width \.28s ease', 'important'\)/);
-  assert.match(contextHotfix, /fill\.style\.setProperty\('width', `\$\{progress\}%`, 'important'\)/);
+  assert.match(contextHotfix, /fill\.style\.setProperty\('transition', 'none', 'important'\)/);
+  assert.match(contextHotfix, /fill\.getAnimations\?\.\(\)/);
+  assert.match(contextHotfix, /void fill\.offsetWidth/);
+  assert.match(contextHotfix, /fill\.style\.setProperty\('width', '100%', 'important'\)/);
+  assert.match(contextHotfix, /fill\.style\.removeProperty\('transition'\)/);
   assert.match(contextHotfix, /track\.dataset\.v48Final = finalStep \? 'true' : 'false'/);
-  assert.match(contextHotfix, /VOICE_PROGRESS_REVISION = '20260812-final-step-progress-v48-1'/);
+  assert.match(contextHotfix, /VOICE_PROGRESS_REVISION = '20260812-final-step-progress-v48-2'/);
 });
 
 test('report special-case block continues with step 9 after the consolidated step', () => {
