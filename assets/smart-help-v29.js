@@ -95,6 +95,9 @@
     if (/\b(bedarfsmedikation|bedarfsgabe|bedarfsmedikament|bedarf medikament)\b/.test(n)) return 'bedarfsmedikation-finden';
     if (/\b(massnahmen ohne zeitangabe|massnahme ohne zeitangabe)\b/.test(n)) return 'massnahmen-ohne-zeitangabe-finden';
 
+    if (/\b(dateiablage|dokument|dokumente|vertrag|vertrage|wohnassistent-vertrag|wohnassistent vertrag|betreuerausweis|arztbrief|arztbriefe|entlassungsbrief|entlassungsbriefe|laborwert|laborwerte)\b/.test(n)) {
+      return 'dateiablage-dokumente';
+    }
     if (/\b(doku erweitert|doku-erweitert)\b/.test(n)) return 'doku-erweitert-finden';
     if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(n)) return 'durchfuehrungsnachweis-finden';
     if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-finden';
