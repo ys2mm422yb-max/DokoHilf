@@ -11,6 +11,8 @@
 
 > Veränderliche Zustände werden bei neuer Arbeit immer live geprüft. Diese Datei ist das dauerhafte Handoff, aber kein Ersatz für GitHub-/Supabase-Liveprüfung.
 
+Diese dauerhafte Projektübergabe enthält ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Inhalte. Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert.
+
 ## 1. Verbindliche Quellen und Reihenfolge
 
 Vor neuer DokoHilf-Arbeit mindestens lesen beziehungsweise prüfen:
@@ -37,6 +39,7 @@ Vor neuer DokoHilf-Arbeit mindestens lesen beziehungsweise prüfen:
 - DokoHilf ist eine öffentliche, accountfreie Schritt-für-Schritt-Bedienhilfe.
 - Keine App-Konten, Anmeldung, Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken.
 - Keine echten Bewohner-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in App, Repository, Supabase, Tests oder Artefakten.
+- Tests und sonstige synthetische Prüfzustände bleiben vollständig künstlich; keine reale Person und kein realer Fall werden nachgebildet.
 - Keine erfundenen Klickwege oder Feldnamen.
 - Keine medizinischen, pflegerischen oder betreuerischen Entscheidungen durch DokoHilf.
 - Berichtssuche bleibt fachlich offen; Issue #103 bleibt offen.
