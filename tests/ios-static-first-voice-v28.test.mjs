@@ -19,7 +19,8 @@ test('mobiler Voice-Einstieg startet keine lokale Sprachinferenz', () => {
 });
 
 test('statisches Supertonic-F1 ist der einzige Sprachpfad', () => {
-  assert.match(gate, /loadStaticSupertonicVoice\(text\)/);
+  assert.match(gate, /loadStaticSupertonicVoice\(text, requestedText\)/);
+  assert.match(gate, /findStaticEntry\(visibleReply, manifest\)/);
   assert.match(gate, /STATIC_VOICE = 'Supertonic-F1'/);
   assert.match(gate, /static-supertonic-only-v29/);
   assert.match(gate, /STATIC_FALLBACK_TEXT = 'Ich habe die Antwort im Chat angezeigt\.'/);
