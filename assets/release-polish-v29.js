@@ -2,7 +2,7 @@
   'use strict';
 
   const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
-  const VERSION_LABEL = 'v29';
+  const VERSION_LABEL = 'v30';
   const UPDATE_NOTICE_MS = 10000;
   const RELOAD_KEY = 'dokohilf-build-reload';
   const PRODUCTION_ORIGIN = 'https://ys2mm422yb-max.github.io';
