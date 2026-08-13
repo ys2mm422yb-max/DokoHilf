@@ -15,7 +15,7 @@ EXPECTED_SOURCE_COUNTS = {
 }
 EXPECTED_COMPLETION_COUNT = 44
 EXPECTED_FILE_STORAGE_COUNT = 5
-EXPECTED_CONTEXT_STUCK_COUNT = 62
+EXPECTED_CONTEXT_STUCK_COUNT = 65
 
 LONG_VOICE_GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.'
 SHORT_VOICE_GREETING = 'Hey! Wobei brauchst du Hilfe?'
