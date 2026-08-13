@@ -156,7 +156,7 @@
     },
     uebergabeformular: {
       title: 'Übergabe anzeigen', subtitle: 'Relevante Einträge über „Was war los?“ öffnen', icon: 'handover',
-      steps: ['Oben den Reiter „Analyse“ öffnen.', '„Was war los?“ wählen.', 'Oben links „Alle anzeigen“ anklicken.', '„Alles ausklappen“ wählen, damit sämtliche Einträge vollständig sichtbar werden.', 'Den Zeitraum nur bei Bedarf ändern und anschließend die Anzeige aktualisieren.'],
+      steps: ['Oben den Reiter „Analyse“ öffnen.', '„Was war los?“ wählen.', 'Oben links „Alle anzeigen“ anklicken.', '„Alle ausklappen“ wählen, damit sämtliche Einträge vollständig sichtbar werden.', 'Den Zeitraum nur bei Bedarf ändern und anschließend die Anzeige aktualisieren.'],
     },
     notfallblatt: {
       title: 'Notfallblatt öffnen', subtitle: 'Notfallblatt in Word öffnen', icon: 'emergency',
