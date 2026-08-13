@@ -1,11 +1,11 @@
 # DokoHilf – bestätigte Arbeitsabläufe
 
 **Status:** verbindliche fachliche Quelle  
-**Stand:** 12. August 2026
+**Stand:** 13. August 2026
 
 Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien. **Fotos und Screenshots selbst werden niemals in GitHub oder Supabase gespeichert; aus Bildhinweisen werden ausschließlich anonymisierte textliche Klickwege übernommen.**
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt. Am 12. August 2026 wurde für „Bericht anlegen“ bestätigt, dass das große Textfeld bereits in der Berichtseingabemaske unten sichtbar ist und sich nicht erst durch die Auswahl der Berichtskategorie öffnet. Ebenfalls bestätigt wurde, dass bei wichtigen Berichten **Wichtig für Schichtübergabe** angehakt wird und der Bericht direkt in das große Textfeld darunter eingetragen wird.
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt. Am 12. August 2026 wurde für „Bericht anlegen“ bestätigt, dass das große Textfeld bereits in der Berichtseingabemaske unten sichtbar ist und sich nicht erst durch die Auswahl der Berichtskategorie öffnet. Ebenfalls bestätigt wurde, dass bei wichtigen Berichten **Wichtig für Schichtübergabe** angehakt wird und der Bericht direkt in das große Textfeld darunter eingetragen wird. Am 13. August 2026 wurde für die Übergabeansicht zusätzlich bestätigt, dass die Schaltfläche **Alle ausklappen** rechts neben **Alle anzeigen** liegt und nach jeder Änderung des Zeitraums samt Aktualisierung erneut gewählt werden muss, damit alle Einträge wieder vollständig geöffnet sind.
 
 ## Allgemeine Regeln
 
@@ -246,8 +246,10 @@ Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, er
 1. Ganz oben in der festen grünen Hauptleiste **Analyse** öffnen.
 2. Darunter **Was war los?** wählen.
 3. Oben links **Alle anzeigen** anklicken.
-4. **Alles ausklappen** wählen.
+4. **Alle ausklappen** wählen.
 5. Zeitraum nur bei Bedarf ändern und Anzeige aktualisieren.
+
+**Detailhilfe, wenn „Alle ausklappen“ nicht gefunden wird:** **Alle ausklappen** befindet sich rechts neben **Alle anzeigen**. Wenn du den Zeitraum geändert und die Anzeige aktualisiert hast, wähle danach erneut **Alle ausklappen**, damit alle Einträge wieder vollständig geöffnet sind.
 
 In der aufgeklappten Ansicht können unter anderem **durchgeführte Visiten** und **neue/geänderte Formulare (mit Abschluss)** erscheinen. Diese sichtbaren Kategorien wurden am 7. August 2026 erneut bestätigt.
 
