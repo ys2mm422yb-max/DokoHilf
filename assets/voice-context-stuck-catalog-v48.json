@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "voice": "Supertonic-F1",
-  "purpose": "Vorab erzeugte Sprachsätze für freigegebene Hilfe beim aktuellen Guide-Schritt",
-  "generatedFrom": "62 eindeutige freigegebene stuck-Hilfetexte aus dokohilf_guides; interne Produktformulierungen vor Veröffentlichung bereinigt",
+  "purpose": "Vorab erzeugte Sprachsätze für freigegebene Hilfe beim aktuellen Guide-Schritt; v51 ergänzt den bestätigten Übergabe-Schritt und zwei Detailhilfen ausschließlich am Ende, damit alle bisherigen WAV-Zuordnungen stabil bleiben",
+  "generatedFrom": "62 eindeutige freigegebene stuck-Hilfetexte aus dokohilf_guides; interne Produktformulierungen vor Veröffentlichung bereinigt; plus 3 bestätigte Übergabe-v51-Sätze am Ende",
   "entries": [
     {"text":"„Analyse“ ist ganz oben in der festen grünen Leiste. Wähle dort „Analyse“; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole."},
     {"text":"„Analyse“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku“, „Doku-Erweitert“ und „Planung“."},
@@ -65,6 +65,9 @@
     {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Medikation“."},
     {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Visiten“."},
     {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du das Symbol beziehungsweise den Bereich „Vitalwerte“."},
-    {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku“ öffnen. Direkt darunter findest du „Durchführungsnachweis“."}
+    {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku“ öffnen. Direkt darunter findest du „Durchführungsnachweis“."},
+    {"text":"Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden."},
+    {"text":"„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“."},
+    {"text":"Wenn du den Zeitraum geändert und die Anzeige aktualisiert hast, wähle danach erneut „Alle ausklappen“, damit alle Einträge wieder vollständig geöffnet sind."}
   ]
 }

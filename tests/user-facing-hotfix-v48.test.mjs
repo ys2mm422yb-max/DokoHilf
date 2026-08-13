@@ -16,12 +16,15 @@ const stuckTexts = stuckCatalog.entries.map(entry => entry.text);
 
 test('approved stuck-help replies are prebuilt with free static Supertonic', () => {
   assert.equal(stuckCatalog.voice, 'Supertonic-F1');
-  assert.equal(stuckTexts.length, 62);
+  assert.equal(stuckTexts.length, 65);
   for (const text of [
     'Bleibe in den geöffneten Stammdaten. Suche in der grauen Leiste nach „Dateiablage“.',
     'Bleibe in „Dateiablage“. Der Bereich „Dokumente“ erscheint unten mittig.',
     'Warte kurz, bis sich Word öffnet, und führe den Doppelklick nicht mehrfach aus.',
     'Du legst die Wirksamkeitskontrolle nicht selbst an. Eine konkrete Wartezeit ist hier nicht festgelegt.',
+    'Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.',
+    '„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“.',
+    'Wenn du den Zeitraum geändert und die Anzeige aktualisiert hast, wähle danach erneut „Alle ausklappen“, damit alle Einträge wieder vollständig geöffnet sind.',
   ]) assert.ok(stuckTexts.includes(text), text);
 
   const joined = stuckTexts.join('\n');
@@ -29,7 +32,7 @@ test('approved stuck-help replies are prebuilt with free static Supertonic', () 
 });
 
 test('new help speech is appended after every existing numbered WAV source', () => {
-  assert.match(builder, /EXPECTED_CONTEXT_STUCK_COUNT = 62/);
+  assert.match(builder, /EXPECTED_CONTEXT_STUCK_COUNT = 65/);
   assert.match(builder, /--context-stuck-catalog/);
   assert.match(builder, /completion_catalog, file_storage_catalog, context_stuck_catalog/);
   assert.match(builder, /Context-stuck help is appended last so every previously published numbered WAV/);
