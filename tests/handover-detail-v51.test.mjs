@@ -4,12 +4,13 @@ import { readFile } from 'node:fs/promises';
 
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 
-const [library, workflows, migration, catalogRaw, version] = await Promise.all([
+const [library, workflows, migration, catalogRaw, version, worker] = await Promise.all([
   read('assets/guide-library-v29.js'),
   read('CONFIRMED_WORKFLOWS.md'),
   read('supabase/migrations/20260813104500_uebergabe_alle_ausklappen_detail_v51.sql'),
   read('assets/voice-context-stuck-catalog-v48.json'),
   read('version.json'),
+  read('service-worker.js'),
 ]);
 const catalog = JSON.parse(catalogRaw);
 const speechTexts = catalog.entries.map(entry => entry.text);
@@ -51,6 +52,8 @@ test('all new approved Übergabe sentences have free static Supertonic keys', ()
   }
 });
 
-test('small detail correction keeps public app version v31', () => {
+test('PWA refreshes this v31 detail correction without a public version bump', () => {
+  assert.match(worker, /HANDOVER_DETAIL_REVISION = '20260813-uebergabe-alle-ausklappen-v51-1'/);
+  assert.match(worker, /handoverDetailRevision: HANDOVER_DETAIL_REVISION/g);
   assert.equal(JSON.parse(version).appVersion, 'v31');
 });
