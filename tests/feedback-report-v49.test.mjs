@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 
-const [ui, loader, worker, fn, migration, config, version, release] = await Promise.all([
+const [ui, loader, worker, fn, migration, config, version, release, policy] = await Promise.all([
   read('assets/feedback-report-v49.js'),
   read('assets/ui-polish-v35.js'),
   read('service-worker.js'),
@@ -13,25 +13,46 @@ const [ui, loader, worker, fn, migration, config, version, release] = await Prom
   read('supabase/config.toml'),
   read('version.json'),
   read('assets/release-polish-v29.js'),
+  read('FEEDBACK_POLICY.md'),
 ]);
 
-test('feedback UI uses the confirmed test-phase copy and warning', () => {
-  assert.match(ui, /DokoHilf befindet sich noch in der Testphase\. Fehler oder fehlende Information gefunden\?/);
+test('feedback entry is home-only and uses the compact v31 design', () => {
+  assert.match(ui, /document\.getElementById\('startScreen'\)/);
+  assert.match(ui, /start\.insertBefore\(entry, safety\)/);
+  assert.match(ui, /\.app-shell:not\(\[data-mode="start"\]\) \.feedback-v49-entry\{display:none!important\}/);
+  assert.match(ui, /Testphase/);
   assert.match(ui, /Fehler oder Hinweis melden/);
-  assert.match(ui, /Aktuelle Stelle mitsenden/);
-  assert.match(ui, /nur Build, aktueller Guide und Schritt mitgesendet\. Keine Chatnachrichten/);
+  assert.match(ui, /Etwas falsch, unklar oder noch nicht vollständig\?/);
+  assert.doesNotMatch(ui, /main\.insertBefore\(entry, legal\)/);
+});
+
+test('feedback modal has no location toggle and explains automatic build-only context', () => {
+  assert.doesNotMatch(ui, /Aktuelle Stelle mitsenden/);
+  assert.doesNotMatch(ui, /name="includeContext"/);
+  assert.match(ui, /automatisch nur die aktuelle DokoHilf-Build-ID mitgesendet/);
+  assert.match(ui, /Kein Guide, kein Schritt und keine Chatnachrichten/);
   assert.match(ui, /Bitte keine Namen, Bewohner-\/Klienten- oder Gesundheitsdaten eingeben/);
   assert.match(ui, /Technische Meldungsnummer/);
 });
 
-test('client payload contains only feedback and explicit optional location context', () => {
-  assert.match(ui, /DokoHilfGuideProgress\?\.getCurrentGuide/);
+test('client payload contains feedback plus automatic build id but no guide or step lookup', () => {
+  assert.match(ui, /includeContext: true/);
   assert.match(ui, /buildId: buildId\(\)/);
-  assert.match(ui, /guideSlug: guide\?\.guideSlug \|\| null/);
-  assert.match(ui, /guideStep:/);
+  assert.match(ui, /guideSlug: null/);
+  assert.match(ui, /guideStep: null/);
+  assert.doesNotMatch(ui, /DokoHilfGuideProgress/);
+  assert.doesNotMatch(ui, /getCurrentGuide/);
   assert.match(ui, /credentials: 'omit'/);
   assert.match(ui, /referrerPolicy: 'no-referrer'/);
   assert.doesNotMatch(ui, /#messages|chatInput|localStorage|sessionStorage|indexedDB|document\.cookie|navigator\.userAgent/);
+});
+
+test('binding feedback policy records the home-only and no-toggle decision', () => {
+  assert.match(policy, /ausschließlich im Hauptmenü/);
+  assert.match(policy, /darf nicht in „Alle Anleitungen“, einzelnen Anleitungen, Chat- oder Sprachmodus/);
+  assert.match(policy, /frühere Schalter `Aktuelle Stelle mitsenden` ist entfernt/);
+  assert.match(policy, /Guide-Slug oder Guide-Schritt aus dem aktuellen App-Zustand/);
+  assert.match(policy, /sichtbare Produktversion bleibt deshalb \*\*v31\*\*/);
 });
 
 test('edge function does not inspect user, device, cookie, session or chat identifiers', () => {
@@ -61,16 +82,16 @@ test('feedback insert RPC is service-role-only and identifier-free', () => {
   assert.doesNotMatch(migration, /^\s*(ip_address|user_agent|cookie|session_id|user_id|device_id|chat_transcript|messages?|audio|screenshot)\s+/imu);
 });
 
-test('PWA loads and refreshes the feedback module', () => {
-  assert.match(loader, /FEEDBACK_REVISION = '20260813-feedback-v49-1'/);
+test('PWA loads and refreshes the home-only feedback revision', () => {
+  assert.match(loader, /FEEDBACK_REVISION = '20260813-feedback-home-only-v50-1'/);
   assert.match(loader, /feedback-report-v49\.js\?v=\$\{FEEDBACK_REVISION\}/);
-  assert.match(worker, /FEEDBACK_REVISION = '20260813-feedback-v49-1'/);
-  assert.match(worker, /feedback-report-v49\.js\?v=20260813-feedback-v49-1/);
+  assert.match(worker, /FEEDBACK_REVISION = '20260813-feedback-home-only-v50-1'/);
+  assert.match(worker, /feedback-report-v49\.js\?v=20260813-feedback-home-only-v50-1/);
   assert.match(worker, /feedbackRevision: FEEDBACK_REVISION/);
   assert.match(config, /\[functions\.dokohilf-feedback\]\s*\nverify_jwt = false/);
 });
 
-test('major feedback release advances the public version to v31', () => {
+test('minor feedback UX hotfix keeps the public version at v31', () => {
   const parsed = JSON.parse(version);
   assert.equal(parsed.appVersion, 'v31');
   assert.match(release, /const VERSION_LABEL = 'v31'/);
