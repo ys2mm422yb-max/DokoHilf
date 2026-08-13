@@ -6,8 +6,8 @@
 **Issue:** #157  
 **PR:** #158  
 **Branch:** `hotfix/uebergabe-alle-ausklappen-v31`  
-**Exact PR Head:** `68241b55b25059fc280aaa388fde623f35e6a348`  
-**Basis-Main:** `946a557f4b9664a994163418b06997210a72c409`
+**Exact PR Head:** maßgeblich ist immer der aktuelle `head_sha` von PR #158; er wird wegen dieser selbst versionierten Arbeitsstandsdatei nicht statisch hier festgeschrieben.  
+**Basis-Main beim Start:** `946a557f4b9664a994163418b06997210a72c409`
 
 ## Bestätigte Produktentscheidung
 
@@ -46,6 +46,6 @@ Danach wurde vollständig zurückgerollt. Eine separate Kontrolle bestätigte de
 
 ## Freigaberegel
 
-Produktive Supabase-Anwendung und Merge erst, wenn sämtliche etablierten DokoHilf-Pflichtgates sowie Versions-/Voice-/Feedback-Gates auf exakt `68241b55b25059fc280aaa388fde623f35e6a348` grün sind. Vor Merge `main` erneut prüfen; bei zwischenzeitlichem Advance den geprüften alten Head niemals blind mergen.
+Produktive Supabase-Anwendung und Merge erst, wenn sämtliche etablierten DokoHilf-Pflichtgates sowie Versions-/Voice-/Feedback-Gates auf **dem jeweils aktuellen exakten `head_sha` von PR #158** grün sind. Vor Merge `main` erneut prüfen; bei zwischenzeitlichem Advance den geprüften alten Head niemals blind mergen.
 
 Nach Merge muss der neue `main`-Deploy inklusive `gh-pages` erfolgreich sein und GitHub Pages `built` melden, bevor die Änderung als live gilt.
