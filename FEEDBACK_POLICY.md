@@ -7,48 +7,50 @@ Diese Datei dokumentiert die bestätigte Produktspezifikation und Datenschutzgre
 
 ## Sichtbare Funktion
 
-Unten in der App steht dezent:
+Die Meldefunktion ist **ausschließlich im Hauptmenü** sichtbar. Sie darf nicht in „Alle Anleitungen“, einzelnen Anleitungen, Chat- oder Sprachmodus eingeblendet werden.
 
-> DokoHilf befindet sich noch in der Testphase. Fehler oder fehlende Information gefunden?
-
-Der Button heißt:
+Der Hauptmenü-Einstieg ist ein kompakter, zum dunklen DokoHilf-Design passender Hinweis mit dem Buttontext:
 
 > Fehler oder Hinweis melden
 
 Das Meldefenster enthält:
 
 - eine Kategorie;
-- eine kurze Beschreibung;
-- den optionalen Schalter `Aktuelle Stelle mitsenden`.
+- eine kurze Beschreibung.
+
+Der frühere Schalter `Aktuelle Stelle mitsenden` ist entfernt. Da die Meldung nur aus dem Hauptmenü geöffnet wird, gibt es keinen sinnvollen aktuellen Guide oder Schritt, der mitgesendet werden müsste.
 
 Vor dem Absenden wird sichtbar gewarnt:
 
 > Bitte keine Namen, Bewohner-/Klienten- oder Gesundheitsdaten eingeben.
 
+Zusätzlich wird transparent angezeigt, dass automatisch ausschließlich die technische DokoHilf-Build-ID mitgesendet wird. Kein Guide, kein Schritt und keine Chatnachrichten.
+
 Nach erfolgreichem Speichern erhält der Nutzer eine technische Meldungsnummer im Format `DH-XXXXXXXXXXXX`.
 
 ## Daten, die gespeichert werden dürfen
-
-Immer:
 
 - technische UUID;
 - technische Meldungsnummer;
 - Kategorie;
 - kurze Beschreibung;
-- Erstellzeitpunkt;
-- Information, ob der optionale Kontext aktiviert wurde.
+- aktuelle DokoHilf-Build-ID;
+- Erstellzeitpunkt.
 
-Nur wenn der Nutzer `Aktuelle Stelle mitsenden` ausdrücklich aktiviert:
+Die bestehenden technischen Datenbankfelder `include_context`, `guide_slug` und `guide_step` bleiben aus Kompatibilitätsgründen bestehen. Für Meldungen der aktuellen Hauptmenü-Funktion gilt:
 
-- Build-ID;
-- aktueller Guide-Slug;
-- aktueller Schritt.
+- `include_context = true`, weil die Build-ID technisch mitgeführt wird;
+- `guide_slug = null`;
+- `guide_step = null`.
+
+Es gibt keinen Nutzer-Schalter mehr für diesen technischen Kontext.
 
 ## Daten, die die DokoHilf-Meldelogik nicht lesen oder speichern darf
 
 - Chatnachrichten oder Chatverlauf;
 - Audio oder Diktat;
 - Screenshots;
+- Guide-Slug oder Guide-Schritt aus dem aktuellen App-Zustand;
 - Namen oder absichtlich vorgesehene Personenfelder;
 - Bewohner-, Klienten-, Patienten- oder Gesundheitsdaten;
 - IP-Adresse;
@@ -76,13 +78,14 @@ Der Missbrauchsschutz darf keine Personen- oder Gerätekennung benötigen. Aktue
 
 ## Tests und Veröffentlichung
 
-- Datenbankänderungen werden vor produktiver Anwendung zuerst transaktional mit vollständigem Rollback geprüft.
+- Die Hauptmenü-Platzierung wird auf iOS 393×852 und Android 412×915 geprüft.
+- Zusätzlich wird geprüft, dass der Feedback-Einstieg in „Alle Anleitungen“, einzelnen Anleitungen, Sprachmodus und Chatmodus nicht sichtbar ist.
+- Das Meldefenster darf keinen `Aktuelle Stelle mitsenden`-Schalter enthalten.
+- Der Client darf keinen aktuellen Guide oder Schritt auslesen.
 - Ende-zu-Ende-Tests verwenden ausschließlich vollständig synthetische Meldungen.
-- Eine synthetische produktive Testmeldung wird nach erfolgreicher Prüfung wieder entfernt.
 - Vor Merge müssen die etablierten DokoHilf-Pflichtgates sowie der funktionsspezifische Feedback-Gate auf demselben exakten PR-Head grün sein.
-- Nach produktiver Aktivierung werden private Nicht-Lesbarkeit und die tatsächlich gespeicherte Feldmenge erneut geprüft.
-- Erst danach darf der Release gemergt und als live bezeichnet werden.
+- Erst nach vollständig verifiziertem `main`-/`gh-pages`-Publish darf der Hotfix als live bezeichnet werden.
 
 ## Versionsregel
 
-Die Einführung der Meldefunktion ist ein größeres, für Nutzer sichtbares Funktionsupdate. Der Release erhöht deshalb gemäß `VERSIONING_POLICY.md` und `PROJECT_RULES.md` die öffentliche App-Version von v30 auf **v31**. Historische interne Dateinamen mit älteren Versionsnummern sind keine öffentliche Produktversion.
+Die Einführung der Meldefunktion erhöhte die öffentliche App-Version von v30 auf **v31**. Die jetzige Korrektur der Platzierung, Darstellung und des überflüssigen Kontext-Schalters ist ein kleiner v31-UX-Hotfix und kein neues größeres Funktionsrelease. Die sichtbare Produktversion bleibt deshalb **v31**. Ein eigener Feedback-/PWA-Revisionsmarker muss installierte DokoHilf-Versionen trotzdem zuverlässig aktualisieren.
