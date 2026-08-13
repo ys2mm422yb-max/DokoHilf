@@ -1,13 +1,12 @@
 # Aktiver Arbeitsstand – Übergabe „Alle ausklappen“ v51
 
 **Stand:** 13. August 2026  
-**Status:** PR-Prüfung läuft  
+**Status:** **fertig, gemergt, produktiv in Supabase und auf GitHub Pages veröffentlicht**  
 **Öffentliche Version:** v31 bleibt unverändert  
-**Issue:** #157  
-**PR:** #158  
-**Branch:** `hotfix/uebergabe-alle-ausklappen-v31`  
-**Exact PR Head:** maßgeblich ist immer der aktuelle `head_sha` von PR #158; er wird wegen dieser selbst versionierten Arbeitsstandsdatei nicht statisch hier festgeschrieben.  
-**Basis-Main beim Start:** `946a557f4b9664a994163418b06997210a72c409`
+**Issue:** #157 – geschlossen  
+**PR:** #158 – gemergt  
+**Merge-Commit auf `main`:** `841a08bfb278302369428fb721158d0dbcc338d7`  
+**Veröffentlichter `gh-pages`-Commit:** `a91457b04b7641870fcc0cfe9e741d4aebc51c5c`
 
 ## Bestätigte Produktentscheidung
 
@@ -19,33 +18,34 @@ Für **Übergabe anzeigen / Was war los?** ist zusätzlich bestätigt:
 
 Die genaue Orts-/Wiederholungsangabe ist primär **Detailhilfe bei Rückfragen oder „Ich finde das nicht“**. Der normale Hauptablauf bleibt kurz; dort wird nur die korrekte Schaltflächenbezeichnung verwendet.
 
-## Umsetzung in PR #158
+## Umgesetzter Stand
 
 - `assets/guide-library-v29.js`: sichtbarer Direktguide von `Alles ausklappen` auf `Alle ausklappen` korrigiert.
 - `CONFIRMED_WORKFLOWS.md`: verbindliche Fachquelle auf Stand 13.08.2026 aktualisiert und Detailhilfe dokumentiert.
-- `supabase/migrations/20260813104500_uebergabe_alle_ausklappen_detail_v51.sql`: approved Guide `uebergabeformular` erhält korrigierten Schritt, zwei `stuck`-Hilfen, neues Troubleshooting und Alias `alle ausklappen`.
-- `assets/voice-context-stuck-catalog-v48.json`: drei neue bestätigte Supertonic-F1-Sätze **am Ende** ergänzt; bisherige WAV-Zuordnungen bleiben dadurch stabil.
+- `supabase/migrations/20260813104500_uebergabe_alle_ausklappen_detail_v51.sql`: approved Guide `uebergabeformular` produktiv aktualisiert.
+- `assets/voice-context-stuck-catalog-v48.json`: drei neue bestätigte Supertonic-F1-Sätze am Ende ergänzt; bisherige WAV-Zuordnungen bleiben stabil.
 - `scripts/build-supertonic-guide-audio-v28.py`: kontrollierter Kontextkatalog auf 65 Einträge erweitert.
-- `service-worker.js`: `HANDOVER_DETAIL_REVISION = '20260813-uebergabe-alle-ausklappen-v51-1'`, damit installierte PWAs die kleine Korrektur trotz unveränderter v31 zuverlässig übernehmen.
-- `tests/handover-detail-v51.test.mjs` und `tests/user-facing-hotfix-v48.test.mjs`: Regressionstests für Text, Detailhilfe, Supabase-Vertrag, statische Sprache, PWA und Versionsregel.
+- `service-worker.js`: `HANDOVER_DETAIL_REVISION = '20260813-uebergabe-alle-ausklappen-v51-1'`.
+- Regressionstests sichern Text, Detailhilfe, Supabase-Vertrag, statische Sprache, PWA und Versionsregel ab.
 
-## Supabase-Sicherheitsprüfung
+## Supabase-Verifikation
 
-Die geplante produktive Inhaltsänderung wurde vollständig in `BEGIN … ROLLBACK` gegen das DokoHilf-Produktionsprojekt geprüft.
+Vor produktiver Anwendung wurde die Inhaltsänderung vollständig in `BEGIN … ROLLBACK` geprüft. Danach wurde die Migration produktiv angewendet und verifiziert:
 
-Verifiziert wurde im Testzustand:
-
-- v8 → v9;
-- Schritt 4 exakt `Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.`;
-- Schritt-4-Hilfe exakt `„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“.`;
+- Guide `uebergabeformular` ist produktiv auf **v9**;
+- Schritt 4 lautet exakt `Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.`;
+- Schritt-4-Hilfe lautet exakt `„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“.`;
 - Schritt-5-Hilfe weist auf erneutes Ausklappen nach Zeitraum-Aktualisierung hin;
-- alter Troubleshooting-Key `alles_ausklappen` entfernt, neuer `alle_ausklappen` gesetzt;
-- Alias `alle ausklappen` ergänzt.
+- neuer Troubleshooting-Key `alle_ausklappen` vorhanden;
+- alter Key `alles_ausklappen` entfernt;
+- Alias `alle ausklappen` vorhanden.
 
-Danach wurde vollständig zurückgerollt. Eine separate Kontrolle bestätigte den unveränderten produktiven Ausgangsstand v8. **Produktion ist zu diesem Zeitpunkt noch nicht geändert.**
+## GitHub-/Release-Verifikation
 
-## Freigaberegel
+Der exakte PR-Head war vor Merge in sämtlichen etablierten DokoHilf-Pflichtgates grün, einschließlich Versions-, Voice-, Feedback-, iOS-/Android- und Deploy-Prüfungen. `main` war beim Merge unverändert.
 
-Produktive Supabase-Anwendung und Merge erst, wenn sämtliche etablierten DokoHilf-Pflichtgates sowie Versions-/Voice-/Feedback-Gates auf **dem jeweils aktuellen exakten `head_sha` von PR #158** grün sind. Vor Merge `main` erneut prüfen; bei zwischenzeitlichem Advance den geprüften alten Head niemals blind mergen.
+Danach wurde PR #158 mit Expected-Head-Schutz gemergt. Der anschließende `main`-Deploy **#843** lief erfolgreich durch. `gh-pages` wurde mit dem Stand von `main`-Commit `841a08bfb278302369428fb721158d0dbcc338d7` veröffentlicht; der veröffentlichte Commit trägt die Nachricht `Publish DokoHilf 841a08bfb278302369428fb721158d0dbcc338d7`.
 
-Nach Merge muss der neue `main`-Deploy inklusive `gh-pages` erfolgreich sein und GitHub Pages `built` melden, bevor die Änderung als live gilt.
+GitHub Pages meldet anschließend **`status: built`** und verwendet `gh-pages` als Quelle.
+
+Damit ist diese Änderung vollständig produktiv und abgeschlossen.
