@@ -12,6 +12,7 @@ const VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-2';
 const FILE_STORAGE_REVISION = '20260812-file-storage-guide-v46-1';
 const USER_FACING_HOTFIX_REVISION = '20260812-voice-copy-progress-report-v48-1';
 const FEEDBACK_REVISION = '20260813-feedback-home-only-v50-1';
+const HANDOVER_DETAIL_REVISION = '20260813-uebergabe-alle-ausklappen-v51-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
@@ -107,6 +108,7 @@ self.addEventListener('activate', event => {
         fileStorageRevision: FILE_STORAGE_REVISION,
         userFacingHotfixRevision: USER_FACING_HOTFIX_REVISION,
         feedbackRevision: FEEDBACK_REVISION,
+        handoverDetailRevision: HANDOVER_DETAIL_REVISION,
         hardRefresh: true,
       });
     }
@@ -131,6 +133,7 @@ self.addEventListener('message', event => {
       fileStorageRevision: FILE_STORAGE_REVISION,
       userFacingHotfixRevision: USER_FACING_HOTFIX_REVISION,
       feedbackRevision: FEEDBACK_REVISION,
+      handoverDetailRevision: HANDOVER_DETAIL_REVISION,
     });
   }
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
@@ -153,6 +156,7 @@ self.addEventListener('message', event => {
         fileStorageRevision: FILE_STORAGE_REVISION,
         userFacingHotfixRevision: USER_FACING_HOTFIX_REVISION,
         feedbackRevision: FEEDBACK_REVISION,
+        handoverDetailRevision: HANDOVER_DETAIL_REVISION,
       });
     })());
   }
