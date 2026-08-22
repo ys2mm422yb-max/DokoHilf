@@ -3,7 +3,8 @@
 **Stand:** 22. August 2026  
 **Status:** in Prüfung  
 **Öffentliche Version:** v31 bleibt unverändert  
-**Branch:** `fix/abzeichnen-durchfuehrungsnachweis-20260822`
+**Branch:** `fix/abzeichnen-durchfuehrungsnachweis-20260822`  
+**Pull Request:** #159
 
 ## Bestätigte Produktentscheidung
 
@@ -41,7 +42,7 @@ Die geplante Guideänderung wurde am 22.08.2026 vollständig gegen den aktuellen
 
 ## Freigabeplan
 
-1. Pull Request erstellen und alle etablierten DokoHilf-Pflichtgates auf exakt demselben Head abwarten, einschließlich iOS/Android und Versions-/Voice-Prüfungen.
+1. PR #159 durch alle etablierten DokoHilf-Pflichtgates auf exakt demselben Head prüfen, einschließlich iOS/Android und Versions-/Voice-Prüfungen.
 2. Erst nach grünen Gates mit Expected-Head-Schutz mergen.
 3. Danach produktive Supabase-Migration anwenden und `dokohilf-chat-router` aus dem gemergten Repository-Stand deployen.
 4. Abschließend `main`, `gh-pages`, festen Hauptlink und den produktiven Guide/Router real verifizieren.
