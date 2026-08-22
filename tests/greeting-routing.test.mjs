@@ -80,7 +80,7 @@ test('nur die letzte Nutzernachricht wird für das Backend bereinigt und eindeut
   assert.equal(rewritten.messages[0].content, 'Hallo! Wobei brauchst du Hilfe?');
   assert.equal(rewritten.messages[1].content, 'wie lege ich eine visite an');
   assert.equal(rewritten.selectedGuideSlug, 'visite-anlegen');
-  assert.equal(rewritten.clientRoutingRevision, '20260812-navigation-safe-guide-audit-v44-1');
+  assert.equal(rewritten.clientRoutingRevision, '20260822-signoff-durchfuehrungsnachweis-v52-1');
 });
 
 test('ein laufender Guide wird durch lokale Intent-Erkennung nicht ungefragt überschrieben', () => {
