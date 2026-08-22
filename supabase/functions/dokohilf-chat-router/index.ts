@@ -113,6 +113,20 @@ function isControlOrConfirmation(text: string): boolean {
   return /^(ja|jap|jo|genau|okay|ok|passt|fertig|erledigt|gefunden|hab ich|habe ich|bin da|ist offen|offen|gemacht|geschafft|bin drin|bin dort)$/.test(n);
 }
 
+function isFalseSignOffCorrection(text: string): boolean {
+  const n = normalize(text);
+  return /\b(falsch|versehentlich|irrtumlich)\b.*\babgezeichnet\b/.test(n)
+    || /\babgezeichnet\b.*\b(falsch|versehentlich|irrtumlich)\b/.test(n);
+}
+
+function hasSignOffIntent(text: string): boolean {
+  const n = normalize(text);
+  if (!n || isFalseSignOffCorrection(n)) return false;
+  return /\b(abzeichnen|abzuzeichnen)\b/.test(n)
+    || /\b(zeichne|zeichnest|zeichnet|zeichn)\b.*\bab\b/.test(n)
+    || /\babgezeichnet\b.*\b(werden|mussen|sollen)\b/.test(n);
+}
+
 function isExplicitHelp(text: string): boolean {
   const n = normalize(text);
   return /\b(wo ist|wo sind|wo finde ich|wie finde ich|wie komme ich|wo muss ich|wo genau|wo soll ich|welcher bereich|welche leiste|welcher reiter|welches menu)\b/.test(n)
@@ -173,7 +187,7 @@ function explicitDifferentGoal(text: string, guide: GuideRecord): boolean {
 
 function hasEntryAction(text: string): boolean {
   const n = normalize(text);
-  return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren)\b/.test(n);
+  return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren|abzeichnen|abzuzeichnen)\b/.test(n);
 }
 
 function hasNavigationIntent(text: string): boolean {
@@ -192,6 +206,8 @@ function isUnconfirmedReportSearch(text: string): boolean {
 
 function inferNavigationGuide(text: string): string {
   const n = normalize(text);
+  if (isFalseSignOffCorrection(n)) return 'durchfuehrung-storno';
+  if (hasSignOffIntent(n)) return 'durchfuehrungsnachweis-finden';
   if (!hasNavigationIntent(n) || hasEntryAction(n)) return '';
   if (isUnconfirmedReportSearch(n)) return '';
 
@@ -338,6 +354,20 @@ Deno.serve(async (req: Request) => {
   if (!messages.length || !lastText) return forwardToExistingRouter(rawBody, origin);
   if (messages.some(message => message.role === 'user' && containsSensitiveData(message.content))) {
     return forwardToExistingRouter(rawBody, origin);
+  }
+
+  if (isFalseSignOffCorrection(lastText)) {
+    const correctionGuide = await loadGuide('durchfuehrung-storno');
+    if (correctionGuide?.steps?.length) {
+      return stepResponse(origin, correctionGuide, 0, 'approved-signoff-storno-v52');
+    }
+  }
+
+  if (hasSignOffIntent(lastText)) {
+    const signOffGuide = await loadGuide('durchfuehrungsnachweis-finden');
+    if (signOffGuide?.steps?.length) {
+      return stepResponse(origin, signOffGuide, 0, 'approved-signoff-durchfuehrungsnachweis-v52');
+    }
   }
 
   if (guideSlug) {

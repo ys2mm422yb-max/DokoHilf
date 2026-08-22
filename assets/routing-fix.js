@@ -4,7 +4,7 @@
   const root = typeof window !== 'undefined' ? window : globalThis;
   const AI_ROUTER_MARKER = '/functions/v1/dokohilf-ai';
   const CHAT_ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-conversation-router';
-  const ROUTING_REVISION = '20260812-navigation-safe-guide-audit-v44-1';
+  const ROUTING_REVISION = '20260822-signoff-durchfuehrungsnachweis-v52-1';
   const GREETINGS = [
     'guten morgen',
     'guten abend',
@@ -41,7 +41,7 @@
 
   function hasCreateIntent(value) {
     const text = normalize(value);
-    return /\b(anlegen|erstellen|dokumentieren|erfassen|eintragen|schreiben|verfassen|abhaken|kontrollieren)\b/.test(text)
+    return /\b(anlegen|erstellen|dokumentieren|erfassen|eintragen|schreiben|verfassen|abhaken|kontrollieren|abzeichnen|abzuzeichnen)\b/.test(text)
       || /\b(lege|legst|legt|leg)\b.*\ban\b/.test(text)
       || /\b(trage|tragst|tragt|trag)\b.*\bein\b/.test(text)
       || /\b(erstelle|erstellst|erstellt|erstell)\b/.test(text)
@@ -60,6 +60,20 @@
       || /\b(wo|wie)\b.*\b(finde|findest|finden|komme)\b/.test(text);
   }
 
+  function isFalseSignOffCorrection(value) {
+    const text = normalize(value);
+    return /\b(falsch|versehentlich|irrtumlich)\b.*\babgezeichnet\b/.test(text)
+      || /\babgezeichnet\b.*\b(falsch|versehentlich|irrtumlich)\b/.test(text);
+  }
+
+  function hasSignOffIntent(value) {
+    const text = normalize(value);
+    if (!text || isFalseSignOffCorrection(text)) return false;
+    return /\b(abzeichnen|abzuzeichnen)\b/.test(text)
+      || /\b(zeichne|zeichnest|zeichnet|zeichn)\b.*\bab\b/.test(text)
+      || /\babgezeichnet\b.*\b(werden|mussen|sollen)\b/.test(text);
+  }
+
   function isUnconfirmedReportSearch(value) {
     const text = normalize(value);
     return /\bberichtssuche\b/.test(text)
@@ -71,6 +85,9 @@
   function inferSelectedGuideSlug(value) {
     const text = normalize(value);
     if (!text) return '';
+
+    if (isFalseSignOffCorrection(text)) return 'durchfuehrung-storno';
+    if (hasSignOffIntent(text)) return 'durchfuehrungsnachweis-finden';
 
     if (/\bfolgebericht\b/.test(text)) return 'bericht-folgebericht';
 
@@ -223,6 +240,8 @@
     stripLeadingGreeting,
     hasCreateIntent,
     hasOpenIntent,
+    isFalseSignOffCorrection,
+    hasSignOffIntent,
     isUnconfirmedReportSearch,
     inferSelectedGuideSlug,
     rewriteRequestBody,
