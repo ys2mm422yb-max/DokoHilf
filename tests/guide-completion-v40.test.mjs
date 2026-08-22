@@ -161,6 +161,6 @@ assert.doesNotMatch(conversationRouter, /Der Ablauf ist erledigt/);
 
 const routingFix = await readFile(new URL('../assets/routing-fix.js', import.meta.url), 'utf8');
 assert.match(routingFix, /dokohilf-conversation-router/);
-assert.match(routingFix, /20260812-navigation-safe-guide-audit-v44-1/);
+assert.match(routingFix, /20260822-signoff-durchfuehrungsnachweis-v52-1/);
 
 console.log('Guide completion v40/v44 regression tests passed.');
