@@ -1,0 +1,104 @@
+/* DokoHilf v29 guide library, safe-area and workflow polish */
+
+.examples[data-v29-guide-library="true"]{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:9px!important;
+}
+.examples[data-v29-guide-library="true"] > span{
+  grid-column:1/-1!important;
+  margin:0 0 1px!important;
+}
+.examples[data-v29-guide-library="true"] > button[data-direct-guide][hidden]{display:none!important}
+.v29-frequent-guide{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:36px minmax(0,1fr) 20px!important;
+  align-items:center!important;
+  gap:9px!important;
+  min-height:64px!important;
+  padding:10px 10px!important;
+  border-radius:15px!important;
+  text-align:left!important;
+}
+.v29-frequent-guide>span:not(.v29-guide-icon){min-width:0;font-size:13px;font-weight:850;line-height:1.2}
+.v29-frequent-guide>i{justify-self:end;color:#75b5a5;font-size:22px;font-style:normal}
+.v29-guide-icon{
+  display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;
+  border:1px solid rgba(112,240,170,.2);border-radius:11px;
+  background:linear-gradient(145deg,rgba(24,110,82,.74),rgba(10,57,46,.78));color:#cffff0;
+}
+.v29-guide-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.v29-all-guides-trigger{
+  grid-column:1/-1!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  min-height:48px!important;padding:0 14px!important;border-radius:14px!important;
+  border:1px solid rgba(112,240,170,.2)!important;background:rgba(112,240,170,.065)!important;
+  color:#bdebd9!important;font-size:12.5px!important;font-weight:900!important;
+}
+.v29-all-guides-trigger i{font-size:22px;font-style:normal}
+
+.v29-library-head{
+  display:grid;grid-template-columns:46px minmax(0,1fr);gap:12px;align-items:start;
+  margin-bottom:14px;padding:16px;border:1px solid var(--v27-line);border-radius:22px;
+  background:linear-gradient(145deg,rgba(10,35,41,.96),rgba(5,20,27,.96));box-shadow:0 18px 50px rgba(0,0,0,.24)
+}
+.v29-library-head>div>span{display:block;margin:2px 0 6px;color:var(--v27-green);font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase}
+.v29-library-head h1{margin:0;color:#fff;font-size:34px;line-height:1;letter-spacing:-.05em}
+.v29-library-head p{margin:7px 0 0;color:#91aaa3;font-size:13px;line-height:1.4}
+.v29-library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.v29-library-card{
+  position:relative;display:grid;grid-template-columns:44px minmax(0,1fr) 22px;align-items:center;gap:11px;
+  min-height:82px;padding:12px;border:1px solid var(--v27-line);border-radius:18px;
+  background:linear-gradient(145deg,rgba(10,30,37,.94),rgba(6,21,28,.91));color:#eef8f5;text-align:left;touch-action:manipulation
+}
+button.v29-library-card:hover,button.v29-library-card:focus-visible{border-color:var(--v27-line-strong)}
+.v29-library-card>.v29-guide-icon{width:40px;height:40px;border-radius:13px}
+.v29-library-card>.v29-guide-icon svg{width:22px;height:22px}
+.v29-library-card>span:not(.v29-guide-icon){min-width:0;display:grid;gap:4px}
+.v29-library-card strong{font-size:15px;line-height:1.18}
+.v29-library-card small{color:#8ea7a0;font-size:11.5px;line-height:1.3}
+.v29-library-card>i{justify-self:end;color:var(--v27-green);font-size:27px;font-style:normal}
+.v29-library-card.is-later{opacity:.72;border-style:dashed;background:rgba(255,255,255,.025)}
+.v29-library-card.is-later>b{justify-self:end;padding:5px 7px;border-radius:999px;background:rgba(241,204,106,.1);color:#e8cf8c;font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+
+.v29-guide-special{
+  display:grid;grid-template-columns:38px minmax(0,1fr);gap:11px;align-items:start;
+  padding:13px 14px;border:1px solid rgba(79,166,255,.28);border-radius:17px;
+  background:linear-gradient(145deg,rgba(19,56,82,.42),rgba(9,31,45,.54));list-style:none
+}
+.v29-guide-special-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;border:1px solid rgba(109,190,255,.3);background:rgba(51,133,198,.2);color:#bfe5ff;font-size:16px;font-weight:950}
+.v29-guide-special strong{display:block;margin:1px 0 5px;color:#bfe5ff;font-size:11px;font-weight:950;letter-spacing:.07em;text-transform:uppercase}
+.v29-guide-special p{margin:0;color:#d5e9f5;font-size:13px;line-height:1.45}
+.v29-vital-choice .v29-guide-icon{position:static!important;margin:0 0 4px!important}
+.v29-vital-choice button{grid-template-columns:1fr!important}
+.v29-vital-choice strong,.v29-vital-choice span{display:block}
+
+@media(max-width:700px){
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="direct-guide"] > .topbar{
+    position:relative!important;top:auto!important;transform:none!important;
+    margin-top:max(10px,calc(env(safe-area-inset-top) + 8px))!important;
+    min-height:58px!important;padding:7px 9px!important;
+  }
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="direct-guide"] > .topbar .brand,
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="direct-guide"] > .topbar .top-actions{align-self:center!important}
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="direct-guide"] .main-content{
+    padding-top:12px!important;
+    padding-left:max(13px,env(safe-area-inset-left))!important;
+    padding-right:max(13px,env(safe-area-inset-right))!important;
+  }
+  .v29-library-guide-head{margin-top:0!important}
+  .v29-library-grid{grid-template-columns:1fr}
+  .v29-library-head{grid-template-columns:42px minmax(0,1fr);padding:14px;border-radius:20px}
+  .v29-library-head h1{font-size:30px}
+  .v29-library-card{min-height:72px;padding:10px 11px}
+  .v29-guide-special{grid-template-columns:34px minmax(0,1fr);padding:12px}
+}
+
+@media(max-width:420px){
+  .examples[data-v29-guide-library="true"]{gap:8px!important}
+  .v29-frequent-guide{grid-template-columns:32px minmax(0,1fr) 18px!important;min-height:61px!important;padding:9px!important}
+  .v29-frequent-guide>.v29-guide-icon{width:31px;height:31px;border-radius:10px}
+  .v29-frequent-guide>.v29-guide-icon svg{width:18px;height:18px}
+  .v29-frequent-guide>span:not(.v29-guide-icon){font-size:12.2px}
+}

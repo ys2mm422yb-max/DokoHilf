@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "voice": "Supertonic-F1",
+  "purpose": "Vorab erzeugte Sprachsätze für den bestätigten Dateiablage-Ablauf",
+  "entries": [
+    {"text":"Öffne die Stammdaten des gewünschten Bewohners."},
+    {"text":"Klicke in der grauen Leiste auf „Dateiablage“."},
+    {"text":"Unten mittig erscheint der Bereich „Dokumente“."},
+    {"text":"Suche dort das gewünschte vorhandene Dokument. Wenn es in der Dateiablage hinterlegt ist, wähle es aus."},
+    {"text":"Öffne das vorhandene Dokument per Doppelklick. Es kann kurz dauern, bis sich Word öffnet. Klicke nicht mehrfach doppelt."}
+  ]
+}

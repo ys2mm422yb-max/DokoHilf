@@ -1,0 +1,169 @@
+/* DokoHilf v29 build 37: focused mobile UI, library and chat polish */
+
+html[data-dokohilf-ui="v29"]{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+
+html[data-dokohilf-ui="v29"] .mode-switch button{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+}
+.v35-mode-icon{
+  display:inline-grid;
+  place-items:center;
+  width:21px;
+  height:21px;
+  flex:0 0 21px;
+}
+.v35-mode-icon svg{
+  width:19px;
+  height:19px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.v29-library-grid{
+  align-items:stretch;
+}
+.v35-library-section{
+  grid-column:1/-1;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:14px;
+  margin:9px 2px 1px;
+  padding:11px 3px 7px;
+  border-bottom:1px solid rgba(104,207,177,.13);
+}
+.v35-library-section:first-child{margin-top:0}
+.v35-library-section>span{
+  color:#d9f7ec;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+.v35-library-section>small{
+  max-width:58%;
+  color:#78928b;
+  font-size:10.5px;
+  font-weight:650;
+  line-height:1.25;
+  text-align:right;
+}
+.v35-library-count{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  margin-top:10px;
+  padding:0 9px;
+  border:1px solid rgba(75,228,163,.18);
+  border-radius:999px;
+  background:rgba(55,215,148,.065);
+  color:#79cbae;
+  font-size:9.5px;
+  font-weight:850;
+  letter-spacing:.035em;
+}
+.v29-library-card[data-v35-group="reports"]>.v29-guide-icon,
+.v29-library-card[data-v35-group="health-medicine"]>.v29-guide-icon,
+.v29-library-card[data-v35-group="organization-documents"]>.v29-guide-icon,
+.v29-library-card[data-v35-group="handover-overview"]>.v29-guide-icon,
+.v29-library-card[data-v35-group="execution"]>.v29-guide-icon{
+  border-radius:12px;
+}
+.v29-library-card[data-v35-group="execution"]>.v29-guide-icon{
+  border-color:rgba(86,232,170,.30);
+  background:linear-gradient(145deg,rgba(23,130,91,.72),rgba(8,65,50,.78));
+}
+.v29-library-card.is-later{
+  min-height:66px;
+  opacity:.58;
+  border-color:rgba(140,163,157,.13);
+  background:linear-gradient(145deg,rgba(8,21,27,.72),rgba(4,15,21,.76));
+}
+.v29-library-card.is-later>.v29-guide-icon{
+  filter:saturate(.72);
+  opacity:.82;
+}
+.v29-library-card.is-later>b{
+  background:rgba(224,194,112,.085);
+  color:#cfbd86;
+}
+
+/* Mobile chat: iOS Safari zooms focused form controls below 16px. Keep the
+   composer at >=16px and let the text field shrink instead of pushing actions
+   outside the visual viewport when the software keyboard opens. */
+html[data-dokohilf-ui="v29"] .composer-wrap{
+  overflow-x:clip!important;
+}
+html[data-dokohilf-ui="v29"] .composer{
+  min-width:0!important;
+}
+html[data-dokohilf-ui="v29"] .composer textarea{
+  min-width:0!important;
+  font-size:16px!important;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+html[data-dokohilf-ui="v29"] .composer .small-mic,
+html[data-dokohilf-ui="v29"] .composer .send-button{
+  flex:0 0 auto!important;
+}
+
+/* Once the user has started a conversation, the large starter card and
+   technical footer no longer compete with the actual chat on small screens. */
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"][data-v35-chat-started="true"] .chat-head,
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"][data-v35-chat-started="true"] .footer-version-wrap{
+  display:none!important;
+}
+html[data-dokohilf-ui="v29"] .app-shell[data-mode="chat"][data-v35-chat-started="true"] .conversation{
+  margin-top:2px!important;
+}
+
+html[data-dokohilf-ui="v29"] .legal-note{
+  color:#78918b!important;
+}
+html[data-dokohilf-ui="v29"] .footer-version-button{
+  border-color:rgba(130,170,159,.17)!important;
+  color:#739087!important;
+  background:rgba(255,255,255,.032)!important;
+  opacity:.9!important;
+}
+html[data-dokohilf-ui="v29"] .footer-credit{
+  color:#638078!important;
+  opacity:.78!important;
+}
+
+@media(max-width:700px){
+  .v35-library-section{
+    align-items:flex-start;
+    margin-top:13px;
+    padding-top:9px;
+  }
+  .v35-library-section>small{
+    max-width:55%;
+    font-size:10px;
+  }
+  .v29-library-card{
+    box-shadow:inset 0 1px rgba(255,255,255,.018),0 8px 22px rgba(0,0,0,.09);
+  }
+}
+
+@media(max-width:390px){
+  .v35-library-section{
+    display:block;
+  }
+  .v35-library-section>small{
+    display:block;
+    max-width:none;
+    margin-top:3px;
+    text-align:left;
+  }
+}
