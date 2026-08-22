@@ -35,10 +35,13 @@ Es werden keine neuen hörbaren Sätze eingeführt. Beide Schritte des erweitert
 
 Damit bleibt die kostenlose statische Spracharchitektur unverändert.
 
+## Supabase-Dry-Run
+
+Die geplante Guideänderung wurde am 22.08.2026 vollständig gegen den aktuellen Produktionsstand in `BEGIN … ROLLBACK` ausgeführt. Innerhalb der Transaktion entstand erwartungsgemäß Guide-Version 4 mit Bewohner-Schritt, Durchführungsnachweis-Schritt und Abzeichnen-Aliasen. Nach dem Rollback wurde erneut abgefragt: produktiv ist weiterhin unverändert Version 3 vorhanden.
+
 ## Freigabeplan
 
-1. Migration vollständig in einer Transaktion gegen den aktuellen Produktionsstand prüfen und mit `ROLLBACK` zurücknehmen.
-2. Pull Request erstellen und alle etablierten DokoHilf-Pflichtgates auf exakt demselben Head abwarten, einschließlich iOS/Android und Versions-/Voice-Prüfungen.
-3. Erst nach grünen Gates mit Expected-Head-Schutz mergen.
-4. Danach produktive Supabase-Migration anwenden und `dokohilf-chat-router` aus dem gemergten Repository-Stand deployen.
-5. Abschließend `main`, `gh-pages`, festen Hauptlink und den produktiven Guide/Router real verifizieren.
+1. Pull Request erstellen und alle etablierten DokoHilf-Pflichtgates auf exakt demselben Head abwarten, einschließlich iOS/Android und Versions-/Voice-Prüfungen.
+2. Erst nach grünen Gates mit Expected-Head-Schutz mergen.
+3. Danach produktive Supabase-Migration anwenden und `dokohilf-chat-router` aus dem gemergten Repository-Stand deployen.
+4. Abschließend `main`, `gh-pages`, festen Hauptlink und den produktiven Guide/Router real verifizieren.
