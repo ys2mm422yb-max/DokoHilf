@@ -1,15 +1,16 @@
 # DokoHilf – bestätigte Arbeitsabläufe
 
 **Status:** verbindliche fachliche Quelle  
-**Stand:** 13. August 2026
+**Stand:** 22. August 2026
 
 Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien. **Fotos und Screenshots selbst werden niemals in GitHub oder Supabase gespeichert; aus Bildhinweisen werden ausschließlich anonymisierte textliche Klickwege übernommen.**
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt. Am 12. August 2026 wurde für „Bericht anlegen“ bestätigt, dass das große Textfeld bereits in der Berichtseingabemaske unten sichtbar ist und sich nicht erst durch die Auswahl der Berichtskategorie öffnet. Ebenfalls bestätigt wurde, dass bei wichtigen Berichten **Wichtig für Schichtübergabe** angehakt wird und der Bericht direkt in das große Textfeld darunter eingetragen wird. Am 13. August 2026 wurde für die Übergabeansicht zusätzlich bestätigt, dass die Schaltfläche **Alle ausklappen** rechts neben **Alle anzeigen** liegt und nach jeder Änderung des Zeitraums samt Aktualisierung erneut gewählt werden muss, damit alle Einträge wieder vollständig geöffnet sind.
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt. Am 12. August 2026 wurde für „Bericht anlegen“ bestätigt, dass das große Textfeld bereits in der Berichtseingabemaske unten sichtbar ist und sich nicht erst durch die Auswahl der Berichtskategorie öffnet. Ebenfalls bestätigt wurde, dass bei wichtigen Berichten **Wichtig für Schichtübergabe** angehakt wird und der Bericht direkt in das große Textfeld darunter eingetragen wird. Am 13. August 2026 wurde für die Übergabeansicht zusätzlich bestätigt, dass die Schaltfläche **Alle ausklappen** rechts neben **Alle anzeigen** liegt und nach jeder Änderung des Zeitraums samt Aktualisierung erneut gewählt werden muss, damit alle Einträge wieder vollständig geöffnet sind. Am 22. August 2026 wurde zusätzlich bestätigt, dass jeder aktuelle Wunsch, etwas **abzuzeichnen**, zum **Durchführungsnachweis des richtigen Bewohners** führt; ausdrücklich gilt das auch für Medikamente. Die normale Medikationsübersicht unter **Doku-Erweitert → Medikation** bleibt davon getrennt und ausschließlich zum Ansehen.
 
 ## Allgemeine Regeln
 
 - Zuerst immer den richtigen Bewohner auswählen, wenn der Ablauf bewohnerbezogen ist.
+- Wenn jemand etwas **abzeichnen** möchte, zuerst den richtigen Bewohner auswählen und anschließend über **Doku → Durchführungsnachweis** führen. Das gilt ausdrücklich auch für **Medikamente abzeichnen**.
 - Keine echten Bewohner-, Gesundheits- oder Mitarbeiterdaten in Tests verwenden.
 - Fotos und Screenshots bleiben ausschließlich im Chat und werden niemals in GitHub oder Supabase übernommen; dort wird nur der anonymisierte textliche Klickweg dokumentiert.
 - Ein falscher Bericht wird nicht endgültig gelöscht oder durch einen Folgebericht korrigiert, sondern durchgestrichen.
@@ -102,6 +103,16 @@ Ein Folgebericht ist ein **neuer Bericht mit Bezug zu einem bereits dokumentiert
 4. **Folgebericht erstellen** wählen.
 5. Datum und Uhrzeit prüfen und den neuen ergänzenden beziehungsweise fortführenden Inhalt eintragen.
 6. Mit OK bestätigen und sichtbaren Eintrag kontrollieren.
+
+## Zum Abzeichnen in den Durchführungsnachweis
+
+Wenn jemand etwas **abzeichnen** möchte, führt DokoHilf immer zuerst zum richtigen Bewohner und danach zu **Doku → Durchführungsnachweis**. Das gilt ausdrücklich auch für **Medikamente abzeichnen**. Die Bezeichnung des Gegenstands ändert diesen Einstieg nicht.
+
+1. Richtigen Bewohner auswählen.
+2. Ganz oben in der festen grünen Hauptleiste **Doku** öffnen.
+3. Darunter **Durchführungsnachweis** öffnen.
+
+Ab dem geöffneten Durchführungsnachweis erfindet DokoHilf für ein allgemeines Abzeichnen keinen weiteren Klickweg, solange dieser nicht ausdrücklich fachlich bestätigt wurde. Die normale Medikationsübersicht unter **Doku-Erweitert → Medikation** bleibt ausschließlich zum Ansehen und ist nicht der Einstieg zum Abzeichnen.
 
 ## Falsch abgezeichnete Durchführung stornieren
 
