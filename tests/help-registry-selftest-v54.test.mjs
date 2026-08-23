@@ -100,10 +100,13 @@ test('v33 lädt Registry zuerst und danach Guide Discovery, Schritthilfe und Sel
   assert.equal(version.appVersion, 'v33');
   assert.equal(version.release, 'help-registry-selftest-v54');
   assert.match(release, /const VERSION_LABEL = 'v33'/);
-  const registryAt = release.indexOf("assets/intent-registry-v54.js");
-  const discoveryAt = release.indexOf("assets/guide-discovery-v53.js");
-  const stepAt = release.indexOf("assets/step-help-v54.js");
-  const selfAt = release.indexOf("assets/self-test-v54.js");
-  assert.ok(registryAt > 0 && discoveryAt > registryAt);
-  assert.ok(stepAt > registryAt && selfAt > registryAt);
+
+  const loader = release.match(/async function loadV54Features\(\) \{[\s\S]*?\n  \}/)?.[0] || '';
+  assert.ok(loader, 'loadV54Features missing');
+  const registryAt = loader.indexOf("assets/intent-registry-v54.js");
+  const discoveryAt = loader.indexOf('await loadGuideDiscovery()');
+  const stepAt = loader.indexOf("assets/step-help-v54.js");
+  const selfAt = loader.indexOf("assets/self-test-v54.js");
+  assert.ok(registryAt >= 0 && discoveryAt > registryAt);
+  assert.ok(stepAt > discoveryAt && selfAt > discoveryAt);
 });
