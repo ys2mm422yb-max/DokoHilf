@@ -1,0 +1,37 @@
+name: Validate help registry self-test v54
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dokohilf-help-registry-selftest-v54-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-v54:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact repository head
+        uses: actions/checkout@v4
+
+      - name: Validate v54 source and contracts
+        run: |
+          set -euo pipefail
+          test -s assets/intent-registry-v54.js
+          test -s assets/step-help-v54.js
+          test -s assets/self-test-v54.js
+          test -s tests/help-registry-selftest-v54.test.mjs
+          node --check assets/intent-registry-v54.js
+          node --check assets/step-help-v54.js
+          node --check assets/self-test-v54.js
+          node --check assets/release-polish-v29.js
+          node --test tests/help-registry-selftest-v54.test.mjs
+          grep -q "const VERSION_LABEL = 'v33'" assets/release-polish-v29.js
+          node -e "const v=require('./version.json'); if(v.appVersion!=='v33'||v.release!=='help-registry-selftest-v54') process.exit(1)"
