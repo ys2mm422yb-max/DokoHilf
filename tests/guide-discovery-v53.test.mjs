@@ -33,10 +33,9 @@ function loadApi() {
 
 const api = loadApi();
 
-test('guide discovery v53 is wired into the v32 release and PWA cache', () => {
-  assert.equal(version.appVersion, 'v32');
-  assert.equal(version.release, 'guide-discovery-v53');
-  assert.match(release, /const VERSION_LABEL = 'v32'/);
+test('v32 guide discovery remains wired after later public version bumps', () => {
+  const publicVersion = Number(String(version.appVersion || '').replace(/^v/, ''));
+  assert.ok(Number.isInteger(publicVersion) && publicVersion >= 32, `unexpected public version: ${version.appVersion}`);
   assert.match(release, /20260823-guide-discovery-v53-1/);
   assert.match(release, /guide-discovery-v53\.js/);
   assert.match(sw, /GUIDE_DISCOVERY_REVISION = '20260823-guide-discovery-v53-1'/);
