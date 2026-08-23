@@ -7,6 +7,7 @@
   const RELOAD_KEY = 'dokohilf-build-reload';
   const PRODUCTION_ORIGIN = 'https://ys2mm422yb-max.github.io';
   const USAGE_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-usage-counter';
+  const GUIDE_LIBRARY_INTELLIGENCE_REVISION = '20260823-guide-library-intelligence-v53-1';
   let usageCountRequested = false;
 
   function installStyles() {
@@ -89,11 +90,22 @@
     }).catch(() => {});
   }
 
+  function loadGuideLibraryIntelligence() {
+    if (window.__DOKOHILF_GUIDE_LIBRARY_INTELLIGENCE_V53__
+      || document.querySelector('script[data-dokohilf-guide-library-intelligence-v53]')) return;
+    const script = document.createElement('script');
+    script.src = `assets/guide-library-intelligence-v53.js?v=${GUIDE_LIBRARY_INTELLIGENCE_REVISION}`;
+    script.async = false;
+    script.dataset.dokohilfGuideLibraryIntelligenceV53 = 'true';
+    document.head.append(script);
+  }
+
   function init() {
     installStyles();
     moveVersionToFooter();
     showUpdateNotice();
     countAnonymousPageView();
+    loadGuideLibraryIntelligence();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
@@ -103,9 +115,11 @@
     buildId: BUILD_ID,
     versionLabel: VERSION_LABEL,
     updateNoticeMs: UPDATE_NOTICE_MS,
+    guideLibraryIntelligenceRevision: GUIDE_LIBRARY_INTELLIGENCE_REVISION,
     moveVersionToFooter,
     showUpdateNotice,
     countAnonymousPageView,
+    loadGuideLibraryIntelligence,
   };
   window.__DOKOHILF_RELEASE_POLISH_V29__ = true;
 })();
