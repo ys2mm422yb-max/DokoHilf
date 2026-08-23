@@ -1,5 +1,5 @@
 const BUILD_ID = '20260812-41';
-const HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3';
+const HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-3';
 const LIBRARY_LAYOUT_REVISION = '20260812-dateiablage-organisation-v46-1';
 const CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1';
 const ROUTING_REVISION = '20260822-signoff-durchfuehrungsnachweis-v52-1';
@@ -13,6 +13,7 @@ const FILE_STORAGE_REVISION = '20260812-file-storage-guide-v46-1';
 const USER_FACING_HOTFIX_REVISION = '20260812-voice-copy-progress-report-v48-1';
 const FEEDBACK_REVISION = '20260813-feedback-home-only-v50-1';
 const HANDOVER_DETAIL_REVISION = '20260813-uebergabe-alle-ausklappen-v51-1';
+const GUIDE_DISCOVERY_REVISION = '20260823-guide-discovery-v53-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
@@ -66,6 +67,7 @@ const CORE_FILES = [
   './assets/voice-polish-v36.js?v=20260812-41-voice1',
   './assets/ux-polish-v42.js?v=20260812-41-ux42',
   './assets/app.js?v=20260812-41',
+  './assets/guide-discovery-v53.js?v=20260823-guide-discovery-v53-1',
   './manifest.webmanifest',
   './icon.svg',
 ];
@@ -109,6 +111,7 @@ self.addEventListener('activate', event => {
         userFacingHotfixRevision: USER_FACING_HOTFIX_REVISION,
         feedbackRevision: FEEDBACK_REVISION,
         handoverDetailRevision: HANDOVER_DETAIL_REVISION,
+        guideDiscoveryRevision: GUIDE_DISCOVERY_REVISION,
         hardRefresh: true,
       });
     }
@@ -134,6 +137,7 @@ self.addEventListener('message', event => {
       userFacingHotfixRevision: USER_FACING_HOTFIX_REVISION,
       feedbackRevision: FEEDBACK_REVISION,
       handoverDetailRevision: HANDOVER_DETAIL_REVISION,
+      guideDiscoveryRevision: GUIDE_DISCOVERY_REVISION,
     });
   }
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
@@ -157,6 +161,7 @@ self.addEventListener('message', event => {
         userFacingHotfixRevision: USER_FACING_HOTFIX_REVISION,
         feedbackRevision: FEEDBACK_REVISION,
         handoverDetailRevision: HANDOVER_DETAIL_REVISION,
+        guideDiscoveryRevision: GUIDE_DISCOVERY_REVISION,
       });
     })());
   }
