@@ -52,7 +52,7 @@ test('confirmed sign-off intent wins over medication wording in library search',
 
 test('false sign-off remains on the existing storno workflow', () => {
   assert.deepEqual([...api.smartTargets('Ich habe etwas falsch abgezeichnet')], ['durchfuehrung-storno']);
-  assert.deepEqual([...api.smartTargets('Versehntlich abgezeichnet')], ['durchfuehrung-storno']);
+  assert.deepEqual([...api.smartTargets('Versehentlich abgezeichnet')], ['durchfuehrung-storno']);
 });
 
 test('smart search adds only already confirmed workflow synonyms', () => {
