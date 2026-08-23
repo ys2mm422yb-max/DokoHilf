@@ -4,7 +4,7 @@
   if (window.__DOKOHILF_UX_POLISH_V42__) return;
   window.__DOKOHILF_UX_POLISH_V42__ = true;
 
-  const REVISION = '20260812-voice-library-ux-v42-2';
+  const REVISION = '20260823-search-flicker-hotfix-v55-1';
   const SEARCH_PLACEHOLDER = 'Anleitung suchen …';
   const CHAT_PLACEHOLDER = 'Frag einfach …';
   let scheduled = false;
@@ -175,6 +175,15 @@
     finishSection();
   }
 
+  function applyLibraryFilter(grid, rawQuery) {
+    const smartFilter = window.DokoHilfGuideDiscoveryV53?.filterLibrarySmart;
+    if (typeof smartFilter === 'function') {
+      smartFilter(grid, rawQuery);
+      return;
+    }
+    filterLibrary(grid, rawQuery);
+  }
+
   function ensureLibrarySearch() {
     const view = document.getElementById('directGuideView');
     const head = view?.querySelector('.v29-library-head');
@@ -191,11 +200,11 @@
       if (input) {
         input.placeholder = SEARCH_PLACEHOLDER;
         input.setAttribute('aria-label', 'Anleitung suchen');
-        input.addEventListener('input', () => filterLibrary(grid, input.value));
+        input.addEventListener('input', () => applyLibraryFilter(grid, input.value));
       }
     }
     const input = wrap.querySelector('input');
-    filterLibrary(grid, input?.value || '');
+    applyLibraryFilter(grid, input?.value || '');
   }
 
   function polishChatPlaceholder() {
@@ -242,6 +251,7 @@
     revision: REVISION,
     normalize,
     filterLibrary,
+    applyLibraryFilter,
     nextButtonLabel,
   };
 })();
