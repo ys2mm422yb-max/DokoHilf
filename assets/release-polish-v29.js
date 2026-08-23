@@ -2,8 +2,11 @@
   'use strict';
 
   const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
-  const VERSION_LABEL = 'v32';
+  const VERSION_LABEL = 'v33';
   const GUIDE_DISCOVERY_REVISION = '20260823-guide-discovery-v53-1';
+  const INTENT_REGISTRY_REVISION = '20260823-confirmed-intent-registry-v54-1';
+  const STEP_HELP_REVISION = '20260823-step-help-v54-1';
+  const SELF_TEST_REVISION = '20260823-self-test-v54-1';
   const UPDATE_NOTICE_MS = 10000;
   const RELOAD_KEY = 'dokohilf-build-reload';
   const PRODUCTION_ORIGIN = 'https://ys2mm422yb-max.github.io';
@@ -90,12 +93,38 @@
     }).catch(() => {});
   }
 
+  function loadScript(path, revision, marker, datasetKey) {
+    return new Promise(resolve => {
+      if (window[marker]) return void resolve(true);
+      const selector = `script[data-${datasetKey}]`;
+      const existing = document.querySelector(selector);
+      if (existing) {
+        existing.addEventListener('load', () => resolve(true), { once: true });
+        existing.addEventListener('error', () => resolve(false), { once: true });
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = `${path}?v=${revision}`;
+      script.setAttribute(`data-${datasetKey}`, 'true');
+      script.addEventListener('load', () => resolve(true), { once: true });
+      script.addEventListener('error', () => resolve(false), { once: true });
+      document.head.append(script);
+    });
+  }
+
   function loadGuideDiscovery() {
-    if (window.__DOKOHILF_GUIDE_DISCOVERY_V53__ || document.querySelector('script[data-dokohilf-guide-discovery-v53]')) return;
-    const script = document.createElement('script');
-    script.src = `assets/guide-discovery-v53.js?v=${GUIDE_DISCOVERY_REVISION}`;
-    script.dataset.dokohilfGuideDiscoveryV53 = 'true';
-    document.head.append(script);
+    return loadScript('assets/guide-discovery-v53.js', GUIDE_DISCOVERY_REVISION, '__DOKOHILF_GUIDE_DISCOVERY_V53__', 'dokohilf-guide-discovery-v53');
+  }
+
+  async function loadV54Features() {
+    // Die bestätigte Intent-Regelbasis wird bewusst zuerst geladen. Sie ist damit
+    // die äußerste Routing-Schicht; ältere Routingmodule bleiben nur als Fallback.
+    await loadScript('assets/intent-registry-v54.js', INTENT_REGISTRY_REVISION, '__DOKOHILF_INTENT_REGISTRY_V54__', 'dokohilf-intent-registry-v54');
+    await loadGuideDiscovery();
+    await Promise.all([
+      loadScript('assets/step-help-v54.js', STEP_HELP_REVISION, '__DOKOHILF_STEP_HELP_V54__', 'dokohilf-step-help-v54'),
+      loadScript('assets/self-test-v54.js', SELF_TEST_REVISION, '__DOKOHILF_SELF_TEST_V54__', 'dokohilf-self-test-v54'),
+    ]);
   }
 
   function init() {
@@ -103,7 +132,7 @@
     moveVersionToFooter();
     showUpdateNotice();
     countAnonymousPageView();
-    loadGuideDiscovery();
+    loadV54Features();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
@@ -113,11 +142,15 @@
     buildId: BUILD_ID,
     versionLabel: VERSION_LABEL,
     guideDiscoveryRevision: GUIDE_DISCOVERY_REVISION,
+    intentRegistryRevision: INTENT_REGISTRY_REVISION,
+    stepHelpRevision: STEP_HELP_REVISION,
+    selfTestRevision: SELF_TEST_REVISION,
     updateNoticeMs: UPDATE_NOTICE_MS,
     moveVersionToFooter,
     showUpdateNotice,
     countAnonymousPageView,
     loadGuideDiscovery,
+    loadV54Features,
   };
   window.__DOKOHILF_RELEASE_POLISH_V29__ = true;
 })();
