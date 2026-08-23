@@ -2,7 +2,8 @@
   'use strict';
 
   const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
-  const VERSION_LABEL = 'v31';
+  const VERSION_LABEL = 'v32';
+  const GUIDE_DISCOVERY_REVISION = '20260823-guide-discovery-v53-1';
   const UPDATE_NOTICE_MS = 10000;
   const RELOAD_KEY = 'dokohilf-build-reload';
   const PRODUCTION_ORIGIN = 'https://ys2mm422yb-max.github.io';
@@ -89,11 +90,20 @@
     }).catch(() => {});
   }
 
+  function loadGuideDiscovery() {
+    if (window.__DOKOHILF_GUIDE_DISCOVERY_V53__ || document.querySelector('script[data-dokohilf-guide-discovery-v53]')) return;
+    const script = document.createElement('script');
+    script.src = `assets/guide-discovery-v53.js?v=${GUIDE_DISCOVERY_REVISION}`;
+    script.dataset.dokohilfGuideDiscoveryV53 = 'true';
+    document.head.append(script);
+  }
+
   function init() {
     installStyles();
     moveVersionToFooter();
     showUpdateNotice();
     countAnonymousPageView();
+    loadGuideDiscovery();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
@@ -102,10 +112,12 @@
   window.DokoHilfReleasePolishV29 = {
     buildId: BUILD_ID,
     versionLabel: VERSION_LABEL,
+    guideDiscoveryRevision: GUIDE_DISCOVERY_REVISION,
     updateNoticeMs: UPDATE_NOTICE_MS,
     moveVersionToFooter,
     showUpdateNotice,
     countAnonymousPageView,
+    loadGuideDiscovery,
   };
   window.__DOKOHILF_RELEASE_POLISH_V29__ = true;
 })();
