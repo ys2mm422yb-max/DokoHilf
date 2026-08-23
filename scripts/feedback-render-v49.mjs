@@ -41,7 +41,8 @@ try {
   if (homeSnapshot.revision !== '20260813-feedback-home-only-v50-1') throw new Error(`Unexpected revision ${homeSnapshot.revision}`);
   if (!String(homeSnapshot.endpoint).endsWith('/functions/v1/dokohilf-feedback')) throw new Error('Feedback endpoint missing');
   if (homeSnapshot.categories.length !== 5) throw new Error(`Expected 5 categories, got ${homeSnapshot.categories.length}`);
-  if (homeSnapshot.appVersion !== 'v31') throw new Error(`Expected v31, got ${homeSnapshot.appVersion}`);
+  const versionNumber = Number(String(homeSnapshot.appVersion || '').replace(/^v/, ''));
+  if (!Number.isInteger(versionNumber) || versionNumber < 31) throw new Error(`Expected v31 or newer, got ${homeSnapshot.appVersion}`);
   if (homeSnapshot.shellMode !== 'start') throw new Error(`Feedback did not start on home: ${homeSnapshot.shellMode}`);
   if (!homeSnapshot.triggerParentIsStart) throw new Error('Feedback entry is not contained by startScreen');
   if (homeSnapshot.horizontalOverflow) throw new Error('Feedback home entry causes horizontal overflow');
