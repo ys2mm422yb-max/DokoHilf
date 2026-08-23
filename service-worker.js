@@ -5,7 +5,7 @@ const CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1';
 const ROUTING_REVISION = '20260822-signoff-durchfuehrungsnachweis-v52-1';
 const CONVERSATION_COMPLETION_REVISION = '20260812-guide-progress-completion-v44-1';
 const USAGE_METRICS_REVISION = '20260811-private-usage-metrics-v41-1';
-const UX_POLISH_REVISION = '20260812-voice-library-ux-v42-2';
+const UX_POLISH_REVISION = '20260823-search-flicker-hotfix-v55-1';
 const REPORT_GUIDE_VOICE_RESET_REVISION = '20260812-report-textfield-voice-reset-v43-1';
 const GUIDE_AUDIT_REVISION = '20260812-full-guide-audit-v44-1';
 const VOICE_REPLY_MATCH_REVISION = '20260812-static-voice-reply-match-v45-2';
@@ -20,7 +20,7 @@ const LEGACY_RELEASE_MARKERS = [
   "HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3'",
   'mobile-polish-8',
 ];
-const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
+const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2-search-v55`;
 const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2';
 const CORE_FILES = [
   './',

@@ -13,12 +13,19 @@ const [index, sw, version, ux, v29, css, routing] = await Promise.all([
   read('tests/helpers/routing-contract.mjs'),
 ]);
 
+function revisionOf(source, constantName) {
+  return source.match(new RegExp(`const ${constantName} = '([^']+)'`))?.[1] || null;
+}
+
 test('UX polish v42 is wired after the established v36 presentation layer', () => {
   assert.match(index, /ux-polish-v42\.css\?v=.*-ux42/);
   assert.match(index, /ux-polish-v42\.js\?v=.*-ux42/);
   assert.ok(index.indexOf('voice-polish-v36.css') < index.indexOf('ux-polish-v42.css'));
   assert.ok(index.indexOf('voice-polish-v36.js') < index.indexOf('ux-polish-v42.js'));
-  assert.match(sw, /UX_POLISH_REVISION = '20260812-voice-library-ux-v42-2'/);
+  const sourceRevision = revisionOf(ux, 'REVISION');
+  const workerRevision = revisionOf(sw, 'UX_POLISH_REVISION');
+  assert.ok(sourceRevision, 'UX-Polish-Quelle muss eine aktive REVISION deklarieren.');
+  assert.equal(workerRevision, sourceRevision, 'Service Worker muss exakt dieselbe aktive UX-Polish-Revision ausliefern.');
   assert.match(sw, /ux-polish-v42\.css\?v=.*-ux42/);
   assert.match(sw, /ux-polish-v42\.js\?v=.*-ux42/);
   assert.equal(typeof version.release, 'string');
