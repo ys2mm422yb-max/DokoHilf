@@ -52,8 +52,10 @@ test('all new approved Übergabe sentences have free static Supertonic keys', ()
   }
 });
 
-test('PWA refreshes this v31 detail correction without a public version bump', () => {
+test('v31 handover detail correction remains active after later public version bumps', () => {
   assert.match(worker, /HANDOVER_DETAIL_REVISION = '20260813-uebergabe-alle-ausklappen-v51-1'/);
   assert.match(worker, /handoverDetailRevision: HANDOVER_DETAIL_REVISION/g);
-  assert.equal(JSON.parse(version).appVersion, 'v31');
+  const parsed = JSON.parse(version);
+  const publicVersion = Number(String(parsed.appVersion || '').replace(/^v/, ''));
+  assert.ok(Number.isInteger(publicVersion) && publicVersion >= 31, `unexpected public version: ${parsed.appVersion}`);
 });
