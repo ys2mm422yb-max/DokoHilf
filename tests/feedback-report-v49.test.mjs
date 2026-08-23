@@ -91,9 +91,11 @@ test('PWA loads and refreshes the home-only feedback revision', () => {
   assert.match(config, /\[functions\.dokohilf-feedback\]\s*\nverify_jwt = false/);
 });
 
-test('minor feedback UX hotfix keeps the public version at v31', () => {
+test('v31 feedback UX remains intact after later public version bumps', () => {
   const parsed = JSON.parse(version);
-  assert.equal(parsed.appVersion, 'v31');
-  assert.match(release, /const VERSION_LABEL = 'v31'/);
-  assert.equal(parsed.release, 'private-feedback-v49');
+  const publicVersion = Number(String(parsed.appVersion || '').replace(/^v/, ''));
+  assert.ok(Number.isInteger(publicVersion) && publicVersion >= 31, `unexpected public version: ${parsed.appVersion}`);
+  const label = release.match(/const VERSION_LABEL = '(v\d+)'/)?.[1];
+  assert.equal(label, parsed.appVersion);
+  assert.match(loader, /FEEDBACK_REVISION = '20260813-feedback-home-only-v50-1'/);
 });

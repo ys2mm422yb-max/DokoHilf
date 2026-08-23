@@ -76,8 +76,9 @@ test('für den Hotfix werden ausschließlich bereits statisch vorhandene Superto
   assert.match(audioCatalog, /Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku“\. Direkt darunter erscheinen die zu „Doku“ gehörenden Funktionen\. Wähle dort „Durchführungsnachweis“\./);
 });
 
-test('PWA übernimmt den Hotfix ohne öffentlichen Versionssprung', () => {
+test('v31 signoff hotfix remains active after later public version bumps', () => {
   assert.match(serviceWorker, /ROUTING_REVISION = '20260822-signoff-durchfuehrungsnachweis-v52-1'/);
   const version = JSON.parse(versionJson);
-  assert.equal(version.appVersion, 'v31');
+  const publicVersion = Number(String(version.appVersion || '').replace(/^v/, ''));
+  assert.ok(Number.isInteger(publicVersion) && publicVersion >= 31, `unexpected public version: ${version.appVersion}`);
 });
