@@ -54,8 +54,9 @@ jobs:
           bash scripts/build-static-site-v27.sh _feedback_site
           test -s _feedback_site/assets/feedback-report-v49.js
           grep -q 'feedback-report-v49.js' _feedback_site/assets/ui-polish-v35.js
-          grep -q "const VERSION_LABEL = 'v31'" _feedback_site/assets/release-polish-v29.js
-          node -e "const v=require('./_feedback_site/version.json'); if(v.appVersion!=='v31') process.exit(1)"
+          node -e "const v=require('./_feedback_site/version.json'); const n=Number(String(v.appVersion || '').replace(/^v/,'')); if(!Number.isInteger(n) || n < 31) process.exit(1)"
+          app_version="$(node -p "require('./_feedback_site/version.json').appVersion")"
+          grep -q "const VERSION_LABEL = '$app_version'" _feedback_site/assets/release-polish-v29.js
 
       - name: Render feedback modal on iOS and Android
         run: |
