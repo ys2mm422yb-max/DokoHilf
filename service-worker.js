@@ -15,7 +15,11 @@ const FEEDBACK_REVISION = '20260813-feedback-home-only-v50-1';
 const HANDOVER_DETAIL_REVISION = '20260813-uebergabe-alle-ausklappen-v51-1';
 const GUIDE_DISCOVERY_REVISION = '20260823-guide-discovery-v53-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
-const LEGACY_RELEASE_MARKERS = ["HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'", 'mobile-polish-8'];
+const LEGACY_RELEASE_MARKERS = [
+  "HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'",
+  "HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3'",
+  'mobile-polish-8',
+];
 const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2`;
 const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2';
 const CORE_FILES = [
