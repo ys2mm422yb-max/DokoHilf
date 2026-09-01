@@ -128,12 +128,12 @@ test('andere Guides behalten ihre bestehende Smart-Help-Reihenfolge', async () =
   assert.equal(h.forwarded(), 1);
 });
 
-test('v57 bleibt auf bestätigte Orientierung begrenzt und enthält keine falsche Bericht-Hierarchie', () => {
-  assert.match(source, /20260901-durchfuehrungs-orientation-v57-1/);
+test('v59 bleibt auf bestätigte Orientierung begrenzt und enthält keine falsche Bericht-Hierarchie', () => {
+  assert.match(source, /20260901-spatial-orientation-v59-1/);
   assert.match(source, /durchfuehrungsnachweis-oeffnen.*step === 1/s);
   assert.match(source, /durchfuehrungsnachweis-finden.*step === 2/s);
   assert.doesNotMatch(source, /prüfe.*richtigen Bereich|richtigen Bereich.*prüfe/i);
   assert.doesNotMatch(source, /Berichte ist ein Hauptbereich|Doku ist ein Hauptbereich.*derselben Ebene wie Berichte/i);
   assert.equal(navigationCatalog.voice, 'Supertonic-F1');
-  assert.equal(navigationCatalog.entries.length, 17);
+  assert.equal(navigationCatalog.entries.length, 18);
 });
