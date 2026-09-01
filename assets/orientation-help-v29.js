@@ -53,7 +53,7 @@
   }
 
   function whiteFunctionBandHelp() {
-    return 'Das weiße Funktionsband liegt direkt unter der festen grünen Hauptleiste. Oben in der grünen Hauptleiste wählst du den Hauptbereich; das weiße Band darunter zeigt die Funktionen des gerade ausgewählten Hauptbereichs. Wenn Doku ausgewählt ist, findest du dort unter anderem Bericht und Durchführungsnachweis. Das weiße Funktionsband ist also nicht dieselbe Leiste wie die grüne Hauptleiste.';
+    return greenMainBarHelp();
   }
 
   function dokuTabHelp() {

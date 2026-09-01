@@ -135,5 +135,5 @@ test('v59 bleibt auf bestätigte Orientierung begrenzt und enthält keine falsch
   assert.doesNotMatch(source, /prüfe.*richtigen Bereich|richtigen Bereich.*prüfe/i);
   assert.doesNotMatch(source, /Berichte ist ein Hauptbereich|Doku ist ein Hauptbereich.*derselben Ebene wie Berichte/i);
   assert.equal(navigationCatalog.voice, 'Supertonic-F1');
-  assert.equal(navigationCatalog.entries.length, 18);
+  assert.equal(navigationCatalog.entries.length, 17);
 });

@@ -24,10 +24,10 @@ test('weißes Funktionsband wird räumlich als zweite Navigationsebene erklärt'
   const window = loadWindow();
   for (const question of ['Wo ist das Funktionsband?', 'Was ist die weiße Leiste?', 'Wo ist die untere Leiste?']) {
     const text = window.DokoHilfOrientationHelpV29.orientationHelp(question);
-    assert.match(text, /direkt unter der festen grünen Hauptleiste/i);
-    assert.match(text, /Funktionen des gerade ausgewählten Hauptbereichs/i);
+    assert.match(text, /feste grüne Hauptleiste ist ganz oben/i);
+    assert.match(text, /Direkt darunter befindet sich das weiße Funktionsband/i);
     assert.match(text, /Bericht und Durchführungsnachweis/i);
-    assert.match(text, /nicht dieselbe Leiste wie die grüne Hauptleiste/i);
+    assert.match(text, /Bericht ist kein Hauptbereich der grünen Leiste/i);
   }
 });
 
@@ -50,19 +50,21 @@ test('DNF-Doku-Schritt beantwortet Funktionsband-Rückfrage lokal ohne Schrittwe
   assert.equal(result.source, 'confirmed-spatial-orientation-v59');
   assert.equal(result.guideStep, 1);
   assert.equal(result.completed, false);
-  assert.match(result.spokenText, /direkt unter der festen grünen Hauptleiste/i);
+  assert.match(result.spokenText, /Direkt darunter befindet sich das weiße Funktionsband/i);
 });
 
-test('neuer räumlicher Hilfesatz ist statisch über Supertonic-F1 katalogisiert', () => {
+test('räumliche Hilfe nutzt bereits katalogisierte statische Supertonic-F1-Sprache', () => {
   const window = loadWindow();
   const text = window.DokoHilfOrientationHelpV29.whiteFunctionBandHelp();
   assert.equal(catalog.voice, 'Supertonic-F1');
+  assert.equal(catalog.entries.length, 17);
   assert.ok(catalog.entries.some(entry => entry.text === text));
 });
 
 test('v59 ändert keine fachlichen Guides und dokumentiert die Datenschutzgrenze', () => {
   assert.match(workNote, /Keine Supabase-Guide-Schritte und keine fachlichen Klickwege in diesem Block ändern/i);
   assert.match(workNote, /Screenshots, Fotos, Video-Frames und Originalunterlagen.*niemals in GitHub oder Supabase/i);
+  assert.match(workNote, /bereits vorhandenen.*Supertonic-F1-Satz wiederverwenden/i);
   assert.match(workNote, /Vitalwerte/i);
   assert.match(workNote, /An-\/Abwesenheiten/i);
   assert.match(workNote, /Durchführungsnachweis/i);

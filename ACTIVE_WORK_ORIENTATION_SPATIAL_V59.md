@@ -29,7 +29,7 @@ DokoHilf soll bei Rückfragen wie „Wo ist die Leiste?“, „Was ist das weiß
 
 - Gemeinsame Hilfe für „weißes Funktionsband“, „weiße Leiste“, „untere Leiste“ und „Funktionsleiste“ ergänzen.
 - Im laufenden Durchführungsnachweis-Doku-Schritt diese Rückfragen lokal und kontextbezogen beantworten.
-- Den neuen hörbaren Hilfesatz in den statischen Supertonic-F1-Katalog aufnehmen.
+- Für die hörbare Antwort einen bereits vorhandenen, bestätigten statischen Supertonic-F1-Satz wiederverwenden; keinen neuen Sprachkatalog-Eintrag erzeugen.
 - PWA-Cache-Revision anheben, damit die neue Orientierung auf Mobilgeräten zuverlässig aktualisiert wird.
 - Keine Supabase-Guide-Schritte und keine fachlichen Klickwege in diesem Block ändern.
 
