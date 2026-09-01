@@ -169,11 +169,7 @@
     }
 
     if (/\breiter\b/.test(n) && /\b(was|welcher|welche|welches|meinst|bedeutet)\b/.test(n)) {
-      return payloadFor(
-        parsed,
-        'Mit Reiter meine ich einen der beschrifteten Hauptbereiche in der grünen Leiste ganz oben. Für diesen Schritt suchst du Doku; Doku liegt zwischen Planung und Doku-Erweitert. Nach dem Anklicken erscheint darunter das weiße Funktionsband mit den Funktionen von Doku, darunter der Durchführungsnachweis.',
-        'confirmed-durchfuehrung-orientation-v57',
-      );
+      return payloadFor(parsed, dokuTabHelp(), 'confirmed-durchfuehrung-orientation-v57');
     }
 
     const asksAboutConfirmedDokuOrientation = /\b(doku|feste leiste|hauptleiste|grune leiste)\b/.test(n)
