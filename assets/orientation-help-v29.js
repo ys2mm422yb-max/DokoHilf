@@ -6,6 +6,7 @@
     '/functions/v1/dokohilf-ai-router',
     '/functions/v1/dokohilf-chat-router',
   ];
+  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260901-durchfuehrungs-orientation-v56-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -118,8 +119,7 @@
     };
   }
 
-  function responseFor(parsed, text) {
-    const spokenText = orientationHelp(text);
+  function payloadFor(parsed, spokenText, source = 'confirmed-area-orientation-v29-4') {
     if (!spokenText) return null;
     const guide = currentGuide(parsed);
     return {
@@ -130,8 +130,43 @@
       ...(guide.guideStep ? { guideStep: guide.guideStep } : {}),
       ...(guide.guideStepCount ? { guideStepCount: guide.guideStepCount } : {}),
       completed: false,
-      source: 'confirmed-area-orientation-v29-4',
+      source,
     };
+  }
+
+  function responseFor(parsed, text) {
+    return payloadFor(parsed, orientationHelp(text));
+  }
+
+  function isDurchfuehrungsDokuStep(parsed) {
+    const guide = currentGuide(parsed);
+    const slug = String(guide.guideSlug || '');
+    const step = Number(guide.guideStep || 0);
+    return (slug === 'durchfuehrungsnachweis-oeffnen' && step === 1)
+      || (slug === 'durchfuehrungsnachweis-finden' && step === 2);
+  }
+
+  function durchfuehrungsStepOrientation(parsed, text) {
+    if (!isDurchfuehrungsDokuStep(parsed)) return null;
+    const n = normalize(text);
+
+    // Innerhalb dieses bestätigten Schritts beantworten wir die konkrete Orientierung
+    // vor dem generischen Smart-Help-Router. So wird eine Folgefrage wie
+    // „Wo ist die feste Leiste?“ nicht mehr mit derselben stuck-Antwort wiederholt.
+    if (/\breiter\b/.test(n) && /\b(was|welcher|welche|welches|meinst|bedeutet)\b/.test(n)) {
+      return payloadFor(
+        parsed,
+        'Bleibe beim geöffneten Bewohner. Doku ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku-Erweitert. Die feste Leiste ist ganz oben und grün; dort stehen außerdem Planung und Analyse. Nach Auswahl von Doku erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.',
+        'confirmed-durchfuehrung-orientation-v56',
+      );
+    }
+
+    const asksAboutConfirmedDokuOrientation = /\b(doku|feste leiste|hauptleiste|grune leiste)\b/.test(n)
+      || (isLocationQuestion(n) && /\b(leiste|doku)\b/.test(n));
+    if (!asksAboutConfirmedDokuOrientation) return null;
+
+    const spokenText = orientationHelp(text);
+    return payloadFor(parsed, spokenText, 'confirmed-durchfuehrung-orientation-v56');
   }
 
   function smartHelpBody(parsed, text) {
@@ -143,30 +178,41 @@
     return prepared;
   }
 
-  window.fetch = async (input, init = {}) => {
-    if (!isAiRequest(input, init)) return previousFetch(input, init);
-    const parsed = parseBody(init.body);
-    if (!parsed) return previousFetch(input, init);
-    const userText = latestUser(parsed);
-    const delegatedBody = smartHelpBody(parsed, userText);
-    if (delegatedBody) return previousFetch(input, { ...init, body: delegatedBody });
-    const payload = responseFor(parsed, userText);
-    if (!payload) return previousFetch(input, init);
+  function localResponse(payload, header = 'confirmed-v29-4') {
     return new Response(JSON.stringify(payload), {
       status: 200,
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-store',
-        'X-DokoHilf-Orientation': 'confirmed-v29-4',
+        'X-DokoHilf-Orientation': header,
       },
     });
+  }
+
+  window.fetch = async (input, init = {}) => {
+    if (!isAiRequest(input, init)) return previousFetch(input, init);
+    const parsed = parseBody(init.body);
+    if (!parsed) return previousFetch(input, init);
+    const userText = latestUser(parsed);
+
+    const scopedOrientation = durchfuehrungsStepOrientation(parsed, userText);
+    if (scopedOrientation) return localResponse(scopedOrientation, 'durchfuehrung-v56');
+
+    const delegatedBody = smartHelpBody(parsed, userText);
+    if (delegatedBody) return previousFetch(input, { ...init, body: delegatedBody });
+    const payload = responseFor(parsed, userText);
+    if (!payload) return previousFetch(input, init);
+    return localResponse(payload);
   };
 
   window.DokoHilfOrientationHelpV29 = {
+    revision: DURCHFUEHRUNG_ORIENTATION_REVISION,
     normalize,
     isLocationQuestion,
     orientationHelp,
     responseFor,
+    isDurchfuehrungsDokuStep,
+    durchfuehrungsStepOrientation,
     smartHelpBody,
   };
   window.__DOKOHILF_ORIENTATION_HELP_V29__ = true;
