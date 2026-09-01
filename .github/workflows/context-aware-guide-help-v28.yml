@@ -28,6 +28,7 @@ jobs:
         run: |
           node --check assets/routing-fix.js
           node --check assets/smart-help-v29.js
+          node --check assets/orientation-help-v29.js
           node --check assets/file-storage-guide-v46.js
 
       - name: Run context regressions
@@ -35,4 +36,5 @@ jobs:
           node --test \
             tests/greeting-routing.test.mjs \
             tests/context-aware-guide-help-v28.test.mjs \
+            tests/durchfuehrungs-orientation-v56.test.mjs \
             tests/dateiablage-v46.test.mjs
