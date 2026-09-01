@@ -7,6 +7,7 @@
     '/functions/v1/dokohilf-chat-router',
   ];
   const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260901-durchfuehrungs-orientation-v57-1';
+  const SPATIAL_ORIENTATION_REVISION = '20260901-spatial-orientation-v59-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -48,22 +49,32 @@
       || /\b(suche|such)\b.*\b(wo|nicht)\b/.test(n);
   }
 
+  function asksAboutFunctionBand(text) {
+    const n = normalize(text);
+    return /\b(weisse leiste|weisses band|funktionsband|funktionsleiste)\b/.test(n)
+      || /\b(symbole|funktionen|schaltflachen)\b.*\b(darunter|unterhalb|unter doku)\b/.test(n);
+  }
+
   function greenMainBarHelp() {
-    return 'Die feste grüne Hauptleiste ist ganz oben im Vivendi-Fenster. Diese feste grüne Leiste enthält unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt darunter befindet sich das weiße Funktionsband des ausgewählten Hauptbereichs. Bericht und Durchführungsnachweis gehören unter Doku zu diesem unteren Funktionsband; Bericht ist kein Hauptbereich der grünen Leiste.';
+    return 'Die feste grüne Hauptleiste verläuft quer ganz oben im Vivendi-Fenster. Dort stehen die beschrifteten Hauptreiter, unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt unter dieser grünen Hauptleiste liegt das weiße Funktionsband. Es zeigt die Funktionen des gerade ausgewählten Hauptbereichs als beschriftete Symbole beziehungsweise Schaltflächen. Wenn Doku ausgewählt ist, findest du dort unter anderem Bericht und Durchführungsnachweis. Bericht ist kein Hauptbereich der grünen Leiste.';
   }
 
   function dokuTabHelp() {
-    return 'Doku ist ein Hauptreiter in der grünen Hauptleiste ganz oben im Vivendi-Fenster. Doku liegt zwischen Planung und Doku-Erweitert. Wenn du Doku auswählst, erscheint direkt darunter das weiße Funktionsband mit den zugehörigen Funktionen. Dort findest du den Durchführungsnachweis.';
+    return 'Doku ist ein beschrifteter Hauptreiter in der grünen Hauptleiste ganz oben im Vivendi-Fenster. Doku liegt zwischen Planung und Doku-Erweitert. Wenn du Doku auswählst, erscheint direkt darunter das weiße Funktionsband mit den zugehörigen beschrifteten Funktionen. Dort findest du unter anderem den Durchführungsnachweis.';
   }
 
   function reportLocationHelp() {
-    return 'Bericht ist kein Hauptreiter in der grünen Leiste. Öffne oben in der grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband; dort findest du Bericht.';
+    return 'Bericht ist kein Hauptreiter in der grünen Leiste. Öffne oben in der grünen Hauptleiste Doku. Direkt darunter liegt das weiße Funktionsband mit beschrifteten Funktionen beziehungsweise Symbolen; dort findest du Bericht.';
   }
 
   function orientationHelp(text) {
     const n = normalize(text);
-    if (!isLocationQuestion(n) && !/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) return '';
+    const asksBand = asksAboutFunctionBand(n);
+    if (!isLocationQuestion(n) && !/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n) && !asksBand) return '';
 
+    if (asksBand) {
+      return greenMainBarHelp();
+    }
     if (/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) {
       return greenMainBarHelp();
     }
@@ -162,8 +173,12 @@
     if (!isDurchfuehrungsDokuStep(parsed)) return null;
     const n = normalize(text);
 
-    // Im laufenden Doku-Schritt ist mit „Leiste“ eindeutig die zuvor genannte
-    // grüne Hauptleiste gemeint. Deshalb nicht an generisches Smart Help delegieren.
+    // Im laufenden Doku-Schritt bleibt die räumliche Hilfe lokal und verändert
+    // den Guide-Schritt nicht. Das gilt auch für Rückfragen zum weißen Funktionsband.
+    if (asksAboutFunctionBand(n)) {
+      return payloadFor(parsed, greenMainBarHelp(), 'confirmed-spatial-orientation-v59');
+    }
+
     if (isLocationQuestion(n) && /\bleiste\b/.test(n)) {
       return payloadFor(parsed, greenMainBarHelp(), 'confirmed-durchfuehrung-orientation-v57');
     }
@@ -173,10 +188,11 @@
     }
 
     const asksAboutConfirmedDokuOrientation = /\b(doku|feste leiste|hauptleiste|grune leiste)\b/.test(n)
+      || asksAboutFunctionBand(n)
       || (isLocationQuestion(n) && /\b(leiste|doku)\b/.test(n));
     if (!asksAboutConfirmedDokuOrientation) return null;
 
-    const spokenText = /\bdoku\b/.test(n) ? dokuTabHelp() : orientationHelp(text);
+    const spokenText = /\bdoku\b/.test(n) && !asksAboutFunctionBand(n) ? dokuTabHelp() : orientationHelp(text);
     return payloadFor(parsed, spokenText, 'confirmed-durchfuehrung-orientation-v57');
   }
 
@@ -218,8 +234,10 @@
 
   window.DokoHilfOrientationHelpV29 = {
     revision: DURCHFUEHRUNG_ORIENTATION_REVISION,
+    spatialRevision: SPATIAL_ORIENTATION_REVISION,
     normalize,
     isLocationQuestion,
+    asksAboutFunctionBand,
     greenMainBarHelp,
     dokuTabHelp,
     reportLocationHelp,
