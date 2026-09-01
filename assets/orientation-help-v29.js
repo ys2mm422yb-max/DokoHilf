@@ -197,6 +197,7 @@
   }
 
   function smartHelpBody(parsed, text) {
+    if (asksAboutFunctionBand(text)) return '';
     const prepared = window.DokoHilfSmartHelpV29?.preparedBody?.(parsed, text);
     if (typeof prepared !== 'string' || !prepared) return '';
     const candidate = parseBody(prepared);
