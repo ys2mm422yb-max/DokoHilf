@@ -6,7 +6,7 @@
     '/functions/v1/dokohilf-ai-router',
     '/functions/v1/dokohilf-chat-router',
   ];
-  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260901-durchfuehrungs-orientation-v56-1';
+  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260901-durchfuehrungs-orientation-v57-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -48,12 +48,24 @@
       || /\b(suche|such)\b.*\b(wo|nicht)\b/.test(n);
   }
 
+  function greenMainBarHelp() {
+    return 'Die feste grüne Hauptleiste ist ganz oben im Vivendi-Fenster. Diese feste grüne Leiste enthält unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt darunter befindet sich das weiße Funktionsband des ausgewählten Hauptbereichs. Bericht und Durchführungsnachweis gehören unter Doku zu diesem unteren Funktionsband; Bericht ist kein Hauptbereich der grünen Leiste.';
+  }
+
+  function dokuTabHelp() {
+    return 'Doku ist ein Hauptreiter in der grünen Hauptleiste ganz oben im Vivendi-Fenster. Doku liegt zwischen Planung und Doku-Erweitert. Wenn du Doku auswählst, erscheint direkt darunter das weiße Funktionsband mit den zugehörigen Funktionen. Dort findest du den Durchführungsnachweis.';
+  }
+
+  function reportLocationHelp() {
+    return 'Bericht ist kein Hauptreiter in der grünen Leiste. Öffne oben in der grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband; dort findest du Bericht.';
+  }
+
   function orientationHelp(text) {
     const n = normalize(text);
     if (!isLocationQuestion(n) && !/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) return '';
 
     if (/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) {
-      return 'Die feste grüne Leiste ist ganz oben. Dort findest du die Hauptbereiche Berichte, Doku-Erweitert, Doku, Planung und Analyse. Wenn du einen Hauptbereich auswählst, erscheinen direkt darunter die dazugehörigen Unterpunkte beziehungsweise Symbole.';
+      return greenMainBarHelp();
     }
     if (/\b(wirksamkeitskontrolle|wirksamkeit).*\b(bedarf|bedarfsmedikation|medikation)\b|\b(bedarf|bedarfsmedikation).*\b(wirksamkeitskontrolle|wirksamkeit)\b/.test(n)) {
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.';
@@ -65,10 +77,10 @@
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du den Bereich Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um ihn zu öffnen.';
     }
     if (/\b(doku erweitert|doku-erweitert)\b/.test(n)) {
-      return 'Doku-Erweitert ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku. Die feste Leiste ist ganz oben und grün; dort stehen außerdem Planung und Analyse. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.';
+      return 'Doku-Erweitert ist ein Hauptreiter in der grünen Hauptleiste ganz oben, direkt rechts von Doku. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.';
     }
     if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(n)) {
-      return 'Öffne beim gewünschten Bewohner zuerst Doku in der festen Leiste. Doku steht ganz oben in der grünen Leiste. Nach der Auswahl erscheinen darunter die zugehörigen Unterpunkte; dort findest du den Durchführungsnachweis.';
+      return 'Öffne beim gewünschten Bewohner zuerst Doku in der grünen Hauptleiste ganz oben. Doku liegt zwischen Planung und Doku-Erweitert. Nach der Auswahl erscheint direkt darunter das weiße Funktionsband; dort findest du den Durchführungsnachweis.';
     }
     if (/\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(n)) {
       return 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Vitalwerte: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Vitalwerte.';
@@ -86,7 +98,7 @@
       return 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du An-/Abwesenheiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du An-/Abwesenheiten.';
     }
     if (/\b(bericht|berichte|berichtseintrag)\b/.test(n)) {
-      return 'Bleibe beim geöffneten Bewohner. Berichte ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Doku und Doku-Erweitert. Die feste Leiste ist ganz oben und grün; dort stehen auch Planung und Analyse.';
+      return reportLocationHelp();
     }
     if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) {
       return 'Öffne oben zuerst Analyse. Analyse steht ganz oben in der festen grünen Leiste. Nach der Auswahl erscheinen darunter die zugehörigen Unterpunkte; dort findest du Was war los. Darüber öffnest du die Übergabeansicht.';
@@ -101,10 +113,10 @@
       return 'Bleibe beim gewünschten Bewohner. Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü und wählst Notfallblatt aufrufen.';
     }
     if (/\b(stammdaten|bewohnerubersicht|bewohneruebersicht)\b/.test(n)) {
-      return 'Öffne zuerst Berichte oder den Durchführungsnachweis. Für den Durchführungsnachweis wählst du ganz oben in der festen grünen Leiste Doku und danach den darunter erscheinenden Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.';
+      return 'Öffne zuerst Bericht oder den Durchführungsnachweis. Beides findest du unter Doku: Wähle ganz oben in der festen grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband mit Bericht und Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.';
     }
     if (/\bdoku\b/.test(n)) {
-      return 'Bleibe beim geöffneten Bewohner. Doku ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku-Erweitert. Die feste Leiste ist ganz oben und grün; dort stehen außerdem Planung und Analyse. Nach Auswahl von Doku erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.';
+      return dokuTabHelp();
     }
     return '';
   }
@@ -150,23 +162,22 @@
     if (!isDurchfuehrungsDokuStep(parsed)) return null;
     const n = normalize(text);
 
-    // Innerhalb dieses bestätigten Schritts beantworten wir die konkrete Orientierung
-    // vor dem generischen Smart-Help-Router. So wird eine Folgefrage wie
-    // „Wo ist die feste Leiste?“ nicht mehr mit derselben stuck-Antwort wiederholt.
+    // Im laufenden Doku-Schritt ist mit „Leiste“ eindeutig die zuvor genannte
+    // grüne Hauptleiste gemeint. Deshalb nicht an generisches Smart Help delegieren.
+    if (isLocationQuestion(n) && /\bleiste\b/.test(n)) {
+      return payloadFor(parsed, greenMainBarHelp(), 'confirmed-durchfuehrung-orientation-v57');
+    }
+
     if (/\breiter\b/.test(n) && /\b(was|welcher|welche|welches|meinst|bedeutet)\b/.test(n)) {
-      return payloadFor(
-        parsed,
-        'Bleibe beim geöffneten Bewohner. Doku ist ein Hauptbereich in der festen Leiste, auf derselben Ebene wie Berichte und Doku-Erweitert. Die feste Leiste ist ganz oben und grün; dort stehen außerdem Planung und Analyse. Nach Auswahl von Doku erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.',
-        'confirmed-durchfuehrung-orientation-v56',
-      );
+      return payloadFor(parsed, dokuTabHelp(), 'confirmed-durchfuehrung-orientation-v57');
     }
 
     const asksAboutConfirmedDokuOrientation = /\b(doku|feste leiste|hauptleiste|grune leiste)\b/.test(n)
       || (isLocationQuestion(n) && /\b(leiste|doku)\b/.test(n));
     if (!asksAboutConfirmedDokuOrientation) return null;
 
-    const spokenText = orientationHelp(text);
-    return payloadFor(parsed, spokenText, 'confirmed-durchfuehrung-orientation-v56');
+    const spokenText = /\bdoku\b/.test(n) ? dokuTabHelp() : orientationHelp(text);
+    return payloadFor(parsed, spokenText, 'confirmed-durchfuehrung-orientation-v57');
   }
 
   function smartHelpBody(parsed, text) {
@@ -196,7 +207,7 @@
     const userText = latestUser(parsed);
 
     const scopedOrientation = durchfuehrungsStepOrientation(parsed, userText);
-    if (scopedOrientation) return localResponse(scopedOrientation, 'durchfuehrung-v56');
+    if (scopedOrientation) return localResponse(scopedOrientation, 'durchfuehrung-v57');
 
     const delegatedBody = smartHelpBody(parsed, userText);
     if (delegatedBody) return previousFetch(input, { ...init, body: delegatedBody });
@@ -209,6 +220,9 @@
     revision: DURCHFUEHRUNG_ORIENTATION_REVISION,
     normalize,
     isLocationQuestion,
+    greenMainBarHelp,
+    dokuTabHelp,
+    reportLocationHelp,
     orientationHelp,
     responseFor,
     isDurchfuehrungsDokuStep,
