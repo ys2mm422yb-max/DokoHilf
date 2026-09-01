@@ -10,7 +10,7 @@ EXPECTED_SOURCE_COUNTS = {
     'release': 49,
     'workflow': 39,
     'ui': 1,
-    'navigation': 17,
+    'navigation': 18,
     'context': 10,
 }
 EXPECTED_COMPLETION_COUNT = 44
