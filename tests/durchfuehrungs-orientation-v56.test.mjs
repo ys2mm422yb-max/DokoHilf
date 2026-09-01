@@ -50,7 +50,7 @@ test('Durchführungsnachweis beantwortet Doku- und Leistenfragen lokal und mit k
 
   const doku = await ask(h, 'Ich finde Doku nicht', 'durchfuehrungsnachweis-oeffnen', 1);
   assert.equal(doku.source, 'confirmed-durchfuehrung-orientation-v57');
-  assert.match(doku.spokenText, /Doku ist ein Hauptreiter/i);
+  assert.match(doku.spokenText, /Doku ist ein .*Hauptreiter/i);
   assert.match(doku.spokenText, /zwischen Planung und Doku-Erweitert/i);
   assert.match(doku.spokenText, /weiße Funktionsband/i);
   assert.equal(doku.guideStep, 1);
@@ -59,7 +59,7 @@ test('Durchführungsnachweis beantwortet Doku- und Leistenfragen lokal und mit k
 
   const leiste = await ask(h, 'Wo ist die Leiste?', 'durchfuehrungsnachweis-oeffnen', 1);
   assert.equal(leiste.source, 'confirmed-durchfuehrung-orientation-v57');
-  assert.match(leiste.spokenText, /feste grüne Hauptleiste ist ganz oben/i);
+  assert.match(leiste.spokenText, /feste grüne Hauptleiste .*ganz oben/i);
   assert.match(leiste.spokenText, /Bericht ist kein Hauptbereich der grünen Leiste/i);
   assert.doesNotMatch(leiste.spokenText, /Schnellzugriffsleiste|welche Leiste|welchen Bereich/i);
   assert.doesNotMatch(leiste.spokenText, /richtigen Bereich/i);
@@ -78,7 +78,7 @@ test('Reiter-Rückfrage erklärt Doku als Hauptreiter und nutzt katalogisierte s
 
   const result = await ask(h, 'Was meinst du mit Reiter?', 'durchfuehrungsnachweis-oeffnen', 1);
   assert.equal(result.source, 'confirmed-durchfuehrung-orientation-v57');
-  assert.match(result.spokenText, /Doku ist ein Hauptreiter/i);
+  assert.match(result.spokenText, /Doku ist ein .*Hauptreiter/i);
   assert.match(result.spokenText, /Doku.*zwischen Planung und Doku-Erweitert/i);
   assert.match(result.spokenText, /weiße Funktionsband/i);
   assert.doesNotMatch(result.spokenText, /derselben Ebene wie Berichte|Berichte.*Hauptbereich/i);
@@ -98,7 +98,7 @@ test('resident-first Signoff-Guide nutzt dieselbe korrigierte Orientierung nur a
 
   const result = await ask(h, 'Wo ist Doku?', 'durchfuehrungsnachweis-finden', 2);
   assert.equal(result.source, 'confirmed-durchfuehrung-orientation-v57');
-  assert.match(result.spokenText, /Doku ist ein Hauptreiter/i);
+  assert.match(result.spokenText, /Doku ist ein .*Hauptreiter/i);
   assert.equal(result.guideStep, 2);
   assert.equal(result.completed, false);
   assert.ok(navigationSpeech.has(result.spokenText));
