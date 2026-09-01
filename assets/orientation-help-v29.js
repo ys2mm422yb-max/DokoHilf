@@ -56,7 +56,7 @@
   }
 
   function greenMainBarHelp() {
-    return 'Die feste grüne Hauptleiste verläuft quer ganz oben im Vivendi-Fenster. Dort stehen die beschrifteten Hauptreiter, unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt unter dieser grünen Hauptleiste liegt das weiße Funktionsband. Es zeigt die Funktionen des gerade ausgewählten Hauptbereichs als beschriftete Symbole beziehungsweise Schaltflächen. Wenn Doku ausgewählt ist, findest du dort unter anderem Bericht und Durchführungsnachweis. Bericht ist kein Hauptbereich der grünen Leiste.';
+    return 'Die feste grüne Hauptleiste – also die feste grüne Leiste – verläuft quer ganz oben im Vivendi-Fenster. Dort stehen die beschrifteten Hauptreiter, unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt unter dieser grünen Hauptleiste liegt das weiße Funktionsband. Es zeigt die Funktionen des gerade ausgewählten Hauptbereichs als beschriftete Symbole beziehungsweise Schaltflächen. Wenn Doku ausgewählt ist, findest du dort unter anderem Bericht und Durchführungsnachweis. Bericht ist kein Hauptbereich der grünen Leiste.';
   }
 
   function dokuTabHelp() {
