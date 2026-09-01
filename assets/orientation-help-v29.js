@@ -6,7 +6,7 @@
     '/functions/v1/dokohilf-ai-router',
     '/functions/v1/dokohilf-chat-router',
   ];
-  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260901-durchfuehrungs-orientation-v57-1';
+  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260901-spatial-orientation-v59-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -52,6 +52,10 @@
     return 'Die feste grüne Hauptleiste ist ganz oben im Vivendi-Fenster. Diese feste grüne Leiste enthält unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt darunter befindet sich das weiße Funktionsband des ausgewählten Hauptbereichs. Bericht und Durchführungsnachweis gehören unter Doku zu diesem unteren Funktionsband; Bericht ist kein Hauptbereich der grünen Leiste.';
   }
 
+  function whiteFunctionBandHelp() {
+    return greenMainBarHelp();
+  }
+
   function dokuTabHelp() {
     return 'Doku ist ein Hauptreiter in der grünen Hauptleiste ganz oben im Vivendi-Fenster. Doku liegt zwischen Planung und Doku-Erweitert. Wenn du Doku auswählst, erscheint direkt darunter das weiße Funktionsband mit den zugehörigen Funktionen. Dort findest du den Durchführungsnachweis.';
   }
@@ -62,8 +66,12 @@
 
   function orientationHelp(text) {
     const n = normalize(text);
-    if (!isLocationQuestion(n) && !/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) return '';
+    const mentionsKnownBar = /\b(feste leiste|hauptleiste|grune leiste|funktionsband|weisse leiste|weisses band|untere leiste|funktionsleiste)\b/.test(n);
+    if (!isLocationQuestion(n) && !mentionsKnownBar) return '';
 
+    if (/\b(funktionsband|weisse leiste|weisses band|untere leiste|funktionsleiste)\b/.test(n)) {
+      return whiteFunctionBandHelp();
+    }
     if (/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) {
       return greenMainBarHelp();
     }
@@ -162,6 +170,10 @@
     if (!isDurchfuehrungsDokuStep(parsed)) return null;
     const n = normalize(text);
 
+    if (/\b(funktionsband|weisse leiste|weisses band|untere leiste|funktionsleiste)\b/.test(n)) {
+      return payloadFor(parsed, whiteFunctionBandHelp(), 'confirmed-spatial-orientation-v59');
+    }
+
     // Im laufenden Doku-Schritt ist mit „Leiste“ eindeutig die zuvor genannte
     // grüne Hauptleiste gemeint. Deshalb nicht an generisches Smart Help delegieren.
     if (isLocationQuestion(n) && /\bleiste\b/.test(n)) {
@@ -221,6 +233,7 @@
     normalize,
     isLocationQuestion,
     greenMainBarHelp,
+    whiteFunctionBandHelp,
     dokuTabHelp,
     reportLocationHelp,
     orientationHelp,
