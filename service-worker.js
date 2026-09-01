@@ -20,7 +20,7 @@ const LEGACY_RELEASE_MARKERS = [
   "HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3'",
   'mobile-polish-8',
 ];
-const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2-search-v55-dnf-orientation-v57`;
+const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2-search-v55-dnf-orientation-v57-report-navigation-v58`;
 const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2';
 const CORE_FILES = [
   './',
