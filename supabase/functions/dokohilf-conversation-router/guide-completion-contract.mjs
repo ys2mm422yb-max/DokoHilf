@@ -1,4 +1,4 @@
-export const COMPLETION_REVISION = '20260810-natural-guide-completions-v40-1';
+export const COMPLETION_REVISION = '20260902-voice-chat-parity-dnf-v66-1';
 
 const ACK = 'Alles klar. Wenn du noch etwas brauchst, sag einfach Bescheid.';
 const ORIENTATION_ANALYSE = 'Super, dann bist du bei „Analyse“. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.';
@@ -30,9 +30,9 @@ const VITAL_SINGLE_SELECT_RESIDENT = 'Wähle zuerst den gewünschten Bewohner au
 const VITAL_BATCH_RESIDENT = 'Bevor du mehrere Vitalwerte erfasst: Ist der richtige Bewohner ausgewählt?';
 const VITAL_BATCH_SELECT_RESIDENT = 'Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für die Vitalwerte ausgewählt ist.';
 
-const DURCHFUEHRUNG_CHOICE = 'Was möchtest du im Durchführungsnachweis machen: eine Bedarfsmedikation dokumentieren, eine Wirksamkeitskontrolle bearbeiten, eine Maßnahme ohne Zeitangabe dokumentieren, eine falsche Durchführung stornieren oder nur einen Nachweis ansehen?';
+const DURCHFUEHRUNG_READY = 'Der Durchführungsnachweis ist geöffnet. Sag mir einfach, was du dort machen möchtest.';
 const DURCHFUEHRUNG_VIEW = 'Alles klar. Dann kannst du den benötigten Nachweis im geöffneten Durchführungsnachweis ansehen.';
-const DURCHFUEHRUNG_UNKNOWN = 'Sag mir kurz, was du im Durchführungsnachweis machen möchtest: Bedarfsmedikation, Wirksamkeitskontrolle, Maßnahme ohne Zeitangabe, Storno oder nur ansehen.';
+const DURCHFUEHRUNG_UNKNOWN = 'Sag mir bitte, was du im geöffneten Durchführungsnachweis machen möchtest.';
 
 export const GUIDE_COMPLETIONS = Object.freeze({
   'analyse-finden': { reply: ORIENTATION_ANALYSE, spokenText: ORIENTATION_ANALYSE },
@@ -49,8 +49,8 @@ export const GUIDE_COMPLETIONS = Object.freeze({
   'doku-erweitert-finden': { reply: ORIENTATION_DOKU_EXT, spokenText: ORIENTATION_DOKU_EXT },
   'doku-finden': { reply: ORIENTATION_DOKU, spokenText: ORIENTATION_DOKU },
   'durchfuehrung-storno': { reply: 'Alles klar, dann ist die Durchführung als storniert gekennzeichnet.', spokenText: 'Alles klar, dann ist die Durchführung als storniert gekennzeichnet.' },
-  'durchfuehrungsnachweis-finden': { reply: DURCHFUEHRUNG_CHOICE, spokenText: DURCHFUEHRUNG_CHOICE },
-  'durchfuehrungsnachweis-oeffnen': { reply: DURCHFUEHRUNG_CHOICE, spokenText: DURCHFUEHRUNG_CHOICE },
+  'durchfuehrungsnachweis-finden': { reply: DURCHFUEHRUNG_READY, spokenText: DURCHFUEHRUNG_READY },
+  'durchfuehrungsnachweis-oeffnen': { reply: DURCHFUEHRUNG_READY, spokenText: DURCHFUEHRUNG_READY },
   'formulare-anlegen': { reply: 'Super, dann ist das Formular gespeichert.', spokenText: 'Super, dann ist das Formular gespeichert.' },
   'formulare-finden': { reply: FORMULAR_OFFER, spokenText: FORMULAR_OFFER },
   'massnahmen-ohne-zeitangabe': { reply: 'Super, dann ist die Maßnahme gespeichert.', spokenText: 'Super, dann ist die Maßnahme gespeichert.' },
@@ -207,7 +207,7 @@ export function inferCompletionContinuation(previousAssistant, userText) {
     if (isNegative(user)) return reply(ACK);
   }
 
-  if (previousMatches(previousAssistant, DURCHFUEHRUNG_CHOICE) || previousMatches(previousAssistant, DURCHFUEHRUNG_UNKNOWN)) {
+  if (previousMatches(previousAssistant, DURCHFUEHRUNG_READY) || previousMatches(previousAssistant, DURCHFUEHRUNG_UNKNOWN)) {
     if (/\bwirksamkeit|wirksamkeitskontrolle|wirkungskontrolle\b/.test(user)) return start('bedarfsmedikation-wirksamkeitskontrolle-finden', 2);
     if (/\bbedarfsmedikation|bedarf|bedarfsgabe\b/.test(user)) return start('bedarfsmedikation-gabe', 2);
     if (/\bmassnahme|massnahmen|ohne zeitangabe\b/.test(user)) return start('massnahmen-ohne-zeitangabe', 2);
