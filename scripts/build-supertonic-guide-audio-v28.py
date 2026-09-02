@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 EXPECTED_SOURCE_COUNTS = {
-    'base': 130,
+    'base': 134,
     'extra': 33,
     'release': 49,
     'workflow': 39,
@@ -15,7 +15,7 @@ EXPECTED_SOURCE_COUNTS = {
 }
 EXPECTED_COMPLETION_COUNT = 44
 EXPECTED_FILE_STORAGE_COUNT = 5
-EXPECTED_CONTEXT_STUCK_COUNT = 65
+EXPECTED_CONTEXT_STUCK_COUNT = 63
 
 LONG_VOICE_GREETING = 'Hallo! Sag mir einfach, wobei du Hilfe brauchst. Ich antworte dir laut und höre danach weiter zu.'
 SHORT_VOICE_GREETING = 'Hey! Wobei brauchst du Hilfe?'
@@ -26,6 +26,10 @@ FORBIDDEN_BASE_SENTENCES = {
     'Öffne oben den Reiter „Aufgaben“.',
     'Wähle darunter „Aktuelles“.',
     'Wähle „Easy-Plan“.',
+    'Wähle „Alles ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.',
+    'Wähle jetzt, ob du eine Durchführung dokumentieren, eine falsche Durchführung stornieren oder nur einen Nachweis ansehen möchtest.',
+    'Im Durchführungsnachweis findest du den Bereich „Maßnahmen ohne Zeitangabe“.',
+    'Öffne im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“.',
 }
 
 REQUIRED_BASE_SENTENCES = {
@@ -33,6 +37,30 @@ REQUIRED_BASE_SENTENCES = {
     '„Wichtig für Schichtübergabe“ ist bei Bedarfsmedikation bereits automatisch ausgewählt. Lass den Haken so. In das Textfeld darunter trägst du kurz den Anlass der Gabe ein.',
     'Öffne beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“.',
     'Wenn die Maßnahme für die nächste Schicht wichtig ist, hake „Wichtig für Schichtübergabe“ an. Wenn nicht, lässt du den Haken frei. In das große Textfeld darunter schreibst du kurz, was passiert ist und was du gemacht beziehungsweise durchgeführt hast.',
+    'Im Durchführungsnachweis findest du „Maßnahmen ohne Zeitangabe“. Klicke auf den kleinen Pfeil links daneben, um den Bereich zu öffnen.',
+    'Suche im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ und klicke auf den kleinen Pfeil links daneben.',
+    'Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.',
+    'Öffne die Stammdaten des gewünschten Bewohners.',
+    'Klicke in der grauen Leiste auf „Dateiablage“.',
+}
+
+FORBIDDEN_PUBLISHED_FRAGMENTS = (
+    'Berichte ist ein Hauptbereich',
+    'Hauptbereiche Berichte, Doku-Erweitert, Doku, Planung und Analyse',
+    'auf derselben Ebene wie Berichte und Doku',
+    'Berichte lassen sich außerdem nach Zeitraum, Kategorie und weiteren Kriterien auswerten',
+    'Wähle „Alles ausklappen“',
+    'Wähle jetzt, ob du eine Durchführung dokumentieren, eine falsche Durchführung stornieren oder nur einen Nachweis ansehen möchtest',
+    'Was möchtest du im Durchführungsnachweis machen: eine Bedarfsmedikation dokumentieren',
+    'Sag mir kurz, was du im Durchführungsnachweis machen möchtest: Bedarfsmedikation',
+    'Wähle die passende Berichtskategorie aus. Danach öffnet sich das Fenster für den Berichtseintrag',
+)
+
+REQUIRED_PUBLISHED_SENTENCES = {
+    'Wobei brauchst du Hilfe? Nenne bitte den Bereich oder die Funktion, zum Beispiel Vitalwerte, Berichte, Visiten, Formulare oder An-/Abwesenheiten.',
+    'Der Durchführungsnachweis ist geöffnet. Sag mir einfach, was du dort machen möchtest.',
+    'Sag mir bitte, was du im geöffneten Durchführungsnachweis machen möchtest.',
+    'Bericht ist kein Hauptbereich der grünen Leiste. Öffne beim gewünschten Bewohner oben Doku und wähle im weißen Funktionsband direkt darunter Bericht.',
 }
 
 
@@ -137,8 +165,19 @@ def validate_base_catalog(catalog: dict) -> None:
     if any('Doku erweitert' in text for text in raw_texts):
         raise SystemExit('legacy spelling "Doku erweitert" is forbidden in the base speech catalog')
     generated_from = str(catalog.get('generatedFrom') or '')
-    if '40 approved dokohilf_guides' not in generated_from or '129 unique approved step texts' not in generated_from:
+    if '41 approved dokohilf_guides' not in generated_from or '133 unique approved step texts' not in generated_from:
         raise SystemExit('base speech catalog provenance/count metadata is stale')
+
+
+def validate_published_entries(entries: list[dict]) -> None:
+    texts = {str(entry.get('text') or '') for entry in entries}
+    joined = '\n'.join(texts)
+    stale = [fragment for fragment in FORBIDDEN_PUBLISHED_FRAGMENTS if fragment in joined]
+    if stale:
+        raise SystemExit(f'stale or unconfirmed speech text is forbidden in published catalog: {stale}')
+    missing = sorted(REQUIRED_PUBLISHED_SENTENCES.difference(texts))
+    if missing:
+        raise SystemExit(f'required voice/chat parity speech sentences are missing: {missing}')
 
 
 def main() -> None:
@@ -192,13 +231,11 @@ def main() -> None:
 
     validate_base_catalog(catalogs['base'])
 
-    # Keep every established catalog, completion and Dateiablage position untouched.
-    # Context-stuck help is appended last so every previously published numbered WAV
-    # keeps exactly the same meaning.
     entries = merged_entries(*catalogs.values(), completion_catalog, file_storage_catalog, context_stuck_catalog)
     static_speech_count = len(entries)
     if not static_speech_count:
         raise SystemExit('static speech catalog is empty')
+    validate_published_entries(entries)
     published_texts = {str(entry.get('text') or '') for entry in entries}
     if SHORT_VOICE_GREETING not in published_texts:
         raise SystemExit('approved short voice greeting is missing from the published static catalog')
