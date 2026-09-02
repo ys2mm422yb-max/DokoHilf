@@ -6,7 +6,7 @@
     '/functions/v1/dokohilf-ai-router',
     '/functions/v1/dokohilf-chat-router',
   ];
-  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260901-spatial-orientation-v59-1';
+  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260902-spatial-orientation-v60-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -48,6 +48,21 @@
       || /\b(suche|such)\b.*\b(wo|nicht)\b/.test(n);
   }
 
+  function isWhiteFunctionBandReference(text, options = {}) {
+    const n = normalize(text);
+    const explicitBand = /\b(?:weiss(?:e|es)?\s*)?(?:funktions|funktionen|funktion)\s*band\b/.test(n)
+      || /\b(?:weiss(?:e|es)?\s*)?funktionsleiste\b/.test(n)
+      || /\b(weisse leiste|weisses band|untere leiste)\b/.test(n);
+    if (explicitBand) return true;
+
+    // "weiße Liste" ist eine beobachtete Spracherkennungsvariante von "weiße Leiste".
+    // Sie bleibt absichtlich auf den laufenden bestätigten DNF-Orientierungsschritt begrenzt,
+    // weil "Liste" außerhalb dieses Kontexts fachlich etwas anderes bedeuten kann.
+    return options.allowContextualListAlias === true
+      && isLocationQuestion(n)
+      && /\bweiss(?:e|es)?\s+liste\b/.test(n);
+  }
+
   function greenMainBarHelp() {
     return 'Die feste grüne Hauptleiste ist ganz oben im Vivendi-Fenster. Diese feste grüne Leiste enthält unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt darunter befindet sich das weiße Funktionsband des ausgewählten Hauptbereichs. Bericht und Durchführungsnachweis gehören unter Doku zu diesem unteren Funktionsband; Bericht ist kein Hauptbereich der grünen Leiste.';
   }
@@ -66,10 +81,11 @@
 
   function orientationHelp(text) {
     const n = normalize(text);
-    const mentionsKnownBar = /\b(feste leiste|hauptleiste|grune leiste|funktionsband|weisse leiste|weisses band|untere leiste|funktionsleiste)\b/.test(n);
+    const asksAboutWhiteFunctionBand = isWhiteFunctionBandReference(n);
+    const mentionsKnownBar = /\b(feste leiste|hauptleiste|grune leiste)\b/.test(n) || asksAboutWhiteFunctionBand;
     if (!isLocationQuestion(n) && !mentionsKnownBar) return '';
 
-    if (/\b(funktionsband|weisse leiste|weisses band|untere leiste|funktionsleiste)\b/.test(n)) {
+    if (asksAboutWhiteFunctionBand) {
       return whiteFunctionBandHelp();
     }
     if (/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) {
@@ -170,8 +186,8 @@
     if (!isDurchfuehrungsDokuStep(parsed)) return null;
     const n = normalize(text);
 
-    if (/\b(funktionsband|weisse leiste|weisses band|untere leiste|funktionsleiste)\b/.test(n)) {
-      return payloadFor(parsed, whiteFunctionBandHelp(), 'confirmed-spatial-orientation-v59');
+    if (isWhiteFunctionBandReference(n, { allowContextualListAlias: true })) {
+      return payloadFor(parsed, whiteFunctionBandHelp(), 'confirmed-spatial-orientation-v60');
     }
 
     // Im laufenden Doku-Schritt ist mit „Leiste“ eindeutig die zuvor genannte
@@ -219,7 +235,7 @@
     const userText = latestUser(parsed);
 
     const scopedOrientation = durchfuehrungsStepOrientation(parsed, userText);
-    if (scopedOrientation) return localResponse(scopedOrientation, 'durchfuehrung-v57');
+    if (scopedOrientation) return localResponse(scopedOrientation, 'durchfuehrung-v60');
 
     const delegatedBody = smartHelpBody(parsed, userText);
     if (delegatedBody) return previousFetch(input, { ...init, body: delegatedBody });
@@ -232,6 +248,7 @@
     revision: DURCHFUEHRUNG_ORIENTATION_REVISION,
     normalize,
     isLocationQuestion,
+    isWhiteFunctionBandReference,
     greenMainBarHelp,
     whiteFunctionBandHelp,
     dokuTabHelp,
