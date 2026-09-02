@@ -78,6 +78,20 @@
       || /\b(kann|konnte)\b.*\b(nicht finden|nicht sehen|nicht offnen)\b/.test(n);
   }
 
+  function isFalseSignOffCorrection(text) {
+    const n = normalize(text);
+    if (!hasCompactTerm(n, 'abgezeichnet')) return false;
+    return /\b(falsch|versehentlich|irrtumlich)\b/.test(n);
+  }
+
+  function hasSignOffIntent(text) {
+    const n = normalize(text);
+    if (!n || isFalseSignOffCorrection(n)) return false;
+    return hasCompactTerm(n, 'abzeichnen', 'abzuzeichnen')
+      || /\b(zeichne|zeichnest|zeichnet|zeichn)\b.*\bab\b/.test(n)
+      || (hasCompactTerm(n, 'abgezeichnet') && /\b(werden|mussen|sollen)\b/.test(n));
+  }
+
   function hasEffectivenessTerm(text) {
     const n = normalize(text);
     return /\bwirksamkeit\b/.test(n) || hasCompactTerm(n, 'Wirksamkeitskontrolle');
@@ -101,6 +115,8 @@
   function inferTaskGuide(text) {
     const n = normalize(text);
     if (!n || isLocationQuestion(n)) return '';
+    if (isFalseSignOffCorrection(n)) return 'durchfuehrung-storno';
+    if (hasSignOffIntent(n)) return 'durchfuehrungsnachweis-finden';
     if (hasEffectivenessTerm(n)
       && (/\b(bedarf|medikation)\b/.test(n) || hasNeedMedicationTerm(n))) {
       return 'bedarfsmedikation-wirksamkeitskontrolle';
@@ -118,6 +134,8 @@
 
   function inferNavigationGuide(text) {
     const n = normalize(text);
+    if (isFalseSignOffCorrection(n)) return 'durchfuehrung-storno';
+    if (hasSignOffIntent(n)) return 'durchfuehrungsnachweis-finden';
     if (!hasNavigationIntent(n) || hasEntryAction(n)) return '';
 
     if (/\b(berichte auswerten|berichte suchen|nach berichten suchen|abfrage)\b/.test(n)
@@ -137,18 +155,18 @@
     }
     if (hasCompactTerm(n, 'Doku-Erweitert')) return 'doku-erweitert-finden';
     if (hasCompactTerm(n, 'Durchführungsnachweis', 'Durchfuehrungsnachweis')) return 'durchfuehrungsnachweis-finden';
-    if (/\b(puls|temperatur|sauerstoff|spo2)\b/.test(n)
+    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)
       || hasCompactTerm(n, 'Blutdruck', 'Blutzucker', 'Sauerstoffsättigung', 'Sauerstoffsaettigung', 'Atemfrequenz', 'Atemalkohol', 'Vitalwert', 'Vitalwerte')) {
       return 'vitalwerte-finden';
     }
     if (/\b(bericht|berichte)\b/.test(n) || hasCompactTerm(n, 'Berichtseintrag')) return 'berichte-finden';
-    if (/\b(visite|visiten)\b/.test(n) || hasCompactTerm(n, 'Sprechstunde')) return 'visiten-finden';
-    if (/\b(medikation|medikament|medikamente)\b/.test(n) || hasCompactTerm(n, 'Medikationsplan')) return 'medikation-finden';
-    if (/\b(formular|formulare)\b/.test(n)
+    if (/\b(visite|visiten|sprechstunde)\b/.test(n) || hasCompactTerm(n, 'Sprechstunde')) return 'visiten-finden';
+    if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n) || hasCompactTerm(n, 'Medikationsplan')) return 'medikation-finden';
+    if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)
       || hasCompactTerm(n, 'Anfallsprotokoll', 'Fallgespräch', 'Fallgespraech', 'Gesprächsprotokoll', 'Gespraechsprotokoll', 'Sturzprotokoll')) {
       return 'formulare-finden';
     }
-    if (/\b(anwesenheit|abwesenheit)\b/.test(n) || hasCompactTerm(n, 'An-/Abwesenheit', 'An-/Abwesenheiten')) return 'anwesenheiten-finden';
+    if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n) || hasCompactTerm(n, 'An-/Abwesenheit', 'An-/Abwesenheiten')) return 'anwesenheiten-finden';
     if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabe-finden';
     if (hasCompactTerm(n, 'Notfallblatt', 'Notfallbogen')) return 'notfallblatt-finden';
     if (hasCompactTerm(n, 'Stammdaten', 'Bewohnerübersicht', 'Bewohneruebersicht')) return 'stammdaten-finden';
@@ -207,6 +225,8 @@
     normalize,
     compactNormalize,
     hasCompactTerm,
+    isFalseSignOffCorrection,
+    hasSignOffIntent,
     helpLike,
     isLocationQuestion,
     inferTaskGuide,
