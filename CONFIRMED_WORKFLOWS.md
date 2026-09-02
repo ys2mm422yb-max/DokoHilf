@@ -1,11 +1,11 @@
 # DokoHilf – bestätigte Arbeitsabläufe
 
 **Status:** verbindliche fachliche Quelle  
-**Stand:** 1. September 2026
+**Stand:** 2. September 2026
 
 Diese Datei enthält ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege. Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien. **Fotos und Screenshots selbst werden niemals in GitHub oder Supabase gespeichert; aus Bildhinweisen werden ausschließlich anonymisierte textliche Klickwege übernommen.**
 
-Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt. Am 12. August 2026 wurde für „Bericht anlegen“ bestätigt, dass das große Textfeld bereits in der Berichtseingabemaske unten sichtbar ist und sich nicht erst durch die Auswahl der Berichtskategorie öffnet. Ebenfalls bestätigt wurde, dass bei wichtigen Berichten **Wichtig für Schichtübergabe** angehakt wird und der Bericht direkt in das große Textfeld darunter eingetragen wird. Am 13. August 2026 wurde für die Übergabeansicht zusätzlich bestätigt, dass die Schaltfläche **Alle ausklappen** rechts neben **Alle anzeigen** liegt und nach jeder Änderung des Zeitraums samt Aktualisierung erneut gewählt werden muss, damit alle Einträge wieder vollständig geöffnet sind. Am 22. August 2026 wurde zusätzlich bestätigt, dass jeder aktuelle Wunsch, etwas **abzuzeichnen**, zum **Durchführungsnachweis des richtigen Bewohners** führt; ausdrücklich gilt das auch für Medikamente. Die normale Medikationsübersicht unter **Doku-Erweitert → Medikation** bleibt davon getrennt und ausschließlich zum Ansehen. Am 1. September 2026 wurde die Navigationshierarchie präzisiert: **Bericht** ist kein Hauptbereich der grünen Hauptleiste, sondern erscheint nach Auswahl von **Doku** im weißen Funktionsband direkt darunter; **Doku** liegt in der bestätigten Anordnung zwischen **Planung** und **Doku-Erweitert**.
+Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durchstreichen, Durchführung stornieren, Notfallblatt, Formulare und Übergabe/„Was war los?“ fachlich erneut bestätigt. Am 8. August 2026 wurden für Visiten zusätzlich die Arztauswahl über das Filtersymbol und die Ortsoption „per Mail“ bestätigt. Ebenfalls am 8. August wurden die Abgrenzung zwischen Berichtskorrektur und Folgebericht sowie die in der lokalen Vitalwert-Auswahl vorhandenen Werte ergänzt. Am 9. August wurden die verschachtelte Bereichsorientierung, die feste grüne Hauptleiste sowie Bedarfsmedikationsgabe, deren spätere Wirksamkeitskontrolle und „Maßnahmen ohne Zeitangabe“ im Durchführungsnachweis ergänzt. Am 12. August 2026 wurde für „Bericht anlegen“ bestätigt, dass das große Textfeld bereits in der Berichtseingabemaske unten sichtbar ist und sich nicht erst durch die Auswahl der Berichtskategorie öffnet. Ebenfalls bestätigt wurde, dass bei wichtigen Berichten **Wichtig für Schichtübergabe** angehakt wird und der Bericht direkt in das große Textfeld darunter eingetragen wird. Am 13. August 2026 wurde für die Übergabeansicht zusätzlich bestätigt, dass die Schaltfläche **Alle ausklappen** rechts neben **Alle anzeigen** liegt und nach jeder Änderung des Zeitraums samt Aktualisierung erneut gewählt werden muss, damit alle Einträge wieder vollständig geöffnet sind. Am 22. August 2026 wurde zusätzlich bestätigt, dass jeder aktuelle Wunsch, etwas **abzuzeichnen**, zum **Durchführungsnachweis des richtigen Bewohners** führt; ausdrücklich gilt das auch für Medikamente. Die normale Medikationsübersicht unter **Doku-Erweitert → Medikation** bleibt davon getrennt und ausschließlich zum Ansehen. Am 1. September 2026 wurde die Navigationshierarchie präzisiert: **Bericht** ist kein Hauptbereich der grünen Hauptleiste, sondern erscheint nach Auswahl von **Doku** im weißen Funktionsband direkt darunter; **Doku** liegt in der bestätigten Anordnung zwischen **Planung** und **Doku-Erweitert**. Am 2. September 2026 wurde der Vitalwerte-Bestand räumlich abgeglichen: **Doku-Erweitert → Vitalwerte** bleibt gültig, zusätzlich ist **Doku → Vitalwerte** als Zugang bestätigt. Für mehrere Werte bleibt **Vitalwerte Sammelerf.** unter Doku-Erweitert bestätigt; aus einer bereits geöffneten Vitalwerte-Übersicht kann außerdem **Sammelerfassung** gewählt werden.
 
 ## Allgemeine Regeln
 
@@ -32,6 +32,7 @@ Am 7. August 2026 wurden die Bereiche Visite, Bericht, Vitalwerte, Bericht durch
 - In der bestätigten Anordnung liegt **Doku** zwischen **Planung** und **Doku-Erweitert**.
 - Nach Auswahl eines Hauptbereichs erscheinen **direkt darunter die zu diesem Bereich gehörenden Symbole beziehungsweise Funktionen in einem weißen Funktionsband**.
 - Unter **Doku-Erweitert** befinden sich die bestätigten Bereiche **Vitalwerte**, **Visiten**, **Medikation**, **Formulare** und **An-/Abwesenheiten**.
+- **Vitalwerte** sind zusätzlich über **Doku → Vitalwerte** erreichbar. Der Weg über **Doku-Erweitert → Vitalwerte** bleibt ebenfalls bestätigt.
 - Unter **Doku** befinden sich im weißen Funktionsband unter anderem die bestätigten Funktionen **Bericht** und **Durchführungsnachweis**. **Bericht** ist kein Hauptbereich der grünen Hauptleiste.
 - Unter **Analyse** befindet sich der bestätigte Einstieg **Was war los?** für die Übergabeansicht.
 - **Planung** selbst ist als Hauptbereich in der festen grünen Leiste bestätigt. Der genaue Ablauf von **Easy-Plan** bleibt weiterhin fachlich offen und wird nicht erfunden.
@@ -62,6 +63,7 @@ Bestätigte Orientierungsanker:
 - Nach Auswahl eines Hauptbereichs erscheinen direkt darunter die dazugehörigen Symbole beziehungsweise Funktionen im weißen Funktionsband.
 - **Bericht** und **Durchführungsnachweis** liegen unter **Doku** im weißen Funktionsband; **Bericht** ist kein Hauptbereich der grünen Hauptleiste.
 - **Vitalwerte, Visiten, Medikation, Formulare und An-/Abwesenheiten** liegen unter **Doku-Erweitert**.
+- **Vitalwerte** können außerdem über **Doku** geöffnet werden; der Weg über **Doku-Erweitert** bleibt bestätigt.
 - **Bedarfsmedikation** und **Maßnahmen ohne Zeitangabe** werden im **Durchführungsnachweis** gefunden.
 - Die Wirksamkeitskontrolle einer Bedarfsmedikation wird nach der dafür vorgesehenen Zeit automatisch im **Durchführungsnachweis** fällig.
 
@@ -197,6 +199,8 @@ Wenn direkt nach der später fälligen Wirksamkeitskontrolle gefragt wird, muss 
 8. Nur bei Bedarf vorhandene Zusatzangaben wie Messart, Qualität oder Bemerkung ergänzen.
 9. Mit OK bestätigen und den Wert kontrollieren.
 
+**Bestätigter alternativer Zugang:** Die Vitalwerte-Übersicht kann auch über **Doku → Vitalwerte** geöffnet werden. Ab der geöffneten Vitalwerte-Übersicht bleibt der Ablauf identisch.
+
 Zusätzliche Felder oder Einheiten nicht pauschal vorgeben, sondern so übernehmen, wie sie in der geöffneten Vivendi-Maske angezeigt werden.
 
 ## Mehrere Vitalwerte erfassen
@@ -209,6 +213,8 @@ Zusätzliche Felder oder Einheiten nicht pauschal vorgeben, sondern so übernehm
 6. Speichern und kontrollieren.
 
 **Vitalwerte** und **Vitalwerte Sammelerf.** sind zwei getrennte Menüeinträge.
+
+**Bestätigter alternativer Zugang:** Ist die **Vitalwerte**-Übersicht bereits geöffnet, kann dort **Sammelerfassung** gewählt werden. Der direkte Einstieg über **Doku-Erweitert → Vitalwerte Sammelerf.** bleibt ebenfalls bestätigt.
 
 ## An- und Abwesenheit erfassen
 
