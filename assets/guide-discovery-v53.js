@@ -4,7 +4,7 @@
   if (window.__DOKOHILF_GUIDE_DISCOVERY_V53__) return;
   window.__DOKOHILF_GUIDE_DISCOVERY_V53__ = true;
 
-  const REVISION = '20260823-guide-discovery-v53-1';
+  const REVISION = '20260902-confirmed-term-input-v61-1';
   const AI_MARKERS = Object.freeze([
     '/functions/v1/dokohilf-ai',
     '/functions/v1/dokohilf-ai-router',
@@ -75,18 +75,30 @@
       .trim();
   }
 
+  function compactNormalize(value) {
+    return normalize(value).replace(/[\s/-]+/g, '');
+  }
+
+  function hasCompactTerm(value, ...terms) {
+    const compact = compactNormalize(value);
+    return terms.some(term => {
+      const wanted = compactNormalize(term);
+      return wanted && compact.includes(wanted);
+    });
+  }
+
   function isFalseSignOff(value) {
     const text = normalize(value);
-    return /\b(falsch|versehentlich|irrtumlich)\b.*\babgezeichnet\b/.test(text)
-      || /\babgezeichnet\b.*\b(falsch|versehentlich|irrtumlich)\b/.test(text);
+    return /\b(falsch|versehentlich|irrtumlich)\b/.test(text)
+      && hasCompactTerm(text, 'abgezeichnet');
   }
 
   function hasSignOffIntent(value) {
     const text = normalize(value);
     if (!text || isFalseSignOff(text)) return false;
-    return /\b(abzeichnen|abzuzeichnen)\b/.test(text)
+    return hasCompactTerm(text, 'abzeichnen', 'abzuzeichnen')
       || /\b(zeichne|zeichnest|zeichnet|zeichn)\b.*\bab\b/.test(text)
-      || /\babgezeichnet\b.*\b(werden|mussen|sollen)\b/.test(text);
+      || (hasCompactTerm(text, 'abgezeichnet') && /\b(werden|mussen|sollen)\b/.test(text));
   }
 
   function smartTargets(value) {
@@ -96,14 +108,16 @@
     if (isFalseSignOff(text)) return ['durchfuehrung-storno'];
     if (hasSignOffIntent(text)) return ['durchfuehrungsnachweis-oeffnen'];
 
-    if (/\b(verschrieben|bericht korrigieren|bericht durchstreichen|falscher bericht|falschen bericht)\b/.test(text)) {
+    if (/\b(verschrieben|bericht korrigieren|falscher bericht|falschen bericht)\b/.test(text)
+      || hasCompactTerm(text, 'Bericht durchstreichen')) {
       return ['bericht-durchstreichen'];
     }
-    if (/\b(arztbrief|entlassungsbrief|laborwerte|betreuerausweis|dateiablage)\b/.test(text)) return ['dateiablage'];
-    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|sauerstoffsattigung|spo2|atemfrequenz|atemalkohol)\b/.test(text)) {
+    if (hasCompactTerm(text, 'Arztbrief', 'Entlassungsbrief', 'Laborwerte', 'Betreuerausweis', 'Dateiablage')) return ['dateiablage'];
+    if (/\b(puls|temperatur|sauerstoff|spo2)\b/.test(text)
+      || hasCompactTerm(text, 'Blutdruck', 'Blutzucker', 'Sauerstoffsättigung', 'Sauerstoffsaettigung', 'Atemfrequenz', 'Atemalkohol')) {
       return ['vitalwerte'];
     }
-    if (/\b(notfallbogen)\b/.test(text)) return ['notfallblatt'];
+    if (hasCompactTerm(text, 'Notfallbogen')) return ['notfallblatt'];
     if (/\b(was war los)\b/.test(text)) return ['uebergabeformular'];
     return [];
   }
@@ -319,6 +333,8 @@
   window.DokoHilfGuideDiscoveryV53 = Object.freeze({
     revision: REVISION,
     normalize,
+    compactNormalize,
+    hasCompactTerm,
     isFalseSignOff,
     hasSignOffIntent,
     smartTargets,
