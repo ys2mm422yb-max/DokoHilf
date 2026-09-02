@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const smartSource = await readFile(new URL('../assets/smart-help-v29.js', import.meta.url), 'utf8');
 const orientationSource = await readFile(new URL('../assets/orientation-help-v29.js', import.meta.url), 'utf8');
+const discoverySource = await readFile(new URL('../assets/guide-discovery-v53.js', import.meta.url), 'utf8');
 const serviceWorker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const navigationCatalog = JSON.parse(await readFile(new URL('../assets/voice-navigation-catalog-v29.json', import.meta.url), 'utf8'));
 const navigationSpeech = new Set((navigationCatalog.entries || []).map(entry => entry.text));
@@ -29,6 +30,19 @@ function loadOrientation() {
   };
   new Function('window', 'Request', 'Response', orientationSource)(window, Request, Response);
   return window.DokoHilfOrientationHelpV29;
+}
+
+function loadDiscovery() {
+  const window = {
+    fetch: async () => new Response('{}', { status: 200 }),
+    addEventListener: () => {},
+  };
+  const document = {
+    readyState: 'loading',
+    addEventListener: () => {},
+  };
+  new Function('window', 'document', 'Request', 'Response', discoverySource)(window, document, Request, Response);
+  return window.DokoHilfGuideDiscoveryV53;
 }
 
 test('bestätigte zusammengesetzte Navigationsbegriffe funktionieren getrennt oder verbunden', () => {
@@ -74,6 +88,25 @@ test('abzeichnen bleibt robust und abhaken wird nicht versehentlich zum Abzeichn
   assert.equal(smart.inferTaskGuide('Ich habe falsch ab gezeichnet'), 'durchfuehrung-storno');
   assert.equal(smart.inferTaskGuide('Medikamente abhaken'), '');
   assert.equal(smart.inferNavigationGuide('Medikamente abhaken'), '');
+});
+
+test('Bibliotheks-Intent erkennt dieselben bestätigten Split-Varianten', () => {
+  const discovery = loadDiscovery();
+  const cases = new Map([
+    ['Medikamente ab zeichnen', ['durchfuehrungsnachweis-oeffnen']],
+    ['falsch ab gezeichnet', ['durchfuehrung-storno']],
+    ['Bericht durch streichen', ['bericht-durchstreichen']],
+    ['Arzt Brief', ['dateiablage']],
+    ['Entlassungs Brief', ['dateiablage']],
+    ['Blut Druck', ['vitalwerte']],
+    ['Sauerstoff Sättigung', ['vitalwerte']],
+    ['Notfall Bogen', ['notfallblatt']],
+  ]);
+  for (const [input, expected] of cases) {
+    assert.deepEqual(discovery.smartTargets(input), expected, input);
+  }
+  assert.deepEqual(discovery.smartTargets('Medikamente abhaken'), []);
+  assert.match(discovery.revision, /confirmed-term-input-v61/);
 });
 
 test('Split-Varianten liefern exakt dieselbe bestätigte Orientierung wie ihre kanonische Schreibweise', () => {
