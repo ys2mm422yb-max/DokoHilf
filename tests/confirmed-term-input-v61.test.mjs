@@ -63,6 +63,7 @@ test('fachliche Grenzen bleiben trotz robuster Schreibweise erhalten', () => {
   const smart = loadSmart();
   assert.equal(smart.inferNavigationGuide('Wo ist die Bericht Suche?'), '');
   assert.equal(smart.inferNavigationGuide('Wo ist EasyPlan?'), '');
+  assert.equal(smart.inferNavigationGuide('Wo ist Easy-Plan?'), '');
   assert.equal(smart.inferNavigationGuide('Wo sind Aufgaben Aktuelles?'), '');
 });
 
@@ -75,29 +76,32 @@ test('abzeichnen bleibt robust und abhaken wird nicht versehentlich zum Abzeichn
   assert.equal(smart.inferNavigationGuide('Medikamente abhaken'), '');
 });
 
-test('bestehende Orientierungstexte reagieren auf Split-Varianten ohne neue Sprachsätze', () => {
+test('Split-Varianten liefern exakt dieselbe bestätigte Orientierung wie ihre kanonische Schreibweise', () => {
   const orientation = loadOrientation();
-  const inputs = [
-    'Wo finde ich den Durchführungs Nachweis?',
-    'Wo ist DokuErweitert?',
-    'Wo finde ich Bedarfs Medikation?',
-    'Wo finde ich die Wirksamkeits Kontrolle der Bedarfs Medikation?',
-    'Wo finde ich Maßnahmen ohne Zeit Angabe?',
-    'Wo finde ich Vital Werte?',
-    'Wo finde ich den Medikations Plan?',
-    'Wo ist das Sturz Protokoll?',
-    'Wo ist das Notfall Blatt?',
-    'Wo sind die Stamm Daten?',
-    'Wo ist die Bewohner Übersicht?',
+  const cases = [
+    ['Wo finde ich den Durchführungs Nachweis?', 'Wo finde ich den Durchführungsnachweis?'],
+    ['Wo ist DokuErweitert?', 'Wo ist Doku-Erweitert?'],
+    ['Wo finde ich Bedarfs Medikation?', 'Wo finde ich Bedarfsmedikation?'],
+    ['Wo finde ich die Wirksamkeits Kontrolle der Bedarfs Medikation?', 'Wo finde ich die Wirksamkeitskontrolle der Bedarfsmedikation?'],
+    ['Wo finde ich Maßnahmen ohne Zeit Angabe?', 'Wo finde ich Maßnahmen ohne Zeitangabe?'],
+    ['Wo finde ich Vital Werte?', 'Wo finde ich Vitalwerte?'],
+    ['Wo finde ich den Medikations Plan?', 'Wo finde ich den Medikationsplan?'],
+    ['Wo ist das Sturz Protokoll?', 'Wo ist das Sturzprotokoll?'],
+    ['Wo ist das Notfall Blatt?', 'Wo ist das Notfallblatt?'],
+    ['Wo sind die Stamm Daten?', 'Wo sind die Stammdaten?'],
+    ['Wo ist die Bewohner Übersicht?', 'Wo ist die Bewohnerübersicht?'],
   ];
 
-  for (const input of inputs) {
-    const text = orientation.orientationHelp(input);
-    assert.ok(text, input);
-    assert.ok(navigationSpeech.has(text), `${input}: Antwort muss vorhandene statische Supertonic-F1-Sprache bleiben`);
+  for (const [split, canonical] of cases) {
+    const splitText = orientation.orientationHelp(split);
+    const canonicalText = orientation.orientationHelp(canonical);
+    assert.ok(canonicalText, canonical);
+    assert.equal(splitText, canonicalText, split);
   }
+
   assert.equal(navigationCatalog.voice, 'Supertonic-F1');
   assert.equal(navigationCatalog.entries.length, 17);
+  assert.ok(navigationSpeech.has(orientation.whiteFunctionBandHelp()), 'bestehender statischer Orientierungsanker bleibt katalogisiert');
 });
 
 test('v60 Listen-Ausnahme bleibt eng und wird nicht als allgemeine Fuzzy-Erkennung ausgeweitet', () => {
