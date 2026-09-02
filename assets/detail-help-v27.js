@@ -25,7 +25,6 @@
     'bericht-neu': { title: 'Neuen Berichtseintrag erfassen' },
     'bericht-durchstreichen': { title: 'Bestehenden Berichtseintrag durchstreichen' },
     'bericht-folgebericht': { title: 'Folgebericht erstellen' },
-    berichtssuche: { title: 'Nach Berichtseinträgen suchen' },
   });
 
   const session = {
