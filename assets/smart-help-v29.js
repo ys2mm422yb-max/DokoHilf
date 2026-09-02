@@ -140,7 +140,8 @@
 
     if (/\b(berichte auswerten|berichte suchen|nach berichten suchen|abfrage)\b/.test(n)
       || hasCompactTerm(n, 'Berichtssuche', 'Bericht Suche')) return '';
-    if (/\b(aufgaben|aktuelles)\b/.test(n) || hasCompactTerm(n, 'Easy Plan')) return '';
+    if (/\b(aufgaben|aktuelles|easy plan|easy-plan|easyplan)\b/.test(n)
+      || hasCompactTerm(n, 'Easy Plan')) return '';
 
     if (hasEffectivenessTerm(n)
       && (/\b(bedarf|medikation)\b/.test(n) || hasNeedMedicationTerm(n))) {
