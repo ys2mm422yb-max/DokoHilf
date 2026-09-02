@@ -162,7 +162,7 @@ Wenn direkt nach der später fälligen Wirksamkeitskontrolle gefragt wird, muss 
 
 1. Beim gewünschten Bewohner ganz oben in der festen grünen Leiste **Doku** öffnen.
 2. Darunter **Durchführungsnachweis** öffnen.
-3. Im Durchführungsnachweis **Maßnahmen ohne Zeitangabe** öffnen.
+3. Im Durchführungsnachweis **Maßnahmen ohne Zeitangabe** suchen und auf den kleinen Pfeil links daneben klicken.
 4. Gewünschte Maßnahme auswählen, zum Beispiel **Klienten-Team Sitzung** oder **Krise**.
 5. Im Pop-up Datum und Uhrzeit prüfen und nur ändern, wenn der tatsächliche Dokumentationszeitpunkt abweicht.
 6. Passende Kategorie auswählen.
