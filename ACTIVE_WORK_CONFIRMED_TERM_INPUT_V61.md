@@ -23,14 +23,15 @@ Der gleiche starre Wortabgleich wurde an mehreren Stellen gefunden:
 
 1. `assets/orientation-help-v29.js` – räumliche Hilfen und bestätigte Bereichsbegriffe.
 2. `assets/smart-help-v29.js` – deterministische Guide-Auswahl für freie Chat-/Spracheingaben.
-3. `assets/guide-discovery-v53.js` – insbesondere Intent-Sonderfälle der Bibliothek; die normale Token-Suche ist bei getrennten Wörtern bereits toleranter.
+3. `assets/guide-discovery-v53.js` – Intent-Sonderfälle der Bibliothek; die normale Token-Suche ist bei getrennten Wörtern bereits toleranter.
 4. `supabase/functions/dokohilf-chat-router/index.ts` – serverseitige deterministische Navigation und Abzeichnen-Erkennung.
 
-## Umsetzung in diesem Frontend-Block
+## Umsetzung in diesem PWA-Block
 
-- Gemeinsame kompakte Vergleichsform innerhalb der betroffenen Frontend-Module: Leerzeichen, Bindestriche und Schrägstriche werden nur für den Vergleich bekannter Begriffe ignoriert.
+- Kompakte Vergleichsform innerhalb der drei betroffenen Frontend-Module: Leerzeichen, Bindestriche und Schrägstriche werden nur für den Vergleich bereits bestätigter Begriffe ignoriert.
 - Keine allgemeine unscharfe oder phonetische Erkennung. Wörter werden nicht frei geraten.
 - Bereits bestätigte Begriffe wie Durchführungsnachweis, Doku-Erweitert, Bedarfsmedikation, Wirksamkeitskontrolle, Maßnahmen ohne Zeitangabe, Vitalwerte, Blutdruck, Blutzucker, Medikationsplan, Formular-/Protokollbegriffe, Notfallblatt, Stammdaten/Bewohnerübersicht und Dateiablage-Begriffe erhalten Split-/Join-Toleranz.
+- Die Bibliotheks-Sonderlogik erhält dieselbe Toleranz für bestätigte Intents wie Abzeichnen, Bericht durchstreichen, Dateiablage-, Vitalwerte- und Notfallblatt-Aliase.
 - Abzeichnen bleibt vor normaler Medikation priorisiert; getrenntes `ab zeichnen` beziehungsweise `ab gezeichnet` wird erkannt.
 - `abhaken` wird ausdrücklich **nicht** allgemein als Abzeichnen interpretiert.
 - Berichtssuche, Easy-Plan und Aufgaben · Aktuelles bleiben auch bei getrennter Schreibweise gesperrt/offen.
@@ -38,8 +39,10 @@ Der gleiche starre Wortabgleich wurde an mehreren Stellen gefunden:
 
 ## Noch separat zu bearbeiten
 
-Die Bibliotheks-Sonderlogik in `guide-discovery-v53.js` und der serverseitige `dokohilf-chat-router` zeigen denselben Fehlertyp. Sie werden nach diesem Frontend-Block separat gehärtet, damit eine Änderung am produktiven Router nicht mit einer PWA-Erkennungsänderung vermischt wird. Vor dem Router-Deploy wird der aktuelle Supabase-Stand erneut geprüft; danach gelten wieder Exact-PR-Head → Merge → Function-Deploy → Live-Prüfung.
+Der serverseitige `dokohilf-chat-router` zeigt denselben Fehlertyp. Er wird nach diesem PWA-Block separat gehärtet, damit ein produktiver Supabase-Function-Deploy nicht mit einer PWA-Erkennungsänderung vermischt wird. Vor diesem Router-Deploy wird der aktuelle Supabase-Stand erneut geprüft; danach gelten wieder Branch → Exact-PR-Head → Merge → Function-Deploy → Live-Prüfung.
+
+Danach folgen aus Issue #167 weiterhin die fachlich getrennten Orientierungsblöcke: Vitalwerte gegen den bestehenden bestätigten Ablauf abgleichen, An-/Abwesenheiten abgleichen und erst anschließend zusätzliche DNF-Details bearbeiten. Kein vorhandener Klickweg wird allein aufgrund räumlicher Bildinformation umgeschrieben.
 
 ## Release-Grenze
 
-Der v61-Branch darf nicht gemergt werden, bevor der vorherige v60-Merge (#177) tatsächlich nach `gh-pages` veröffentlicht und kontrolliert ist. Danach: vollständige Regressionen → exakter PR-Head → Merge → Veröffentlichung → Live-Prüfung.
+Der vorherige v60-Merge (#177) ist auf `main` und `gh-pages` veröffentlicht und kontrolliert. Für v61 gilt daher: vollständige Regressionen → exakter PR-Head → Merge → Veröffentlichung → Live-Prüfung.
