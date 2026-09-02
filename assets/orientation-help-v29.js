@@ -7,6 +7,7 @@
     '/functions/v1/dokohilf-chat-router',
   ];
   const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260902-spatial-orientation-v60-1';
+  const CONFIRMED_TERM_INPUT_REVISION = '20260902-confirmed-term-input-v61-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -18,6 +19,18 @@
       .replace(/[^a-z0-9\s/-]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
+  }
+
+  function compactNormalize(value) {
+    return normalize(value).replace(/[\s/-]+/g, '');
+  }
+
+  function hasCompactTerm(value, ...terms) {
+    const compact = compactNormalize(value);
+    return terms.some(term => {
+      const wanted = compactNormalize(term);
+      return wanted && compact.includes(wanted);
+    });
   }
 
   function requestUrl(input) {
@@ -52,7 +65,8 @@
     const n = normalize(text);
     const explicitBand = /\b(?:weiss(?:e|es)?\s*)?(?:funktions|funktionen|funktion)\s*band\b/.test(n)
       || /\b(?:weiss(?:e|es)?\s*)?funktionsleiste\b/.test(n)
-      || /\b(weisse leiste|weisses band|untere leiste)\b/.test(n);
+      || /\b(weisse leiste|weisses band|untere leiste)\b/.test(n)
+      || hasCompactTerm(n, 'Funktionsband', 'Funktionen Band', 'Funktionsleiste');
     if (explicitBand) return true;
 
     // "weiße Liste" ist eine beobachtete Spracherkennungsvariante von "weiße Leiste".
@@ -61,6 +75,25 @@
     return options.allowContextualListAlias === true
       && isLocationQuestion(n)
       && /\bweiss(?:e|es)?\s+liste\b/.test(n);
+  }
+
+  function isGreenMainBarReference(text) {
+    const n = normalize(text);
+    return /\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)
+      || hasCompactTerm(n, 'Hauptleiste', 'grüne Hauptleiste');
+  }
+
+  function hasEffectivenessTerm(text) {
+    const n = normalize(text);
+    return /\bwirksamkeit\b/.test(n) || hasCompactTerm(n, 'Wirksamkeitskontrolle');
+  }
+
+  function hasNeedMedicationTerm(text) {
+    return hasCompactTerm(text, 'Bedarfsmedikation', 'Bedarfsgabe', 'Bedarfsmedikament', 'Bedarf Medikament');
+  }
+
+  function hasMeasuresWithoutTimeTerm(text) {
+    return hasCompactTerm(text, 'Maßnahmen ohne Zeitangabe', 'Maßnahme ohne Zeitangabe');
   }
 
   function greenMainBarHelp() {
@@ -82,46 +115,49 @@
   function orientationHelp(text) {
     const n = normalize(text);
     const asksAboutWhiteFunctionBand = isWhiteFunctionBandReference(n);
-    const mentionsKnownBar = /\b(feste leiste|hauptleiste|grune leiste)\b/.test(n) || asksAboutWhiteFunctionBand;
+    const mentionsKnownBar = isGreenMainBarReference(n) || asksAboutWhiteFunctionBand;
     if (!isLocationQuestion(n) && !mentionsKnownBar) return '';
 
     if (asksAboutWhiteFunctionBand) {
       return whiteFunctionBandHelp();
     }
-    if (/\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)) {
+    if (isGreenMainBarReference(n)) {
       return greenMainBarHelp();
     }
-    if (/\b(wirksamkeitskontrolle|wirksamkeit).*\b(bedarf|bedarfsmedikation|medikation)\b|\b(bedarf|bedarfsmedikation).*\b(wirksamkeitskontrolle|wirksamkeit)\b/.test(n)) {
+    if (hasEffectivenessTerm(n)
+      && (/\b(bedarf|medikation)\b/.test(n) || hasNeedMedicationTerm(n))) {
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.';
     }
-    if (/\b(bedarfsmedikation|bedarfsgabe|bedarfsmedikament|bedarf medikament)\b/.test(n)) {
+    if (hasNeedMedicationTerm(n)) {
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du Bedarfsmedikation. Klicke auf den kleinen Pfeil links daneben, um sie zu öffnen.';
     }
-    if (/\b(massnahmen ohne zeitangabe|massnahme ohne zeitangabe)\b/.test(n)) {
+    if (hasMeasuresWithoutTimeTerm(n)) {
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du den Bereich Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um ihn zu öffnen.';
     }
-    if (/\b(doku erweitert|doku-erweitert)\b/.test(n)) {
+    if (hasCompactTerm(n, 'Doku-Erweitert')) {
       return 'Doku-Erweitert ist ein Hauptreiter in der grünen Hauptleiste ganz oben, direkt rechts von Doku. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.';
     }
-    if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis)\b/.test(n)) {
+    if (hasCompactTerm(n, 'Durchführungsnachweis', 'Durchfuehrungsnachweis')) {
       return 'Öffne beim gewünschten Bewohner zuerst Doku in der grünen Hauptleiste ganz oben. Doku liegt zwischen Planung und Doku-Erweitert. Nach der Auswahl erscheint direkt darunter das weiße Funktionsband; dort findest du den Durchführungsnachweis.';
     }
-    if (/\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(n)) {
+    if (/\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(n)
+      || hasCompactTerm(n, 'Vitalwert', 'Vitalwerte', 'Blutdruck', 'Blutzucker', 'Sauerstoffsättigung', 'Sauerstoffsaettigung', 'Atemfrequenz', 'Atemalkohol')) {
       return 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Vitalwerte: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Vitalwerte.';
     }
-    if (/\b(visite|visiten|sprechstunde)\b/.test(n)) {
+    if (/\b(visite|visiten|sprechstunde)\b/.test(n) || hasCompactTerm(n, 'Sprechstunde')) {
       return 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Visiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Visiten.';
     }
-    if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n)) {
+    if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n) || hasCompactTerm(n, 'Medikationsplan')) {
       return 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Medikation: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Medikation.';
     }
-    if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)) {
+    if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)
+      || hasCompactTerm(n, 'Anfallsprotokoll', 'Fallgespräch', 'Fallgespraech', 'Gesprächsprotokoll', 'Gespraechsprotokoll', 'Sturzprotokoll')) {
       return 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Formulare: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Formulare.';
     }
-    if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n)) {
+    if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n) || hasCompactTerm(n, 'An-/Abwesenheit', 'An-/Abwesenheiten')) {
       return 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du An-/Abwesenheiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du An-/Abwesenheiten.';
     }
-    if (/\b(bericht|berichte|berichtseintrag)\b/.test(n)) {
+    if (/\b(bericht|berichte|berichtseintrag)\b/.test(n) || hasCompactTerm(n, 'Berichtseintrag')) {
       return reportLocationHelp();
     }
     if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) {
@@ -133,10 +169,10 @@
     if (/\banalyse\b/.test(n)) {
       return 'Den Reiter Analyse findest du oben in der festen grünen Leiste. Nach der Auswahl erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.';
     }
-    if (/\b(notfallblatt|notfallbogen|rotes kreuz)\b/.test(n)) {
+    if (/\brotes kreuz\b/.test(n) || hasCompactTerm(n, 'Notfallblatt', 'Notfallbogen')) {
       return 'Bleibe beim gewünschten Bewohner. Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü und wählst Notfallblatt aufrufen.';
     }
-    if (/\b(stammdaten|bewohnerubersicht|bewohneruebersicht)\b/.test(n)) {
+    if (hasCompactTerm(n, 'Stammdaten', 'Bewohnerübersicht', 'Bewohneruebersicht')) {
       return 'Öffne zuerst Bericht oder den Durchführungsnachweis. Beides findest du unter Doku: Wähle ganz oben in der festen grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband mit Bericht und Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.';
     }
     if (/\bdoku\b/.test(n)) {
@@ -192,7 +228,7 @@
 
     // Im laufenden Doku-Schritt ist mit „Leiste“ eindeutig die zuvor genannte
     // grüne Hauptleiste gemeint. Deshalb nicht an generisches Smart Help delegieren.
-    if (isLocationQuestion(n) && /\bleiste\b/.test(n)) {
+    if (isLocationQuestion(n) && (/\bleiste\b/.test(n) || isGreenMainBarReference(n))) {
       return payloadFor(parsed, greenMainBarHelp(), 'confirmed-durchfuehrung-orientation-v57');
     }
 
@@ -200,7 +236,8 @@
       return payloadFor(parsed, dokuTabHelp(), 'confirmed-durchfuehrung-orientation-v57');
     }
 
-    const asksAboutConfirmedDokuOrientation = /\b(doku|feste leiste|hauptleiste|grune leiste)\b/.test(n)
+    const asksAboutConfirmedDokuOrientation = /\bdoku\b/.test(n)
+      || isGreenMainBarReference(n)
       || (isLocationQuestion(n) && /\b(leiste|doku)\b/.test(n));
     if (!asksAboutConfirmedDokuOrientation) return null;
 
@@ -246,9 +283,13 @@
 
   window.DokoHilfOrientationHelpV29 = {
     revision: DURCHFUEHRUNG_ORIENTATION_REVISION,
+    inputRevision: CONFIRMED_TERM_INPUT_REVISION,
     normalize,
+    compactNormalize,
+    hasCompactTerm,
     isLocationQuestion,
     isWhiteFunctionBandReference,
+    isGreenMainBarReference,
     greenMainBarHelp,
     whiteFunctionBandHelp,
     dokuTabHelp,
