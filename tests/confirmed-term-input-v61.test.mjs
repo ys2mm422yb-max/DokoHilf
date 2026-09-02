@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const smartSource = await readFile(new URL('../assets/smart-help-v29.js', import.meta.url), 'utf8');
 const orientationSource = await readFile(new URL('../assets/orientation-help-v29.js', import.meta.url), 'utf8');
+const serviceWorker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const navigationCatalog = JSON.parse(await readFile(new URL('../assets/voice-navigation-catalog-v29.json', import.meta.url), 'utf8'));
 const navigationSpeech = new Set((navigationCatalog.entries || []).map(entry => entry.text));
 
@@ -103,4 +104,12 @@ test('v60 Listen-Ausnahme bleibt eng und wird nicht als allgemeine Fuzzy-Erkennu
   const orientation = loadOrientation();
   assert.equal(orientation.orientationHelp('Wo ist die weiße Liste?'), '');
   assert.match(orientation.inputRevision, /confirmed-term-input-v61/);
+});
+
+test('PWA rotiert nur den Shell-Cache und bewahrt die bestätigten Release-Grenzen', () => {
+  assert.match(serviceWorker, /INPUT_ROBUSTNESS_REVISION = '20260902-confirmed-term-input-v61-1'/);
+  assert.match(serviceWorker, /spatial-orientation-v60-confirmed-term-input-v61/);
+  assert.match(serviceWorker, /HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-3'/);
+  assert.match(serviceWorker, /ROUTING_REVISION = '20260822-signoff-durchfuehrungsnachweis-v52-1'/);
+  assert.match(serviceWorker, /GUIDE_DISCOVERY_REVISION = '20260823-guide-discovery-v53-1'/);
 });
