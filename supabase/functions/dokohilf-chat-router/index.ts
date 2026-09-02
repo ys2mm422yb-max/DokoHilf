@@ -8,6 +8,7 @@ const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 24;
 const MAX_BODY_CHARS = 16_000;
 const LEGACY_CONTEXT_HELP_MARKER = 'approved-guide-context-help-v29-4';
+const CHAT_ROUTER_REVISION = 'context-aware-v29-7-confirmed-term-input-v62';
 const ROUTER_CONTRACT_MARKERS = [
   'approved-guide-context-help-v28',
   LEGACY_CONTEXT_HELP_MARKER,
@@ -33,9 +34,21 @@ function normalize(value: unknown): string {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/ß/g, 'ss')
-    .replace(/[^a-z0-9\s-]/g, ' ')
+    .replace(/[^a-z0-9\s/-]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function compactNormalize(value: unknown): string {
+  return normalize(value).replace(/[\s/-]+/g, '');
+}
+
+function hasCompactTerm(value: unknown, ...terms: string[]): boolean {
+  const compact = compactNormalize(value);
+  return terms.some(term => {
+    const wanted = compactNormalize(term);
+    return Boolean(wanted) && compact.includes(wanted);
+  });
 }
 
 function corsHeaders(origin: string | null): Record<string, string> {
@@ -59,7 +72,7 @@ function jsonResponse(origin: string | null, status: number, body: unknown): Res
     headers: {
       ...corsHeaders(origin),
       'Content-Type': 'application/json; charset=utf-8',
-      'X-DokoHilf-Chat-Router': 'context-aware-v29-6',
+      'X-DokoHilf-Chat-Router': CHAT_ROUTER_REVISION,
     },
   });
 }
@@ -115,16 +128,16 @@ function isControlOrConfirmation(text: string): boolean {
 
 function isFalseSignOffCorrection(text: string): boolean {
   const n = normalize(text);
-  return /\b(falsch|versehentlich|irrtumlich)\b.*\babgezeichnet\b/.test(n)
-    || /\babgezeichnet\b.*\b(falsch|versehentlich|irrtumlich)\b/.test(n);
+  if (!hasCompactTerm(n, 'abgezeichnet')) return false;
+  return /\b(falsch|versehentlich|irrtumlich)\b/.test(n);
 }
 
 function hasSignOffIntent(text: string): boolean {
   const n = normalize(text);
   if (!n || isFalseSignOffCorrection(n)) return false;
-  return /\b(abzeichnen|abzuzeichnen)\b/.test(n)
+  return hasCompactTerm(n, 'abzeichnen', 'abzuzeichnen')
     || /\b(zeichne|zeichnest|zeichnet|zeichn)\b.*\bab\b/.test(n)
-    || /\babgezeichnet\b.*\b(werden|mussen|sollen)\b/.test(n);
+    || (hasCompactTerm(n, 'abgezeichnet') && /\b(werden|mussen|sollen)\b/.test(n));
 }
 
 function isExplicitHelp(text: string): boolean {
@@ -165,6 +178,7 @@ function explicitDifferentGoal(text: string, guide: GuideRecord): boolean {
   const n = normalize(text);
   const active = normalize(`${guide.slug} ${guide.title}`);
   if (/\b(neuer ablauf|anderer ablauf|anderes thema|stattdessen|wechseln zu|jetzt lieber)\b/.test(n)) return true;
+  if (isUnconfirmedReportSearch(n)) return true;
 
   const relatedGuideSwitches: Array<[RegExp, RegExp]> = [
     [/\b(durchstreichen|bericht loschen|bericht korrigieren)\b/, /bericht-durchstreichen|durchstreichen/],
@@ -187,7 +201,8 @@ function explicitDifferentGoal(text: string, guide: GuideRecord): boolean {
 
 function hasEntryAction(text: string): boolean {
   const n = normalize(text);
-  return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren|abzeichnen|abzuzeichnen)\b/.test(n);
+  if (isFalseSignOffCorrection(n) || hasSignOffIntent(n)) return true;
+  return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren|abhaken)\b/.test(n);
 }
 
 function hasNavigationIntent(text: string): boolean {
@@ -198,7 +213,7 @@ function hasNavigationIntent(text: string): boolean {
 
 function isUnconfirmedReportSearch(text: string): boolean {
   const n = normalize(text);
-  return /\bberichtssuche\b/.test(n)
+  return hasCompactTerm(n, 'Berichtssuche', 'Bericht Suche')
     || /\bberichte (durchsuchen|auswerten|filtern)\b/.test(n)
     || /\bnach (einem |dem |einem bestimmten |dem bestimmten )?bericht suchen\b/.test(n)
     || /\bbericht.*\babfrage\b/.test(n);
@@ -211,20 +226,23 @@ function inferNavigationGuide(text: string): string {
   if (!hasNavigationIntent(n) || hasEntryAction(n)) return '';
   if (isUnconfirmedReportSearch(n)) return '';
 
-  if (/\b(wirksamkeitskontrolle|wirkungskontrolle)\b/.test(n)) return 'bedarfsmedikation-wirksamkeitskontrolle-finden';
-  if (/\bbedarfsmedikation\b/.test(n)) return 'bedarfsmedikation-finden';
-  if (/\bmassnahmen ohne zeitangabe\b/.test(n)) return 'massnahmen-ohne-zeitangabe-finden';
-  if (/\b(durchfuhrungsnachweis|durchfuehrungsnachweis|durchfuhrung|durchfuehrung)\b/.test(n)) return 'durchfuehrungsnachweis-finden';
-  if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)) return 'vitalwerte-finden';
-  if (/\b(bericht|berichte|berichtseintrag)\b/.test(n)) return 'berichte-finden';
-  if (/\b(visite|visiten|sprechstunde)\b/.test(n)) return 'visiten-finden';
-  if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n)) return 'medikation-finden';
-  if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)) return 'formulare-finden';
+  if (hasCompactTerm(n, 'Wirksamkeitskontrolle', 'Wirkungskontrolle')) return 'bedarfsmedikation-wirksamkeitskontrolle-finden';
+  if (hasCompactTerm(n, 'Bedarfsmedikation')) return 'bedarfsmedikation-finden';
+  if (hasCompactTerm(n, 'Maßnahmen ohne Zeitangabe', 'Massnahmen ohne Zeitangabe')) return 'massnahmen-ohne-zeitangabe-finden';
+  if (/\b(durchfuhrung|durchfuehrung)\b/.test(n)
+    || hasCompactTerm(n, 'Durchführungsnachweis', 'Durchfuehrungsnachweis')) return 'durchfuehrungsnachweis-finden';
+  if (/\b(puls|temperatur|sauerstoff|spo2)\b/.test(n)
+    || hasCompactTerm(n, 'Blutdruck', 'Blutzucker', 'Sauerstoffsättigung', 'Sauerstoffsaettigung', 'Atemfrequenz', 'Atemalkohol', 'Vitalwert', 'Vitalwerte')) return 'vitalwerte-finden';
+  if (/\b(bericht|berichte)\b/.test(n) || hasCompactTerm(n, 'Berichtseintrag')) return 'berichte-finden';
+  if (/\b(visite|visiten|sprechstunde)\b/.test(n) || hasCompactTerm(n, 'Sprechstunde')) return 'visiten-finden';
+  if (/\b(medikation|medikament|medikamente)\b/.test(n) || hasCompactTerm(n, 'Medikationsplan')) return 'medikation-finden';
+  if (/\b(formular|formulare)\b/.test(n)
+    || hasCompactTerm(n, 'Anfallsprotokoll', 'Fallgespräch', 'Fallgespraech', 'Gesprächsprotokoll', 'Gespraechsprotokoll', 'Sturzprotokoll')) return 'formulare-finden';
   if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n)) return 'anwesenheiten-finden';
   if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) return 'uebergabe-finden';
-  if (/\b(notfallblatt|notfallbogen)\b/.test(n)) return 'notfallblatt-finden';
-  if (/\bstammdaten\b/.test(n)) return 'stammdaten-finden';
-  if (/\bdoku-erweitert\b/.test(n)) return 'doku-erweitert-finden';
+  if (hasCompactTerm(n, 'Notfallblatt', 'Notfallbogen')) return 'notfallblatt-finden';
+  if (hasCompactTerm(n, 'Stammdaten')) return 'stammdaten-finden';
+  if (hasCompactTerm(n, 'Doku-Erweitert')) return 'doku-erweitert-finden';
   if (/\bdoku\b/.test(n)) return 'doku-finden';
   if (/\banalyse\b/.test(n)) return 'analyse-finden';
   if (/\bplanung\b/.test(n)) return 'planung-finden';
@@ -326,7 +344,7 @@ async function forwardToExistingRouter(rawBody: string, origin: string | null): 
   } catch { }
 
   const responseHeaders = new Headers(response.headers);
-  responseHeaders.set('X-DokoHilf-Chat-Router', 'context-aware-v29-6');
+  responseHeaders.set('X-DokoHilf-Chat-Router', CHAT_ROUTER_REVISION);
   responseHeaders.set('Cache-Control', 'no-store');
   return new Response(raw, { status: response.status, headers: responseHeaders });
 }
