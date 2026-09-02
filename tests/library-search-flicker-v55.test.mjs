@@ -27,6 +27,27 @@ function loadUxApi(smartFilter) {
   return window.DokoHilfUxPolishV42;
 }
 
+function loadDiscoveryApi() {
+  const window = {
+    fetch: async () => new Response('{}', { status: 200 }),
+    addEventListener() {},
+  };
+  const document = {
+    readyState: 'loading',
+    addEventListener() {},
+  };
+  vm.runInNewContext(discoverySource, {
+    window,
+    document,
+    console,
+    Request,
+    Response,
+    MutationObserver: class MutationObserver {},
+    requestAnimationFrame() {},
+  });
+  return window.DokoHilfGuideDiscoveryV53;
+}
+
 test('v33 search hotfix delegates the legacy search owner to the smart filter', () => {
   assert.equal(version.appVersion, 'v33');
   assert.match(uxSource, /20260823-search-flicker-hotfix-v55-1/);
@@ -47,6 +68,7 @@ test('the library input and sync path no longer invoke the legacy substring filt
 });
 
 test('Sauerstoff remains a confirmed smart-search alias for Vitalwerte', () => {
-  assert.match(discoverySource, /blutdruck\|puls\|temperatur\|blutzucker\|sauerstoff\|sauerstoffsattigung\|spo2\|atemfrequenz\|atemalkohol/);
-  assert.match(discoverySource, /return \['vitalwerte'\]/);
+  const discovery = loadDiscoveryApi();
+  assert.deepEqual([...discovery.smartTargets('Sauerstoff')], ['vitalwerte']);
+  assert.deepEqual([...discovery.smartTargets('Sauerstoff Sättigung')], ['vitalwerte']);
 });
