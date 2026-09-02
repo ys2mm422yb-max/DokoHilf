@@ -4,6 +4,7 @@
   const AI_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-ai';
   const TTS_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-tts';
   const MAX_HISTORY = 12;
+  const MAX_SPEECH_ALTERNATIVES = 4;
   const BLOCK_MESSAGE = 'Diese Eingabe wird nicht an die KI übertragen. Bitte stelle nur eine allgemeine Bedienfrage und entferne alle echten Personen-, Fall- oder Gesundheitsdaten.';
 
   const state = {
@@ -165,6 +166,22 @@
     return (health && (caseLanguage || /\d/.test(raw))) || raw.length > 260;
   }
 
+  function safeSpeechAlternatives(values, primaryText) {
+    if (!Array.isArray(values)) return [];
+    const primary = normalize(primaryText);
+    const seen = new Set();
+    const safe = [];
+    for (const value of values) {
+      const text = String(value || '').trim().slice(0, 350);
+      const key = normalize(text);
+      if (!text || !key || key === primary || seen.has(key) || clientPrivacyGuard(text)) continue;
+      seen.add(key);
+      safe.push(text);
+      if (safe.length >= MAX_SPEECH_ALTERNATIVES) break;
+    }
+    return safe;
+  }
+
   function setBusy(value) {
     state.pending = value;
     el.input.disabled = value;
@@ -174,7 +191,7 @@
     el.send.textContent = value ? 'Warte …' : 'Senden';
   }
 
-  async function sendMessage(rawText, { fromVoice = false } = {}) {
+  async function sendMessage(rawText, { fromVoice = false, speechAlternatives = [] } = {}) {
     const text = String(rawText || '').trim();
     if (!text || state.pending) return;
 
@@ -189,6 +206,7 @@
       return;
     }
 
+    const safeAlternatives = fromVoice ? safeSpeechAlternatives(speechAlternatives, text) : [];
     state.history.push({ role: 'user', content: text });
     state.history = state.history.slice(-MAX_HISTORY);
     const typing = addTyping();
@@ -199,7 +217,11 @@
       const response = await fetch(AI_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: state.history, guideSlug: state.activeGuide }),
+        body: JSON.stringify({
+          messages: state.history,
+          guideSlug: state.activeGuide,
+          ...(safeAlternatives.length ? { speechAlternatives: safeAlternatives } : {}),
+        }),
       });
       const payload = await response.json().catch(() => ({}));
       typing.remove();
@@ -381,11 +403,13 @@
     recognition.lang = 'de-DE';
     recognition.interimResults = false;
     recognition.continuous = false;
-    recognition.maxAlternatives = 1;
+    recognition.maxAlternatives = 5;
     recognition.onstart = () => setVoiceState('listening', 'Ich höre zu …', 'Sprich jetzt ganz normal.');
     recognition.onresult = event => {
-      const transcript = event.results?.[0]?.[0]?.transcript || '';
-      if (transcript) sendMessage(transcript, { fromVoice: true });
+      const result = event.results?.[0];
+      const transcript = result?.[0]?.transcript || '';
+      const speechAlternatives = result ? Array.from(result).map(item => item?.transcript || '').filter(Boolean) : [];
+      if (transcript) sendMessage(transcript, { fromVoice: true, speechAlternatives });
     };
     recognition.onerror = event => {
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
