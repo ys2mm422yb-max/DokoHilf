@@ -1,8 +1,8 @@
-# DokoHilf – räumliche Vivendi-Orientierung v59
+# DokoHilf – räumliche Vivendi-Orientierung v59/v60
 
 **Status:** kleiner, fachlich begrenzter Orientierungsblock  
 **Bezug:** Issue #167  
-**Stand:** 1. September 2026
+**Stand:** 2. September 2026
 
 ## Ziel
 
@@ -32,6 +32,22 @@ DokoHilf soll bei Rückfragen wie „Wo ist die Leiste?“, „Was ist das weiß
 - Für die hörbare Antwort einen bereits vorhandenen, bestätigten statischen Supertonic-F1-Satz wiederverwenden; keinen neuen Sprachkatalog-Eintrag erzeugen.
 - PWA-Cache-Revision anheben, damit die neue Orientierung auf Mobilgeräten zuverlässig aktualisiert wird.
 - Keine Supabase-Guide-Schritte und keine fachlichen Klickwege in diesem Block ändern.
+
+## Praxistest-Regressionskorrektur v60
+
+Ein anschließender mobiler Praxistest hat gezeigt, dass die räumliche Antwort fachlich korrekt ist, die Erkennung aber zu streng auf einzelne Schreibweisen begrenzt war. Spracherkennungsvarianten können Wörter trennen, verbinden oder einen ähnlich klingenden Begriff liefern.
+
+v60 erweitert deshalb ausschließlich die Intent-Erkennung für das bereits bestätigte weiße Funktionsband:
+
+- getrennte Varianten wie „Funktionen Band“ und „Funktions Band“ werden verstanden;
+- zusammengeschriebene Varianten werden verstanden;
+- die bereits bestätigten Begriffe „weiße Leiste“, „untere Leiste“ und „Funktionsleiste“ bleiben erhalten;
+- die mögliche Spracherkennungsvariante „weiße Liste“ wird nur im laufenden bestätigten Durchführungsnachweis-Doku-Schritt als „weiße Leiste“ interpretiert; außerhalb dieses Kontexts bleibt „Liste“ bewusst mehrdeutig und wird nicht automatisch umgedeutet;
+- der laufende Guide-Schritt bleibt unverändert und wird nicht als erledigt markiert;
+- die hörbare Antwort bleibt exakt der bereits katalogisierte Supertonic-F1-Satz; der statische Sprachkatalog wird nicht erweitert;
+- keine fachlichen Klickwege, Supabase-Guide-Daten oder gesperrten Bereiche werden geändert.
+
+Die ursprünglichen visuellen Quellen bleiben weiterhin ausschließlich außerhalb des Projekts. Weder diese Quellen noch daraus erkennbare Einzelinhalte werden gespeichert; dokumentiert sind nur die abstrahierten technischen Regressionen und die bereits bestätigte Bedienorientierung.
 
 ## Nächste Schritte – jeweils separat prüfen und veröffentlichen
 
