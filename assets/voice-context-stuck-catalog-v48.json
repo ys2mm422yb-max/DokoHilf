@@ -1,9 +1,10 @@
 {
   "schemaVersion": 1,
   "voice": "Supertonic-F1",
-  "purpose": "Vorab erzeugte Sprachsätze für freigegebene Hilfe beim aktuellen Guide-Schritt; v51 ergänzt den bestätigten Übergabe-Schritt und zwei Detailhilfen ausschließlich am Ende, damit alle bisherigen WAV-Zuordnungen stabil bleiben",
-  "generatedFrom": "62 eindeutige freigegebene stuck-Hilfetexte aus dokohilf_guides; interne Produktformulierungen vor Veröffentlichung bereinigt; plus 3 bestätigte Übergabe-v51-Sätze am Ende",
+  "purpose": "Vorab erzeugte Sprachsätze für freigegebene Hilfe beim aktuellen Guide-Schritt; synchron zum bestätigten Supabase-Bestand",
+  "generatedFrom": "63 eindeutige freigegebene stuck-Hilfetexte aus dokohilf_guides",
   "entries": [
+    {"text":"„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“."},
     {"text":"„Analyse“ ist ganz oben in der festen grünen Leiste. Wähle dort „Analyse“; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole."},
     {"text":"„Analyse“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku“, „Doku-Erweitert“ und „Planung“."},
     {"text":"„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. „Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge; wähle für mehrere Werte „Vitalwerte Sammelerf.“."},
@@ -18,10 +19,10 @@
     {"text":"„Doku“ ist ein fester Hauptbereich ganz oben in der grünen Leiste."},
     {"text":"„Doku“ ist ein Hauptbereich ganz oben in der festen grünen Leiste."},
     {"text":"„Doku“ ist ganz oben in der festen grünen Leiste. Wähle dort „Doku“; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole."},
+    {"text":"„Doku“ liegt oben in der festen grünen Hauptleiste zwischen „Planung“ und „Doku-Erweitert“. Öffne „Doku“ und wähle im weißen Funktionsband direkt darunter „Bericht“."},
     {"text":"„Doku“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku-Erweitert“, „Planung“ und „Analyse“."},
     {"text":"„Vitalwerte Sammelerf.“ ist ein eigener Eintrag neben „Vitalwerte“."},
     {"text":"„Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge direkt unter „Doku-Erweitert“."},
-    {"text":"Bleibe beim geöffneten Bewohner und suche ganz oben in der festen grünen Leiste nach „Berichte“."},
     {"text":"Bleibe im Durchführungsnachweis und suche „Bedarfsmedikation“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen."},
     {"text":"Bleibe im Durchführungsnachweis und suche „Maßnahmen ohne Zeitangabe“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen."},
     {"text":"Bleibe im Durchführungsnachweis und suche dort „Maßnahmen ohne Zeitangabe“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen."},
@@ -54,20 +55,17 @@
     {"text":"Suche zum vorgesehenen Zeitpunkt im Durchführungsnachweis die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation."},
     {"text":"Wähle ganz oben in der festen grünen Leiste zuerst „Analyse“. Danach erscheint darunter „Was war los?“."},
     {"text":"Wähle ganz oben in der festen grünen Leiste zuerst „Doku“. Danach erscheint darunter „Durchführungsnachweis“."},
-    {"text":"Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach „Berichte“."},
-    {"text":"Wähle zuerst den gewünschten Bewohner. „Berichte“ findest du ganz oben in der festen grünen Leiste."},
+    {"text":"Wähle zuerst den gewünschten Bewohner. Öffne oben in der festen grünen Hauptleiste „Doku“ und wähle im weißen Funktionsband direkt darunter „Bericht“."},
     {"text":"Warte kurz, bis sich Word öffnet, und führe den Doppelklick nicht mehrfach aus."},
     {"text":"Wenn der durchführende Arzt beim Bewohner nicht hinterlegt ist, aktiviere rechts neben der Arztauswahl das kleine Filtersymbol. Dann stehen alle systemweit hinterlegten Ärzte zur Auswahl."},
     {"text":"Wenn du den Durchführungsnachweis öffnen möchtest: „Doku“ → „Durchführungsnachweis“."},
+    {"text":"Wenn du den Zeitraum geändert und die Anzeige aktualisiert hast, wähle danach erneut „Alle ausklappen“, damit alle Einträge wieder vollständig geöffnet sind."},
     {"text":"Zuerst ganz oben in der grünen Hauptleiste „Analyse“ öffnen. Direkt darunter findest du „Was war los?“."},
     {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „An-/Abwesenheiten“."},
     {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Formulare“."},
     {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Medikation“."},
     {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Visiten“."},
     {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du das Symbol beziehungsweise den Bereich „Vitalwerte“."},
-    {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku“ öffnen. Direkt darunter findest du „Durchführungsnachweis“."},
-    {"text":"Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden."},
-    {"text":"„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“."},
-    {"text":"Wenn du den Zeitraum geändert und die Anzeige aktualisiert hast, wähle danach erneut „Alle ausklappen“, damit alle Einträge wieder vollständig geöffnet sind."}
+    {"text":"Zuerst ganz oben in der grünen Hauptleiste „Doku“ öffnen. Direkt darunter findest du „Durchführungsnachweis“."}
   ]
 }
