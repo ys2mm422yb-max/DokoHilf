@@ -44,9 +44,10 @@ test('Supabase migration updates only the confirmed Übergabe guide detail', () 
   assert.match(migration, /- 'alles_ausklappen'/);
 });
 
-test('all new approved Übergabe sentences have free static Supertonic keys', () => {
+test('all current approved Übergabe sentences have free static Supertonic keys', () => {
   assert.equal(catalog.voice, 'Supertonic-F1');
-  assert.equal(speechTexts.length, 65);
+  assert.equal(speechTexts.length, 63);
+  assert.match(String(catalog.generatedFrom || ''), /63 eindeutige freigegebene stuck-Hilfetexte/);
   for (const text of [EXPAND_STEP, LOCATION_HELP, REFRESH_HELP]) {
     assert.ok(speechTexts.includes(text), `missing static speech: ${text}`);
   }
