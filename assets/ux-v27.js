@@ -101,31 +101,6 @@
     });
   };
 
-  function installSpeechSynthesisWatchdog() {
-    if (localVoiceV28()) return;
-    const synth = window.speechSynthesis;
-    if (!synth || typeof synth.speak !== 'function' || window.__DOKOHILF_SPEECH_RESUME_WATCHDOG_V27__) return;
-    const nativeSpeak = synth.speak.bind(synth);
-
-    synth.speak = utterance => {
-      let startedOrFinished = false;
-      const settle = () => { startedOrFinished = true; };
-      utterance?.addEventListener?.('start', settle, { once: true });
-      utterance?.addEventListener?.('end', settle, { once: true });
-      utterance?.addEventListener?.('error', settle, { once: true });
-
-      nativeSpeak(utterance);
-      const resumeIfNeeded = () => {
-        if (startedOrFinished) return;
-        try { synth.resume(); } catch { /* iOS kann resume während eines Zustandswechsels ablehnen. */ }
-      };
-      resumeIfNeeded();
-      [60, 140, 280, 520].forEach(delay => window.setTimeout(resumeIfNeeded, delay));
-    };
-
-    window.__DOKOHILF_SPEECH_RESUME_WATCHDOG_V27__ = true;
-  }
-
   function compactGuideMenu() {
     const bar = document.getElementById('guideProgress');
     const actions = bar?.querySelector('.guide-progress-actions');
@@ -172,22 +147,11 @@
     let changed = false;
     const current = normalize(status.textContent);
 
-    if (localVoiceV28()) {
-      if (shell.dataset.voiceState === 'thinking' || current.includes('stimme wird vorbereitet') || current.includes('antwort startet')) {
-        changed = setTextIfChanged(status, 'Lokale Stimme erzeugt Antwort …') || changed;
-        changed = setTextIfChanged(hint, 'Die Sprachausgabe läuft direkt auf diesem Gerät.') || changed;
-      }
-      if (badge) changed = setTextIfChanged(badge, 'Lokale Stimme') || changed;
-      return changed;
+    if (shell.dataset.voiceState === 'thinking' || current.includes('stimme wird vorbereitet') || current.includes('antwort startet')) {
+      changed = setTextIfChanged(status, 'Statische Stimme wird vorbereitet …') || changed;
+      changed = setTextIfChanged(hint, 'DokoHilf verwendet ausschließlich die freigegebene statische F1-Sprachausgabe.') || changed;
     }
-
-    if (shell.dataset.voiceState === 'thinking' || current.includes('stimme wird vorbereitet') || current.includes('stimme ladt')) {
-      changed = setTextIfChanged(status, 'Antwort startet …') || changed;
-      changed = setTextIfChanged(hint, 'Ist Gacrux schon fertig, hörst du sie direkt. Sonst spricht sofort die Sofortstimme.') || changed;
-    }
-    if (badge && /geratestimme|ersatz/.test(normalize(badge.textContent))) {
-      changed = setTextIfChanged(badge, 'Sofortstimme') || changed;
-    }
+    if (badge) changed = setTextIfChanged(badge, 'Statische F1-Stimme') || changed;
     return changed;
   }
 
@@ -221,7 +185,6 @@
     });
   }
 
-  installSpeechSynthesisWatchdog();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true });
   else initialize();
   window.DokoHilfUxV27 = {
@@ -238,4 +201,5 @@
   window.__DOKOHILF_IDEMPOTENT_SYNC_V27__ = true;
   window.__DOKOHILF_FLUID_VOICE_180MS_V27__ = !localVoiceV28();
   window.__DOKOHILF_LOCAL_VOICE_ONLY_V28__ = localVoiceV28();
+  window.__DOKOHILF_SYSTEM_VOICE_RETIRED_V67__ = true;
 })();
