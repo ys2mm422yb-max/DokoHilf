@@ -4,16 +4,19 @@ import { readFile } from 'node:fs/promises';
 
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 
-const [library, workflows, migration, catalogRaw, version, worker] = await Promise.all([
+const [library, workflows, migration, stuckCatalogRaw, baseCatalogRaw, version, worker] = await Promise.all([
   read('assets/guide-library-v29.js'),
   read('CONFIRMED_WORKFLOWS.md'),
   read('supabase/migrations/20260813104500_uebergabe_alle_ausklappen_detail_v51.sql'),
   read('assets/voice-context-stuck-catalog-v48.json'),
+  read('assets/guide-audio-catalog.json'),
   read('version.json'),
   read('service-worker.js'),
 ]);
-const catalog = JSON.parse(catalogRaw);
-const speechTexts = catalog.entries.map(entry => entry.text);
+const stuckCatalog = JSON.parse(stuckCatalogRaw);
+const baseCatalog = JSON.parse(baseCatalogRaw);
+const stuckSpeechTexts = stuckCatalog.entries.map(entry => entry.text);
+const baseSpeechTexts = baseCatalog.entries.map(entry => entry.text);
 
 const EXPAND_STEP = 'Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.';
 const LOCATION_HELP = '„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“.';
@@ -45,11 +48,13 @@ test('Supabase migration updates only the confirmed Übergabe guide detail', () 
 });
 
 test('all current approved Übergabe sentences have free static Supertonic keys', () => {
-  assert.equal(catalog.voice, 'Supertonic-F1');
-  assert.equal(speechTexts.length, 63);
-  assert.match(String(catalog.generatedFrom || ''), /63 eindeutige freigegebene stuck-Hilfetexte/);
-  for (const text of [EXPAND_STEP, LOCATION_HELP, REFRESH_HELP]) {
-    assert.ok(speechTexts.includes(text), `missing static speech: ${text}`);
+  assert.equal(baseCatalog.voice, 'Supertonic-F1');
+  assert.equal(stuckCatalog.voice, 'Supertonic-F1');
+  assert.equal(stuckSpeechTexts.length, 63);
+  assert.match(String(stuckCatalog.generatedFrom || ''), /63 eindeutige freigegebene stuck-Hilfetexte/);
+  assert.ok(baseSpeechTexts.includes(EXPAND_STEP), `missing static base speech: ${EXPAND_STEP}`);
+  for (const text of [LOCATION_HELP, REFRESH_HELP]) {
+    assert.ok(stuckSpeechTexts.includes(text), `missing static stuck speech: ${text}`);
   }
 });
 
