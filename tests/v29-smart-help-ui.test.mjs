@@ -51,7 +51,7 @@ test('free-text help and the help button keep the same contextual router path', 
   assert.doesNotMatch(detail, /localStorage|sessionStorage|indexedDB/);
 });
 
-test('explicit location questions route to dedicated area-finding guides', async () => {
+test('explicit location questions route to confirmed navigation guides', async () => {
   const [smart, oldMigration, greenMigration] = await Promise.all([
     read('assets/smart-help-v29.js'),
     read('supabase/migrations/20260809112500_later_guides_stammdaten_v29.sql'),
@@ -62,8 +62,6 @@ test('explicit location questions route to dedicated area-finding guides', async
     'berichte-finden',
     'doku-erweitert-finden',
     'doku-finden',
-    'visiten-finden',
-    'vitalwerte-finden',
     'anwesenheiten-finden',
     'medikation-finden',
     'formulare-finden',
@@ -76,6 +74,10 @@ test('explicit location questions route to dedicated area-finding guides', async
     assert.match(smart, new RegExp(`return '${slug}'`));
     assert.match(oldMigration, new RegExp(`'${slug}'`));
   }
+  assert.match(smart, /return 'visiten-oeffnen'/);
+  assert.match(smart, /return 'vitalwerte'/);
+  assert.match(oldMigration, /'visiten-finden'/);
+  assert.match(oldMigration, /'vitalwerte-finden'/);
   assert.match(smart, /return 'planung-finden'/);
   assert.match(greenMigration, /'planung-finden'/);
   assert.match(greenMigration, /feste grüne Hauptleiste/);
@@ -183,13 +185,13 @@ test('active-guide help keeps the guide and approved area details', async () => 
   assert.match(migration, /„Notfallblatt aufrufen“/);
 });
 
-test('searching for a concrete vital value stays in the confirmed navigation guide until an entry action is requested', async () => {
+test('searching for a concrete vital value stays in the confirmed progressive navigation guide until an entry action is requested', async () => {
   const [smart, router] = await Promise.all([
     read('assets/smart-help-v29.js'),
     read('supabase/functions/dokohilf-chat-router/index.ts'),
   ]);
   assert.match(smart, /blutdruck\|puls\|temperatur/);
-  assert.match(smart, /return 'vitalwerte-finden'/);
+  assert.match(smart, /return 'vitalwerte'/);
   assert.doesNotMatch(smart, /!isLocationQuestion\(n\)\) return 'vitalwerte-einzelwert'/);
   assert.match(smart, /selectedGuideSlug/);
   assert.match(router, /selectedGuideSlug/);
