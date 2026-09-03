@@ -145,7 +145,8 @@ test('v60 Listen-Ausnahme bleibt eng und wird nicht als allgemeine Fuzzy-Erkennu
 
 test('PWA rotiert nur den Shell-Cache und bewahrt die bestätigten Release-Grenzen', () => {
   assert.match(serviceWorker, /INPUT_ROBUSTNESS_REVISION = '20260902-confirmed-term-input-v61-1'/);
-  assert.match(serviceWorker, /spatial-orientation-v60-confirmed-term-input-v61/);
+  assert.match(serviceWorker, /spatial-orientation-v60-confirmed-term-input-v61-progressive-navigation-v68/);
+  assert.match(serviceWorker, /PROGRESSIVE_NAVIGATION_REVISION = '20260903-progressive-navigation-v68-1'/);
   assert.match(serviceWorker, /HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-3'/);
   assert.match(serviceWorker, /ROUTING_REVISION = '20260822-signoff-durchfuehrungsnachweis-v52-1'/);
   assert.match(serviceWorker, /GUIDE_DISCOVERY_REVISION = '20260823-guide-discovery-v53-1'/);

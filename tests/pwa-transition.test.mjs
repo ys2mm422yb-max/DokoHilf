@@ -10,7 +10,7 @@ const [versionRaw, indexHtml, updateManager, serviceWorker] = await Promise.all(
 ]);
 
 const { buildId } = JSON.parse(versionRaw);
-const previousBuildId = '20260805-16';
+const previousBuildId = '20260812-41';
 
 function buildNumber(value) {
   const match = String(value).match(/^(\d{8})-(\d+)$/);
@@ -26,6 +26,9 @@ test('HTML, Versionsquelle und Service Worker verwenden denselben Build', () => 
   assert.match(indexHtml, new RegExp(`dokohilf-build" content="${buildId}`));
   assert.match(indexHtml, new RegExp(`app\\.js\\?v=${buildId}`));
   assert.match(serviceWorker, new RegExp(`BUILD_ID = '${buildId}'`));
+  assert.match(serviceWorker, /PROGRESSIVE_NAVIGATION_REVISION = '20260903-progressive-navigation-v68-1'/);
+  assert.match(serviceWorker, /progressive-navigation-v68/);
+  assert.match(serviceWorker, /progressiveNavigationRevision: PROGRESSIVE_NAVIGATION_REVISION/g);
 });
 
 test('alte DokoHilf-Caches werden beim Aktivieren entfernt', () => {

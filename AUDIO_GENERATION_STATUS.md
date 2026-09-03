@@ -1,8 +1,8 @@
 # Audio-Erzeugungsstatus
 
 **Stand:** 3. September 2026  
-**Status:** v33 – ausschließlich statische Supertonic-F1-WAVs  
-**Ziel-Build:** `20260812-41`
+**Status:** v34 – ausschließlich statische Supertonic-F1-WAVs
+**Ziel-Build:** `20260903-42`
 
 ## Aktueller Vertrag
 

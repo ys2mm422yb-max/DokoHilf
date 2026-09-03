@@ -1,12 +1,13 @@
 # DokoHilf – dauerhafte Projektübergabe
 
 **Status:** verbindliche Arbeitsquelle  
-**Stand:** 12. August 2026  
-**Aktueller Produktstand:** `v29` / Build `20260809-36` / Bibliothekslayout v37 / Chat-UI v38 / Natural Routing v39 / Guide-Completions v40 / private Reichweitenmessung v41  
-**Aktueller `main`:** `2d608f03848b60fb9095c0cc27c98706f744bdf1`  
-**Aktueller veröffentlichter `gh-pages`-Commit:** `3a90315f7225d5e99cd3893d2c450882290cf7cf` (`Publish DokoHilf 2d608f03848b60fb9095c0cc27c98706f744bdf1`)  
-**Letzter Produkt-PR:** `#135` – private anonyme Reichweitenmessung  
+**Stand:** 3. September 2026
+**Aktueller live verifizierter Produktstand:** `v34` / Build `20260812-41` / progressive Sprachnavigation v68
+**Aktueller `main`:** `c0634b133a24e097397184ab60bfe353635d83c5`
+**Aktueller veröffentlichter `gh-pages`-Commit:** `225b30a88a019c6456e5971576571069637cd16f` (`Publish DokoHilf c0634b133a24e097397184ab60bfe353635d83c5`)
+**Letzter Produkt-PR:** `#186` – progressive und knappe Sprachnavigation v68
 **Letzter Hardening-PR:** `#136` – explizite RLS-Deny-All-Policy  
+**PWA-Ziel dieses Arbeitsblocks:** `v34` / Build `20260903-42`; Details in `ACTIVE_WORK_PWA_REFRESH_V68.md`
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
 > Veränderliche Zustände werden bei neuer Arbeit immer live geprüft. Diese Datei ist das dauerhafte Handoff, aber kein Ersatz für GitHub-/Supabase-Liveprüfung.
@@ -62,15 +63,14 @@ Vor neuer DokoHilf-Arbeit mindestens lesen beziehungsweise prüfen:
 
 ## 4. Aktueller GitHub-/Release-Stand
 
-Am 12. August 2026 live gegen GitHub verifiziert:
+Am 3. September 2026 live gegen GitHub und den festen öffentlichen Hauptlink verifiziert:
 
-- `main` steht auf `2d608f03848b60fb9095c0cc27c98706f744bdf1`, Merge von PR #136.
-- `gh-pages` steht auf `3a90315f7225d5e99cd3893d2c450882290cf7cf` und wurde mit `Publish DokoHilf 2d608f03848b60fb9095c0cc27c98706f744bdf1` erzeugt.
+- `main` steht auf `c0634b133a24e097397184ab60bfe353635d83c5`, Merge von PR #186.
+- `gh-pages` steht auf `225b30a88a019c6456e5971576571069637cd16f` und wurde mit `Publish DokoHilf c0634b133a24e097397184ab60bfe353635d83c5` erzeugt.
 - Damit ist der veröffentlichte Branch auf demselben Produkt-/Hardening-Stand wie `main`.
-- PR #135 und #136 sind gemergt.
-- PR #135 führte die private anonyme Seitenaufrufmessung ein.
-- PR #136 ergänzte die explizite RLS-Deny-All-Policy für öffentliche Rollen und die interne Statistikdokumentation.
-- Diese aktuelle Dokumentationssynchronisierung verändert **keine App-Datei, keinen Guide-Code, keinen Router, keine Sprache, keine Migration und kein Supabase-Objekt**.
+- PR #186 ist vollständig grün gemergt und mit v34/v68 sowie 316 statischen Supertonic-F1-Sätzen live bestätigt.
+- Der fachliche v68-Stand verwendet noch Build `20260812-41`. Der getrennte PWA-Refresh hebt ausschließlich den technischen Build auf `20260903-42` und gilt erst nach erneutem Main-Deploy und Live-Nachweis als veröffentlicht.
+- Dieser PWA-Arbeitsblock verändert **keinen Guide, keinen Router, keinen hörbaren Text, keine Migration und kein Supabase-Objekt**.
 
 ## 5. Aktueller fachlicher Stand
 
@@ -155,7 +155,7 @@ Mobile Chat-UI v38 bleibt aktiv: 16-px-Textarea auf Mobilgeräten, eigener Chat-
 - keine Browser-/WebGPU-/WASM-Inferenz;
 - Sprachstart: **„Hey! Wobei brauchst du Hilfe?“**;
 - v40-Completion-Katalog: 44 feste Completion-/Anschlusssätze;
-- letzter bestätigter Gesamtbestand: 275 statische WAV-Sätze.
+- letzter live bestätigter Gesamtbestand nach PR #186: 316 statische WAV-Sätze.
 
 Eine Änderung eines bestätigten Textes muss mit der statischen Sprachquelle synchron gehalten werden; diese Dokumentationssynchronisierung ändert keinen hörbaren Text.
 
@@ -180,9 +180,9 @@ Der Zähler ist kein Nutzertracking und darf nicht zu einer Geräte- oder Nutzer
 
 Die folgenden technischen Anker bleiben bewusst wörtlich dokumentiert, weil sie Bestandteil der etablierten DokoHilf-Regressions- und Übergabeverträge sind.
 
-**Aktive Supabase-Funktion:** `dokohilf-conversation-router`, zuletzt bestätigter v40-Stand Version 2, Status `ACTIVE`, `verify_jwt=false`.  
-**Aktiver Basisrouter:** `dokohilf-chat-router`, zuletzt bestätigter v40-Stand Version 16, Status `ACTIVE`, `verify_jwt=false`.  
-**Aktiver Core-Router:** `dokohilf-ai` als bestehender privater Core-Pfad.  
+**Aktive Supabase-Funktion:** `dokohilf-conversation-router`, live bestätigte Version 5, Status `ACTIVE`.
+**Aktiver Basisrouter:** `dokohilf-chat-router`, live bestätigte Version 11, Status `ACTIVE`.
+**Aktiver AI-Router:** `dokohilf-ai-router`, live bestätigte Version 12, Status `ACTIVE`; `dokohilf-ai` bleibt der bestehende private Core-Pfad.
 **Aktueller Datenbankstand:** `natural_path_routing_v39` plus produktive private Reichweitenmessung v41.  
 **Supabase Security:** Security Advisor nach v41 / PR #136 ohne offene Lints.  
 **Offenes fachliches Issue:** `#103` Berichtssuche.
@@ -238,6 +238,7 @@ Die folgenden Pfade bleiben als Architekturanker erhalten:
 ## 11. Offene fachliche Punkte
 
 - Issue #103: Berichtssuche – weiterhin offen.
+- Issue #167: Erweiterung der Orientierung – weiterhin offen.
 - Easy-Plan: genauer Detailweg nicht bestätigt.
 - Aufgaben · Aktuelles: nicht als fertiger Guide freigegeben.
 
@@ -251,4 +252,4 @@ Keine dieser Lücken auf Verdacht schließen oder durch KI ergänzen.
 - PR-Beschreibungen, Migrationen und Tests ersetzen die zentrale Fachquelle nicht.
 - Dokumentationsänderungen allein dürfen keine App-/Guide-/Router-/Sprachlogik verändern.
 
-Diese Datei beschreibt den aktuellen dauerhaften Projektstand nach PR #136 und der anschließenden GitHub-Dokumentationssynchronisierung.
+Diese Datei beschreibt den live verifizierten fachlichen Stand nach PR #186 sowie den davon getrennten PWA-Refresh auf Build `20260903-42`.

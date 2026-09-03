@@ -1,7 +1,7 @@
 # DokoHilf – statische Supertonic-Sprachausgabe
 
 **Stand:** 3. September 2026  
-**Ziel-Build:** `20260812-41` / v33
+**Ziel-Build:** `20260903-42` / v34
 
 ## Zweck
 
