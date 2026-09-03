@@ -5,7 +5,7 @@
     '/functions/v1/dokohilf-ai',
     '/functions/v1/dokohilf-chat-router',
   ];
-  const INPUT_ROBUSTNESS_REVISION = '20260903-voice-chat-parity-v66-1';
+  const INPUT_ROBUSTNESS_REVISION = '20260903-progressive-navigation-v68-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -180,10 +180,10 @@
     if (hasCompactTerm(n, 'Durchführungsnachweis', 'Durchfuehrungsnachweis')) return 'durchfuehrungsnachweis-finden';
     if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2|vitalwert|vitalwerte)\b/.test(n)
       || hasCompactTerm(n, 'Blutdruck', 'Blutzucker', 'Sauerstoffsättigung', 'Sauerstoffsaettigung', 'Atemfrequenz', 'Atemalkohol', 'Vitalwert', 'Vitalwerte')) {
-      return 'vitalwerte-finden';
+      return 'vitalwerte';
     }
     if (/\b(bericht|berichte)\b/.test(n) || hasCompactTerm(n, 'Berichtseintrag')) return 'berichte-finden';
-    if (/\b(visite|visiten|sprechstunde)\b/.test(n) || hasCompactTerm(n, 'Sprechstunde')) return 'visiten-finden';
+    if (/\b(visite|visiten|sprechstunde)\b/.test(n) || hasCompactTerm(n, 'Sprechstunde')) return 'visiten-oeffnen';
     if (/\b(medikation|medikament|medikamente|medikationsplan)\b/.test(n) || hasCompactTerm(n, 'Medikationsplan')) return 'medikation-finden';
     if (/\b(formular|formulare|anfallsprotokoll|fallgesprach|gesprachsprotokoll|sturzprotokoll)\b/.test(n)
       || hasCompactTerm(n, 'Anfallsprotokoll', 'Fallgespräch', 'Fallgespraech', 'Gesprächsprotokoll', 'Gespraechsprotokoll', 'Sturzprotokoll')) {
