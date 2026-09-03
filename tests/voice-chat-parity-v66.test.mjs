@@ -124,5 +124,5 @@ test('v66-Migration entfernt ausschließlich die nicht bestätigten Statusbeispi
 test('Arbeitsdokument hält die offenen Fachgrenzen fest', () => {
   assert.match(workDoc, /Berichtssuche, Easy-Plan und Aufgaben · Aktuelles bleiben fachlich offen/);
   assert.match(workDoc, /keine Browser-\/Systemstimme/);
-  assert.match(workDoc, /keine neuen Vivendi-Felder, Menüpunkte oder Klickwege/i);
+  assert.match(workDoc, /Keine neuen Vivendi-Felder, Statusnamen, Menüpunkte oder Klickwege werden ergänzt\./i);
 });
