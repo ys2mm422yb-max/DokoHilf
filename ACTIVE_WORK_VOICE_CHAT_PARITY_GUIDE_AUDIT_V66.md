@@ -1,7 +1,7 @@
 # DokoHilf – Sprach-/Schreibparität und Guide-Audit v66
 
 **Stand:** 3. September 2026  
-**Status:** PR-Vorbereitung
+**Status:** PR-Prüfung
 
 ## Ziel
 
@@ -38,7 +38,7 @@ Sprachmodus und Schreibmodus sollen für denselben erkannten Inhalt dieselbe bes
 - keine realen Personen-, Bewohner-, Mitarbeiter-, Fall- oder Gesundheitsdaten
 - Spracherkennungsalternativen werden nur für dieselbe laufende Anfrage verarbeitet
 - Alternativen werden vor der Weitergabe begrenzt und auf dieselben Datenschutzgrenzen wie die primäre Eingabe geprüft
-- keine Screenshots oder Originalunterlagen werden in GitHub oder Supabase übernommen
+- öffentlich und produktiv werden ausschließlich abstrahierte, bestätigte Bedieninformationen und erforderliche technische Metadaten geführt
 
 ## Freigabe
 
