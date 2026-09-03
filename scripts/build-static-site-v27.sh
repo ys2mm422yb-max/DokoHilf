@@ -185,7 +185,7 @@ if [[ "$REQUIRE_STATIC_SUPERTONIC" == "1" ]]; then
 import json, sys
 catalog = json.load(open(sys.argv[1], encoding='utf-8'))
 summary = json.load(open(sys.argv[2], encoding='utf-8'))
-expected_sources = {'base': 130, 'extra': 33, 'release': 49, 'workflow': 39, 'ui': 1, 'navigation': 17, 'context': 10}
+expected_sources = {'base': 134, 'extra': 33, 'release': 49, 'workflow': 39, 'ui': 1, 'navigation': 17, 'context': 10}
 if catalog.get('voice') != 'Supertonic-F1':
     raise SystemExit('Falsche statische Stimme im veröffentlichten Katalog.')
 if catalog.get('sourceCounts') != expected_sources:
