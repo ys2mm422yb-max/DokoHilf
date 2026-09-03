@@ -6,8 +6,8 @@
     '/functions/v1/dokohilf-ai-router',
     '/functions/v1/dokohilf-chat-router',
   ];
-  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260902-spatial-orientation-v60-1';
-  const CONFIRMED_TERM_INPUT_REVISION = '20260902-confirmed-term-input-v61-1';
+  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260903-progressive-navigation-v68-1';
+  const CONFIRMED_TERM_INPUT_REVISION = '20260903-progressive-navigation-v68-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -69,9 +69,6 @@
       || hasCompactTerm(n, 'Funktionsband', 'Funktionen Band', 'Funktionsleiste');
     if (explicitBand) return true;
 
-    // "weiße Liste" ist eine beobachtete Spracherkennungsvariante von "weiße Leiste".
-    // Sie bleibt absichtlich auf den laufenden bestätigten DNF-Orientierungsschritt begrenzt,
-    // weil "Liste" außerhalb dieses Kontexts fachlich etwas anderes bedeuten kann.
     return options.allowContextualListAlias === true
       && isLocationQuestion(n)
       && /\bweiss(?:e|es)?\s+liste\b/.test(n);
@@ -81,6 +78,14 @@
     const n = normalize(text);
     return /\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)
       || hasCompactTerm(n, 'Hauptleiste', 'grüne Hauptleiste');
+  }
+
+  function isDetailedOrientationRequest(text) {
+    const n = normalize(text);
+    if (!n) return false;
+    if (isGreenMainBarReference(n) || isWhiteFunctionBandReference(n)) return true;
+    return /\b(wo genau|finde.*nicht|sehe.*nicht|erkenne.*nicht|nirgends|komme nicht weiter|weiss nicht weiter|weis nicht weiter|keine ahnung|brauche hilfe|hilf mir|verstehe nicht|versteh nicht|checke nicht|check nicht)\b/.test(n)
+      || /\b(bei mir heisst|bei mir steht|sieht anders aus|ist anders|andere ansicht|anderer reiter|anderes menu)\b/.test(n);
   }
 
   function hasEffectivenessTerm(text) {
@@ -118,12 +123,8 @@
     const mentionsKnownBar = isGreenMainBarReference(n) || asksAboutWhiteFunctionBand;
     if (!isLocationQuestion(n) && !mentionsKnownBar) return '';
 
-    if (asksAboutWhiteFunctionBand) {
-      return whiteFunctionBandHelp();
-    }
-    if (isGreenMainBarReference(n)) {
-      return greenMainBarHelp();
-    }
+    if (asksAboutWhiteFunctionBand) return whiteFunctionBandHelp();
+    if (isGreenMainBarReference(n)) return greenMainBarHelp();
     if (hasEffectivenessTerm(n)
       && (/\b(bedarf|medikation)\b/.test(n) || hasNeedMedicationTerm(n))) {
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.';
@@ -157,9 +158,7 @@
     if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n) || hasCompactTerm(n, 'An-/Abwesenheit', 'An-/Abwesenheiten')) {
       return 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du An-/Abwesenheiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du An-/Abwesenheiten.';
     }
-    if (/\b(bericht|berichte|berichtseintrag)\b/.test(n) || hasCompactTerm(n, 'Berichtseintrag')) {
-      return reportLocationHelp();
-    }
+    if (/\b(bericht|berichte|berichtseintrag)\b/.test(n) || hasCompactTerm(n, 'Berichtseintrag')) return reportLocationHelp();
     if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) {
       return 'Öffne oben zuerst Analyse. Analyse steht ganz oben in der festen grünen Leiste. Nach der Auswahl erscheinen darunter die zugehörigen Unterpunkte; dort findest du Was war los. Darüber öffnest du die Übergabeansicht.';
     }
@@ -175,9 +174,7 @@
     if (hasCompactTerm(n, 'Stammdaten', 'Bewohnerübersicht', 'Bewohneruebersicht')) {
       return 'Öffne zuerst Bericht oder den Durchführungsnachweis. Beides findest du unter Doku: Wähle ganz oben in der festen grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband mit Bericht und Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.';
     }
-    if (/\bdoku\b/.test(n)) {
-      return dokuTabHelp();
-    }
+    if (/\bdoku\b/.test(n)) return dokuTabHelp();
     return '';
   }
 
@@ -226,8 +223,6 @@
       return payloadFor(parsed, whiteFunctionBandHelp(), 'confirmed-spatial-orientation-v60');
     }
 
-    // Im laufenden Doku-Schritt ist mit „Leiste“ eindeutig die zuvor genannte
-    // grüne Hauptleiste gemeint. Deshalb nicht an generisches Smart Help delegieren.
     if (isLocationQuestion(n) && (/\bleiste\b/.test(n) || isGreenMainBarReference(n))) {
       return payloadFor(parsed, greenMainBarHelp(), 'confirmed-durchfuehrung-orientation-v57');
     }
@@ -276,6 +271,13 @@
 
     const delegatedBody = smartHelpBody(parsed, userText);
     if (delegatedBody) return previousFetch(input, { ...init, body: delegatedBody });
+
+    if (!currentGuide(parsed).guideSlug
+      && !isDetailedOrientationRequest(userText)
+      && window.DokoHilfSmartHelpV29?.preparedBody) {
+      return previousFetch(input, init);
+    }
+
     const payload = responseFor(parsed, userText);
     if (!payload) return previousFetch(input, init);
     return localResponse(payload);
@@ -288,6 +290,7 @@
     compactNormalize,
     hasCompactTerm,
     isLocationQuestion,
+    isDetailedOrientationRequest,
     isWhiteFunctionBandReference,
     isGreenMainBarReference,
     greenMainBarHelp,

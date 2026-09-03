@@ -26,12 +26,12 @@ test('freie Texte und Hilfe-Button landen beim selben Server-Kontextpfad', () =>
   assert.match(router, /stepResponse\(origin, guide, currentIndex/);
 });
 
-test('Vitalwerte behalten den bestätigten Einzelwert-Ablauf, während reine Suche zuerst den Bereich findet', () => {
+test('Vitalwerte behalten den bestätigten Einzelwert-Ablauf, während reine Suche schrittweise in den bestätigten Guide führt', () => {
   assert.match(confirmed, /## Einzelnen Vitalwert erfassen/);
   assert.match(confirmed, /1\. Bewohner auswählen\./);
   assert.match(confirmed, /2\. Ganz oben in der festen grünen Leiste \*\*Doku-Erweitert\*\* öffnen\./);
   assert.match(confirmed, /3\. Darunter \*\*Vitalwerte\*\* wählen\./);
-  assert.match(smart, /return 'vitalwerte-finden'/);
+  assert.match(smart, /return 'vitalwerte'/);
   assert.doesNotMatch(smart, /!isLocationQuestion\(n\)\) return 'vitalwerte-einzelwert'/);
 });
 

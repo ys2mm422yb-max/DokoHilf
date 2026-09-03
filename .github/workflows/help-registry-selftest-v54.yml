@@ -33,5 +33,10 @@ jobs:
           node --check assets/self-test-v54.js
           node --check assets/release-polish-v29.js
           node --test tests/help-registry-selftest-v54.test.mjs
-          grep -q "const VERSION_LABEL = 'v33'" assets/release-polish-v29.js
-          node -e "const v=require('./version.json'); if(v.appVersion!=='v33'||v.release!=='help-registry-selftest-v54') process.exit(1)"
+          node - <<'NODE'
+          const fs = require('fs');
+          const version = require('./version.json');
+          const release = fs.readFileSync('assets/release-polish-v29.js', 'utf8');
+          if (!/^v\d+$/.test(version.appVersion || '')) process.exit(1);
+          if (!release.includes(`const VERSION_LABEL = '${version.appVersion}'`)) process.exit(1);
+          NODE

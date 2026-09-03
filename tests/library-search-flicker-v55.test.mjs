@@ -48,8 +48,9 @@ function loadDiscoveryApi() {
   return window.DokoHilfGuideDiscoveryV53;
 }
 
-test('v33 search hotfix delegates the legacy search owner to the smart filter', () => {
-  assert.equal(version.appVersion, 'v33');
+test('v33 search hotfix remains active after later public version bumps', () => {
+  assert.match(version.appVersion, /^v\d+$/);
+  assert.ok(Number(version.appVersion.slice(1)) >= 33);
   assert.match(uxSource, /20260823-search-flicker-hotfix-v55-1/);
   assert.match(swSource, /UX_POLISH_REVISION = '20260823-search-flicker-hotfix-v55-1'/);
   assert.match(swSource, /static-supertonic-2-search-v55/);

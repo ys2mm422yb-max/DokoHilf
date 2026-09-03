@@ -54,10 +54,10 @@ test('bestätigte zusammengesetzte Navigationsbegriffe funktionieren getrennt od
     ['Wo finde ich Bedarfs Medikation?', 'bedarfsmedikation-finden'],
     ['Wo finde ich die Wirksamkeits Kontrolle der Bedarfs Medikation?', 'bedarfsmedikation-wirksamkeitskontrolle-finden'],
     ['Wo finde ich Maßnahmen ohne Zeit Angabe?', 'massnahmen-ohne-zeitangabe-finden'],
-    ['Wo finde ich Vital Werte?', 'vitalwerte-finden'],
-    ['Wo finde ich Blut Druck?', 'vitalwerte-finden'],
-    ['Wo finde ich Blut Zucker?', 'vitalwerte-finden'],
-    ['Wo finde ich Sauerstoff Sättigung?', 'vitalwerte-finden'],
+    ['Wo finde ich Vital Werte?', 'vitalwerte'],
+    ['Wo finde ich Blut Druck?', 'vitalwerte'],
+    ['Wo finde ich Blut Zucker?', 'vitalwerte'],
+    ['Wo finde ich Sauerstoff Sättigung?', 'vitalwerte'],
     ['Wo finde ich den Medikations Plan?', 'medikation-finden'],
     ['Wo ist das Sturz Protokoll?', 'formulare-finden'],
     ['Wo ist das Fall Gespräch?', 'formulare-finden'],
@@ -140,7 +140,7 @@ test('Split-Varianten liefern exakt dieselbe bestätigte Orientierung wie ihre k
 test('v60 Listen-Ausnahme bleibt eng und wird nicht als allgemeine Fuzzy-Erkennung ausgeweitet', () => {
   const orientation = loadOrientation();
   assert.equal(orientation.orientationHelp('Wo ist die weiße Liste?'), '');
-  assert.match(orientation.inputRevision, /confirmed-term-input-v61/);
+  assert.match(orientation.inputRevision, /progressive-navigation-v68/);
 });
 
 test('PWA rotiert nur den Shell-Cache und bewahrt die bestätigten Release-Grenzen', () => {

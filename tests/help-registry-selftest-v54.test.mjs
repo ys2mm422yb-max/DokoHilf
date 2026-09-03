@@ -95,11 +95,12 @@ test('Selbsttest bleibt lokal, datensparsam und prüft ausschließlich statische
   assert.doesNotMatch(selfTest, /localStorage|sessionStorage|indexedDB|document\.cookie/i);
 });
 
-test('v33 lädt Registry zuerst und danach Guide Discovery, Schritthilfe und Selbsttest', () => {
+test('Registry, Guide Discovery, Schritthilfe und Selbsttest bleiben mit der aktuellen App-Version gekoppelt', () => {
   const version = JSON.parse(versionRaw);
-  assert.equal(version.appVersion, 'v33');
-  assert.equal(version.release, 'help-registry-selftest-v54');
-  assert.match(release, /const VERSION_LABEL = 'v33'/);
+  assert.match(version.appVersion, /^v\d+$/);
+  assert.equal(typeof version.release, 'string');
+  assert.ok(version.release.trim().length > 0);
+  assert.match(release, new RegExp(`const VERSION_LABEL = '${version.appVersion}'`));
 
   const loader = release.match(/async function loadV54Features\(\) \{[\s\S]*?\n  \}/)?.[0] || '';
   assert.ok(loader, 'loadV54Features missing');
