@@ -37,10 +37,10 @@ test('PROJECT_RULES macht das Echtdatenverbot dauerhaft und die App zur reinen E
   for (const text of publicCore) assert.equal(text.includes(obsoleteTestAccountTerm), false);
 });
 
-test('Fachquelle und Handoff veröffentlichen nur Ergebnisse statt interner Ausgangsmaterialien', () => {
-  assert.match(workflows, /Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien/);
-  assert.match(handoff, /Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert/);
-  assert.match(readme, /Herkunft, Prüfmaterialien oder interne Ausgangsmaterialien werden nicht öffentlich dokumentiert/);
+test('Fachquelle und Handoff bleiben auf bestätigte veröffentlichungsfähige Inhalte begrenzt', () => {
+  assert.match(workflows, /ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege/);
+  assert.match(handoff, /ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Inhalte/);
+  assert.match(readme, /ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Ergebnisse/);
 });
 
 test('Hotfix-QA bleibt für beide mobilen Plattformen und synthetische Zustände verbindlich', () => {

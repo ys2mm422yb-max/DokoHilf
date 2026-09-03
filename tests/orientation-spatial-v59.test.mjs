@@ -93,9 +93,10 @@ test('räumliche Hilfe nutzt bereits katalogisierte statische Supertonic-F1-Spra
   assert.ok(catalog.entries.some(entry => entry.text === text));
 });
 
-test('v60 ändert keine fachlichen Guides und dokumentiert die Datenschutzgrenze', () => {
+test('v60 ändert keine fachlichen Guides und hält die neutrale Veröffentlichungsgrenze ein', () => {
   assert.match(workNote, /Keine Supabase-Guide-Schritte und keine fachlichen Klickwege in diesem Block ändern/i);
-  assert.match(workNote, /Screenshots, Fotos, Video-Frames und Originalunterlagen.*niemals in GitHub oder Supabase/i);
+  assert.match(workNote, /ausschließlich anonymisierte, selbst formulierte und bereits bestätigte Bedien- und Orientierungsinformationen/i);
+  assert.match(workNote, /Nicht bestätigte Details bleiben offen und werden nicht ergänzt/i);
   assert.match(workNote, /bereits vorhandenen.*Supertonic-F1-Satz wiederverwenden/i);
   assert.match(workNote, /Spracherkennungsvarianten/i);
   assert.match(workNote, /Vitalwerte/i);
