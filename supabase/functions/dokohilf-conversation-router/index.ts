@@ -10,10 +10,12 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:3000',
 ]);
 
-const ROUTER_VERSION = 'natural-guide-completions-v44';
+const ROUTER_VERSION = 'voice-chat-parity-v66';
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 24;
 const MAX_BODY_CHARS = 16_000;
+const MAX_SPEECH_ALTERNATIVES = 4;
+const VAGUE_HELP_REPLY = 'Wobei brauchst du Hilfe? Nenne bitte den Bereich oder die Funktion, zum Beispiel Vitalwerte, Berichte, Visiten, Formulare oder An-/Abwesenheiten.';
 const requestWindows = new Map<string, { startedAt: number; count: number }>();
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
@@ -108,6 +110,23 @@ function sanitizeMessages(value: unknown): ChatMessage[] {
   }).filter((item): item is ChatMessage => Boolean(item));
 }
 
+function sanitizeSpeechAlternatives(value: unknown, primary: string): string[] {
+  if (!Array.isArray(value)) return [];
+  const primaryKey = normalize(primary);
+  const seen = new Set<string>();
+  const safe: string[] = [];
+  for (const item of value) {
+    if (typeof item !== 'string') continue;
+    const text = item.replace(/\u0000/g, '').trim().slice(0, 350);
+    const key = normalize(text);
+    if (!text || !key || key === primaryKey || seen.has(key) || containsSensitiveData(text)) continue;
+    seen.add(key);
+    safe.push(text);
+    if (safe.length >= MAX_SPEECH_ALTERNATIVES) break;
+  }
+  return safe;
+}
+
 function latestUser(messages: ChatMessage[]): string {
   return [...messages].reverse().find(message => message.role === 'user')?.content || '';
 }
@@ -125,6 +144,11 @@ function isPositiveConfirmation(text: string): boolean {
   if (/^(weiter|mach weiter|weiter bitte|nachster schritt|ja|jap|jo|genau|ok|okay|gemacht|fertig|passt|erledigt|hab ich|habe ich|bin dort|ich bin da|ist offen|ist geoffnet|gefunden|geschafft|bin drin)$/.test(n)) return true;
   return /\b(geoffnet|ausgewahlt|angeklickt|geklickt|eingetragen|erfasst|eingegeben|ausgefullt|gespeichert|bestatigt|sichtbar|durchgefuhrt|entfernt|gefunden)\b/.test(n)
     && /\b(ich|habe|hab|ist|sind|wurde|wurden|jetzt)\b/.test(n);
+}
+
+function isVagueHelpRequest(text: string): boolean {
+  const n = normalize(text);
+  return /^(ich mochte bitte|ich mochte|mochte bitte|ich brauche hilfe|brauche hilfe|hilfe|hilf mir|bitte hilf mir|kannst du mir helfen|bitte)$/.test(n);
 }
 
 async function loadGuide(slug: string): Promise<GuideRecord | null> {
@@ -225,7 +249,7 @@ async function renderContinuation(origin: string | null, continuation: Continuat
   return renderGuideStep(origin, guide, Number(continuation.stepIndex) || 0, 'approved-guide-completion-followup-v44');
 }
 
-async function forwardToChatRouter(rawBody: string, origin: string | null): Promise<Response> {
+async function forwardToChatRouter(body: string, origin: string | null): Promise<Response> {
   const url = Deno.env.get('SUPABASE_URL');
   if (!url) return jsonResponse(origin, 503, { error: 'Die KI-Verbindung ist gerade nicht verfügbar.' });
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -233,7 +257,7 @@ async function forwardToChatRouter(rawBody: string, origin: string | null): Prom
   const response = await fetch(`${url}/functions/v1/dokohilf-chat-router`, {
     method: 'POST',
     headers,
-    body: rawBody,
+    body,
     signal: AbortSignal.timeout(15_000),
   }).catch(() => null);
   if (!response) return jsonResponse(origin, 503, { error: 'Die KI-Verbindung ist gerade nicht verfügbar.' });
@@ -259,12 +283,33 @@ Deno.serve(async (req: Request) => {
 
   const messages = sanitizeMessages(parsed.messages);
   if (!messages.length || messages.at(-1)?.role !== 'user') return forwardToChatRouter(rawBody, origin);
-  if (messages.some(message => message.role === 'user' && containsSensitiveData(message.content))) {
-    return forwardToChatRouter(rawBody, origin);
-  }
 
   const userText = latestUser(messages);
+  const speechAlternatives = sanitizeSpeechAlternatives(parsed.speechAlternatives, userText);
+  const safeBody = JSON.stringify({
+    ...parsed,
+    messages,
+    ...(speechAlternatives.length ? { speechAlternatives } : { speechAlternatives: [] }),
+  });
+
+  if (messages.some(message => message.role === 'user' && containsSensitiveData(message.content))) {
+    return forwardToChatRouter(safeBody, origin);
+  }
+
   const assistantText = previousAssistant(messages);
+  const guideSlug = typeof parsed.guideSlug === 'string' ? parsed.guideSlug.trim() : '';
+  const selectedGuideSlug = typeof parsed.selectedGuideSlug === 'string' ? parsed.selectedGuideSlug.trim() : '';
+
+  if (!guideSlug && !selectedGuideSlug && isVagueHelpRequest(userText)) {
+    return jsonResponse(origin, 200, {
+      reply: VAGUE_HELP_REPLY,
+      spokenText: VAGUE_HELP_REPLY,
+      guideSlug: null,
+      completed: false,
+      completionRevision: COMPLETION_REVISION,
+      source: 'vague-help-clarification-v66',
+    });
+  }
 
   const continuation = inferCompletionContinuation(assistantText, userText) as Continuation | null;
   if (continuation) {
@@ -272,7 +317,6 @@ Deno.serve(async (req: Request) => {
     if (response) return response;
   }
 
-  const guideSlug = typeof parsed.guideSlug === 'string' ? parsed.guideSlug.trim() : '';
   if (guideSlug && isPositiveConfirmation(userText)) {
     const guide = await loadGuide(guideSlug);
     if (guide?.steps?.length) {
@@ -282,5 +326,5 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  return forwardToChatRouter(rawBody, origin);
+  return forwardToChatRouter(safeBody, origin);
 });

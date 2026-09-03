@@ -1,14 +1,14 @@
 # Audio-Erzeugungsstatus
 
-**Stand:** 9. August 2026  
-**Status:** v29 – ausschließlich statische Supertonic-F1-WAVs  
-**Ziel-Build:** `20260809-34`
+**Stand:** 3. September 2026  
+**Status:** v33 – ausschließlich statische Supertonic-F1-WAVs  
+**Ziel-Build:** `20260812-41`
 
 ## Aktueller Vertrag
 
-- 40 freigegebene Guides in Supabase
-- 129 eindeutige freigegebene Guide-Schritttexte
-- 130 Basiseinträge inklusive Begrüßungsquelle in `assets/guide-audio-catalog.json`
+- 41 freigegebene Guides im aktuellen freigegebenen Guide-Snapshot
+- 133 eindeutige freigegebene Guide-Schritttexte
+- 134 Basiseinträge inklusive Begrüßungsquelle in `assets/guide-audio-catalog.json`
 - weitere kontrollierte Quellen: 33 Dialog, 49 Release, 39 Durchführung, 1 UI, 17 Navigation, 10 Kontext
 - Erzeugung ausschließlich im geprüften GitHub-Releasebuild mit Supertonic 3, Stimme F1, Deutsch
 - die endgültige WAV-Zahl wird nach Deduplizierung dynamisch aus allen kontrollierten Quellen abgeleitet
@@ -19,7 +19,7 @@ Die WAV-Dateien werden nicht in den Quellbranch committed. Der Releasejob erzeug
 
 ## Schutz vor veralteten Sprachwegen
 
-Der Basiskatalog wird als Snapshot der aktuell freigegebenen Supabase-Guide-Schritte gepflegt. Der Builder blockiert bekannte Altwege wie die Schreibweise `Doku erweitert`, `Aufgaben → Aktuelles` und einen direkten erfundenen Easy-Plan-Schritt. Die bestätigte Navigation verwendet `Doku-Erweitert` und die feste grüne Hauptleiste.
+Der Basiskatalog wird als Snapshot der aktuell freigegebenen Guide-Schritte gepflegt. Der Builder blockiert bekannte Altwege wie die Schreibweise `Doku erweitert`, `Aufgaben → Aktuelles`, einen direkten erfundenen Easy-Plan-Schritt, veraltete Bericht-Hierarchien sowie nicht bestätigte An-/Abwesenheits-Statusbeispiele. Die bestätigte Navigation verwendet `Doku-Erweitert` und die feste grüne Hauptleiste; nicht bestätigte Details bleiben offen.
 
 ## Stillgelegter Altbestand
 

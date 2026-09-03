@@ -36,7 +36,9 @@ test('Vitalwerte behalten den bestätigten Einzelwert-Ablauf, während reine Suc
 });
 
 test('Bericht-Hilfe verwendet den bestätigten Einstieg statt Vitalwerte-Fallback', () => {
-  assert.match(contextHotfix, /Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach \*\*Berichte\*\*/);
+  assert.match(contextHotfix, /Öffne oben in der festen grünen Hauptleiste \*\*Doku\*\*/);
+  assert.match(contextHotfix, /weißen Funktionsband direkt darunter \*\*Bericht\*\*/);
+  assert.doesNotMatch(contextHotfix, /suche danach in der festen Leiste nach \*\*Berichte\*\*/);
   assert.doesNotMatch(router, /Vitalwerte fehlt/);
 });
 

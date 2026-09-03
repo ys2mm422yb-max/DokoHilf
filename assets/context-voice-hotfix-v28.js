@@ -8,9 +8,9 @@
     'bericht-folgebericht',
     'berichtssuche',
   ]);
-  const REPORT_ENTRY_REPLY = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach **Berichte**. Siehst du **Berichte**?';
-  const REPORT_ENTRY_SPEECH = 'Wähle zuerst den gewünschten Bewohner und suche danach in der festen Leiste nach Berichte. Siehst du Berichte?';
-  const VOICE_PROGRESS_REVISION = '20260812-final-step-progress-v48-2';
+  const REPORT_ENTRY_REPLY = 'Wähle zuerst den gewünschten Bewohner. Öffne oben in der festen grünen Hauptleiste **Doku** und wähle im weißen Funktionsband direkt darunter **Bericht**. Ist der Bereich **Berichte** geöffnet?';
+  const REPORT_ENTRY_SPEECH = 'Öffne oben in der festen grünen Hauptleiste Doku und wähle im weißen Funktionsband direkt darunter Bericht. Ist der Bereich Berichte geöffnet?';
+  const VOICE_PROGRESS_REVISION = '20260902-voice-chat-parity-v66-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -165,7 +165,7 @@
     if (fixed === payload) return response;
     const headers = new Headers(response.headers);
     headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers.set('X-DokoHilf-Context-Hotfix', 'natural-copy-static-voice-v48-1');
+    headers.set('X-DokoHilf-Context-Hotfix', 'voice-chat-parity-v66-1');
     return new Response(JSON.stringify(fixed), {
       status: response.status,
       statusText: response.statusText,

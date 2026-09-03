@@ -33,18 +33,19 @@ function normalizeKey(value) {
 test('base speech catalog mirrors the current approved guide snapshot', () => {
   assert.equal(catalog.schemaVersion, 1);
   assert.equal(catalog.voice, 'Supertonic-F1');
-  assert.equal(catalog.entries.length, 130);
+  assert.equal(catalog.entries.length, 134);
   assert.equal(extraCatalog.entries.length, 33);
-  assert.equal(new Set(catalog.entries.map(entry => normalizeKey(entry.text))).size, 130);
+  assert.equal(new Set(catalog.entries.map(entry => normalizeKey(entry.text))).size, 134);
   assert.equal(new Set(extraCatalog.entries.map(entry => normalizeKey(entry.text))).size, 33);
-  assert.match(catalog.generatedFrom, /40 approved dokohilf_guides/);
-  assert.match(catalog.generatedFrom, /129 unique approved step texts plus greeting/);
+  assert.match(catalog.generatedFrom, /41 approved dokohilf_guides/);
+  assert.match(catalog.generatedFrom, /133 unique approved step texts plus greeting/);
   const sourceText = catalog.entries.map(entry => entry.text).join('\n');
-  assert.doesNotMatch(sourceText, /Doku erweitert|Öffne oben den Reiter „Aufgaben“|Wähle darunter „Aktuelles“|^Wähle „Easy-Plan“\.$/m);
+  assert.doesNotMatch(sourceText, /Doku erweitert|Öffne oben den Reiter „Aufgaben“|Wähle darunter „Aktuelles“|^Wähle „Easy-Plan“\.$|Abwesend – Krankenhaus|das passende externe Angebot/m);
   assert.match(sourceText, /„Planung“ findest du ganz oben in der festen grünen Hauptleiste/);
   assert.match(sourceText, /Wichtig für Schichtübergabe.*Bedarfsmedikation/s);
   assert.match(sourceText, /Öffne beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“/);
   assert.match(sourceText, /große Textfeld darunter/);
+  assert.match(sourceText, /Wähle den passenden Status aus\./);
 });
 
 test('legacy compatibility browser code still points only at the fixed private audio endpoint', () => {
@@ -79,16 +80,19 @@ test('alte serverseitige TTS-, Builder- und Gacrux-Auslieferungsendpunkte sind R
 });
 
 test('öffentliche Voice-Dokumentation beschreibt nur noch statische Supertonic-Ausgabe', () => {
-  assert.match(audioStatus, /130 Basiseinträge/);
+  assert.match(audioStatus, /134 Basiseinträge/);
+  assert.match(audioStatus, /41 freigegebene Guides/);
+  assert.match(audioStatus, /133 eindeutige freigegebene Guide-Schritttexte/);
   assert.match(audioStatus, /keine lokale Inferenz/i);
   assert.match(providerStatus, /keinen Gacrux-, Gemini-TTS- oder Systemstimmen-Rollbackpfad/);
   assert.match(thirdParty, /kein Rollback- oder Fallbackpfad mehr/);
   assert.doesNotMatch(thirdParty, /Rollback-Bestand erhalten/);
-  assert.match(policy, /40.*freigegebene Guides/s);
-  assert.match(policy, /129.*Schritttexte/s);
-  assert.match(policy, /130 Basissätze/);
+  assert.match(policy, /41.*freigegebene Guides/s);
+  assert.match(policy, /133.*Schritttexte/s);
+  assert.match(policy, /134 Basissätze/);
   assert.match(policy, /33.*Dialog/s);
   assert.match(policy, /keinen.*Browser.*Geräte.*Systemstimmen.*WebGPU.*WASM.*Cloud-TTS/s);
+  assert.match(policy, /Nicht bestätigte Details bleiben offen/);
 });
 
 test('static audio exception is narrow and excludes every user-content source', () => {
