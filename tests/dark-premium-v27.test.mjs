@@ -52,7 +52,7 @@ test('published voice is static Supertonic-F1 only and legacy synthesis paths st
   assert.match(localGate, /static-supertonic-only-v29/);
   assert.doesNotMatch(localGate, /DokoHilfLocalVoiceV28\.synthesize|localFallback|IOS_LOCAL_TIMEOUT_MS|OTHER_LOCAL_TIMEOUT_MS/);
   assert.match(ux, /__DOKOHILF_LOCAL_VOICE_ONLY_V28__/);
-  assert.match(app, /function speakWithSystemVoice/);
+  assert.doesNotMatch(app, /function speakWithSystemVoice|SpeechSynthesisUtterance|speechSynthesis\.speak|speechSynthesis\.getVoices/);
   assert.match(experience, /window\.__DOKOHILF_LOCAL_VOICE_V28__ !== true/);
   assert.match(uxCss, /data-voice-state=\"listening\"/); assert.match(uxCss, /width:92px!important/);
   assert.doesNotMatch(serviceWorker, /dokohilf-guide-audio\?manifest=/);

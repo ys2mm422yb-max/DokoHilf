@@ -8,24 +8,24 @@ const ux = await readFile('assets/ux-v27.js', 'utf8');
 const server = await readFile('supabase/functions/dokohilf-tts/index.ts', 'utf8');
 const migration = await readFile('supabase/migrations/20260806173000_remove_repeated_exercise_notices.sql', 'utf8');
 
-test('client starts the immediate fallback instead of waiting indefinitely', () => {
+test('legacy timeout wrapper bleibt unter dem aktuellen statischen Voice-Marker inaktiv', () => {
   assert.match(ux, /HARD_FALLBACK_MS = 180/);
+  assert.match(ux, /if \(localVoiceV28\(\)\) return previousFetch\(input, init\)/);
   assert.match(ux, /Promise\.race\(\[request, timeout\]\)/);
   assert.match(ux, /new AbortController\(\)/);
   assert.match(ux, /controller\.abort\(\)/);
-  assert.match(ux, /dokohilf_immediate_voice_fallback/);
   assert.match(experience, /nextSpokenText/);
   assert.match(experience, /prefetch(?:Text)?/);
   assert.doesNotMatch(experience, /localStorage|indexedDB|caches\.open/);
   assert.doesNotMatch(ux, /indexedDB|caches\.open/);
 });
 
-test('iPhone Sofortstimme wird nach Cloud-Fallback aktiv aus dem pausierten Zustand geholt', () => {
-  assert.match(ux, /installSpeechSynthesisWatchdog/);
-  assert.match(ux, /speechSynthesis/);
-  assert.match(ux, /synth\.resume\(\)/);
-  assert.match(ux, /\[60, 140, 280, 520\]/);
-  assert.match(ux, /__DOKOHILF_SPEECH_RESUME_WATCHDOG_V27__/);
+test('Browser- und Systemstimmen-Watchdog ist dauerhaft entfernt', () => {
+  assert.doesNotMatch(ux, /installSpeechSynthesisWatchdog/);
+  assert.doesNotMatch(ux, /speechSynthesis/);
+  assert.doesNotMatch(ux, /synth\.resume\(\)/);
+  assert.doesNotMatch(ux, /Gerätestimme|Sofortstimme|Gacrux/);
+  assert.match(ux, /__DOKOHILF_SYSTEM_VOICE_RETIRED_V67__/);
 });
 
 test('persistent browser storage is limited to one privacy acknowledgement boolean', () => {

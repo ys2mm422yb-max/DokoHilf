@@ -21,7 +21,6 @@
     audioSource: null,
     ttsAbort: null,
     speechRequestId: 0,
-    preferredSystemVoice: null,
   };
 
   const el = {
@@ -267,31 +266,6 @@
       .trim();
   }
 
-  function chooseBestSystemVoice() {
-    if (!('speechSynthesis' in window)) return null;
-    const voices = window.speechSynthesis.getVoices();
-    if (!voices.length) return null;
-
-    const score = voice => {
-      const name = `${voice.name} ${voice.voiceURI}`.toLowerCase();
-      const language = String(voice.lang || '').toLowerCase();
-      let points = 0;
-      if (language === 'de-de') points += 80;
-      else if (language.startsWith('de')) points += 60;
-      if (voice.localService) points += 8;
-      if (/anna|petra|marlene|helena|katja|google.*deutsch|google.*german|siri/.test(name)) points += 25;
-      if (/premium|enhanced|natural/.test(name)) points += 18;
-      if (/compact|espeak/.test(name)) points -= 25;
-      return points;
-    };
-
-    return [...voices].sort((a, b) => score(b) - score(a))[0] || null;
-  }
-
-  function refreshSystemVoice() {
-    state.preferredSystemVoice = chooseBestSystemVoice();
-  }
-
   async function unlockAudioEngine() {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) return null;
@@ -311,7 +285,6 @@
       try { state.audioSource.disconnect(); } catch { /* no-op */ }
       state.audioSource = null;
     }
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     state.speaking = false;
   }
 
@@ -333,26 +306,17 @@
     }
   }
 
-  function speakWithSystemVoice(text, requestId) {
-    if (!('speechSynthesis' in window) || requestId !== state.speechRequestId) {
-      finishSpeech(requestId);
-      return;
-    }
-
-    refreshSystemVoice();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'de-DE';
-    utterance.rate = 0.97;
-    utterance.pitch = 1;
-    if (state.preferredSystemVoice) utterance.voice = state.preferredSystemVoice;
-    utterance.onstart = () => {
-      if (requestId === state.speechRequestId) {
-        setVoiceState('speaking', 'DokoHilf spricht …', 'Danach höre ich automatisch weiter zu.');
-      }
-    };
-    utterance.onend = () => finishSpeech(requestId);
-    utterance.onerror = () => finishSpeech(requestId);
-    window.speechSynthesis.speak(utterance);
+  function failStaticSpeech(requestId) {
+    if (requestId !== state.speechRequestId) return;
+    state.shouldListenAfterSpeech = false;
+    state.speaking = false;
+    state.audioSource = null;
+    state.ttsAbort = null;
+    setVoiceState(
+      'error',
+      'Sprachausgabe nicht verfügbar',
+      'Die Antwort bleibt im Chat sichtbar. Tippe auf das Mikrofon zum Weiterreden.',
+    );
   }
 
   async function speak(text) {
@@ -392,7 +356,7 @@
       source.start(0);
     } catch (error) {
       if (requestId !== state.speechRequestId || error?.name === 'AbortError') return;
-      speakWithSystemVoice(clean, requestId);
+      failStaticSpeech(requestId);
     }
   }
 
@@ -581,12 +545,6 @@
         if (document.visibilityState === 'visible') registration.update().catch(() => {});
       });
     } catch { /* App remains usable without offline update support. */ }
-  }
-
-  if ('speechSynthesis' in window) {
-    refreshSystemVoice();
-    window.speechSynthesis.addEventListener?.('voiceschanged', refreshSystemVoice);
-    window.speechSynthesis.onvoiceschanged = refreshSystemVoice;
   }
 
   registerAutoUpdate();

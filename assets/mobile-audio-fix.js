@@ -35,7 +35,7 @@
   }
 
   async function unlockAudioPlayback() {
-    if (audioPrimed && (!sharedAudioContext || sharedAudioContext.state === 'running')) return true;
+    if (audioPrimed && sharedAudioContext?.state === 'running') return true;
 
     let context = null;
     try {
@@ -52,20 +52,10 @@
       context = null;
     }
 
-    if (!audioPrimed && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
-      try {
-        const silent = new SpeechSynthesisUtterance(' ');
-        silent.lang = 'de-DE';
-        silent.volume = 0;
-        window.speechSynthesis.speak(silent);
-        window.speechSynthesis.resume();
-      } catch {
-        // Die natürliche Stimme bleibt der Standard; die Gerätestimme ist nur Ersatz.
-      }
-    }
-
-    audioPrimed = Boolean(context?.state === 'running') || ('speechSynthesis' in window);
-    document.documentElement.dataset.dokohilfAudio = context?.state || (audioPrimed ? 'device-ready' : 'blocked');
+    // Audio wird ausschließlich über den freigegebenen statischen F1-Pfad
+    // wiedergegeben. Zum Entsperren wird deshalb nur AudioContext verwendet.
+    audioPrimed = Boolean(context?.state === 'running');
+    document.documentElement.dataset.dokohilfAudio = context?.state || 'blocked';
     window.dispatchEvent(new CustomEvent('dokohilf:audio-unlock', {
       detail: { ready: audioPrimed, contextState: context?.state || 'unavailable' },
     }));
@@ -151,10 +141,11 @@
   window.DokoHilfAudioUnlock = {
     unlock: unlockAudioPlayback,
     getContext: () => sharedAudioContext,
-    isReady: () => audioPrimed && (!sharedAudioContext || sharedAudioContext.state === 'running'),
+    isReady: () => audioPrimed && sharedAudioContext?.state === 'running',
   };
   window.__DOKOHILF_NATURAL_VOICE__ = true;
   window.__DOKOHILF_MOBILE_VOICE_V2__ = true;
   window.__DOKOHILF_AUDIO_UNLOCK_V3__ = true;
   window.__DOKOHILF_AUDIO_ONLY_V4__ = true;
+  window.__DOKOHILF_SYSTEM_VOICE_RETIRED_V67__ = true;
 })();
