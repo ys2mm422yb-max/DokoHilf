@@ -4,26 +4,31 @@ import { readFile } from 'node:fs/promises';
 
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 
-const [contextHotfix, reportHotfix, builder, worker, stuckCatalogRaw] = await Promise.all([
+const [contextHotfix, reportHotfix, builder, worker, stuckCatalogRaw, baseCatalogRaw] = await Promise.all([
   read('assets/context-voice-hotfix-v28.js'),
   read('assets/report-guide-hotfix-v43.js'),
   read('scripts/build-supertonic-guide-audio-v28.py'),
   read('service-worker.js'),
   read('assets/voice-context-stuck-catalog-v48.json'),
+  read('assets/guide-audio-catalog.json'),
 ]);
 const stuckCatalog = JSON.parse(stuckCatalogRaw);
+const baseCatalog = JSON.parse(baseCatalogRaw);
 const stuckTexts = stuckCatalog.entries.map(entry => entry.text);
+const baseTexts = baseCatalog.entries.map(entry => entry.text);
+const EXPAND_STEP = 'Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.';
 
 test('approved stuck-help replies are prebuilt with free static Supertonic', () => {
   assert.equal(stuckCatalog.voice, 'Supertonic-F1');
+  assert.equal(baseCatalog.voice, 'Supertonic-F1');
   assert.equal(stuckTexts.length, 63);
   assert.match(String(stuckCatalog.generatedFrom || ''), /63 eindeutige freigegebene stuck-Hilfetexte/);
+  assert.ok(baseTexts.includes(EXPAND_STEP), EXPAND_STEP);
   for (const text of [
     'Bleibe in den geöffneten Stammdaten. Suche in der grauen Leiste nach „Dateiablage“.',
     'Bleibe in „Dateiablage“. Der Bereich „Dokumente“ erscheint unten mittig.',
     'Warte kurz, bis sich Word öffnet, und führe den Doppelklick nicht mehrfach aus.',
     'Du legst die Wirksamkeitskontrolle nicht selbst an. Eine konkrete Wartezeit ist hier nicht festgelegt.',
-    'Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.',
     '„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“.',
     'Wenn du den Zeitraum geändert und die Anzeige aktualisiert hast, wähle danach erneut „Alle ausklappen“, damit alle Einträge wieder vollständig geöffnet sind.',
   ]) assert.ok(stuckTexts.includes(text), text);
