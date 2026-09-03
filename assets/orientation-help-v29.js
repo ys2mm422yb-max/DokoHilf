@@ -6,8 +6,8 @@
     '/functions/v1/dokohilf-ai-router',
     '/functions/v1/dokohilf-chat-router',
   ];
-  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260902-spatial-orientation-v60-1';
-  const CONFIRMED_TERM_INPUT_REVISION = '20260902-confirmed-term-input-v61-1';
+  const DURCHFUEHRUNG_ORIENTATION_REVISION = '20260903-progressive-navigation-v68-1';
+  const CONFIRMED_TERM_INPUT_REVISION = '20260903-progressive-navigation-v68-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -69,9 +69,6 @@
       || hasCompactTerm(n, 'Funktionsband', 'Funktionen Band', 'Funktionsleiste');
     if (explicitBand) return true;
 
-    // "weiße Liste" ist eine beobachtete Spracherkennungsvariante von "weiße Leiste".
-    // Sie bleibt absichtlich auf den laufenden bestätigten DNF-Orientierungsschritt begrenzt,
-    // weil "Liste" außerhalb dieses Kontexts fachlich etwas anderes bedeuten kann.
     return options.allowContextualListAlias === true
       && isLocationQuestion(n)
       && /\bweiss(?:e|es)?\s+liste\b/.test(n);
@@ -81,6 +78,14 @@
     const n = normalize(text);
     return /\b(feste leiste|hauptleiste|grune leiste)\b/.test(n)
       || hasCompactTerm(n, 'Hauptleiste', 'grüne Hauptleiste');
+  }
+
+  function isDetailedOrientationRequest(text) {
+    const n = normalize(text);
+    if (!n) return false;
+    if (isGreenMainBarReference(n) || isWhiteFunctionBandReference(n)) return true;
+    return /\b(wo genau|finde.*nicht|sehe.*nicht|erkenne.*nicht|nirgends|komme nicht weiter|weiss nicht weiter|weis nicht weiter|keine ahnung|brauche hilfe|hilf mir|verstehe nicht|versteh nicht|checke nicht|check nicht)\b/.test(n)
+      || /\b(bei mir heisst|bei mir steht|sieht anders aus|ist anders|andere ansicht|anderer reiter|anderes menu)\b/.test(n);
   }
 
   function hasEffectivenessTerm(text) {
@@ -226,8 +231,6 @@
       return payloadFor(parsed, whiteFunctionBandHelp(), 'confirmed-spatial-orientation-v60');
     }
 
-    // Im laufenden Doku-Schritt ist mit „Leiste“ eindeutig die zuvor genannte
-    // grüne Hauptleiste gemeint. Deshalb nicht an generisches Smart Help delegieren.
     if (isLocationQuestion(n) && (/\bleiste\b/.test(n) || isGreenMainBarReference(n))) {
       return payloadFor(parsed, greenMainBarHelp(), 'confirmed-durchfuehrung-orientation-v57');
     }
@@ -276,6 +279,11 @@
 
     const delegatedBody = smartHelpBody(parsed, userText);
     if (delegatedBody) return previousFetch(input, { ...init, body: delegatedBody });
+
+    if (!currentGuide(parsed).guideSlug && !isDetailedOrientationRequest(userText)) {
+      return previousFetch(input, init);
+    }
+
     const payload = responseFor(parsed, userText);
     if (!payload) return previousFetch(input, init);
     return localResponse(payload);
@@ -288,6 +296,7 @@
     compactNormalize,
     hasCompactTerm,
     isLocationQuestion,
+    isDetailedOrientationRequest,
     isWhiteFunctionBandReference,
     isGreenMainBarReference,
     greenMainBarHelp,
