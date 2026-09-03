@@ -83,7 +83,7 @@ test('dauerhafte Fach-, Mobile- und Veröffentlichungsgrenzen bleiben dokumentie
   assert.match(activeVoice, /iOS 393×852/);
   assert.match(activeVoice, /Android 412×915/);
   assert.match(activeVoice, /ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Projektinhalte/);
-  assert.match(confirmed, /Öffentliche Dokumentation enthält keine Angaben zu Herkunft, Prüfmaterialien oder internen Ausgangsmaterialien/);
+  assert.match(confirmed, /ausschließlich anonymisierte, selbst formulierte und fachlich bestätigte Klickwege/);
   assert.match(rules, /Dauerhaftes absolutes Echtdatenverbot/);
   assert.match(rules, /Eine spätere Freigabe darf dieses Verbot \*\*nicht\*\* aufheben oder abschwächen/);
   assert.match(confirmed, /Klienten auswählen/);
