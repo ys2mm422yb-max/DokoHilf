@@ -1,7 +1,7 @@
 # DokoHilf – statische Supertonic-Sprachausgabe
 
-**Stand:** 9. August 2026  
-**Ziel-Build:** `20260809-34` / v29
+**Stand:** 3. September 2026  
+**Ziel-Build:** `20260812-41` / v33
 
 ## Zweck
 
@@ -13,9 +13,9 @@ Es gibt **keinen** Browser-, Geräte-, Systemstimmen-, WebGPU-/WASM- oder Cloud-
 
 Der Basiskatalog ist ein versionierter Snapshot aller aktuell freigegebenen Guide-Schritte:
 
-- **40** freigegebene Guides in Supabase
-- **129** eindeutige freigegebene Schritttexte
-- plus eine allgemeine Begrüßungsquelle = **130 Basissätze** in `assets/guide-audio-catalog.json`
+- **41** freigegebene Guides im aktuellen freigegebenen Guide-Snapshot
+- **133** eindeutige freigegebene Schritttexte
+- plus eine allgemeine Begrüßungsquelle = **134 Basissätze** in `assets/guide-audio-catalog.json`
 - zusätzlich **33** feste Dialogsätze
 - **49** Release-/UI-Sätze
 - **39** Durchführungssätze
@@ -27,8 +27,9 @@ Der Releasebuilder führt diese Quellen zusammen, entfernt Dubletten und leitet 
 
 ## Verbindliche Regeln
 
-- Der Basiskatalog darf keine veralteten Wege wie `Doku erweitert`, `Aufgaben → Aktuelles` oder einen erfundenen direkten Easy-Plan-Schritt enthalten.
+- Der Basiskatalog darf keine veralteten Wege wie `Doku erweitert`, `Aufgaben → Aktuelles`, einen erfundenen direkten Easy-Plan-Schritt, eine falsche Bericht-Hierarchie oder nicht bestätigte An-/Abwesenheits-Statusbeispiele enthalten.
 - `Doku-Erweitert` wird nur mit der bestätigten Schreibweise und Hierarchie verwendet.
+- Nicht bestätigte Details bleiben offen und werden weder textlich noch als Audio ergänzt.
 - Textänderung = vollständige Audio-Neuerzeugung im Releasebuild.
 - Der Build bricht ab, wenn erwartete Quellen fehlen, alte verbotene Basissätze wieder auftauchen oder Katalog/WAV-Zahl/Build-Zusammenfassung nicht übereinstimmen.
 - Die veröffentlichte Stimme bleibt ausschließlich **Supertonic-F1**.
@@ -59,4 +60,4 @@ DokoHilf ist eine öffentliche erklärende Bedienhilfe ohne Endnutzerkonten, Per
 
 ## Aktualisierung
 
-Ändert sich ein freigegebener Guide-Schritt, wird der Basiskatalog aktualisiert, die Build-ID erhöht und der vollständige statische Sprachbestand im nächsten Release neu erzeugt. Veröffentlicht wird nur, wenn Quellkataloge, WAV-Dateien, Build-Zusammenfassung, mobile QA und der exakt geprüfte Git-Head übereinstimmen.
+Ändert sich ein freigegebener Guide-Schritt, wird der Basiskatalog aktualisiert und der vollständige statische Sprachbestand im nächsten Release neu erzeugt. Veröffentlicht wird nur, wenn Quellkataloge, WAV-Dateien, Build-Zusammenfassung, mobile QA und der exakt geprüfte Git-Head übereinstimmen.
