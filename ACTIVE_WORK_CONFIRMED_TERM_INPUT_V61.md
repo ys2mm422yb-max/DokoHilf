@@ -10,12 +10,12 @@ DokoHilf soll bereits fachlich bestätigte Begriffe auch dann zuverlässig erken
 
 Beispiele für den technischen Fehlertyp sind `Durchführungs Nachweis` statt `Durchführungsnachweis`, `Bedarfs Medikation` statt `Bedarfsmedikation` oder `Notfall Blatt` statt `Notfallblatt`.
 
-## Datenschutz- und Materialgrenze
+## Datenschutzgrenze
 
-- Keine Screenshots, Fotos, Video-Frames, OCR-Ausgaben oder Originalunterlagen werden in GitHub oder Supabase gespeichert.
 - Keine Namen, Bewohner-, Mitarbeiter-, Fall-, Gesundheits- oder Organisationsdaten werden übernommen.
 - Tests verwenden ausschließlich synthetische, abstrakte Eingaben ohne reale Person oder realen Fall.
 - Gespeichert werden nur selbst formulierte technische Erkennungsvarianten bereits bestätigter Begriffe.
+- Nicht bestätigte Begriffe oder fachliche Abläufe werden nicht ergänzt.
 
 ## Audit des bestehenden Stands
 
@@ -41,7 +41,7 @@ Der gleiche starre Wortabgleich wurde an mehreren Stellen gefunden:
 
 Der serverseitige `dokohilf-chat-router` zeigt denselben Fehlertyp. Er wird nach diesem PWA-Block separat gehärtet, damit ein produktiver Supabase-Function-Deploy nicht mit einer PWA-Erkennungsänderung vermischt wird. Vor diesem Router-Deploy wird der aktuelle Supabase-Stand erneut geprüft; danach gelten wieder Branch → Exact-PR-Head → Merge → Function-Deploy → Live-Prüfung.
 
-Danach folgen aus Issue #167 weiterhin die fachlich getrennten Orientierungsblöcke: Vitalwerte gegen den bestehenden bestätigten Ablauf abgleichen, An-/Abwesenheiten abgleichen und erst anschließend zusätzliche DNF-Details bearbeiten. Kein vorhandener Klickweg wird allein aufgrund räumlicher Bildinformation umgeschrieben.
+Danach folgen aus Issue #167 weiterhin die fachlich getrennten Orientierungsblöcke: Vitalwerte gegen den bestehenden bestätigten Ablauf abgleichen, An-/Abwesenheiten abgleichen und erst anschließend zusätzliche DNF-Details bearbeiten. Kein vorhandener Klickweg wird allein aufgrund unbestätigter Orientierung umgeschrieben.
 
 ## Release-Grenze
 
