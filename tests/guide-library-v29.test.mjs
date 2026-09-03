@@ -59,11 +59,15 @@ test('Hauptmenü nutzt lokale Häufigkeit, eindeutige Icons und 15 fertige Top-L
   const order = library.match(/const LIBRARY_ORDER = \[([\s\S]*?)\];/); assert.ok(order); const slugs = [...order[1].matchAll(/'([^']+)'/g)].map(match => match[1]); assert.equal(slugs.length, 15); assert.equal(new Set(slugs).size, 15);
 });
 
-test('Navigation questions route to deterministic finding guides for all approved areas', () => {
-  for (const slug of ['berichte-finden', 'doku-erweitert-finden', 'doku-finden', 'visiten-finden', 'vitalwerte-finden', 'anwesenheiten-finden', 'medikation-finden', 'formulare-finden', 'durchfuehrungsnachweis-finden', 'analyse-finden', 'uebergabe-finden', 'notfallblatt-finden', 'stammdaten-finden']) {
+test('Navigation questions route to deterministic confirmed navigation guides for all approved areas', () => {
+  for (const slug of ['berichte-finden', 'doku-erweitert-finden', 'doku-finden', 'anwesenheiten-finden', 'medikation-finden', 'formulare-finden', 'durchfuehrungsnachweis-finden', 'analyse-finden', 'uebergabe-finden', 'notfallblatt-finden', 'stammdaten-finden']) {
     assert.match(followupMigration, new RegExp(`'${slug}'`));
     assert.match(smartHelp, new RegExp(`return '${slug}'`));
   }
+  assert.match(followupMigration, /'visiten-finden'/);
+  assert.match(followupMigration, /'vitalwerte-finden'/);
+  assert.match(smartHelp, /return 'visiten-oeffnen'/);
+  assert.match(smartHelp, /return 'vitalwerte'/);
   assert.match(followupMigration, /festen? Leiste/);
   assert.match(followupMigration, /„Doku-Erweitert“/);
   assert.match(followupMigration, /„Analyse“/);
