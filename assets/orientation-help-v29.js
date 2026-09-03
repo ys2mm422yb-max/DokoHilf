@@ -123,12 +123,8 @@
     const mentionsKnownBar = isGreenMainBarReference(n) || asksAboutWhiteFunctionBand;
     if (!isLocationQuestion(n) && !mentionsKnownBar) return '';
 
-    if (asksAboutWhiteFunctionBand) {
-      return whiteFunctionBandHelp();
-    }
-    if (isGreenMainBarReference(n)) {
-      return greenMainBarHelp();
-    }
+    if (asksAboutWhiteFunctionBand) return whiteFunctionBandHelp();
+    if (isGreenMainBarReference(n)) return greenMainBarHelp();
     if (hasEffectivenessTerm(n)
       && (/\b(bedarf|medikation)\b/.test(n) || hasNeedMedicationTerm(n))) {
       return 'Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.';
@@ -162,9 +158,7 @@
     if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(n) || hasCompactTerm(n, 'An-/Abwesenheit', 'An-/Abwesenheiten')) {
       return 'Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du An-/Abwesenheiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du An-/Abwesenheiten.';
     }
-    if (/\b(bericht|berichte|berichtseintrag)\b/.test(n) || hasCompactTerm(n, 'Berichtseintrag')) {
-      return reportLocationHelp();
-    }
+    if (/\b(bericht|berichte|berichtseintrag)\b/.test(n) || hasCompactTerm(n, 'Berichtseintrag')) return reportLocationHelp();
     if (/\b(ubergabe|uebergabe|was war los)\b/.test(n)) {
       return 'Öffne oben zuerst Analyse. Analyse steht ganz oben in der festen grünen Leiste. Nach der Auswahl erscheinen darunter die zugehörigen Unterpunkte; dort findest du Was war los. Darüber öffnest du die Übergabeansicht.';
     }
@@ -180,9 +174,7 @@
     if (hasCompactTerm(n, 'Stammdaten', 'Bewohnerübersicht', 'Bewohneruebersicht')) {
       return 'Öffne zuerst Bericht oder den Durchführungsnachweis. Beides findest du unter Doku: Wähle ganz oben in der festen grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband mit Bericht und Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.';
     }
-    if (/\bdoku\b/.test(n)) {
-      return dokuTabHelp();
-    }
+    if (/\bdoku\b/.test(n)) return dokuTabHelp();
     return '';
   }
 
@@ -280,7 +272,9 @@
     const delegatedBody = smartHelpBody(parsed, userText);
     if (delegatedBody) return previousFetch(input, { ...init, body: delegatedBody });
 
-    if (!currentGuide(parsed).guideSlug && !isDetailedOrientationRequest(userText)) {
+    if (!currentGuide(parsed).guideSlug
+      && !isDetailedOrientationRequest(userText)
+      && window.DokoHilfSmartHelpV29?.preparedBody) {
       return previousFetch(input, init);
     }
 
