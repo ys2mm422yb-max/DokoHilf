@@ -46,10 +46,28 @@ jobs:
           test "${#V66_TESTS[@]}" -gt 0
           node --test "${V66_TESTS[@]}"
 
-      - name: Run existing regression suite
+      - name: Run legacy Dateiablage regression
+        run: node --test tests/dateiablage-v46.test.mjs
+
+      - name: Run legacy completion regression
+        run: node --test tests/guide-completion-v40.test.mjs
+
+      - name: Run legacy handover regression
+        run: node --test tests/handover-detail-v51.test.mjs
+
+      - name: Run legacy user-facing regression
+        run: node --test tests/user-facing-hotfix-v48.test.mjs
+
+      - name: Run remaining existing regression suite
         run: |
           set -euo pipefail
-          mapfile -d '' EXISTING_TESTS < <(find tests -maxdepth 1 -type f -name '*.test.mjs' ! -name '*v66*.test.mjs' -print0 | sort -z)
+          mapfile -d '' EXISTING_TESTS < <(find tests -maxdepth 1 -type f -name '*.test.mjs' \
+            ! -name '*v66*.test.mjs' \
+            ! -name 'dateiablage-v46.test.mjs' \
+            ! -name 'guide-completion-v40.test.mjs' \
+            ! -name 'handover-detail-v51.test.mjs' \
+            ! -name 'user-facing-hotfix-v48.test.mjs' \
+            -print0 | sort -z)
           test "${#EXISTING_TESTS[@]}" -gt 0
           node --test "${EXISTING_TESTS[@]}"
 
