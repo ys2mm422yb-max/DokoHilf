@@ -16,7 +16,8 @@ const stuckTexts = stuckCatalog.entries.map(entry => entry.text);
 
 test('approved stuck-help replies are prebuilt with free static Supertonic', () => {
   assert.equal(stuckCatalog.voice, 'Supertonic-F1');
-  assert.equal(stuckTexts.length, 65);
+  assert.equal(stuckTexts.length, 63);
+  assert.match(String(stuckCatalog.generatedFrom || ''), /63 eindeutige freigegebene stuck-Hilfetexte/);
   for (const text of [
     'Bleibe in den geöffneten Stammdaten. Suche in der grauen Leiste nach „Dateiablage“.',
     'Bleibe in „Dateiablage“. Der Bereich „Dokumente“ erscheint unten mittig.',
@@ -31,11 +32,10 @@ test('approved stuck-help replies are prebuilt with free static Supertonic', () 
   assert.doesNotMatch(joined, /Einen anderen Klickweg erfindet DokoHilf nicht|DokoHilf kann nicht garantieren|DokoHilf hilft hier nur|DokoHilf nennt keine erfundene Wartezeit/);
 });
 
-test('new help speech is appended after every existing numbered WAV source', () => {
-  assert.match(builder, /EXPECTED_CONTEXT_STUCK_COUNT = 65/);
+test('context-stuck help remains the last static speech source', () => {
+  assert.match(builder, /EXPECTED_CONTEXT_STUCK_COUNT = 63/);
   assert.match(builder, /--context-stuck-catalog/);
-  assert.match(builder, /completion_catalog, file_storage_catalog, context_stuck_catalog/);
-  assert.match(builder, /Context-stuck help is appended last so every previously published numbered WAV/);
+  assert.match(builder, /entries = merged_entries\(\*catalogs\.values\(\), completion_catalog, file_storage_catalog, context_stuck_catalog\)/);
   assert.match(builder, /contextStuckSourceCount/);
 });
 
@@ -55,7 +55,7 @@ test('voice progress is forced immediately to exactly 100 percent at the final s
   assert.match(contextHotfix, /fill\.style\.setProperty\('width', '100%', 'important'\)/);
   assert.match(contextHotfix, /fill\.style\.removeProperty\('transition'\)/);
   assert.match(contextHotfix, /track\.dataset\.v48Final = finalStep \? 'true' : 'false'/);
-  assert.match(contextHotfix, /VOICE_PROGRESS_REVISION = '20260812-final-step-progress-v48-2'/);
+  assert.match(contextHotfix, /VOICE_PROGRESS_REVISION = '20260902-voice-chat-parity-v66-1'/);
 });
 
 test('report special-case block continues with step 9 after the consolidated step', () => {
