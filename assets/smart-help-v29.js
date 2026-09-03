@@ -5,7 +5,7 @@
     '/functions/v1/dokohilf-ai',
     '/functions/v1/dokohilf-chat-router',
   ];
-  const INPUT_ROBUSTNESS_REVISION = '20260902-confirmed-term-input-v61-1';
+  const INPUT_ROBUSTNESS_REVISION = '20260903-voice-chat-parity-v66-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -49,6 +49,22 @@
   function latestUser(parsed) {
     if (!Array.isArray(parsed?.messages)) return '';
     return [...parsed.messages].reverse().find(message => message?.role === 'user')?.content || '';
+  }
+
+  function speechAlternatives(parsed, primaryText) {
+    if (!Array.isArray(parsed?.speechAlternatives)) return [];
+    const primary = normalize(primaryText);
+    const seen = new Set();
+    return parsed.speechAlternatives
+      .filter(value => typeof value === 'string')
+      .map(value => String(value || '').trim().slice(0, 350))
+      .filter(value => {
+        const key = normalize(value);
+        if (!key || key === primary || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 4);
   }
 
   function helpLike(text) {
@@ -110,6 +126,12 @@
 
   function hasMeasuresWithoutTimeTerm(text) {
     return hasCompactTerm(text, 'Maßnahmen ohne Zeitangabe', 'Maßnahme ohne Zeitangabe');
+  }
+
+  function isUnconfirmedGoal(text) {
+    const n = normalize(text);
+    return /\b(berichte auswerten|berichte suchen|nach berichten suchen|abfrage|aufgaben|aktuelles|easy plan|easy-plan|easyplan)\b/.test(n)
+      || hasCompactTerm(n, 'Berichtssuche', 'Bericht Suche', 'Easy Plan');
   }
 
   function inferTaskGuide(text) {
@@ -177,27 +199,39 @@
     return '';
   }
 
+  function inferAlternativeGuide(parsed, userText, infer) {
+    if (isUnconfirmedGoal(userText) || hasEntryAction(userText)) return '';
+    for (const alternative of speechAlternatives(parsed, userText)) {
+      const guideSlug = infer(alternative);
+      if (guideSlug) return guideSlug;
+    }
+    return '';
+  }
+
   function preparedBody(parsed, userText) {
     const activeGuide = String(parsed.guideSlug || '').trim();
-    if (activeGuide && helpLike(userText)) {
+    const alternatives = speechAlternatives(parsed, userText);
+    if (activeGuide && (helpLike(userText) || alternatives.some(helpLike))) {
       return JSON.stringify({ ...parsed, smartHelpIntent: true });
     }
 
     if (!activeGuide && !parsed.selectedGuideSlug) {
-      const taskGuideSlug = inferTaskGuide(userText);
+      const taskGuideSlug = inferTaskGuide(userText) || inferAlternativeGuide(parsed, userText, inferTaskGuide);
       if (taskGuideSlug) {
         return JSON.stringify({
           ...parsed,
           selectedGuideSlug: taskGuideSlug,
           smartTaskIntent: true,
+          ...(inferTaskGuide(userText) ? {} : { smartSpeechAlternativeIntent: true }),
         });
       }
-      const selectedGuideSlug = inferNavigationGuide(userText);
+      const selectedGuideSlug = inferNavigationGuide(userText) || inferAlternativeGuide(parsed, userText, inferNavigationGuide);
       if (selectedGuideSlug) {
         return JSON.stringify({
           ...parsed,
           selectedGuideSlug,
           smartNavigationIntent: true,
+          ...(inferNavigationGuide(userText) ? {} : { smartSpeechAlternativeIntent: true }),
         });
       }
     }
@@ -230,8 +264,11 @@
     hasSignOffIntent,
     helpLike,
     isLocationQuestion,
+    isUnconfirmedGoal,
+    speechAlternatives,
     inferTaskGuide,
     inferNavigationGuide,
+    inferAlternativeGuide,
     preparedBody,
   };
   window.__DOKOHILF_SMART_HELP_V29__ = true;
