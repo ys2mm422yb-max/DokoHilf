@@ -24,7 +24,12 @@ jobs:
           node --check scripts/apply-detail-help-v27.mjs
           node --test tests/local-voice-v28.test.mjs tests/detail-help-v27.test.mjs
           python3 scripts/build-supertonic-guide-audio-v28.py --validate-only
-          grep -q 'Hier werden fachliche Beobachtungen und Ereignisse als Berichtseinträge dokumentiert' assets/voice-extra-catalog-v28.json
+          grep -q 'Wobei brauchst du Hilfe? Nenne bitte den Bereich oder die Funktion' assets/voice-extra-catalog-v28.json
+          grep -q 'Bericht ist kein Hauptbereich der grünen Leiste' assets/voice-extra-catalog-v28.json
+          if grep -q 'Hier werden fachliche Beobachtungen und Ereignisse als Berichtseinträge dokumentiert' assets/voice-extra-catalog-v28.json; then
+            echo 'Veralteter Bericht-Sprachsatz darf im v66-Katalog nicht mehr enthalten sein.' >&2
+            exit 1
+          fi
           if grep -q "'target-missing': 'Vitalwerte fehlt'" assets/detail-help-render-sync-v27.js; then
             echo 'Bericht-Hilfe darf keinen globalen Vitalwerte-Label-Override mehr enthalten.' >&2
             exit 1
