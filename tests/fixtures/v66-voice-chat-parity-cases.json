@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {"mode":"typed","input":"Medikation","expectedGuide":"medikation-finden"},
+    {"mode":"voice","input":"Medi kation","alternatives":["Medikation"],"expectedGuide":"medikation-finden"},
+    {"mode":"voice","input":"durch führung nach heiß","alternatives":["Durchführungsnachweis"],"expectedGuide":"durchfuehrungsnachweis-finden"},
+    {"mode":"voice","input":"Medikamente abhaken","alternatives":["Medikamente abzeichnen"],"expectedGuide":null},
+    {"mode":"voice","input":"Berichtssuche","alternatives":["Berichte"],"expectedGuide":null},
+    {"mode":"voice","input":"Easy Plan","alternatives":["Planung"],"expectedGuide":null}
+  ]
+}
