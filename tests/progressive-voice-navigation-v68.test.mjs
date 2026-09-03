@@ -6,19 +6,22 @@ import { readFile } from 'node:fs/promises';
 const smartHelpSource = await readFile('assets/smart-help-v29.js', 'utf8');
 const orientationSource = await readFile('assets/orientation-help-v29.js', 'utf8');
 
+function documentStub() {
+  return {
+    querySelector: () => ({}),
+    createElement: () => ({ dataset: {} }),
+    head: { append() {} },
+  };
+}
+
 function loadSmartHelp() {
   const upstream = async () => new Response(JSON.stringify({ upstream: true }), {
     headers: { 'Content-Type': 'application/json' },
   });
   const window = { fetch: upstream };
-  const document = {
-    querySelector: () => ({}),
-    createElement: () => ({ dataset: {} }),
-    head: { append() {} },
-  };
   vm.runInNewContext(smartHelpSource, {
     window,
-    document,
+    document: documentStub(),
     Request,
     Response,
     console,
@@ -46,13 +49,43 @@ test('nicht freigegebene Ziele bleiben auch mit v68 ohne erfundenen Guide', () =
   assert.equal(bodyFor(helper, 'Berichtssuche'), null);
 });
 
-test('lange Orientierungsantwort greift ohne laufenden Guide erst bei echter Detailhilfe', async () => {
-  let upstreamCalls = 0;
-  const upstream = async () => {
-    upstreamCalls += 1;
+test('Produktionsreihenfolge gibt normale Suche an den kurzen Guide weiter statt an den langen Orientierungsblock', async () => {
+  const upstreamBodies = [];
+  const upstream = async (_input, init = {}) => {
+    upstreamBodies.push(JSON.parse(init.body || '{}'));
     return new Response(JSON.stringify({ upstream: true }), {
       headers: { 'Content-Type': 'application/json' },
     });
+  };
+  const window = { fetch: upstream };
+  const context = {
+    window,
+    document: documentStub(),
+    Request,
+    Response,
+    console,
+  };
+
+  vm.runInNewContext(smartHelpSource, context);
+  vm.runInNewContext(orientationSource, context);
+
+  const response = await window.fetch('https://example.test/functions/v1/dokohilf-ai', {
+    method: 'POST',
+    body: JSON.stringify({ messages: [{ role: 'user', content: 'Wo finde ich Vitalwerte?' }] }),
+  });
+
+  assert.deepEqual(await response.json(), { upstream: true });
+  assert.equal(response.headers.get('X-DokoHilf-Orientation'), null);
+  assert.equal(upstreamBodies.length, 1);
+  assert.equal(upstreamBodies[0].selectedGuideSlug, 'vitalwerte');
+  assert.equal(upstreamBodies[0].smartNavigationIntent, true);
+});
+
+test('bestätigte Orientierung bleibt als Fallback erhalten, falls die vorgeschaltete Kurz-Routing-Schicht fehlt', async () => {
+  let upstreamCalls = 0;
+  const upstream = async () => {
+    upstreamCalls += 1;
+    return new Response(JSON.stringify({ upstream: true }));
   };
   const window = { fetch: upstream };
   vm.runInNewContext(orientationSource, {
@@ -62,22 +95,15 @@ test('lange Orientierungsantwort greift ohne laufenden Guide erst bei echter Det
     console,
   });
 
-  const normal = await window.fetch('https://example.test/functions/v1/dokohilf-ai', {
+  const response = await window.fetch('https://example.test/functions/v1/dokohilf-ai', {
     method: 'POST',
     body: JSON.stringify({ messages: [{ role: 'user', content: 'Wo finde ich Vitalwerte?' }] }),
   });
-  assert.deepEqual(await normal.json(), { upstream: true });
-  assert.equal(upstreamCalls, 1);
-
-  const detailed = await window.fetch('https://example.test/functions/v1/dokohilf-ai', {
-    method: 'POST',
-    body: JSON.stringify({ messages: [{ role: 'user', content: 'Ich finde Vitalwerte nicht' }] }),
-  });
-  const payload = await detailed.json();
-  assert.equal(upstreamCalls, 1, 'Detailhilfe soll lokal aus bestätigter Orientierung kommen');
+  const payload = await response.json();
+  assert.equal(upstreamCalls, 0);
+  assert.equal(response.headers.get('X-DokoHilf-Orientation'), 'confirmed-v29-4');
   assert.match(payload.reply, /Doku-Erweitert/);
   assert.match(payload.reply, /Findest du es damit\?/);
-  assert.equal(payload.completed, false);
 });
 
 test('Orientierung unterscheidet normale Suche und ausdrückliche Detailfrage', () => {
