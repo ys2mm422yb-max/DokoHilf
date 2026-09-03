@@ -53,7 +53,7 @@ const expectedApprovedSlugs = [
   'vitalwerte-sammelerfassung-fortsetzen',
 ].sort();
 
-assert.equal(COMPLETION_REVISION, '20260810-natural-guide-completions-v40-1');
+assert.equal(COMPLETION_REVISION, '20260902-voice-chat-parity-dnf-v66-1');
 assert.deepEqual(APPROVED_COMPLETION_SLUGS, expectedApprovedSlugs, 'every approved guide must have an explicit completion contract');
 assert.equal(Object.keys(GUIDE_COMPLETIONS).length, 40);
 
@@ -122,9 +122,12 @@ assert.deepEqual(
 );
 
 const executionChoice = completionForGuide('durchfuehrungsnachweis-oeffnen');
-const executionYes = inferCompletionContinuation(executionChoice.reply, 'Ja');
-assert.equal(executionYes.kind, 'reply');
-assert.match(executionYes.reply, /Bedarfsmedikation.*Wirksamkeitskontrolle.*Maßnahme.*Storno.*ansehen/i, 'plain yes must ask for the actual execution target');
+assert.equal(
+  executionChoice.reply,
+  'Der Durchführungsnachweis ist geöffnet. Sag mir einfach, was du dort machen möchtest.',
+  'opened DNF must stay neutral instead of presenting an invented generic action menu',
+);
+assert.doesNotMatch(executionChoice.reply, /Bedarfsmedikation.*Wirksamkeitskontrolle.*Maßnahme.*Storno.*ansehen/i);
 assert.deepEqual(
   inferCompletionContinuation(executionChoice.reply, 'Storno'),
   { kind: 'start', guideSlug: 'durchfuehrung-storno', stepIndex: 2 },
@@ -163,4 +166,4 @@ const routingFix = await readFile(new URL('../assets/routing-fix.js', import.met
 assert.match(routingFix, /dokohilf-conversation-router/);
 assert.match(routingFix, /20260822-signoff-durchfuehrungsnachweis-v52-1/);
 
-console.log('Guide completion v40/v44 regression tests passed.');
+console.log('Guide completion v40/v44/v66 regression tests passed.');
