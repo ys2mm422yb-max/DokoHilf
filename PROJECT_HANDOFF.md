@@ -41,7 +41,7 @@ Vor neuer DokoHilf-Arbeit mindestens vollständig lesen beziehungsweise prüfen:
 - Keine App-Konten oder Anmeldung; auch keine Redaktions-, Mitarbeiter- oder Administrationskonten in DokoHilf.
 - Keine Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken.
 - Keine echten Bewohner-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in App, Repository, Supabase, Tests oder Artefakten.
-- Tests und Renderzustände bleiben vollständig synthetisch und bilden keine reale Person oder realen Fall nach.
+- Tests und Renderzustände bleiben vollständig synthetisch; keine reale Person und kein realer Fall werden nachgebildet.
 - Keine erfundenen Vivendi-Klickwege, Feldnamen, Menüpunkte oder Abläufe.
 - Keine medizinischen, pflegerischen oder betreuerischen Entscheidungen durch DokoHilf.
 - Berichtssuche bleibt fachlich offen; Issue #103 bleibt offen.
