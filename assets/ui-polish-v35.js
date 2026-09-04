@@ -146,13 +146,13 @@
 
     const unmatched = activeCards.filter(card => !used.has(card));
     if (unmatched.length) {
-      const fallback = { key: 'other', label: 'Weitere Anleitungen', hint: 'Weitere freigegebene Abläufe' };
+      const fallback = { key: 'other', label: 'Weitere Anleitungen', hint: 'Weitere Bedienwege' };
       fragment.append(sectionNode(fallback));
       for (const card of unmatched) fragment.append(card);
     }
 
     if (laterCards.length) {
-      fragment.append(sectionNode({ key: 'later', label: 'In Vorbereitung', hint: 'Noch nicht fachlich freigegeben' }));
+      fragment.append(sectionNode({ key: 'later', label: 'In Vorbereitung', hint: 'Anleitungen werden noch ergänzt' }));
       for (const card of laterCards) {
         card.dataset.v35Group = 'later';
         fragment.append(card);

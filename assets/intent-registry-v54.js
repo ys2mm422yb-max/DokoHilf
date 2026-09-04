@@ -3,7 +3,7 @@
 
   if (window.__DOKOHILF_INTENT_REGISTRY_V54__) return;
 
-  const REVISION = '20260823-confirmed-intent-registry-v54-1';
+  const REVISION = '20260904-confirmed-intent-parity-v69-1';
   const AI_MARKERS = Object.freeze([
     '/functions/v1/dokohilf-ai',
     '/functions/v1/dokohilf-ai-router',
@@ -61,13 +61,27 @@
 
   function hasCreateIntent(value) {
     const text = normalize(value);
-    return /\b(anlegen|erstellen|dokumentieren|erfassen|eintragen|schreiben|verfassen|abhaken|kontrollieren|abzeichnen|abzuzeichnen)\b/.test(text)
+    return /\b(anlegen|erstellen|dokumentieren|erfassen|eintragen|eingeben|schreiben|verfassen|abhaken|kontrollieren|abzeichnen|abzuzeichnen)\b/.test(text)
       || /\b(lege|legst|legt|leg)\b.*\ban\b/.test(text)
       || /\b(trage|tragst|tragt|trag)\b.*\bein\b/.test(text)
       || /\b(erstelle|erstellst|erstellt|erstell)\b/.test(text)
       || /\b(dokumentiere|dokumentierst|dokumentiert|dokumentier)\b/.test(text)
       || /\b(erfasse|erfasst|erfass)\b/.test(text)
+      || /\b(eingebe|eingibst|eingibt|eingeb)\b/.test(text)
       || /\b(schreibe|schreibst|schreibt|schreib)\b/.test(text);
+  }
+
+  function vitalEntryGuide(value) {
+    const text = normalize(value);
+    if (!hasCreateIntent(text)) return '';
+    if (/\b(mehrere|mehreren|verschiedene|gemeinsam|gleichzeitig|sammelerfassung|sammelerf)\b/.test(text)) {
+      return 'vitalwerte-sammelerfassung';
+    }
+    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|sauerstoffsattigung|spo2|atemfrequenz|atemalkohol)\b/.test(text)
+      || /\b(einen|einzelnen|ein)\s+vitalwert\b/.test(text)) {
+      return 'vitalwerte-einzelwert';
+    }
+    return '';
   }
 
   function hasOpenIntent(value) {
@@ -137,9 +151,9 @@
       if (hasOpenIntent(text) || /^berichte?$/.test(text)) return 'berichte-finden';
     }
     if (/\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|blutzucker|sauerstoff|sauerstoffsattigung|spo2|atemfrequenz|atemalkohol)\b/.test(text)) {
-      // Bei Erfassung mehrerer/einzelner Vitalwerte soll weiterhin die bestehende
-      // bestätigte Auswahl-/Klärungslogik entscheiden; keine stille Festlegung.
-      if (hasCreateIntent(text)) return '';
+      // Nur klar benannte, bereits bestätigte Einzel-/Sammelabsichten werden direkt
+      // gesetzt. Bei „Vitalwerte erfassen“ bleibt die bestehende Rückfrage erhalten.
+      if (hasCreateIntent(text)) return vitalEntryGuide(text);
       return 'vitalwerte-finden';
     }
     if (/\b(anwesenheit|abwesenheit|an- und abwesenheit)\b/.test(text)) {
@@ -256,6 +270,7 @@
     revision: REVISION,
     normalize,
     hasCreateIntent,
+    vitalEntryGuide,
     hasOpenIntent,
     isFalseSignOff,
     hasSignOffIntent,

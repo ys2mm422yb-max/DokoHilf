@@ -4,6 +4,10 @@
     {"mode":"typed","input":"Medikation","expectedGuide":"medikation-finden"},
     {"mode":"voice","input":"Medi kation","alternatives":["Medikation"],"expectedGuide":"medikation-finden"},
     {"mode":"voice","input":"durch führung nach heiß","alternatives":["Durchführungsnachweis"],"expectedGuide":"durchfuehrungsnachweis-finden"},
+    {"mode":"typed","input":"Ich möchte mehrere Vitalwerte gleichzeitig eingeben","expectedGuide":"vitalwerte-sammelerfassung"},
+    {"mode":"voice","input":"Mehrere Vitalwerte eingeben","expectedGuide":"vitalwerte-sammelerfassung"},
+    {"mode":"typed","input":"Ich möchte Blutdruck eingeben","expectedGuide":"vitalwerte-einzelwert"},
+    {"mode":"typed","input":"Ich möchte Vitalwerte eingeben","expectedGuide":null},
     {"mode":"voice","input":"Medikamente abhaken","alternatives":["Medikamente abzeichnen"],"expectedGuide":null},
     {"mode":"voice","input":"Berichtssuche","alternatives":["Berichte"],"expectedGuide":null},
     {"mode":"voice","input":"Easy Plan","alternatives":["Planung"],"expectedGuide":null}

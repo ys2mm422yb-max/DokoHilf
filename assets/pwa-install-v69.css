@@ -1,0 +1,140 @@
+.pwa-install-v69 {
+  width: min(100%, 760px);
+  box-sizing: border-box;
+  margin: 20px auto 8px;
+}
+
+.pwa-install-v69-entry {
+  width: 100%;
+  min-height: 78px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 36px;
+  gap: 13px;
+  align-items: center;
+  padding: 14px 15px;
+  border: 1px solid rgba(91, 161, 255, .28);
+  border-radius: 21px;
+  background:
+    radial-gradient(circle at 8% 50%, rgba(53, 137, 255, .13), transparent 27%),
+    linear-gradient(135deg, rgba(7, 31, 52, .98), rgba(7, 43, 58, .94));
+  color: #eef7ff;
+  text-align: left;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .2), inset 0 1px rgba(255, 255, 255, .045);
+  cursor: pointer;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.pwa-install-v69-entry:active { transform: scale(.99); }
+.pwa-install-v69-entry:focus-visible { outline: 3px solid rgba(89, 169, 255, .35); outline-offset: 3px; }
+
+.pwa-install-v69-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(102, 174, 255, .32);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(35, 120, 221, .7), rgba(15, 76, 137, .86));
+  box-shadow: inset 0 1px rgba(255, 255, 255, .08);
+}
+
+.pwa-install-v69-icon svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: #b7dcff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pwa-install-v69-copy { min-width: 0; display: grid; gap: 3px; }
+.pwa-install-v69-copy small { color: #78b8f3; font-size: 9px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
+.pwa-install-v69-copy strong { color: #f5faff; font-size: 15px; line-height: 1.25; font-weight: 850; }
+.pwa-install-v69-copy span { color: #98adbc; font-size: 11.5px; line-height: 1.38; }
+.pwa-install-v69-arrow { justify-self: end; color: #76bfff; font-size: 30px; font-weight: 400; line-height: 1; }
+.pwa-install-v69-status { min-height: 0; margin: 7px 12px 0; color: #86a2b3; font-size: 11px; line-height: 1.35; text-align: center; }
+.pwa-install-v69-status:empty { display: none; }
+
+.app-shell:not([data-mode="start"]) .pwa-install-v69,
+.pwa-install-v69[hidden] { display: none !important; }
+
+.pwa-install-v69-backdrop[hidden] { display: none !important; }
+.pwa-install-v69-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1250;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 14, 20, .68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.pwa-install-v69-dialog {
+  width: min(520px, 100%);
+  max-height: min(720px, calc(100dvh - 36px));
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 22px;
+  border: 1px solid rgba(73, 138, 176, .16);
+  border-radius: 24px;
+  background: #f8fbfd;
+  color: #173949;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .36);
+}
+
+.pwa-install-v69-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.pwa-install-v69-head h2 { margin: 0; color: #123747; font-size: 22px; line-height: 1.15; letter-spacing: -.025em; }
+.pwa-install-v69-head p { margin: 6px 0 0; color: #607783; font-size: 13px; line-height: 1.45; }
+.pwa-install-v69-close {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border: 0;
+  border-radius: 13px;
+  background: #eaf1f5;
+  color: #285263;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.pwa-install-v69-steps { margin: 20px 0 0; padding: 0; display: grid; gap: 11px; list-style: none; counter-reset: pwa-install-step; }
+.pwa-install-v69-steps li {
+  counter-increment: pwa-install-step;
+  display: grid;
+  grid-template-columns: 31px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  color: #294c5c;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.pwa-install-v69-steps li::before {
+  content: counter(pwa-install-step);
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #e5f1f8;
+  color: #17638c;
+  font-size: 12px;
+  font-weight: 900;
+}
+.pwa-install-v69-note { margin: 18px 0 0; padding: 11px 12px; border-radius: 13px; background: #eaf6f1; color: #2a6452; font-size: 12px; line-height: 1.45; }
+.pwa-install-v69-done { width: 100%; min-height: 46px; margin-top: 18px; border: 0; border-radius: 14px; background: #116b91; color: #fff; font-size: 14px; font-weight: 850; cursor: pointer; }
+
+@media (max-width: 600px) {
+  .pwa-install-v69 { margin-top: 16px; }
+  .pwa-install-v69-entry { min-height: 74px; grid-template-columns: 44px minmax(0, 1fr) 26px; gap: 11px; padding: 13px 14px; border-radius: 19px; }
+  .pwa-install-v69-icon { width: 44px; height: 44px; border-radius: 15px; }
+  .pwa-install-v69-backdrop { align-items: end; padding: 0; }
+  .pwa-install-v69-dialog { width: 100%; max-height: 88dvh; padding: 20px 17px calc(20px + env(safe-area-inset-bottom)); border-radius: 24px 24px 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pwa-install-v69-entry:active { transform: none; }
+}

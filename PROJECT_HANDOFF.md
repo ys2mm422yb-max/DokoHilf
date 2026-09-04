@@ -1,13 +1,13 @@
 # DokoHilf – dauerhafte Projektübergabe
 
 **Status:** verbindliche Arbeitsquelle  
-**Stand:** 3. September 2026
-**Aktueller live verifizierter Produktstand:** `v34` / Build `20260812-41` / progressive Sprachnavigation v68
-**Aktueller `main`:** `c0634b133a24e097397184ab60bfe353635d83c5`
-**Aktueller veröffentlichter `gh-pages`-Commit:** `225b30a88a019c6456e5971576571069637cd16f` (`Publish DokoHilf c0634b133a24e097397184ab60bfe353635d83c5`)
-**Letzter Produkt-PR:** `#186` – progressive und knappe Sprachnavigation v68
+**Stand:** 4. September 2026
+**Aktueller live verifizierter Produktstand:** `v34` / Build `20260903-42` / progressive Sprachnavigation v68
+**Aktueller `main`:** `4aee543e8dabfcb4622789f651b71c34f111fd04`
+**Aktueller veröffentlichter `gh-pages`-Commit:** `be2dfd33dd3df6ae39e75c43a2122c0919c8294e` (aus exakt `4aee543e8dabfcb4622789f651b71c34f111fd04` erzeugt)
+**Letzter Produkt-PR:** `#187` – PWA-Build-Refresh für v34/v68
 **Letzter Hardening-PR:** `#136` – explizite RLS-Deny-All-Policy  
-**PWA-Ziel dieses Arbeitsblocks:** `v34` / Build `20260903-42`; Details in `ACTIVE_WORK_PWA_REFRESH_V68.md`
+**Aktuelles Release-Ziel:** `v35` / Build `20260904-43`; Details in `ACTIVE_WORK_INSTALL_AND_FULL_QA_V69.md`
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
 > Veränderliche Zustände werden bei neuer Arbeit immer live geprüft. Diese Datei ist das dauerhafte Handoff, aber kein Ersatz für GitHub-/Supabase-Liveprüfung.
@@ -63,14 +63,14 @@ Vor neuer DokoHilf-Arbeit mindestens lesen beziehungsweise prüfen:
 
 ## 4. Aktueller GitHub-/Release-Stand
 
-Am 3. September 2026 live gegen GitHub und den festen öffentlichen Hauptlink verifiziert:
+Am 4. September 2026 live gegen GitHub und den festen öffentlichen Hauptlink verifiziert:
 
-- `main` steht auf `c0634b133a24e097397184ab60bfe353635d83c5`, Merge von PR #186.
-- `gh-pages` steht auf `225b30a88a019c6456e5971576571069637cd16f` und wurde mit `Publish DokoHilf c0634b133a24e097397184ab60bfe353635d83c5` erzeugt.
+- `main` steht auf `4aee543e8dabfcb4622789f651b71c34f111fd04`, Merge von PR #187.
+- `gh-pages` steht auf `be2dfd33dd3df6ae39e75c43a2122c0919c8294e` und wurde aus exakt diesem `main`-Stand erzeugt.
 - Damit ist der veröffentlichte Branch auf demselben Produkt-/Hardening-Stand wie `main`.
-- PR #186 ist vollständig grün gemergt und mit v34/v68 sowie 316 statischen Supertonic-F1-Sätzen live bestätigt.
-- Der fachliche v68-Stand verwendet noch Build `20260812-41`. Der getrennte PWA-Refresh hebt ausschließlich den technischen Build auf `20260903-42` und gilt erst nach erneutem Main-Deploy und Live-Nachweis als veröffentlicht.
-- Dieser PWA-Arbeitsblock verändert **keinen Guide, keinen Router, keinen hörbaren Text, keine Migration und kein Supabase-Objekt**.
+- PR #186 ist vollständig grün gemergt; PR #187 hat danach ausschließlich den PWA-Build auf `20260903-42` aktualisiert.
+- v34/v68, Build `20260903-42` und 316 statische Supertonic-F1-Sätze sind am festen Hauptlink live bestätigt.
+- Der nächste Arbeitsblock v69 ist noch nicht live. Er gilt erst nach vollständiger PR-, Deploy- und Live-Prüfung als veröffentlicht.
 
 ## 5. Aktueller fachlicher Stand
 
@@ -92,7 +92,7 @@ Besonders wichtig:
 - **Formulare:** Doku-Erweitert → Formulare → Neu → Formular auswählen → OK → ausfüllen → oben links speichern.
 - **Stammdaten:** Berichte oder Durchführungsnachweis öffnen → links Bewohnerübersicht → Bewohner doppelklicken → Stammdaten.
 - **Notfallblatt:** Bewohner → rotes Kreuz/Pfeil oben links → Notfallblatt aufrufen → Notfallblatt_Allgemein → Einweisungsgrund nur bei Bedarf → OK → bis etwa drei Minuten auf Word warten, Standby verhindern, nicht mehrfach starten.
-- **Übergabe:** Analyse → Was war los? → Alle anzeigen → Alles ausklappen → Zeitraum nur bei Bedarf ändern.
+- **Übergabe:** Analyse → Was war los? → Alle anzeigen → Alle ausklappen → Zeitraum nur bei Bedarf ändern.
 
 ## 6. Bestätigte kontextbewusste Chatlogik
 
@@ -127,6 +127,7 @@ Aktuelle Bibliotheksgruppen:
 - An-/Abwesenheit
 - Formular anlegen
 - Stammdaten öffnen
+- Dateiablage öffnen
 
 ### Übergabe & Übersicht
 - Übergabe / Was war los?
@@ -198,8 +199,8 @@ Im zuletzt bestätigten v40-/v41-Stand bestehen die etablierten Router-/AI-Pfade
 
 Der zuletzt bestätigte Guide-Datenstand vor der v41-Reichweitenänderung war:
 
-- `dokohilf_guides`: **45 Zeilen insgesamt, 40 `approved`, 5 `draft`**;
-- alle 40 freigegebenen Guide-Slugs werden vom v40-Completion-Contract abgedeckt;
+- `dokohilf_guides`: **46 Zeilen insgesamt, 41 `approved`, 5 `draft`**;
+- alle 41 freigegebenen Guide-Slugs werden von den aktiven Router- und Bibliotheksverträgen abgedeckt;
 - `dokohilf_guide_versions`: **42 Archivzeilen** im zuletzt bestätigten v40-Stand;
 - `auth.users = 0`;
 - keine DokoHilf-Cronjobs;
@@ -252,4 +253,4 @@ Keine dieser Lücken auf Verdacht schließen oder durch KI ergänzen.
 - PR-Beschreibungen, Migrationen und Tests ersetzen die zentrale Fachquelle nicht.
 - Dokumentationsänderungen allein dürfen keine App-/Guide-/Router-/Sprachlogik verändern.
 
-Diese Datei beschreibt den live verifizierten fachlichen Stand nach PR #186 sowie den davon getrennten PWA-Refresh auf Build `20260903-42`.
+Diese Datei beschreibt den live verifizierten Stand nach PR #187 auf v34 / Build `20260903-42` sowie das davon getrennte, noch nicht live bestätigte Release-Ziel v35/v69.

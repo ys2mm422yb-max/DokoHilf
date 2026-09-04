@@ -101,7 +101,7 @@
     } else if (payload.helpMode === true && title === 'Siehst du zusätzlich „Vitalwerte“?') {
       reply = '**Vitalwerte Sammelerf.** ist für mehrere Werte. Siehst du daneben auch **Vitalwerte**?';
       spokenText = 'Vitalwerte Sammelerfassung ist für mehrere Werte. Siehst du daneben auch Vitalwerte?';
-    } else if (payload.helpMode === true && title === 'Hast du den bestätigten Einstieg gefunden?') {
+    } else if (payload.helpMode === true && (title === 'Hast du den Einstieg gefunden?' || title === 'Hast du den bestätigten Einstieg gefunden?')) {
       const entry = firstBold(original) || 'den Einstieg';
       reply = `Suche zuerst **${entry}**. Hast du ihn gefunden?`;
       spokenText = `Suche zuerst ${entry}. Hast du ihn gefunden?`;
@@ -118,7 +118,7 @@
       reply = 'Perfekt. Öffne jetzt **Vitalwerte**. Wenn die Ansicht offen ist, tippe auf **Weiter**.';
       spokenText = 'Perfekt. Öffne jetzt Vitalwerte. Wenn die Ansicht offen ist, tippe auf Weiter.';
     } else if (/menschliche Unterstützung|Kollegin|Kollegen|Ansprechperson/i.test(original)) {
-      reply = 'Dafür habe ich keinen bestätigten Weg. Frag bitte kurz eine Kollegin oder einen Kollegen.';
+      reply = 'Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen.';
       spokenText = textOnly(reply);
     }
 

@@ -1,8 +1,8 @@
 # Audio-Erzeugungsstatus
 
-**Stand:** 3. September 2026  
-**Status:** v34 – ausschließlich statische Supertonic-F1-WAVs
-**Ziel-Build:** `20260903-42`
+**Stand:** 4. September 2026
+**Status:** v35 – ausschließlich statische Supertonic-F1-WAVs
+**Ziel-Build:** `20260904-43`
 
 ## Aktueller Vertrag
 
@@ -12,6 +12,7 @@
 - weitere kontrollierte Quellen: 33 Dialog, 49 Release, 39 Durchführung, 1 UI, 17 Navigation, 10 Kontext
 - Erzeugung ausschließlich im geprüften GitHub-Releasebuild mit Supertonic 3, Stimme F1, Deutsch
 - die endgültige WAV-Zahl wird nach Deduplizierung dynamisch aus allen kontrollierten Quellen abgeleitet
+- der für v35 validierte zusammengeführte Bestand umfasst weiterhin 316 eindeutige statische Sätze
 - Veröffentlichung nur bei übereinstimmendem Katalog, WAV-Bestand und Build-Zusammenfassung
 - ausschließlich statische Wiedergabe; **keine lokale Inferenz**, keine System-/Gerätestimme und keine Cloud-TTS-API
 

@@ -13,10 +13,11 @@ test('stuck help uses only the current step detail and never an unrelated troubl
   assert.match(router, /const help = stepHelp \|\| fallback/);
 });
 
-test('missing detailed help is stated transparently without inventing a click path', () => {
-  assert.match(router, /noch keine genauere Positionsangabe bestätigt/);
-  assert.match(router, /Menü-, Button- oder Feldbezeichnungen/);
-  assert.match(router, /Ich erfinde keinen alternativen Klickweg/);
+test('missing detailed help asks naturally what is visible without adding a click path', () => {
+  assert.match(router, /const fallback = 'Okay\. Was siehst du gerade\?'/);
+  assert.match(router, /reply: stepHelp \? `\$\{help\}\\n\\nKlappt es so\?` : help/);
+  assert.doesNotMatch(router, /noch keine genauere Positionsangabe bestätigt/);
+  assert.doesNotMatch(router, /Ich erfinde keinen alternativen Klickweg/);
   assert.match(router, /approved-guide-router-stuck-gap-v10/);
 });
 

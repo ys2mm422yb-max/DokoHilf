@@ -149,7 +149,7 @@
 
     if (shell.dataset.voiceState === 'thinking' || current.includes('stimme wird vorbereitet') || current.includes('antwort startet')) {
       changed = setTextIfChanged(status, 'Statische Stimme wird vorbereitet …') || changed;
-      changed = setTextIfChanged(hint, 'DokoHilf verwendet ausschließlich die freigegebene statische F1-Sprachausgabe.') || changed;
+      changed = setTextIfChanged(hint, 'DokoHilf antwortet mit der integrierten DokoHilf-Stimme.') || changed;
     }
     if (badge) changed = setTextIfChanged(badge, 'Statische F1-Stimme') || changed;
     return changed;

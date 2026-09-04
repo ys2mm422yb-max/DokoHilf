@@ -16,7 +16,7 @@ test('v29 premium home keeps the start screen free of the composer', () => {
 });
 
 test('v29 premium home renders the accepted visual hierarchy', () => {
-  assert.match(ui, /Dein KI-Assistent für Dokumentation/);
+  assert.match(ui, /Bedienungshilfe für Dokumentation/);
   assert.match(ui, /Was möchtest du <span data-v29-home-accent>erledigen\?<\/span>/);
   assert.match(ui, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
   assert.match(ui, /Häufige Abläufe · direkt öffnen/);

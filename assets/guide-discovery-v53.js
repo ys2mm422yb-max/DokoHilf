@@ -175,7 +175,7 @@
       empty.className = 'v53-library-search-empty';
       empty.hidden = true;
       empty.setAttribute('role', 'status');
-      empty.textContent = 'Keine passende freigegebene Anleitung gefunden. Du kannst DokoHilf auch im Chat fragen.';
+      empty.textContent = 'Keine passende Anleitung gefunden. Du kannst DokoHilf auch im Chat fragen.';
       grid.before(empty);
     }
     return empty;
@@ -247,7 +247,7 @@
     panel = document.createElement('div');
     panel.className = 'v53-guided-start';
     panel.dataset.guideSlug = slug;
-    panel.innerHTML = `<div class="v53-guided-start-copy"><strong>Lieber Schritt für Schritt?</strong><span>DokoHilf startet denselben bestätigten Ablauf im Chat und führt dich einzeln durch die Schritte.</span></div><button type="button" data-v53-start-guide="${slug}">Schritt für Schritt starten</button>`;
+    panel.innerHTML = `<div class="v53-guided-start-copy"><strong>Lieber Schritt für Schritt?</strong><span>DokoHilf startet diese Anleitung im Chat und führt dich einzeln durch die Schritte.</span></div><button type="button" data-v53-start-guide="${slug}">Schritt für Schritt starten</button>`;
     head.insertAdjacentElement('afterend', panel);
     panel.querySelector('button')?.setAttribute('data-v53-guide-label', title);
   }

@@ -230,8 +230,8 @@ html[data-dokohilf-ui="v29"] .composer-wrap{border-top-color:rgba(78,230,160,.15
       title.innerHTML = 'Was möchtest du <span data-v29-home-accent>erledigen?</span>';
     }
     const brandSmall = document.querySelector('.brand small');
-    if (brandSmall && brandSmall.textContent !== 'Dein KI-Assistent für Dokumentation') {
-      brandSmall.textContent = 'Dein KI-Assistent für Dokumentation';
+    if (brandSmall && brandSmall.textContent !== 'Bedienungshilfe für Dokumentation') {
+      brandSmall.textContent = 'Bedienungshilfe für Dokumentation';
     }
     const examples = document.querySelector('.examples');
     const examplesLabel = examples?.querySelector(':scope > span');

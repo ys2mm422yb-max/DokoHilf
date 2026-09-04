@@ -1,7 +1,7 @@
 # DokoHilf – statische Supertonic-Sprachausgabe
 
-**Stand:** 3. September 2026  
-**Ziel-Build:** `20260903-42` / v34
+**Stand:** 4. September 2026
+**Ziel-Build:** `20260904-43` / v35
 
 ## Zweck
 
@@ -24,6 +24,8 @@ Der Basiskatalog ist ein versionierter Snapshot aller aktuell freigegebenen Guid
 - **10** Kontext-Hilfesätze
 
 Der Releasebuilder führt diese Quellen zusammen, entfernt Dubletten und leitet die endgültige Zahl der statischen WAV-Dateien **dynamisch** aus dem zusammengeführten Katalog ab. Eine alte fest verdrahtete Gesamtzahl ist ausdrücklich nicht mehr zulässig.
+
+Für v35 ergibt die vollständige Quellvalidierung weiterhin **316** eindeutige statische Sätze.
 
 ## Verbindliche Regeln
 

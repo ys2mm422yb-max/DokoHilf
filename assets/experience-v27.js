@@ -271,7 +271,7 @@
     if (chatTitle) chatTitle.textContent = 'Schreiben';
     if (chatText) chatText.textContent = 'Schreibe oder diktiere. Alles bleibt übersichtlich zum Nachlesen.';
     setText('.chat-head h1', 'Was möchtest du machen?');
-    setText('.chat-head p', 'Schreib einfach dein Ziel. DokoHilf führt dich nur durch bestätigte Abläufe.');
+    setText('.chat-head p', 'Schreib kurz, was du erledigen möchtest. DokoHilf führt dich Schritt für Schritt.');
 
     const note = document.querySelector('.safety-note');
     if (note) note.innerHTML = '<strong>Keine persönlichen Daten eingeben.</strong><span>Nutze DokoHilf nur für allgemeine Bedienfragen.</span>';

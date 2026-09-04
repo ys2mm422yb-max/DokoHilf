@@ -190,7 +190,7 @@ function currentGuideIndex(guide: GuideRecord, suppliedStep: unknown, assistantT
 }
 
 function spokenStep(step: GuideStep | undefined): string {
-  return String(step?.text || '').replace(/\s+/g, ' ').trim().slice(0, 260);
+  return String(step?.text || '').replace(/\s+/g, ' ').trim();
 }
 
 function renderGuideStep(origin: string | null, guide: GuideRecord, index: number, source: string): Response {

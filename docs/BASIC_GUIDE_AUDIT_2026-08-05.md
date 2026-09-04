@@ -1,7 +1,10 @@
 # Audit der Basis-Anleitungen
 
 **Stand:** 5. August 2026  
+**Status:** historischer Snapshot – nicht als aktuelle Klickanleitung verwenden
 **Geltungsbereich:** geschützte DokoHilf-Wissensbasis
+
+Die verbindliche aktuelle Quelle ist `CONFIRMED_WORKFLOWS.md`. Später korrigierte oder weiterhin offene Wege in diesem historischen Snapshot dürfen nicht erneut freigegeben werden.
 
 ## Ziel
 

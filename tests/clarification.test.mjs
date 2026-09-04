@@ -76,6 +76,7 @@ test('Vitalwerte-Auswahl wird strukturiert in Einzel- und Sammelerfassung getren
 
 test('interne Freigabeformulierungen werden nicht an Nutzer weitergereicht', () => {
   assert.match(router, /neutralizeInternalText/);
-  assert.match(router, /Dafür ist aktuell noch keine bestätigte Schritt-für-Schritt-Anleitung hinterlegt/);
+  assert.match(router, /Dazu habe ich keine passende Anleitung\. Frag bitte kurz eine Kollegin oder einen Kollegen/);
+  assert.match(router, /spokenText: unavailable/);
   assert.doesNotMatch(frontend, /noch nicht freigegeben/);
 });
