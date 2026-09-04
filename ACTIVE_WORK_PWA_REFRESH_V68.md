@@ -1,13 +1,13 @@
 # DokoHilf – PWA-Refresh für v34 / v68
 
 **Stand:** 3. September 2026
-**Status:** Umsetzung und Freigabe über separaten Pull Request
+**Status:** Abgeschlossen und live verifiziert über PR #187
 **Fachliche Basis:** PR #186 / `c0634b133a24e097397184ab60bfe353635d83c5`
 **Ziel:** App-Version `v34`, Build `20260903-42`, Release `progressive-voice-navigation-v68`
 
 ## Ausgangslage
 
-PR #186 wurde vollständig geprüft, gemergt und anschließend auf `gh-pages` sowie am festen öffentlichen Hauptlink verifiziert. Der veröffentlichte Stand enthielt bereits v34/v68 und 316 statische Supertonic-F1-Sätze, verwendete aber weiterhin die ältere Build-ID `20260812-41`.
+PR #186 wurde vollständig geprüft, gemergt und anschließend auf `gh-pages` sowie am festen öffentlichen Hauptlink verifiziert. Der veröffentlichte Stand enthielt bereits v34/v68 und 316 statische Supertonic-F1-Sätze, verwendete zunächst aber weiterhin die ältere Build-ID `20260812-41`.
 
 Die installierte PWA vergleicht für ihre automatische Aktualisierung die Build-ID. Eine geänderte App-Version bei unveränderter Build-ID löst deshalb keinen eindeutigen Versionswechsel aus. Der PWA-Refresh wird bewusst getrennt vom fachlichen v68-PR veröffentlicht.
 
@@ -32,3 +32,7 @@ Die installierte PWA vergleicht für ihre automatische Aktualisierung die Build-
 ## Freigabe
 
 Branch → Pull Request → alle Pflichtprüfungen auf exakt demselben Head → manueller Merge mit erwartetem Head-SHA → Main-Deploy → `gh-pages` → feste öffentliche Seite. `Live` gilt erst, wenn Build `20260903-42`, v34/v68, der neue Service-Worker-Cache und der statische Supertonic-F1-Bestand tatsächlich ausgeliefert werden.
+
+## Ergebnis
+
+PR #187 wurde vollständig grün gemergt. `main` steht auf `4aee543e8dabfcb4622789f651b71c34f111fd04`; `gh-pages` wurde daraus als `be2dfd33dd3df6ae39e75c43a2122c0919c8294e` erzeugt. Der feste Hauptlink liefert v34, Build `20260903-42`, Release v68 und den vollständigen Bestand von 316 statischen Supertonic-F1-Audios aus.

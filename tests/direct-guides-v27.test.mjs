@@ -53,7 +53,8 @@ test('Übergabe ist als vollständige bestätigte Direktanleitung enthalten', ()
   assert.match(guides, /Oben den Reiter „Analyse“ öffnen/);
   assert.match(guides, /Dort „Was war los\?“ wählen/);
   assert.match(guides, /Oben links „Alle anzeigen“ anklicken/);
-  assert.match(guides, /Danach „Alles ausklappen“ wählen/);
+  assert.match(guides, /Danach „Alle ausklappen“ wählen/);
+  assert.match(guides, /Den Zeitraum nur bei Bedarf ändern/);
 });
 
 test('sicherheitskritische Direktanleitungen behalten ihre harten Regeln', () => {

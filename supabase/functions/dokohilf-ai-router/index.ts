@@ -376,7 +376,7 @@ function currentGuideIndex(parsed: Record<string, unknown>, messages: ChatMessag
 }
 
 function spokenStep(step: GuideStep | undefined): string {
-  return String(step?.text || '').replace(/\s+/g, ' ').trim().slice(0, 260);
+  return String(step?.text || '').replace(/\s+/g, ' ').trim();
 }
 
 function renderGuideStep(origin: string | null, guide: GuideRecord, index: number, source: string, prefix = ''): Response {
@@ -434,10 +434,10 @@ function stuckHelp(origin: string | null, parsed: Record<string, unknown>, messa
   const index = currentGuideIndex(parsed, messages, guide);
   const step = guide.steps[index] || guide.steps[0] || {};
   const stepHelp = String(step.stuck || '').trim();
-  const fallback = 'Für diesen Schritt ist noch keine genauere Positionsangabe bestätigt. Bleib bitte bei diesem Schritt und sag mir nur, welche Menü-, Button- oder Feldbezeichnungen du dort siehst. Ich erfinde keinen alternativen Klickweg.';
+  const fallback = 'Okay. Was siehst du gerade?';
   const help = stepHelp || fallback;
   return jsonResponse(origin, 200, {
-    reply: `${help}\n\nKlappt es so?`,
+    reply: stepHelp ? `${help}\n\nKlappt es so?` : help,
     spokenText: help,
     nextSpokenText: spokenStep(guide.steps[index + 1]),
     guideSlug: guide.slug,
@@ -451,9 +451,11 @@ function stuckHelp(origin: string | null, parsed: Record<string, unknown>, messa
 function neutralizeInternalText(payload: Record<string, unknown>): Record<string, unknown> {
   const reply = typeof payload.reply === 'string' ? payload.reply : '';
   if (!/noch nicht freigegeben|bestatigt ist bisher|genauen klickweg/i.test(normalize(reply))) return payload;
+  const unavailable = 'Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen.';
   return {
     ...payload,
-    reply: 'Dafür ist aktuell noch keine bestätigte Schritt-für-Schritt-Anleitung hinterlegt. Beschreibe bitte genauer, welche vorhandene Funktion du nutzen möchtest.',
+    reply: unavailable,
+    spokenText: unavailable,
     guideSlug: null,
     source: 'neutral-unavailable-guide-v9',
   };

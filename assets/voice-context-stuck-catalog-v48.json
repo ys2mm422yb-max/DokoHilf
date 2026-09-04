@@ -51,7 +51,7 @@
     {"text":"Suche in der festen Leiste nach „Doku“."},
     {"text":"Suche in der geöffneten Visite nach der Statusauswahl. Verwende ausschließlich „durchgeführt“ und nicht „abgeschlossen“."},
     {"text":"Suche innerhalb von „Doku“ nach „Durchführungsnachweis“."},
-    {"text":"Suche nur nach einem bereits vorhandenen Dokument. Wenn das gewünschte Dokument nicht angezeigt wird, ist nicht bestätigt, dass es dort hinterlegt ist."},
+    {"text":"Bleibe in der Dateiablage. Wenn das gewünschte Dokument nicht angezeigt wird, frag bitte kurz im Team, ob und wo es abgelegt ist."},
     {"text":"Suche zum vorgesehenen Zeitpunkt im Durchführungsnachweis die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation."},
     {"text":"Wähle ganz oben in der festen grünen Leiste zuerst „Analyse“. Danach erscheint darunter „Was war los?“."},
     {"text":"Wähle ganz oben in der festen grünen Leiste zuerst „Doku“. Danach erscheint darunter „Durchführungsnachweis“."},

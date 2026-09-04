@@ -52,7 +52,11 @@
       )
       .replace(
         'DokoHilf kann nicht garantieren, dass ein bestimmtes Dokument hinterlegt ist. Suche nur nach bereits vorhandenen Dokumenten; nichts hochladen, löschen, umbenennen oder verändern.',
+        'Bleibe in der Dateiablage. Wenn das gewünschte Dokument nicht angezeigt wird, frag bitte kurz im Team, ob und wo es abgelegt ist.',
+      )
+      .replace(
         'Suche nur nach einem bereits vorhandenen Dokument. Wenn das gewünschte Dokument nicht angezeigt wird, ist nicht bestätigt, dass es dort hinterlegt ist.',
+        'Bleibe in der Dateiablage. Wenn das gewünschte Dokument nicht angezeigt wird, frag bitte kurz im Team, ob und wo es abgelegt ist.',
       )
       .replace(
         'Warte kurz auf Word und starte den Doppelklick nicht mehrfach. DokoHilf hilft hier nur beim Öffnen vorhandener Dokumente.',

@@ -1,7 +1,7 @@
 {
-  "name": "DokoHilf – KI-Bedienungshilfe",
+  "name": "DokoHilf – Bedienungshilfe",
   "short_name": "DokoHilf",
-  "description": "Sichere KI-Bedienungshilfe mit Sprachgespräch und Chatmodus.",
+  "description": "Schritt-für-Schritt-Bedienungshilfe mit Sprach- und Chatmodus.",
   "lang": "de-DE",
   "start_url": "./",
   "scope": "./",

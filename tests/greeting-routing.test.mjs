@@ -67,6 +67,12 @@ test('mehrdeutige oder fachlich gesperrte Ziele werden nicht lokal erzwungen', (
   assert.equal(inferSelectedGuideSlug('Berichtssuche'), '');
 });
 
+test('klar benannte Vitalwerte-Eingaben verwenden nur die bestätigte Einzel-/Sammeltrennung', () => {
+  assert.equal(inferSelectedGuideSlug('Ich möchte mehrere Vitalwerte gleichzeitig eingeben'), 'vitalwerte-sammelerfassung');
+  assert.equal(inferSelectedGuideSlug('Ich möchte Blutdruck eingeben'), 'vitalwerte-einzelwert');
+  assert.equal(inferSelectedGuideSlug('Ich möchte Vitalwerte eingeben'), '');
+});
+
 test('nur die letzte Nutzernachricht wird für das Backend bereinigt und eindeutig geroutet', () => {
   const body = JSON.stringify({
     guideSlug: null,

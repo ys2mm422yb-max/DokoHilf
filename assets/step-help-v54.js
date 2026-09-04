@@ -40,7 +40,7 @@
     button.disabled = !guide;
     button.hidden = !guide;
     button.title = guide
-      ? `Bestätigte Hilfe zu Schritt ${guide.guideStep} von ${guide.guideStepCount}`
+      ? `Hilfe zu Schritt ${guide.guideStep} von ${guide.guideStepCount}`
       : '';
   }
 

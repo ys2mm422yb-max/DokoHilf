@@ -32,6 +32,7 @@ jobs:
           for file in \
             README.md PROJECT_RULES.md PROJECT_HANDOFF.md CONFIRMED_WORKFLOWS.md STATIC_VOICE_POLICY.md \
             PREBUILT_AUDIO.md AUDIO_PROVIDER_BLOCKER.md FINAL_SCOPE_V27.md ACTIVE_WORK_STATIC_AUDIO.md \
+            ACTIVE_WORK_INSTALL_AND_FULL_QA_V69.md \
             ACTIVE_WORK_MOBILE_CROSS_PLATFORM.md ACTIVE_WORK_DIRECT_GUIDES_CHAT.md ACTIVE_WORK_ACCOUNT_FREE_V28.md \
             assets/guide-audio-catalog.json assets/voice-extra-catalog-v28.json assets/voice-release-catalog-v29.json \
             assets/voice-durchfuehrung-catalog-v29.json assets/voice-ui-catalog-v29.json \
@@ -39,6 +40,7 @@ jobs:
             assets/direct-guides-v27.js assets/direct-guide-copy-v29.js assets/direct-guides-chat-v27.css \
             assets/durchfuehrungs-workflows-v29.js assets/orientation-help-v29.js assets/release-polish-v29.js \
             assets/local-voice-v28.js assets/local-voice-gate-v28.js assets/smart-help-v29.js assets/v29-ui.js assets/v29-ui.css \
+            assets/pwa-install-v69.js assets/pwa-install-v69.css \
             scripts/mobile-render-v27.mjs scripts/build-static-site-v27.sh scripts/build-supertonic-guide-audio-v28.py \
             scripts/run-behavior-regressions.mjs scripts/live-routing-smoke.mjs scripts/live-routing-stable.mjs \
             scripts/live-vitalwerte-routing-smoke.mjs tests/local-voice-v28.test.mjs tests/v29-smart-help-ui.test.mjs \
@@ -52,7 +54,8 @@ jobs:
             supabase/migrations/20260807232000_deny_all_app_guide_access.sql \
             supabase/migrations/20260807232412_relocate_accountless_trigger_functions.sql \
             supabase/migrations/20260809124000_bedarfsmedikation_massnahmen_v29.sql \
-            supabase/migrations/20260809125500_green_navigation_hierarchy_v29.sql; do
+            supabase/migrations/20260809125500_green_navigation_hierarchy_v29.sql \
+            supabase/migrations/20260904113000_natural_dateiablage_help_v69.sql; do
             test -s "$file"
           done
 
@@ -72,6 +75,7 @@ jobs:
           grep -Fq 'encodeURIComponent(BUILD_ID)' assets/local-voice-gate-v28.js
           grep -q '__DOKOHILF_SMART_HELP_V29__' assets/smart-help-v29.js
           grep -q '__DOKOHILF_UI_V29__' assets/v29-ui.js
+          grep -q '__DOKOHILF_PWA_INSTALL_V69__' assets/pwa-install-v69.js
           grep -q '__DOKOHILF_ORIENTATION_HELP_V29__' assets/orientation-help-v29.js
           grep -q 'feste grüne Leiste' assets/orientation-help-v29.js
           grep -q '__DOKOHILF_DURCHFUEHRUNGS_WORKFLOWS_V29__' assets/durchfuehrungs-workflows-v29.js
@@ -132,6 +136,7 @@ jobs:
           node --check assets/orientation-help-v29.js
           node --check assets/local-voice-v28.js
           node --check assets/local-voice-gate-v28.js
+          node --check assets/pwa-install-v69.js
           node --check assets/app.js
           node --check service-worker.js
           node --check scripts/mobile-render-v27.mjs
@@ -179,7 +184,10 @@ jobs:
             tests/direct-guides-v27.test.mjs \
             tests/local-voice-v28.test.mjs \
             tests/voice-spoken-report-conditional-v28.test.mjs \
-            tests/v29-smart-help-ui.test.mjs
+            tests/v29-smart-help-ui.test.mjs \
+            tests/v69-install-full-qa.test.mjs \
+            tests/voice-chat-parity-fixtures-v66.test.mjs \
+            tests/voice-chat-parity-guide-audit-v66.test.mjs
 
       - name: Build isolated UI test surface
         run: |

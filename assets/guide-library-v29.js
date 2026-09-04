@@ -26,9 +26,9 @@
   });
 
   const LATER_ITEMS = Object.freeze([
-    { label: 'Aufgaben · Aktuelles', subtitle: 'Wird fachlich noch überarbeitet · kommt später', icon: 'tasks' },
-    { label: 'Easy-Plan öffnen', subtitle: 'Wird fachlich noch überarbeitet · kommt später', icon: 'plan' },
-    { label: 'Berichtssuche', subtitle: 'Wird fachlich noch überarbeitet · kommt später', icon: 'reportSearch' },
+    { label: 'Aufgaben · Aktuelles', subtitle: 'Anleitung wird noch ergänzt · kommt später', icon: 'tasks' },
+    { label: 'Easy-Plan öffnen', subtitle: 'Anleitung wird noch ergänzt · kommt später', icon: 'plan' },
+    { label: 'Berichtssuche', subtitle: 'Anleitung wird noch ergänzt · kommt später', icon: 'reportSearch' },
   ]);
 
   const GUIDES = Object.freeze({
@@ -169,7 +169,7 @@
     },
     'durchfuehrungsnachweis-oeffnen': {
       title: 'Durchführungsnachweis öffnen', subtitle: 'Zum Durchführungsnachweis wechseln', icon: 'checklist',
-      steps: ['„Doku“ öffnen.', '„Durchführungsnachweis“ wählen.', 'Dort den gewünschten Eintrag beziehungsweise die gewünschte Funktion auswählen.'],
+      steps: ['„Doku“ öffnen.', '„Durchführungsnachweis“ wählen.'],
     },
     stammdaten: {
       title: 'Stammdaten öffnen', subtitle: 'Stammdaten eines Bewohners aufrufen', icon: 'person',

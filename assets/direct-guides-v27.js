@@ -9,17 +9,16 @@
         'Richtigen Bewohner öffnen.',
         'Bereich „Berichte“ öffnen.',
         'Oben links auf das grüne Plus klicken.',
-        'In der geöffneten Auswahl die Berichtskategorie wählen.',
-        'Danach öffnet sich die Eingabemaske für den Bericht.',
+        'In der geöffneten Eingabemaske die Berichtskategorie wählen. Das große Textfeld für den Bericht ist unten bereits sichtbar.',
         'Nur bei „Kontakt – alles außer Arzt“ und „Sturzereignis“ prüfen, ob ein zusätzliches Protokoll automatisch verknüpft ist.',
         'Wird das Protokoll benötigt, bleibt es verknüpft.',
         'Wird es nicht benötigt, den angezeigten Protokollnamen anklicken und anschließend oben rechts auf das kleine rote X klicken.',
         'Das rote X entfernt nur die Protokollverknüpfung, nicht den Bericht.',
         'Datum und Uhrzeit prüfen.',
-        'Berichtstext eintragen.',
+        'Wenn der Bericht für die nächste Schicht wichtig ist, „Wichtig für Schichtübergabe“ anhaken. Den Berichtstext in das große Textfeld darunter eintragen.',
         'Mit „OK“ bestätigen und den neuen Eintrag kontrollieren.',
       ],
-      note: 'Bei „Kontakt – alles außer Arzt“ ist das automatisch verknüpfte Protokoll ein Fallgespräch. Beim Sturzereignis bleibt die Bezeichnung des automatisch zugeordneten Protokolls bewusst neutral.',
+      note: 'Bei „Kontakt – alles außer Arzt“ ist automatisch ein Fallgespräch verknüpft. Bei „Sturzereignis“ ist automatisch ein Sturzprotokoll verknüpft.',
     },
     visite: {
       title: 'Visite anlegen',
@@ -32,15 +31,16 @@
         'Danach öffnet sich „Neue Visite“.',
         'Oben auf „Durchführen“ klicken. Dadurch wird die Visite als durchgeführt erfasst.',
         'Datum, Beginn und gegebenenfalls Ende prüfen.',
-        'Den durchführenden Arzt auswählen.',
+        'Den beim Bewohner hinterlegten durchführenden Arzt auswählen.',
         '„Mitarbeiter“ bleibt auf „ohne Mitarbeiter“ beziehungsweise leer.',
         'Bei „Anforderung“ eintragen, wer die Sprechstunde angefordert hat.',
         'Den Grund eintragen, zum Beispiel „Kontrollbesuch“.',
-        'Den Ort auswählen: Einrichtung, beim Arzt oder telefonisch.',
+        'Den Ort auswählen: Einrichtung, beim Arzt, telefonisch oder per Mail.',
         'Rechts in „Bemerkung“ Inhalt und Ergebnis der Visite eintragen.',
         'Speichern und prüfen, dass die Visite unter den durchgeführten Visiten erscheint.',
       ],
       warning: 'Visiten werden hier immer als „durchgeführt“ dokumentiert – niemals als „abgeschlossen“.',
+      note: 'Nur wenn der durchführende Arzt beim Bewohner nicht hinterlegt ist, rechts neben der Arztauswahl das kleine Filtersymbol aktivieren. Im Normalfall bleibt das Filtersymbol aus.',
     },
     vitalEinzel: {
       title: 'Einzelnen Vitalwert erfassen',
@@ -50,7 +50,7 @@
         '„Doku-Erweitert“ öffnen.',
         '„Vitalwerte“ wählen.',
         'Oben links auf das grüne Plus beziehungsweise „Neu“ klicken.',
-        'Im Pop-up den gewünschten Vitalwert auswählen.',
+        'Im Pop-up den gewünschten Vitalwert auswählen, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.',
         'Datum und Uhrzeit prüfen.',
         'Den gemessenen Wert eintragen; bei Blutdruck zum Beispiel Systole und Diastole.',
         'Nur bei Bedarf Messart, Qualität oder Bemerkung ergänzen.',
@@ -108,7 +108,8 @@
         'Oben links „Neu“ klicken.',
         'Im Fenster „Formular anlegen“ das benötigte Formular auswählen, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.',
         'Mit „OK“ bestätigen.',
-        'Das geöffnete Formular nach der bei euch gültigen fachlichen Vorgabe bearbeiten. Nicht bestätigte Formularfelder werden von DokoHilf nicht erfunden.',
+        'Das geöffnete Formular wie gewohnt ausfüllen.',
+        'Wenn das Formular fertig bearbeitet ist, oben links in der Leiste speichern.',
       ],
     },
     uebergabe: {
@@ -118,7 +119,8 @@
         'Oben den Reiter „Analyse“ öffnen.',
         'Dort „Was war los?“ wählen.',
         'Oben links „Alle anzeigen“ anklicken.',
-        'Danach „Alles ausklappen“ wählen, damit die Einträge vollständig sichtbar sind.',
+        'Danach „Alle ausklappen“ wählen, damit die Einträge vollständig sichtbar sind.',
+        'Den Zeitraum nur bei Bedarf ändern und anschließend die Anzeige aktualisieren.',
       ],
     },
   });
@@ -186,7 +188,7 @@
     }
     if (eyebrow && eyebrow.textContent !== 'DokoHilf Chat') { eyebrow.textContent = 'DokoHilf Chat'; changed = true; }
     if (heading && heading.textContent !== 'Schreib deine Frage.') { heading.textContent = 'Schreib deine Frage.'; changed = true; }
-    const copyText = 'Beschreibe kurz dein Ziel. DokoHilf führt dich nur durch bestätigte Abläufe.';
+    const copyText = 'Schreib kurz, was du erledigen möchtest. DokoHilf führt dich Schritt für Schritt.';
     if (copy && copy.textContent !== copyText) { copy.textContent = copyText; changed = true; }
     head.querySelector('.quick-prompts')?.setAttribute('aria-label', 'Schnelle Fragen');
     return changed;

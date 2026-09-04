@@ -5,6 +5,7 @@
   const AI_ROUTER_MARKER = '/functions/v1/dokohilf-ai';
   const CHAT_ROUTER_ENDPOINT = 'https://efifbuqctylsujiauabg.supabase.co/functions/v1/dokohilf-conversation-router';
   const ROUTING_REVISION = '20260822-signoff-durchfuehrungsnachweis-v52-1';
+  const VITAL_ROUTING_REVISION = '20260904-vitalwerte-input-parity-v69-1';
   const GREETINGS = [
     'guten morgen',
     'guten abend',
@@ -41,13 +42,27 @@
 
   function hasCreateIntent(value) {
     const text = normalize(value);
-    return /\b(anlegen|erstellen|dokumentieren|erfassen|eintragen|schreiben|verfassen|abhaken|kontrollieren|abzeichnen|abzuzeichnen)\b/.test(text)
+    return /\b(anlegen|erstellen|dokumentieren|erfassen|eintragen|eingeben|schreiben|verfassen|abhaken|kontrollieren|abzeichnen|abzuzeichnen)\b/.test(text)
       || /\b(lege|legst|legt|leg)\b.*\ban\b/.test(text)
       || /\b(trage|tragst|tragt|trag)\b.*\bein\b/.test(text)
       || /\b(erstelle|erstellst|erstellt|erstell)\b/.test(text)
       || /\b(dokumentiere|dokumentierst|dokumentiert|dokumentier)\b/.test(text)
       || /\b(erfasse|erfasst|erfass)\b/.test(text)
+      || /\b(eingebe|eingibst|eingibt|eingeb)\b/.test(text)
       || /\b(schreibe|schreibst|schreibt|schreib)\b/.test(text);
+  }
+
+  function vitalEntryGuide(value) {
+    const text = normalize(value);
+    if (!hasCreateIntent(text)) return '';
+    if (/\b(mehrere|mehreren|verschiedene|gemeinsam|gleichzeitig|sammelerfassung|sammelerf)\b/.test(text)) {
+      return 'vitalwerte-sammelerfassung';
+    }
+    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|sauerstoffsattigung|spo2|atemfrequenz|atemalkohol)\b/.test(text)
+      || /\b(einen|einzelnen|ein)\s+vitalwert\b/.test(text)) {
+      return 'vitalwerte-einzelwert';
+    }
+    return '';
   }
 
   function hasOpenIntent(value) {
@@ -101,8 +116,8 @@
       if (!isUnconfirmedReportSearch(text) && (hasOpenIntent(text) || /^berichte?$/.test(text))) return 'berichte-finden';
     }
 
-    if (/\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(text)) {
-      if (hasCreateIntent(text)) return '';
+    if (/\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|blutzucker|sauerstoff|sauerstoffsattigung|spo2|atemfrequenz|atemalkohol)\b/.test(text)) {
+      if (hasCreateIntent(text)) return vitalEntryGuide(text);
       if (hasOpenIntent(text) || /^vitalwerte?$/.test(text)) return 'vitalwerte-finden';
     }
 
@@ -216,6 +231,7 @@
       ...parsed,
       ...(selectedGuideSlug ? { selectedGuideSlug } : {}),
       clientRoutingRevision: ROUTING_REVISION,
+      ...(selectedGuideSlug?.startsWith('vitalwerte-') ? { clientVitalRoutingRevision: VITAL_ROUTING_REVISION } : {}),
       messages,
     });
   }
@@ -239,6 +255,7 @@
     normalize,
     stripLeadingGreeting,
     hasCreateIntent,
+    vitalEntryGuide,
     hasOpenIntent,
     isFalseSignOffCorrection,
     hasSignOffIntent,
@@ -248,6 +265,7 @@
     rewriteRouterInput,
     chatRouterEndpoint: CHAT_ROUTER_ENDPOINT,
     revision: ROUTING_REVISION,
+    vitalRoutingRevision: VITAL_ROUTING_REVISION,
     installFetchPatch,
   };
 

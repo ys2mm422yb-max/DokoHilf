@@ -2,9 +2,9 @@
   'use strict';
 
   const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
-  const VERSION_LABEL = 'v34';
+  const VERSION_LABEL = 'v35';
   const GUIDE_DISCOVERY_REVISION = '20260823-guide-discovery-v53-1';
-  const INTENT_REGISTRY_REVISION = '20260823-confirmed-intent-registry-v54-1';
+  const INTENT_REGISTRY_REVISION = '20260904-confirmed-intent-parity-v69-1';
   const STEP_HELP_REVISION = '20260823-step-help-v54-1';
   const SELF_TEST_REVISION = '20260823-self-test-v54-1';
   const UPDATE_NOTICE_MS = 10000;

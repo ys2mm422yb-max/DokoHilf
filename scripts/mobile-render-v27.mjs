@@ -223,6 +223,55 @@ try {
   assert(start.scrollWidth <= start.viewportWidth + 1, `Hauptmenü hat auf ${PROFILE} horizontalen Überlauf.`);
   assert(await page.locator('[data-select-mode="voice"]').isVisible(), 'Sprechen-Karte fehlt.');
   assert(await page.locator('[data-select-mode="chat"]').isVisible(), 'Schreiben-Karte fehlt.');
+  const installAction = page.locator('[data-pwa-install-action]');
+  await installAction.waitFor({ state: 'visible', timeout: 8_000 });
+  const installHome = await page.evaluate(() => ({
+    revision: document.querySelector('[data-pwa-install-revision]')?.dataset.pwaInstallRevision || '',
+    label: document.querySelector('[data-pwa-install-action] strong')?.textContent?.trim() || '',
+    subtitle: document.getElementById('pwaInstallV69Subtitle')?.textContent?.trim() || '',
+    platform: window.DokoHilfPwaInstallV69?.platform?.() || '',
+    installed: window.DokoHilfPwaInstallV69?.isInstalled?.() ?? null,
+  }));
+  assert(installHome.revision === '20260904-pwa-install-v69-1', `Installationsmodul fehlt oder hat eine falsche Revision: ${installHome.revision}`);
+  assert(installHome.label === 'DokoHilf installieren', `Installationsbutton ist unklar: ${installHome.label}`);
+  assert(installHome.platform === PROFILE, `Installationsplattform falsch erkannt: ${installHome.platform} statt ${PROFILE}`);
+  assert(installHome.installed === false, `Testoberfläche wird auf ${PROFILE} fälschlich als installiert erkannt.`);
+
+  let installEvidence;
+  if (PROFILE === 'android') {
+    await page.evaluate(() => {
+      window.__DOKOHILF_INSTALL_PROMPT_TEST__ = false;
+      const event = new Event('beforeinstallprompt', { cancelable: true });
+      event.prompt = async () => { window.__DOKOHILF_INSTALL_PROMPT_TEST__ = true; };
+      event.userChoice = Promise.resolve({ outcome: 'dismissed', platform: 'web' });
+      window.dispatchEvent(event);
+    });
+    await installAction.click();
+    await page.waitForFunction(() => window.__DOKOHILF_INSTALL_PROMPT_TEST__ === true);
+    await page.waitForFunction(() => document.querySelector('[data-pwa-install-status]')?.textContent?.includes('nicht gestartet'));
+    await installAction.click();
+  } else {
+    await installAction.click();
+  }
+  const installDialog = page.locator('.pwa-install-v69-dialog');
+  await installDialog.waitFor({ state: 'visible' });
+  installEvidence = await page.evaluate(() => ({
+    platform: document.querySelector('.pwa-install-v69-dialog')?.dataset.pwaInstallPlatform || '',
+    title: document.getElementById('pwaInstallV69Title')?.textContent?.trim() || '',
+    steps: [...document.querySelectorAll('.pwa-install-v69-steps li')].map(node => node.textContent?.trim() || ''),
+  }));
+  assert(installEvidence.platform === PROFILE, `Installationshinweise zeigen ${installEvidence.platform} statt ${PROFILE}.`);
+  if (PROFILE === 'ios') {
+    assert(installEvidence.steps.some(step => step.includes('Safari')), 'iOS-Hinweis nennt Safari nicht.');
+    assert(installEvidence.steps.some(step => step.includes('Zum Home-Bildschirm')), 'iOS-Hinweis nennt „Zum Home-Bildschirm“ nicht.');
+    assert(installEvidence.steps.some(step => step.includes('Als Web-App öffnen')), 'iOS-Hinweis nennt „Als Web-App öffnen“ nicht.');
+  } else {
+    assert(installEvidence.steps.some(step => step.includes('Chrome')), 'Android-Hinweis nennt Chrome nicht.');
+    assert(installEvidence.steps.some(step => step.includes('App installieren')), 'Android-Hinweis nennt „App installieren“ nicht.');
+  }
+  await page.screenshot({ path: `${OUTPUT_DIR}/01-install-${PROFILE}.png`, fullPage: false });
+  await page.locator('.pwa-install-v69-dialog [data-pwa-install-close]').first().click();
+  await page.locator('.pwa-install-v69-backdrop').waitFor({ state: 'hidden' });
   await page.waitForFunction(() => {
     const examples = document.querySelector('.examples');
     const label = examples?.querySelector(':scope > span')?.textContent?.trim();
@@ -299,6 +348,7 @@ try {
   await page.locator('[data-select-mode="chat"]').click();
   await page.locator('.chat-head').waitFor({ state: 'visible' });
   await page.waitForTimeout(180);
+  assert(!(await page.locator('.pwa-install-v69').isVisible()), `Installationsbereich bleibt im Chat auf ${PROFILE} sichtbar.`);
   const chat = await page.evaluate(() => {
     const shell = document.getElementById('appShell');
     const input = document.getElementById('chatInput');
@@ -403,6 +453,8 @@ try {
     identity,
     libraryHome,
     fullLibrary,
+    installHome,
+    installEvidence,
     chat,
     guideActions,
     assistantText,

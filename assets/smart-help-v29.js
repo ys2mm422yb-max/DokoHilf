@@ -6,6 +6,7 @@
     '/functions/v1/dokohilf-chat-router',
   ];
   const INPUT_ROBUSTNESS_REVISION = '20260903-progressive-navigation-v68-1';
+  const VITAL_PARITY_REVISION = '20260904-vitalwerte-input-parity-v69-1';
   const previousFetch = window.fetch.bind(window);
 
   function normalize(value) {
@@ -81,6 +82,24 @@
     return /\b(erfassen|eintragen|eingeben|anlegen|erstellen|schreiben|dokumentieren|neu machen|neu erfassen|korrigieren|durchstreichen|stornieren|geben|gabe|abhaken|kontrollieren|hochladen|uploaden|upload|loschen|loeschen|umbenennen|andern|aendern|bearbeiten|verschieben|ersetzen)\b/.test(n);
   }
 
+  function vitalEntryGuide(text) {
+    const n = normalize(text);
+    const entering = /\b(erfassen|eintragen|eingeben|dokumentieren)\b/.test(n)
+      || /\b(erfasse|erfasst|erfass|trage|tragst|tragt|trag|eingebe|eingibst|eingibt|eingeb|dokumentiere|dokumentierst|dokumentiert|dokumentier)\b/.test(n);
+    const vital = /\b(vitalwert|vitalwerte|blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(n)
+      || hasCompactTerm(n, 'Sauerstoffsättigung', 'Sauerstoffsaettigung', 'Atemfrequenz', 'Atemalkohol');
+    if (!entering || !vital) return '';
+    if (/\b(mehrere|mehreren|verschiedene|gemeinsam|gleichzeitig|sammelerfassung|sammelerf)\b/.test(n)) {
+      return 'vitalwerte-sammelerfassung';
+    }
+    if (/\b(blutdruck|puls|temperatur|blutzucker|sauerstoff|spo2)\b/.test(n)
+      || hasCompactTerm(n, 'Sauerstoffsättigung', 'Sauerstoffsaettigung', 'Atemfrequenz', 'Atemalkohol')
+      || /\b(einen|einzelnen|ein)\s+vitalwert\b/.test(n)) {
+      return 'vitalwerte-einzelwert';
+    }
+    return '';
+  }
+
   function hasNavigationIntent(text) {
     const n = normalize(text);
     return /\b(suche|such|finde|finden|wo ist|wo sind|wo finde|wie komme|ich will zu|ich mochte zu|offnen|oeffnen|aufrufen|ansehen|anschauen|zeigen)\b/.test(n)
@@ -139,6 +158,8 @@
     if (!n || isLocationQuestion(n)) return '';
     if (isFalseSignOffCorrection(n)) return 'durchfuehrung-storno';
     if (hasSignOffIntent(n)) return 'durchfuehrungsnachweis-finden';
+    const vitalGuide = vitalEntryGuide(n);
+    if (vitalGuide) return vitalGuide;
     if (hasEffectivenessTerm(n)
       && (/\b(bedarf|medikation)\b/.test(n) || hasNeedMedicationTerm(n))) {
       return 'bedarfsmedikation-wirksamkeitskontrolle';
@@ -222,6 +243,7 @@
           ...parsed,
           selectedGuideSlug: taskGuideSlug,
           smartTaskIntent: true,
+          ...(taskGuideSlug.startsWith('vitalwerte-') ? { smartVitalParityRevision: VITAL_PARITY_REVISION } : {}),
           ...(inferTaskGuide(userText) ? {} : { smartSpeechAlternativeIntent: true }),
         });
       }
@@ -262,6 +284,8 @@
     hasCompactTerm,
     isFalseSignOffCorrection,
     hasSignOffIntent,
+    hasEntryAction,
+    vitalEntryGuide,
     helpLike,
     isLocationQuestion,
     isUnconfirmedGoal,

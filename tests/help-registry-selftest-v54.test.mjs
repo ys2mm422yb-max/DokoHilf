@@ -56,7 +56,7 @@ test('zentrale Fetch-Schicht setzt nur bestätigte Slugs und respektiert bereits
   const base = { messages: [{ role: 'user', content: 'Ich muss Medikamente abzeichnen' }] };
   const routed = JSON.parse(registry.injectCanonicalRoute(JSON.stringify(base)));
   assert.equal(routed.selectedGuideSlug, 'durchfuehrungsnachweis-finden');
-  assert.match(routed.confirmedIntentRegistryRevision, /confirmed-intent-registry-v54/);
+  assert.match(routed.confirmedIntentRegistryRevision, /confirmed-intent-parity-v69/);
 
   const existing = JSON.stringify({ ...base, selectedGuideSlug: 'medikation-finden' });
   assert.equal(registry.injectCanonicalRoute(existing), existing);

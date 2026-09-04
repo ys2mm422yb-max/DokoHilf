@@ -26,7 +26,7 @@
       title: 'Wirksamkeitskontrolle dokumentieren',
       subtitle: 'Wirkung einer Bedarfsmedikation festhalten',
       icon: 'effect',
-      note: 'Die Wirksamkeitskontrolle wird automatisch nach einer Bedarfsmedikationsgabe angelegt. DokoHilf nennt keine erfundene Wartezeit.',
+      note: 'Die Wirksamkeitskontrolle wird automatisch nach einer Bedarfsmedikationsgabe angelegt. Eine konkrete Wartezeit ist hier nicht festgelegt.',
       steps: [
         'Warten, bis die automatisch angelegte Wirksamkeitskontrolle zum vorgesehenen Zeitpunkt fällig ist.',
         'Beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“ öffnen.',
