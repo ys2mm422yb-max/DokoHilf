@@ -2,11 +2,12 @@
   'use strict';
 
   const BUILD_ID = document.querySelector('meta[name="dokohilf-build"]')?.content || 'unknown';
-  const VERSION_LABEL = 'v35';
+  const VERSION_LABEL = 'v36';
   const GUIDE_DISCOVERY_REVISION = '20260823-guide-discovery-v53-1';
   const INTENT_REGISTRY_REVISION = '20260904-confirmed-intent-parity-v69-1';
   const STEP_HELP_REVISION = '20260823-step-help-v54-1';
   const SELF_TEST_REVISION = '20260823-self-test-v54-1';
+  const CHAT_GUIDE_UX_REVISION = '20260905-chat-guide-back-dictation-v70-1';
   const UPDATE_NOTICE_MS = 10000;
   const RELOAD_KEY = 'dokohilf-build-reload';
   const PRODUCTION_ORIGIN = 'https://ys2mm422yb-max.github.io';
@@ -125,6 +126,7 @@
       loadScript('assets/step-help-v54.js', STEP_HELP_REVISION, '__DOKOHILF_STEP_HELP_V54__', 'dokohilf-step-help-v54'),
       loadScript('assets/self-test-v54.js', SELF_TEST_REVISION, '__DOKOHILF_SELF_TEST_V54__', 'dokohilf-self-test-v54'),
     ]);
+    await loadScript('assets/chat-guide-ux-v70.js', CHAT_GUIDE_UX_REVISION, '__DOKOHILF_CHAT_GUIDE_UX_V70__', 'dokohilf-chat-guide-ux-v70');
   }
 
   function init() {
@@ -145,6 +147,7 @@
     intentRegistryRevision: INTENT_REGISTRY_REVISION,
     stepHelpRevision: STEP_HELP_REVISION,
     selfTestRevision: SELF_TEST_REVISION,
+    chatGuideUxRevision: CHAT_GUIDE_UX_REVISION,
     updateNoticeMs: UPDATE_NOTICE_MS,
     moveVersionToFooter,
     showUpdateNotice,
