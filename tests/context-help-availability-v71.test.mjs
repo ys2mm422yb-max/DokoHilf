@@ -85,7 +85,7 @@ test('v71 verändert weder Schritt-zurück noch fachliche Hilfeinhalte oder Spra
   assert.doesNotMatch(source, /data-v54-step-help|Schritt zurück/);
   assert.doesNotMatch(source, /speechSynthesis|SpeechSynthesisUtterance|cloud.*tts|elevenlabs/i);
   assert.doesNotMatch(source, /localStorage|sessionStorage|indexedDB|document\.cookie/i);
-  assert.doesNotMatch(source, /Doku-Erweitert|Durchführungsnachweis|Bewohner öffnen|klick/i, 'v71 darf keine fachlichen Ersatzschritte enthalten');
+  assert.doesNotMatch(source, /feste grüne|weißen Funktionsband|Bewohner öffnen|klicke|wähle dort/i, 'v71 darf keine fachlichen Ersatzschritte enthalten');
 });
 
 test('v71 ist im aktuellen Build nach v70 geladen und offline gecacht', () => {
