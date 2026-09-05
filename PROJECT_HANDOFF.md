@@ -1,36 +1,36 @@
 # DokoHilf – dauerhafte Projektübergabe
 
 **Status:** verbindliche Arbeitsquelle  
-**Stand:** 4. September 2026
-**Aktueller live verifizierter Produktstand:** `v34` / Build `20260903-42` / progressive Sprachnavigation v68
-**Aktueller `main`:** `4aee543e8dabfcb4622789f651b71c34f111fd04`
-**Aktueller veröffentlichter `gh-pages`-Commit:** `be2dfd33dd3df6ae39e75c43a2122c0919c8294e` (aus exakt `4aee543e8dabfcb4622789f651b71c34f111fd04` erzeugt)
-**Letzter Produkt-PR:** `#187` – PWA-Build-Refresh für v34/v68
+**Stand:** 4. September 2026  
+**Aktueller veröffentlichter Produktstand:** `v35` / Build `20260904-43` / Release `pwa-install-and-full-qa-v69`  
+**Aktueller `main`:** `b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6`  
+**Aktueller veröffentlichter `gh-pages`-Commit:** `98bb5f8f92b7b6c661c152a839ad7a9eff95cd4e`  
+**Letzter Produkt-PR:** `#188` – Add PWA installation and complete user-facing QA v69  
+**PR-Head von #188:** `c6d54cc45698be4877d0d8b23dc5b7eac3012f7c`  
 **Letzter Hardening-PR:** `#136` – explizite RLS-Deny-All-Policy  
-**Aktuelles Release-Ziel:** `v35` / Build `20260904-43`; Details in `ACTIVE_WORK_INSTALL_AND_FULL_QA_V69.md`
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
-> Veränderliche Zustände werden bei neuer Arbeit immer live geprüft. Diese Datei ist das dauerhafte Handoff, aber kein Ersatz für GitHub-/Supabase-Liveprüfung.
+> Veränderliche Zustände werden bei neuer Arbeit immer erneut live geprüft. Diese Datei ist das dauerhafte Handoff, aber kein Ersatz für GitHub-, Actions-, Pages- und Supabase-Liveprüfung.
 
 Diese dauerhafte Projektübergabe enthält ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Inhalte. Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert.
 
 ## 1. Verbindliche Quellen und Reihenfolge
 
-Vor neuer DokoHilf-Arbeit mindestens lesen beziehungsweise prüfen:
+Vor neuer DokoHilf-Arbeit mindestens vollständig lesen beziehungsweise prüfen:
 
 1. `PROJECT_RULES.md`
-2. `CONFIRMED_WORKFLOWS.md`
-3. `CROSS_PLATFORM_POLICY.md`
-4. `STATIC_VOICE_POLICY.md` bei Sprachbezug
-5. `USAGE_METRICS.md` bei Reichweiten-/Datenschutzbezug
-6. diese Datei
+2. `PROJECT_HANDOFF.md`
+3. `CONFIRMED_WORKFLOWS.md`
+4. `CROSS_PLATFORM_POLICY.md`
+5. `STATIC_VOICE_POLICY.md` bei Sprachbezug
+6. `USAGE_METRICS.md` bei Reichweiten-/Datenschutzbezug
 7. relevante `ACTIVE_WORK_*.md`
-8. aktuelle GitHub-PRs/Issues/Actions sowie `main` und `gh-pages`
+8. aktuelle GitHub-PRs, Issues, Actions, `main` und `gh-pages`
 9. bei Supabase-Bezug ausschließlich Projekt `efifbuqctylsujiauabg`
 
-**Wichtig:** `CONFIRMED_WORKFLOWS.md` ist die fachliche Source of Truth für lokale Klickwege. Eine spätere technische Änderung in JS, Migration, Router, Sprache oder Test gilt nicht als sauber dokumentiert, solange der bestätigte Weg dort nicht nachgezogen ist.
+`CONFIRMED_WORKFLOWS.md` ist die fachliche Source of Truth für bestätigte lokale Klickwege. Technische Implementierung, Migrationen, Router, Sprache oder Tests dürfen diese Quelle nicht stillschweigend erweitern.
 
-Ältere `ACTIVE_WORK_*.md` können abgeschlossene historische Arbeitsblöcke dokumentieren. Maßgeblich für den aktuellen Gesamtstand sind deren jeweiliger Status, diese Datei und die aktuelle Fachquelle; ein Dateiname mit `ACTIVE_WORK_` allein bedeutet nicht automatisch, dass der Block noch offen ist.
+Ältere `ACTIVE_WORK_*.md` können abgeschlossene historische Arbeitsblöcke dokumentieren. Maßgeblich sind deren jeweiliger Status, diese Datei, die aktuelle Fachquelle und der bei Arbeitsbeginn neu geprüfte Remote-Stand.
 
 ## 2. Harte Projekt- und Produktgrenzen
 
@@ -38,219 +38,175 @@ Vor neuer DokoHilf-Arbeit mindestens lesen beziehungsweise prüfen:
 - Einziges Supabase-Projekt: `efifbuqctylsujiauabg`, Region `eu-central-1`.
 - Andere GitHub- oder Supabase-Projekte werden nicht geöffnet, verändert, verbunden oder als Deployment-Ziel genutzt.
 - DokoHilf ist eine öffentliche, accountfreie Schritt-für-Schritt-Bedienhilfe.
-- DokoHilf führt keinerlei Konten oder Anmeldung; auch interne App-, Redaktions-, Mitarbeiter- oder Administrationskonten sind nicht Teil des Produkts.
-- Keine App-Konten, Anmeldung, Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken.
+- DokoHilf führt keinerlei Konten oder Anmeldung; auch keine Redaktions-, Mitarbeiter- oder Administrationskonten in DokoHilf.
+- Keine Bewohner-/Mitarbeiterprofile, Fallakten oder personenbezogenen Eingabemasken.
 - Keine echten Bewohner-, Patienten-, Angehörigen-, Gesundheits-, Mitarbeiter-, Fall-, Termin- oder Zugangsdaten in App, Repository, Supabase, Tests oder Artefakten.
-- Tests und sonstige synthetische Prüfzustände bleiben vollständig künstlich; keine reale Person und kein realer Fall werden nachgebildet.
-- Keine erfundenen Klickwege oder Feldnamen.
+- Tests und Renderzustände bleiben vollständig synthetisch; keine reale Person und kein realer Fall werden nachgebildet.
+- Keine erfundenen Vivendi-Klickwege, Feldnamen, Menüpunkte oder Abläufe.
 - Keine medizinischen, pflegerischen oder betreuerischen Entscheidungen durch DokoHilf.
 - Berichtssuche bleibt fachlich offen; Issue #103 bleibt offen.
-- Der genaue Easy-Plan-Ablauf bleibt fachlich offen.
+- Easy-Plan bleibt im genauen Detailweg fachlich offen.
 - `Aufgaben · Aktuelles` bleibt fachlich offen.
 - Medikation bleibt im normalen Medikationsbereich strikt **nur ansehen**.
+- Dateiablage bleibt ausschließlich beim Finden und Öffnen bereits vorhandener Dokumente.
 
 ## 3. Verbindlicher GitHub- und Veröffentlichungsablauf
 
 1. Nie direkt auf `main` arbeiten.
 2. Eigener Branch → Pull Request → exakten PR-Head prüfen.
 3. Kein Auto-Merge und keine automatische Branch-Löschung.
-4. Produkt-/UI-/Guide-/Sprachänderungen nur bei allen acht etablierten Pflichtworkflows grün auf exakt demselben Head mergen.
+4. Produkt-/UI-/Guide-/Sprachänderungen nur mergen, wenn alle ausgelösten Pflichtprüfungen auf exakt demselben PR-Head erfolgreich sind; die etablierten iOS-/Android-Prüfungen bleiben verpflichtend.
 5. Reine Docs-only-Änderungen müssen alle durch die vorhandenen Pfadfilter tatsächlich ausgelösten Pflichtworkflows grün bestehen; nicht ausgelöste UI-Workflows werden nicht künstlich verlangt.
-6. Bei Datenbankänderungen zuerst Transaktions-Dry-Run mit Rollback; produktive Migration erst nach Merge.
+6. Datenbankänderungen zuerst per Transaktion mit Rollback prüfen; produktive Migration erst nach geprüftem Merge.
 7. Edge Functions erst nach geprüftem Merge produktiv deployen.
 8. Nach Produktmerge `main`, `gh-pages`, festen Hauptlink und betroffene Supabase-Ressourcen prüfen.
-9. Gegenüber dem Nutzer nie `live` behaupten, bevor der veröffentlichte Stand real verifiziert wurde.
+9. Gegenüber dem Nutzer nie `live` oder `fertig` behaupten, bevor der dafür relevante veröffentlichte Stand tatsächlich geprüft wurde.
 
-## 4. Aktueller GitHub-/Release-Stand
+## 4. Aktueller GitHub- und Release-Stand v35 / v69
 
-Am 4. September 2026 live gegen GitHub und den festen öffentlichen Hauptlink verifiziert:
+Am 4. September 2026 wurde PR #188 mit dem exakten Head `c6d54cc45698be4877d0d8b23dc5b7eac3012f7c` vollständig geprüft und anschließend manuell gemergt.
 
-- `main` steht auf `4aee543e8dabfcb4622789f651b71c34f111fd04`, Merge von PR #187.
-- `gh-pages` steht auf `be2dfd33dd3df6ae39e75c43a2122c0919c8294e` und wurde aus exakt diesem `main`-Stand erzeugt.
-- Damit ist der veröffentlichte Branch auf demselben Produkt-/Hardening-Stand wie `main`.
-- PR #186 ist vollständig grün gemergt; PR #187 hat danach ausschließlich den PWA-Build auf `20260903-42` aktualisiert.
-- v34/v68, Build `20260903-42` und 316 statische Supertonic-F1-Sätze sind am festen Hauptlink live bestätigt.
-- Der nächste Arbeitsblock v69 ist noch nicht live. Er gilt erst nach vollständiger PR-, Deploy- und Live-Prüfung als veröffentlicht.
+- Alle 11 für diesen PR-Head ausgelösten GitHub-Workflows stehen auf `completed / success`, darunter Exact-Head-, iOS-/Android-, statische Sprach-, Versions- und Deploy-Prüfungen.
+- Merge-Commit auf `main`: `b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6`.
+- Der Merge-Commit und der PR-Head besitzen denselben Produkt-Tree `ca42104227b454291a9de8d9f6987c61eeae30b2`.
+- Main-Deploy #958 für `b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6` ist erfolgreich abgeschlossen.
+- Veröffentlichter `gh-pages`-Commit: `98bb5f8f92b7b6c661c152a839ad7a9eff95cd4e`.
+- Dessen Committext lautet `Publish DokoHilf b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6`.
+- Auch das anschließende GitHub-Pages-Build-and-Deployment für diesen `gh-pages`-Commit wurde erfolgreich abgeschlossen.
+- `gh-pages/version.json` enthält `appVersion: v35`, `buildId: 20260904-43`, `release: pwa-install-and-full-qa-v69`.
+- Der Branch `feature/pwa-install-full-qa-v69-20260904` existiert weiterhin und steht unverändert auf dem gemergten PR-Head.
+- Aktuell gibt es keine offenen Pull Requests.
 
-## 5. Aktueller fachlicher Stand
+Die v69-Arbeit ist abgeschlossen. `ACTIVE_WORK_INSTALL_AND_FULL_QA_V69.md` ist als abgeschlossen markiert und darf nicht mehr wie ein offener Release-Block behandelt werden.
 
-Die vollständigen Schrittfolgen stehen in `CONFIRMED_WORKFLOWS.md`. Dort sind seit dieser Synchronisierung auch die nachträglich bestätigten Details aus den späteren PRs vollständig enthalten.
+## 5. PWA-Installation v69
 
-Besonders wichtig:
+Der veröffentlichte v69-Stand enthält die startseitige Installationskarte **DokoHilf installieren**.
 
-- **Bericht anlegen:** richtiger Bewohner → Berichte → grünes Plus → Kategorie → Sonderfall nur bei `Kontakt – alles außer Arzt` / `Sturzereignis` → Datum/Uhrzeit → `Wichtig für Schichtübergabe` nur bei Bedarf → Bericht in Textfeld darunter → OK.
-- **Bericht korrigieren:** falschen Bericht rechtsklicken → Eintrag bearbeiten → Durchstreichen → Bemerkung zur Bearbeitung → OK. Korrektur danach als neuer Bericht, nicht als Folgebericht.
-- **Folgebericht:** neuer Bericht mit Bezug auf bestehendes Geschehen; ursprünglicher Bericht bleibt unverändert.
-- **Durchführung stornieren:** Doku → Durchführungsnachweis → falsche Durchführung → Rechtsklick → Durchführung stornieren → Grund → OK.
-- **Bedarfsmedikation:** Doku → Durchführungsnachweis → kleiner Pfeil links neben Bedarfsmedikation → Medikament anhaken → tatsächliche Uhrzeit → `Wichtig für Schichtübergabe` bleibt automatisch gesetzt → Anlass im Textfeld → ggf. tatsächlich verwendete geringere Menge → OK → automatische Wirksamkeitskontrolle.
-- **Wirksamkeitskontrolle:** automatisch angelegt; keine erfundene Wartezeit; zum vorgesehenen Zeitpunkt im Durchführungsnachweis öffnen, abhaken, Wirkung dokumentieren, OK.
-- **Maßnahmen ohne Zeitangabe:** Doku → Durchführungsnachweis → **kleiner Pfeil links** neben Maßnahmen ohne Zeitangabe → Maßnahme → Datum/Uhrzeit → Kategorie → `Wichtig für Schichtübergabe` optional → Dokumentation im großen Textfeld → optionale zusätzliche Zeit → OK.
-- **Visite:** Doku-Erweitert → Visiten → grünes Plus/Neu → Klient auswählen → Neue Visite → Durchführen → Datum/Beginn/ggf. Ende → hinterlegten Arzt → Mitarbeiter leer/ohne Mitarbeiter → Anforderung → Grund → Ort `Einrichtung / beim Arzt / telefonisch / per Mail` → Bemerkung → speichern; Status immer `durchgeführt`.
-- **Visiten-Sonderfall:** Arzt nicht beim Bewohner hinterlegt → kleines Filtersymbol rechts neben der Arztauswahl → alle Systemärzte; im Normalfall Filter aus.
-- **Vitalwerte:** Einzelwert und Sammelerfassung sind getrennte Wege. Bestätigte Beispiele: Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz, Atemalkohol. Blutdruck mit Systole/Diastole; zusätzliche Felder/Einheiten nur nach sichtbarer Maske.
-- **An-/Abwesenheit:** `Von` immer; `Bis` nur bei sicher bekanntem Endzeitpunkt, sonst leer.
-- **Formulare:** Doku-Erweitert → Formulare → Neu → Formular auswählen → OK → ausfüllen → oben links speichern.
-- **Stammdaten:** Berichte oder Durchführungsnachweis öffnen → links Bewohnerübersicht → Bewohner doppelklicken → Stammdaten.
-- **Notfallblatt:** Bewohner → rotes Kreuz/Pfeil oben links → Notfallblatt aufrufen → Notfallblatt_Allgemein → Einweisungsgrund nur bei Bedarf → OK → bis etwa drei Minuten auf Word warten, Standby verhindern, nicht mehrfach starten.
-- **Übergabe:** Analyse → Was war los? → Alle anzeigen → Alle ausklappen → Zeitraum nur bei Bedarf ändern.
+- Android verwendet `beforeinstallprompt`, wenn der Browser das Ereignis bereitstellt; andernfalls werden die vorgesehenen Browser-Menüschritte angezeigt.
+- Auf iPhone/iPad wird die Safari-Anleitung für **Teilen → Zum Home-Bildschirm → Als Web-App öffnen → Hinzufügen** verwendet.
+- Im Standalone-Modus wird die Installationskarte ausgeblendet.
+- Im Chat, Sprachmodus und in geöffneten Direktguides wird die Karte ebenfalls nicht angezeigt.
+- Manifest, Service Worker und die erforderlichen PWA-Icons sind Bestandteil des veröffentlichten Stands.
+- Die Release-Prüfung umfasst die mobilen Profile iOS 393×852 und Android 412×915.
 
-## 6. Bestätigte kontextbewusste Chatlogik
+Nicht automatisch behaupten, eine physische Installation auf einem konkreten iPhone oder Android-Gerät sei durchgeführt worden. Bestätigt sind Implementierung, Release-Prüfung und veröffentlichter PWA-Stand.
 
-PR #130 und #132 bleiben verbindlich enthalten:
+## 6. Aktueller fachlicher Stand
+
+Die vollständigen Klickwege stehen ausschließlich verbindlich in `CONFIRMED_WORKFLOWS.md`. Besonders wichtig bleiben:
+
+- **Bericht anlegen:** richtiger Bewohner → Berichte → grünes Plus → Kategorie → bestätigte Sonderfälle beachten → Datum/Uhrzeit → `Wichtig für Schichtübergabe` nur bei Bedarf → Bericht in Textfeld → OK.
+- **Bericht korrigieren:** falschen Bericht rechtsklicken → Eintrag bearbeiten → Durchstreichen → Bemerkung zur Bearbeitung → OK; Korrektur danach als neuer Bericht, nicht als Folgebericht.
+- **Folgebericht:** neuer Bericht mit Bezug auf ein bestehendes Geschehen; ursprünglicher Bericht bleibt unverändert.
+- **Zum Abzeichnen:** richtiger Bewohner → `Doku` → `Durchführungsnachweis`; für einen allgemeinen Durchführungsnachweis endet die bestätigte Orientierung dort. Keinen dritten Fantasie-Schritt ergänzen.
+- **Durchführung stornieren:** im Durchführungsnachweis falschen Eintrag rechtsklicken → Durchführung stornieren → Grund → OK.
+- **Bedarfsmedikation:** eigener bestätigter Ablauf im Durchführungsnachweis; keine Veränderung der Verordnung.
+- **Wirksamkeitskontrolle:** automatisch angelegt; keine erfundene Wartezeit.
+- **Visite:** wird immer als `durchgeführt` dokumentiert, niemals als abgeschlossen.
+- **Vitalwerte:** Einzelwert und Sammelerfassung sind getrennte Wege. Klare Mehrfachabsicht führt zur Sammelerfassung; klar benannter Einzelwert zum Einzelwert-Ablauf; allgemeine Anfrage bleibt eine Rückfrage mit den bestätigten Möglichkeiten.
+- **An-/Abwesenheit:** `Von` immer; `Bis` nur bei sicher bekanntem Endzeitpunkt, niemals schätzen.
+- **Medikation ansehen:** normale Medikationsübersicht ausschließlich lesen, dort keine Änderungen anleiten.
+- **Dateiablage:** ausschließlich vorhandene Dokumente finden und öffnen; nicht hochladen, löschen, umbenennen, bearbeiten oder verschieben.
+- **Notfallblatt, Formulare, Stammdaten und Übergabe/Was war los?** bleiben gemäß `CONFIRMED_WORKFLOWS.md` bestätigt.
+
+## 7. Chat- und Sprachlogik
+
+Der veröffentlichte v69-Stand bewahrt die bestehende kontextbewusste Guide-Logik und korrigiert die bestätigten v69-Regressionspunkte:
 
 - Natürliche Formulierungen wie `lege … an`, `trage … ein`, `erstelle`, `dokumentiere`, `erfasse`, `öffne`, `rufe … auf`, `sehe … an` werden für freigegebene Guides erkannt.
-- Der `dokohilf-conversation-router` sitzt vor dem bestehenden `dokohilf-chat-router` und behandelt natürliche Guide-Abschlüsse sowie bestätigte Anschlussdialoge.
+- `dokohilf-conversation-router` sitzt vor `dokohilf-chat-router` und behandelt bestätigte Anschlussdialoge.
 - Bereits erreichte Navigation wird erhalten, wenn der nächste Schritt bestätigt ist.
 - Finden-/Öffnen-Guides tun nicht so, als wäre bereits ein Eintrag erstellt worden.
-- `vitalwerte-erfassen` und `durchfuehrungsnachweis-oeffnen` behandeln ein bloßes `Ja` nicht als Abschluss, sondern klären die noch offene Auswahl.
-- Medikation bietet keinen Änderungsanschluss.
+- Vitalwerte behandeln Einzelwert, Sammelerfassung und allgemeine Rückfrage getrennt.
+- Der allgemeine Durchführungsnachweis endet nach `Doku → Durchführungsnachweis`.
+- Die betroffenen Router schneiden bestätigte längere Schritte nicht mehr nach 260 Zeichen ab.
+- Die natürliche Rückfrage bei fehlender Detailinformation bleibt sinngemäß auf dem bestätigten sichtbaren Zustand und erfindet keinen Klickweg.
+- Gibt es keine passende bestätigte Anleitung, wird transparent auf menschliche Unterstützung verwiesen.
 - Berichtssuche, Easy-Plan und Aufgaben/Aktuelles bleiben als unbestätigte Anschlussziele gesperrt.
 
-## 7. Bibliothek und mobile Darstellung
+## 8. Bibliothek und offene fachliche Punkte
 
-Aktuelle Bibliotheksgruppen:
+Aktuelle sichtbare Bibliotheksgruppen enthalten die freigegebenen Guides für Berichte, Gesundheit & Medizin, Organisation & Dokumente, Übergabe & Übersicht sowie Durchführung.
 
-### Berichte
-- Bericht anlegen
-- Bericht korrigieren
-- Folgebericht erstellen
+Als **In Vorbereitung** bleiben:
 
-### Gesundheit & Medizin
-- Visite anlegen
-- Visiten öffnen
-- Visitenstatus
-- Vitalwerte erfassen
-- Medikation ansehen
-- Notfallblatt öffnen
-
-### Organisation & Dokumente
-- An-/Abwesenheit
-- Formular anlegen
-- Stammdaten öffnen
-- Dateiablage öffnen
-
-### Übergabe & Übersicht
-- Übergabe / Was war los?
-
-### Durchführung
-- Durchführung stornieren
-- Durchführungsnachweis öffnen
-- Bedarfsmedikation dokumentieren
-- Wirksamkeitskontrolle
-- Maßnahmen ohne Zeitangabe
-
-### In Vorbereitung
 - Berichtssuche
 - Easy-Plan
 - Aufgaben · Aktuelles
 
-Mobile Chat-UI v38 bleibt aktiv: 16-px-Textarea auf Mobilgeräten, eigener Chat-Scroller, Composer am sichtbaren unteren Rand, keine ungefragte Tastaturöffnung. Produktänderungen werden weiterhin auf iOS 393×852 und Android 412×915 geprüft.
+Offene GitHub-Issues:
 
-## 8. Sprache
-
-`STATIC_VOICE_POLICY.md` bleibt verbindlich.
-
-- ausschließlich kostenloses statisches Supertonic-3/F1 für freigegebene hörbare Sätze;
-- keine System-/Gerätestimme als regulärer Fallback;
-- keine Cloud-/Bezahl-TTS;
-- keine Browser-/WebGPU-/WASM-Inferenz;
-- Sprachstart: **„Hey! Wobei brauchst du Hilfe?“**;
-- v40-Completion-Katalog: 44 feste Completion-/Anschlusssätze;
-- letzter live bestätigter Gesamtbestand nach PR #186: 316 statische WAV-Sätze.
-
-Eine Änderung eines bestätigten Textes muss mit der statischen Sprachquelle synchron gehalten werden; diese Dokumentationssynchronisierung ändert keinen hörbaren Text.
-
-## 9. Private anonyme Reichweitenmessung v41
-
-Verbindliche Detaildokumentation: `USAGE_METRICS.md` sowie der abgeschlossene Arbeitsblock `ACTIVE_WORK_PRIVATE_USAGE_METRICS_V41.md`.
-
-Fachliche Bedeutung:
-
-- gezählt werden **Seitenaufrufe**, keine eindeutigen Personen oder Geräte;
-- keine Geräte-ID, kein Fingerprinting, keine DokoHilf-IP-Speicherung, kein User-Agent, Referrer, Session-ID oder Analysecookie;
-- Browser sendet pro neu geladenem Produktionsdokument einen leeren Counter-POST;
-- Statistik ist nicht öffentlich in DokoHilf sichtbar;
-- interne Summary liefert heute / 7 Tage / 30 Tage / gesamt;
-- Tageswerte werden höchstens 400 Kalendertage gehalten;
-- öffentliche Rollen haben keinen Lese- oder Increment-Zugriff;
-- explizite RLS-Deny-All-Policy aus PR #136 bleibt zusätzlich zu den REVOKEs aktiv.
-
-Der Zähler ist kein Nutzertracking und darf nicht zu einer Geräte- oder Nutzerwiedererkennung erweitert werden.
-
-## 10. Technische Architektur- und Supabase-Anker
-
-Die folgenden technischen Anker bleiben bewusst wörtlich dokumentiert, weil sie Bestandteil der etablierten DokoHilf-Regressions- und Übergabeverträge sind.
-
-**Aktive Supabase-Funktion:** `dokohilf-conversation-router`, live bestätigte Version 5, Status `ACTIVE`.
-**Aktiver Basisrouter:** `dokohilf-chat-router`, live bestätigte Version 11, Status `ACTIVE`.
-**Aktiver AI-Router:** `dokohilf-ai-router`, live bestätigte Version 12, Status `ACTIVE`; `dokohilf-ai` bleibt der bestehende private Core-Pfad.
-**Aktueller Datenbankstand:** `natural_path_routing_v39` plus produktive private Reichweitenmessung v41.  
-**Supabase Security:** Security Advisor nach v41 / PR #136 ohne offene Lints.  
-**Offenes fachliches Issue:** `#103` Berichtssuche.
-
-### Supabase-Architektur
-
-Im zuletzt bestätigten v40-/v41-Stand bestehen die etablierten Router-/AI-Pfade plus der technische Reichweitenzähler:
-
-1. `dokohilf-conversation-router` – öffentlicher kontenfreier Wrapper, `verify_jwt=false`.
-2. `dokohilf-chat-router` – öffentlicher Basisrouter, `verify_jwt=false`.
-3. `dokohilf-ai` – bestehender privater Core-Pfad.
-4. `dokohilf-usage-counter` – technischer, origin-beschränkter Seitenaufruf-Endpunkt; gibt keine öffentlichen Statistikwerte aus.
-
-Der zuletzt bestätigte Guide-Datenstand vor der v41-Reichweitenänderung war:
-
-- `dokohilf_guides`: **46 Zeilen insgesamt, 41 `approved`, 5 `draft`**;
-- alle 41 freigegebenen Guide-Slugs werden von den aktiven Router- und Bibliotheksverträgen abgedeckt;
-- `dokohilf_guide_versions`: **42 Archivzeilen** im zuletzt bestätigten v40-Stand;
-- `auth.users = 0`;
-- keine DokoHilf-Cronjobs;
-- interner Build-Schalter `false`.
-
-Die v41-Reichweitenänderung verändert keine Guides und ergänzt ausschließlich technische Statistikobjekte:
-
-- `public.dokohilf_usage_counters`;
-- `public.dokohilf_usage_summary`;
-- `public.dokohilf_increment_page_view()`;
-- Edge Function `dokohilf-usage-counter`.
-
-Für diese Statistik gilt:
-
-- `anon` und `authenticated` dürfen weder Counter noch Summary lesen;
-- `anon` und `authenticated` dürfen den Increment-RPC nicht ausführen;
-- explizite RLS-Deny-All-Policy plus REVOKEs bleiben aktiv;
-- Security Advisor nach PR #136: **0 Lints**;
-- Performance Advisor zuletzt nur INFO zum ungenutzten Index `dokohilf_guide_versions_guide_version_idx`; nicht ohne neue Evidenz entfernen.
-
-Veränderliche Werte wie aktuelle Seitenaufrufe oder spätere Function-Versionen werden bei Bedarf live geprüft.
-
-### Kanonische technische Quellen
-
-Die folgenden Pfade bleiben als Architekturanker erhalten:
-
-- `assets/conversation-router-v40.ts`
-- `assets/voice-completion-catalog-v40.json`
-- `supabase/functions/dokohilf-conversation-router/index.ts`
-- `tests/guide-completion-v40.test.mjs`
-- `scripts/build-supertonic-guide-audio-v28.py`
-- `supabase/functions/dokohilf-usage-counter/index.ts`
-- `supabase/migrations/20260811225800_private_usage_metrics_v41.sql`
-- `USAGE_METRICS.md`
-
-## 11. Offene fachliche Punkte
-
-- Issue #103: Berichtssuche – weiterhin offen.
-- Issue #167: Erweiterung der Orientierung – weiterhin offen.
-- Easy-Plan: genauer Detailweg nicht bestätigt.
-- Aufgaben · Aktuelles: nicht als fertiger Guide freigegeben.
+- Issue #103: Berichtssuche später fachlich überarbeiten.
+- Issue #167: Orientierungswissen schrittweise und ausschließlich aus bestätigten Informationen erweitern.
 
 Keine dieser Lücken auf Verdacht schließen oder durch KI ergänzen.
 
+## 9. Sprache
+
+`STATIC_VOICE_POLICY.md` bleibt verbindlich.
+
+- ausschließlich kostenloses statisches Supertonic 3 / F1;
+- keine System-, Geräte- oder Browserstimme als Fallback;
+- keine Cloud-/Bezahl-TTS;
+- keine Browser-/WebGPU-/WASM-Inferenz;
+- Sprachstart: **„Hey! Wobei brauchst du Hilfe?“**;
+- der v69-Release bleibt auf dem bestätigten Bestand von 316 statischen Supertonic-F1-Audios;
+- Textänderung eines hörbaren freigegebenen Satzes erfordert synchron neu erzeugtes statisches Audio.
+
+Die Spracharchitektur darf nicht stillschweigend auf einen anderen TTS-Pfad wechseln.
+
+## 10. Aktueller Supabase-Stand
+
+Ausschließlich Projekt `efifbuqctylsujiauabg` verwenden.
+
+Am 4. September 2026 erneut geprüft:
+
+- Projektstatus: `ACTIVE_HEALTHY`.
+- `dokohilf-ai-router`: Version 13, `ACTIVE`, `verify_jwt=false`.
+- `dokohilf-conversation-router`: Version 6, `ACTIVE`, `verify_jwt=false`.
+- `dokohilf-chat-router`: Version 11, `ACTIVE`, `verify_jwt=false`.
+- Neueste produktive Migration: `natural_dateiablage_help_v69`.
+- `dokohilf_guides`: 46 Guides insgesamt, 41 `approved`, 5 `draft`.
+- 155 freigegebene Schritte, 133 eindeutige freigegebene Schritttexte.
+- Keine leeren freigegebenen Schritttexte und keine leeren Prüffragen.
+- Entwürfe bleiben: `aufgaben-aktuelles`, `berichtssuche`, `durchfuehrung-abweichung`, `easyplan`, `vitalwerte-erfassen-fortsetzen`.
+
+Die fünf Entwürfe werden nicht als fertige Guides veröffentlicht.
+
+### Private anonyme Reichweitenmessung
+
+`USAGE_METRICS.md` und der abgeschlossene Arbeitsblock `ACTIVE_WORK_PRIVATE_USAGE_METRICS_V41.md` bleiben verbindlich.
+
+- gezählt werden Seitenaufrufe, keine eindeutigen Personen oder Geräte;
+- keine Geräte-ID, kein Fingerprinting, keine DokoHilf-IP-Speicherung, kein User-Agent, Referrer, Session-ID oder Analysecookie;
+- Statistik ist nicht öffentlich in DokoHilf sichtbar;
+- explizite RLS-Deny-All-Policy plus REVOKEs bleiben aktiv;
+- die Reichweitenmessung darf nicht zu Geräte- oder Nutzerwiedererkennung erweitert werden.
+
+## 11. Qualitäts- und Release-Anker v69
+
+Für PR #188 sind auf exakt demselben Head 11 Workflow-Runs erfolgreich abgeschlossen worden, darunter:
+
+- `Validate exact PR head`
+- `Validate dark iPhone UI v27`
+- `Validate report conditional iOS Android`
+- `Validate detailed help iOS Android`
+- `Validate static voice iOS Android`
+- `Validate app version policy`
+- die weiteren für den PR ausgelösten Kontext-, Registry-, Feedback- und Deploy-Prüfungen
+
+Main-Deploy #958 und das anschließende GitHub-Pages-Deployment sind erfolgreich abgeschlossen.
+
+Dokumentierte v69-Release-Nachweise umfassen außerdem die vollständige Node-Testreihe, Routingregressionen, Gesprächsfolgen, Workflow-Marker, Live-Routing, Vitalwerte-Regressionsprüfung, statische Audio-Prüfung sowie iOS-/Android-Renderprüfung. Künftige Änderungen müssen ihre eigenen aktuellen Nachweise erzeugen und dürfen sich nicht pauschal auf diese alte Freigabe berufen.
+
 ## 12. Dokumentationspflicht ab jetzt
 
-- Neue bestätigte Klickwege sofort in `CONFIRMED_WORKFLOWS.md` aufnehmen.
+- Neue bestätigte Klickwege sofort anonymisiert in `CONFIRMED_WORKFLOWS.md` aufnehmen.
 - Den aktuellen Gesamtstand nach relevanten Releases in `PROJECT_HANDOFF.md` nachziehen.
 - Ein `ACTIVE_WORK_*.md` muss einen eindeutigen Status tragen; abgeschlossene Blöcke dürfen nicht weiter als offene Arbeit beschrieben werden.
 - PR-Beschreibungen, Migrationen und Tests ersetzen die zentrale Fachquelle nicht.
-- Dokumentationsänderungen allein dürfen keine App-/Guide-/Router-/Sprachlogik verändern.
+- Dokumentationsänderungen allein dürfen keine App-, Guide-, Router- oder Sprachlogik verändern.
+- Vor jeder neuen Aufgabe trotzdem `main`, `gh-pages`, offene PRs, relevante Actions und bei Bedarf Supabase erneut prüfen.
 
-Diese Datei beschreibt den live verifizierten Stand nach PR #187 auf v34 / Build `20260903-42` sowie das davon getrennte, noch nicht live bestätigte Release-Ziel v35/v69.
+Diese Datei beschreibt den veröffentlichten Produktstand nach PR #188 auf `v35` / Build `20260904-43` / Release `pwa-install-and-full-qa-v69`. Die hier vorgenommene Dokumentationssynchronisierung selbst verändert keine Produktfunktion.
