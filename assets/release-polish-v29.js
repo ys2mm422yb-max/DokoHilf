@@ -8,6 +8,7 @@
   const STEP_HELP_REVISION = '20260823-step-help-v54-1';
   const SELF_TEST_REVISION = '20260823-self-test-v54-1';
   const CHAT_GUIDE_UX_REVISION = '20260905-chat-guide-back-dictation-v70-1';
+  const CONTEXT_HELP_AVAILABILITY_REVISION = '20260905-context-help-availability-v71-1';
   const UPDATE_NOTICE_MS = 10000;
   const RELOAD_KEY = 'dokohilf-build-reload';
   const PRODUCTION_ORIGIN = 'https://ys2mm422yb-max.github.io';
@@ -127,6 +128,7 @@
       loadScript('assets/self-test-v54.js', SELF_TEST_REVISION, '__DOKOHILF_SELF_TEST_V54__', 'dokohilf-self-test-v54'),
     ]);
     await loadScript('assets/chat-guide-ux-v70.js', CHAT_GUIDE_UX_REVISION, '__DOKOHILF_CHAT_GUIDE_UX_V70__', 'dokohilf-chat-guide-ux-v70');
+    await loadScript('assets/context-help-availability-v71.js', CONTEXT_HELP_AVAILABILITY_REVISION, '__DOKOHILF_CONTEXT_HELP_AVAILABILITY_V71__', 'dokohilf-context-help-availability-v71');
   }
 
   function init() {
@@ -148,6 +150,7 @@
     stepHelpRevision: STEP_HELP_REVISION,
     selfTestRevision: SELF_TEST_REVISION,
     chatGuideUxRevision: CHAT_GUIDE_UX_REVISION,
+    contextHelpAvailabilityRevision: CONTEXT_HELP_AVAILABILITY_REVISION,
     updateNoticeMs: UPDATE_NOTICE_MS,
     moveVersionToFooter,
     showUpdateNotice,
