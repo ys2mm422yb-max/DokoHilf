@@ -27,12 +27,15 @@ jobs:
           test -s assets/intent-registry-v54.js
           test -s assets/step-help-v54.js
           test -s assets/self-test-v54.js
+          test -s assets/context-help-availability-v71.js
           test -s tests/help-registry-selftest-v54.test.mjs
+          test -s tests/context-help-availability-v71.test.mjs
           node --check assets/intent-registry-v54.js
           node --check assets/step-help-v54.js
           node --check assets/self-test-v54.js
+          node --check assets/context-help-availability-v71.js
           node --check assets/release-polish-v29.js
-          node --test tests/help-registry-selftest-v54.test.mjs
+          node --test tests/help-registry-selftest-v54.test.mjs tests/context-help-availability-v71.test.mjs
           node - <<'NODE'
           const fs = require('fs');
           const version = require('./version.json');
