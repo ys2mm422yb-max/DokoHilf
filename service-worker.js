@@ -1,4 +1,4 @@
-const BUILD_ID = '20260904-43';
+const BUILD_ID = '20260905-44';
 const HOTFIX_REVISION = '20260809-static-supertonic-orientation-ui-v29-3';
 const LIBRARY_LAYOUT_REVISION = '20260812-dateiablage-organisation-v46-1';
 const CHAT_UI_REVISION = '20260810-mobile-chat-viewport-v38-1';
@@ -19,69 +19,71 @@ const INPUT_ROBUSTNESS_REVISION = '20260902-confirmed-term-input-v61-1';
 const PROGRESSIVE_NAVIGATION_REVISION = '20260903-progressive-navigation-v68-1';
 const PWA_INSTALL_REVISION = '20260904-pwa-install-v69-1';
 const FULL_QA_REVISION = '20260904-full-qa-v69-1';
+const CHAT_GUIDE_UX_REVISION = '20260905-chat-guide-back-dictation-v70-1';
 // Compatibility-only markers for older regression suites. Runtime state is defined by HOTFIX_REVISION above.
 const LEGACY_RELEASE_MARKERS = [
   "HOTFIX_REVISION = '20260808-smart-help-voice-ui-v29-1'",
   "HOTFIX_REVISION = '20260809-massnahmen-arrow-v29-3'",
   'mobile-polish-8',
 ];
-const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2-search-v55-dnf-orientation-v57-report-navigation-v58-spatial-orientation-v60-confirmed-term-input-v61-progressive-navigation-v68-pwa-install-full-qa-v69`;
+const CACHE_NAME = `dokohilf-shell-${BUILD_ID}-static-supertonic-2-search-v55-dnf-orientation-v57-report-navigation-v58-spatial-orientation-v60-confirmed-term-input-v61-progressive-navigation-v68-pwa-install-full-qa-v69-chat-guide-back-dictation-v70`;
 const STATIC_AUDIO_CACHE = 'dokohilf-static-supertonic-audio-v29-2';
 const CORE_FILES = [
   './',
   './index.html',
   './version.json',
-  './assets/guide-audio-catalog.json?v=20260904-43',
-  './assets/styles.css?v=20260904-43',
-  './assets/premium-ui-v25.css?v=20260904-43',
-  './assets/premium-ui-v26.css?v=20260904-43',
-  './assets/premium-ui-v27.css?v=20260904-43',
-  './assets/ux-v27.css?v=20260904-43',
-  './assets/voice-stage-balance-v27.css?v=20260904-43',
-  './assets/direct-guides-chat-v27.css?v=20260904-43',
-  './assets/v29-ui.css?v=20260904-43',
-  './assets/card-axis-fix-v29.css?v=20260904-43-cardaxis1',
-  './assets/guide-library-v29.css?v=20260904-43-library1',
-  './assets/ui-polish-v35.css?v=20260904-43-ui1',
-  './assets/voice-polish-v36.css?v=20260904-43-voice1',
-  './assets/ux-polish-v42.css?v=20260904-43-ux42',
-  './assets/pwa-install-v69.css?v=20260904-43',
-  './assets/update-manager.js?v=20260904-43',
-  './assets/mobile-audio-fix.js?v=20260904-43',
-  './assets/routing-fix.js?v=20260904-43',
-  './assets/conversation-intelligence.js?v=20260904-43',
-  './assets/clarification-ui.js?v=20260904-43',
-  './assets/detail-help-v27.js?v=20260904-43',
-  './assets/smart-help-v29.js?v=20260904-43',
+  './assets/guide-audio-catalog.json?v=20260905-44',
+  './assets/styles.css?v=20260905-44',
+  './assets/premium-ui-v25.css?v=20260905-44',
+  './assets/premium-ui-v26.css?v=20260905-44',
+  './assets/premium-ui-v27.css?v=20260905-44',
+  './assets/ux-v27.css?v=20260905-44',
+  './assets/voice-stage-balance-v27.css?v=20260905-44',
+  './assets/direct-guides-chat-v27.css?v=20260905-44',
+  './assets/v29-ui.css?v=20260905-44',
+  './assets/card-axis-fix-v29.css?v=20260905-44-cardaxis1',
+  './assets/guide-library-v29.css?v=20260905-44-library1',
+  './assets/ui-polish-v35.css?v=20260905-44-ui1',
+  './assets/voice-polish-v36.css?v=20260905-44-voice1',
+  './assets/ux-polish-v42.css?v=20260905-44-ux42',
+  './assets/pwa-install-v69.css?v=20260905-44',
+  './assets/update-manager.js?v=20260905-44',
+  './assets/mobile-audio-fix.js?v=20260905-44',
+  './assets/routing-fix.js?v=20260905-44',
+  './assets/conversation-intelligence.js?v=20260905-44',
+  './assets/clarification-ui.js?v=20260905-44',
+  './assets/detail-help-v27.js?v=20260905-44',
+  './assets/smart-help-v29.js?v=20260905-44',
   './assets/file-storage-guide-v46.js?v=20260812-file-storage-v46-1',
-  './assets/guide-progress.js?v=20260904-43',
-  './assets/orientation-help-v29.js?v=20260904-43',
-  './assets/release-polish-v29.js?v=20260904-43',
-  './assets/durchfuehrungs-workflows-v29.js?v=20260904-43',
-  './assets/voice-focus-mode.js?v=20260904-43',
-  './assets/local-voice-v28.js?v=20260904-43',
-  './assets/experience-v27.js?v=20260904-43',
-  './assets/detail-help-polish-v27.js?v=20260904-43',
-  './assets/detail-help-render-sync-v27.js?v=20260904-43',
-  './assets/context-voice-hotfix-v28.js?v=20260904-43',
-  './assets/ux-v27.js?v=20260904-43',
-  './assets/v29-ui.js?v=20260904-43',
-  './assets/mobile-polish-v29.js?v=20260904-43-cardaxis1',
-  './assets/local-voice-gate-v28.js?v=20260904-43',
-  './assets/direct-guides-v27.js?v=20260904-43',
-  './assets/direct-guide-copy-v29.js?v=20260904-43',
-  './assets/guide-library-v29.js?v=20260904-43-library1',
-  './assets/report-guide-hotfix-v43.js?v=20260904-43',
-  './assets/ui-polish-v35.js?v=20260904-43-ui1',
+  './assets/guide-progress.js?v=20260905-44',
+  './assets/orientation-help-v29.js?v=20260905-44',
+  './assets/release-polish-v29.js?v=20260905-44',
+  './assets/durchfuehrungs-workflows-v29.js?v=20260905-44',
+  './assets/voice-focus-mode.js?v=20260905-44',
+  './assets/local-voice-v28.js?v=20260905-44',
+  './assets/experience-v27.js?v=20260905-44',
+  './assets/detail-help-polish-v27.js?v=20260905-44',
+  './assets/detail-help-render-sync-v27.js?v=20260905-44',
+  './assets/context-voice-hotfix-v28.js?v=20260905-44',
+  './assets/ux-v27.js?v=20260905-44',
+  './assets/v29-ui.js?v=20260905-44',
+  './assets/mobile-polish-v29.js?v=20260905-44-cardaxis1',
+  './assets/local-voice-gate-v28.js?v=20260905-44',
+  './assets/direct-guides-v27.js?v=20260905-44',
+  './assets/direct-guide-copy-v29.js?v=20260905-44',
+  './assets/guide-library-v29.js?v=20260905-44-library1',
+  './assets/report-guide-hotfix-v43.js?v=20260905-44',
+  './assets/ui-polish-v35.js?v=20260905-44-ui1',
   './assets/feedback-report-v49.js?v=20260813-feedback-home-only-v50-1',
-  './assets/voice-polish-v36.js?v=20260904-43-voice1',
-  './assets/ux-polish-v42.js?v=20260904-43-ux42',
-  './assets/pwa-install-v69.js?v=20260904-43',
-  './assets/app.js?v=20260904-43',
+  './assets/voice-polish-v36.js?v=20260905-44-voice1',
+  './assets/ux-polish-v42.js?v=20260905-44-ux42',
+  './assets/pwa-install-v69.js?v=20260905-44',
+  './assets/app.js?v=20260905-44',
   './assets/guide-discovery-v53.js?v=20260823-guide-discovery-v53-1',
   './assets/intent-registry-v54.js?v=20260904-confirmed-intent-parity-v69-1',
   './assets/step-help-v54.js?v=20260823-step-help-v54-1',
   './assets/self-test-v54.js?v=20260823-self-test-v54-1',
+  './assets/chat-guide-ux-v70.js?v=20260905-chat-guide-back-dictation-v70-1',
   './manifest.webmanifest',
   './icon.svg',
 ];
@@ -131,6 +133,7 @@ self.addEventListener('activate', event => {
         progressiveNavigationRevision: PROGRESSIVE_NAVIGATION_REVISION,
         pwaInstallRevision: PWA_INSTALL_REVISION,
         fullQaRevision: FULL_QA_REVISION,
+        chatGuideUxRevision: CHAT_GUIDE_UX_REVISION,
         hardRefresh: true,
       });
     }
@@ -162,6 +165,7 @@ self.addEventListener('message', event => {
       progressiveNavigationRevision: PROGRESSIVE_NAVIGATION_REVISION,
       pwaInstallRevision: PWA_INSTALL_REVISION,
       fullQaRevision: FULL_QA_REVISION,
+      chatGuideUxRevision: CHAT_GUIDE_UX_REVISION,
     });
   }
   if (event.data?.type === 'CLEAR_DOKOHILF_CACHES') {
@@ -191,6 +195,7 @@ self.addEventListener('message', event => {
         progressiveNavigationRevision: PROGRESSIVE_NAVIGATION_REVISION,
         pwaInstallRevision: PWA_INSTALL_REVISION,
         fullQaRevision: FULL_QA_REVISION,
+        chatGuideUxRevision: CHAT_GUIDE_UX_REVISION,
       });
     })());
   }

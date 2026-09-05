@@ -39,14 +39,14 @@ const version = JSON.parse(versionRaw);
 const extraTexts = JSON.parse(extraRaw).entries.map(entry => entry.text);
 const stuckTexts = JSON.parse(stuckRaw).entries.map(entry => entry.text);
 
-test('v35/v69 bindet den Installationsbereich in App-Shell und Offline-Cache ein', () => {
-  assert.equal(version.appVersion, 'v35');
-  assert.equal(version.buildId, '20260904-43');
-  assert.equal(version.release, 'pwa-install-and-full-qa-v69');
-  assert.match(index, /pwa-install-v69\.css\?v=20260904-43/);
-  assert.match(index, /pwa-install-v69\.js\?v=20260904-43/);
-  assert.match(worker, /pwa-install-v69\.css\?v=20260904-43/);
-  assert.match(worker, /pwa-install-v69\.js\?v=20260904-43/);
+test('v69-Installationsbereich bleibt im aktuellen v36/v70-Release in App-Shell und Offline-Cache erhalten', () => {
+  assert.equal(version.appVersion, 'v36');
+  assert.equal(version.buildId, '20260905-44');
+  assert.equal(version.release, 'chat-guide-back-dictation-v70');
+  assert.match(index, /pwa-install-v69\.css\?v=20260905-44/);
+  assert.match(index, /pwa-install-v69\.js\?v=20260905-44/);
+  assert.match(worker, /pwa-install-v69\.css\?v=20260905-44/);
+  assert.match(worker, /pwa-install-v69\.js\?v=20260905-44/);
   assert.match(worker, /PWA_INSTALL_REVISION = '20260904-pwa-install-v69-1'/);
 });
 
