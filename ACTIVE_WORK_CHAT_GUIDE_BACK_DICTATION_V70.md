@@ -32,6 +32,12 @@ Die neue, rein clientseitige Schicht `assets/chat-guide-ux-v70.js`:
 8. zeigt sichtbare Zustände für Zuhören, Übernahme und typische Fehler;
 9. entfernt unmittelbar aufeinanderfolgende, wortgleiche Assistenten-Doppelblasen, ohne Wiederholungen nach einer neuen Benutzereingabe zu unterdrücken.
 
+## PR-Regression und Ursachenbehebung
+
+Auf einem früheren PR-Head scheiterte ausschließlich der mobile Feedback-Renderlauf mit einem `networkidle`-Timeout. Die Feedback-Vertragstests, Privacy-Prüfung und der Supabase-Typecheck waren dabei erfolgreich. Die Ursache lag in v70 selbst: Der versteckte alte Schritthilfe-Button wurde bei jedem DOM-Mutationsereignis erneut per `textContent` auf **„Schritt zurück“** gesetzt. Diese Textänderung erzeugte wiederum ein neues Mutationsereignis und konnte so eine Observer-Schleife auslösen.
+
+Die Behebung setzt die Beschriftung jetzt **idempotent** nur dann, wenn sie tatsächlich noch abweicht. Der CI-Render-Test wurde nicht abgeschwächt oder umgangen.
+
 ## Fachliche und Datenschutz-Grenzen
 
 - Keine neuen Vivendi-Menüs, Felder, Statuswerte oder Klickwege.
@@ -56,6 +62,8 @@ Neu beziehungsweise angepasst:
   - v36/v70-Version und Offline-Einbindung.
 - `tests/chat-guide-static-voice-v70.test.mjs`
   - bestätigter Doku-Erweitert-Ortstext ist im `Supertonic-F1`-Navigationskatalog vorhanden.
+- `tests/chat-guide-observer-idempotence-v70.test.mjs`
+  - wiederholte Synchronisierung von **„Schritt zurück“** darf `textContent` nicht erneut schreiben und damit keine MutationObserver-Schleife erzeugen.
 - `tests/v69-install-full-qa.test.mjs`
   - bestehende v69-PWA-Funktion bleibt als Regression im neuen Build erhalten.
 
@@ -64,6 +72,7 @@ Neu beziehungsweise angepasst:
 Erledigt:
 
 1. PR #191 wurde aus dem eigenen Branch gegen `main` eröffnet.
+2. Ein erster roter mobiler Feedback-Renderlauf wurde nicht übergangen, sondern auf die v70-Observer-Schleife zurückgeführt und mit eigener Regression behoben.
 
 Noch offen und verpflichtend:
 
