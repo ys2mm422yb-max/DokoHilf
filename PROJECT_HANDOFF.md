@@ -1,16 +1,16 @@
 # DokoHilf – dauerhafte Projektübergabe
 
 **Status:** verbindliche Arbeitsquelle  
-**Stand:** 4. September 2026  
-**Aktueller veröffentlichter Produktstand:** `v35` / Build `20260904-43` / Release `pwa-install-and-full-qa-v69`  
-**Aktueller `main`:** `b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6`  
-**Aktueller veröffentlichter `gh-pages`-Commit:** `98bb5f8f92b7b6c661c152a839ad7a9eff95cd4e`  
-**Letzter Produkt-PR:** `#188` – Add PWA installation and complete user-facing QA v69  
+**Stand:** 5. September 2026  
+**Verifizierter Produkt-Release:** `v35` / Build `20260904-43` / Release `pwa-install-and-full-qa-v69`  
+**v69 Produkt-Merge-Commit:** `b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6`  
+**v69 Veröffentlichungsbeleg auf `gh-pages`:** `98bb5f8f92b7b6c661c152a839ad7a9eff95cd4e`  
+**Produkt-PR:** `#188` – Add PWA installation and complete user-facing QA v69  
 **PR-Head von #188:** `c6d54cc45698be4877d0d8b23dc5b7eac3012f7c`  
-**Letzter Hardening-PR:** `#136` – explizite RLS-Deny-All-Policy  
+**Letzter Hardening-PR des v69-Stands:** `#136` – explizite RLS-Deny-All-Policy  
 **Öffentlicher Hauptlink:** `https://ys2mm422yb-max.github.io/DokoHilf/`
 
-> Veränderliche Zustände werden bei neuer Arbeit immer erneut live geprüft. Diese Datei ist das dauerhafte Handoff, aber kein Ersatz für GitHub-, Actions-, Pages- und Supabase-Liveprüfung.
+> Veränderliche Remote-Zustände wie die jeweils aktuelle `main`-SHA, `gh-pages`-SHA, offene PRs und laufende Actions werden bewusst nicht als dauerhaft „aktuelle“ Werte festgeschrieben. Sie müssen vor neuer Arbeit live geprüft werden. Diese Datei ist das dauerhafte Handoff, aber kein Ersatz für GitHub-, Actions-, Pages- und Supabase-Liveprüfung.
 
 Diese dauerhafte Projektübergabe enthält ausschließlich selbst formulierte, anonymisierte und veröffentlichungsfähige Inhalte. Herkunft, Prüfmaterialien und interne Ausgangsmaterialien werden nicht öffentlich dokumentiert.
 
@@ -62,20 +62,21 @@ Vor neuer DokoHilf-Arbeit mindestens vollständig lesen beziehungsweise prüfen:
 8. Nach Produktmerge `main`, `gh-pages`, festen Hauptlink und betroffene Supabase-Ressourcen prüfen.
 9. Gegenüber dem Nutzer nie `live` oder `fertig` behaupten, bevor der dafür relevante veröffentlichte Stand tatsächlich geprüft wurde.
 
-## 4. Aktueller GitHub- und Release-Stand v35 / v69
+## 4. Verifizierter GitHub- und Release-Stand v35 / v69
 
 Am 4. September 2026 wurde PR #188 mit dem exakten Head `c6d54cc45698be4877d0d8b23dc5b7eac3012f7c` vollständig geprüft und anschließend manuell gemergt.
 
 - Alle 11 für diesen PR-Head ausgelösten GitHub-Workflows stehen auf `completed / success`, darunter Exact-Head-, iOS-/Android-, statische Sprach-, Versions- und Deploy-Prüfungen.
-- Merge-Commit auf `main`: `b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6`.
-- Der Merge-Commit und der PR-Head besitzen denselben Produkt-Tree `ca42104227b454291a9de8d9f6987c61eeae30b2`.
+- Produkt-Merge-Commit von PR #188: `b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6`.
+- Der Produkt-Merge-Commit und der PR-Head besitzen denselben Produkt-Tree `ca42104227b454291a9de8d9f6987c61eeae30b2`.
 - Main-Deploy #958 für `b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6` ist erfolgreich abgeschlossen.
-- Veröffentlichter `gh-pages`-Commit: `98bb5f8f92b7b6c661c152a839ad7a9eff95cd4e`.
+- v69-Veröffentlichungsbeleg auf `gh-pages`: `98bb5f8f92b7b6c661c152a839ad7a9eff95cd4e`.
 - Dessen Committext lautet `Publish DokoHilf b767ef1f8b72ee14719a2e47105bb4fa64ecd6f6`.
 - Auch das anschließende GitHub-Pages-Build-and-Deployment für diesen `gh-pages`-Commit wurde erfolgreich abgeschlossen.
-- `gh-pages/version.json` enthält `appVersion: v35`, `buildId: 20260904-43`, `release: pwa-install-and-full-qa-v69`.
-- Der Branch `feature/pwa-install-full-qa-v69-20260904` existiert weiterhin und steht unverändert auf dem gemergten PR-Head.
-- Aktuell gibt es keine offenen Pull Requests.
+- `gh-pages/version.json` dieses Release-Belegs enthält `appVersion: v35`, `buildId: 20260904-43`, `release: pwa-install-and-full-qa-v69`.
+- Der Release-Branch `feature/pwa-install-full-qa-v69-20260904` wurde nach dem Merge nicht gelöscht.
+
+Spätere reine Dokumentations-Merges können die jeweils aktuelle `main`- oder `gh-pages`-SHA ändern, ohne den freigegebenen Produktstand `v35` / `20260904-43` / v69 zu verändern. Deshalb sind die oben genannten SHAs ausdrücklich Release-Belege und keine dauerhaft gültigen Aussagen über den jeweils aktuellen Remote-Head.
 
 Die v69-Arbeit ist abgeschlossen. `ACTIVE_WORK_INSTALL_AND_FULL_QA_V69.md` ist als abgeschlossen markiert und darf nicht mehr wie ein offener Release-Block behandelt werden.
 
@@ -156,7 +157,7 @@ Keine dieser Lücken auf Verdacht schließen oder durch KI ergänzen.
 
 Die Spracharchitektur darf nicht stillschweigend auf einen anderen TTS-Pfad wechseln.
 
-## 10. Aktueller Supabase-Stand
+## 10. Zuletzt bestätigter Supabase-Stand
 
 Ausschließlich Projekt `efifbuqctylsujiauabg` verwenden.
 
@@ -209,4 +210,4 @@ Dokumentierte v69-Release-Nachweise umfassen außerdem die vollständige Node-Te
 - Dokumentationsänderungen allein dürfen keine App-, Guide-, Router- oder Sprachlogik verändern.
 - Vor jeder neuen Aufgabe trotzdem `main`, `gh-pages`, offene PRs, relevante Actions und bei Bedarf Supabase erneut prüfen.
 
-Diese Datei beschreibt den veröffentlichten Produktstand nach PR #188 auf `v35` / Build `20260904-43` / Release `pwa-install-and-full-qa-v69`. Die hier vorgenommene Dokumentationssynchronisierung selbst verändert keine Produktfunktion.
+Diese Datei beschreibt den verifizierten Produkt-Release nach PR #188 auf `v35` / Build `20260904-43` / Release `pwa-install-and-full-qa-v69`. Die jeweils aktuellen Remote-SHAs werden absichtlich nicht dauerhaft festgeschrieben; sie sind vor neuer Arbeit live zu prüfen. Diese Dokumentationssynchronisierung verändert keine Produktfunktion.
