@@ -19,6 +19,14 @@
     return String(value || '').replace(/\s+/g, ' ').trim();
   }
 
+  function normalizedLower(value) {
+    return normalize(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ß/g, 'ss');
+  }
+
   function requestUrl(input) {
     return typeof input === 'string' ? input : input?.url;
   }
@@ -49,11 +57,21 @@
     };
   }
 
+  function isAmbiguousDokuErweitertMention(text) {
+    const n = normalizedLower(text);
+    if (!/\bdoku(?:\s*-\s*|\s+)erweitert\b/.test(n)) return false;
+    return !/\b(ja|nein|geoffnet|offen|gefunden|erledigt|weiter|fertig|passt|da|dort|zuruck|nochmal)\b/.test(n);
+  }
+
   function confirmedGuideOrientationPayload(parsed, text) {
     const guide = currentGuide(parsed);
     const api = window.DokoHilfOrientationHelpV29;
-    if (!guide.guideSlug || !api?.isLocationQuestion?.(text)) return null;
-    const payload = api.responseFor?.(parsed, text);
+    if (!guide.guideSlug || !api) return null;
+    const isLocationQuestion = api.isLocationQuestion?.(text) === true;
+    const ambiguousDokuErweitert = isAmbiguousDokuErweitertMention(text);
+    if (!isLocationQuestion && !ambiguousDokuErweitert) return null;
+    const orientationText = isLocationQuestion ? text : 'Wo ist Doku-Erweitert';
+    const payload = api.responseFor?.(parsed, orientationText);
     if (!payload?.spokenText) return null;
     return {
       ...payload,
@@ -135,6 +153,7 @@
     style.id = 'chatGuideUxV70Styles';
     style.textContent = `
       [data-v54-step-help][data-v70-step-back="true"]{white-space:nowrap}
+      [data-v54-step-help][data-v70-step-back="true"]::before{display:none!important;content:none!important}
       [data-v54-step-help][data-v70-step-back="true"]:disabled{cursor:not-allowed;opacity:.42;transform:none!important}
       #smallMicButton[data-dictation-state="listening"]{outline:2px solid rgba(74,232,178,.72);outline-offset:2px;background:rgba(22,155,113,.22)}
       #smallMicButton[data-dictation-state="listening"] svg{animation:dokohilfDictationPulse 1s ease-in-out infinite alternate}
@@ -329,6 +348,7 @@
   window.DokoHilfChatGuideUxV70 = {
     revision: REVISION,
     currentGuide,
+    isAmbiguousDokuErweitertMention,
     confirmedGuideOrientationPayload,
     applyStepBackButton,
     requestStepBack,
