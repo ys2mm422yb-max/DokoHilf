@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DokoHilf App-Icon">
+  <defs>
+    <linearGradient id="bg" x1="56" y1="20" x2="468" y2="496" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#071a20"/>
+      <stop offset="0.5" stop-color="#020c12"/>
+      <stop offset="1" stop-color="#06141b"/>
+    </linearGradient>
+    <radialGradient id="greenGlow" cx="0" cy="0" r="1" gradientTransform="translate(94 54) rotate(46) scale(330)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1fcf83" stop-opacity=".26"/>
+      <stop offset="1" stop-color="#1fcf83" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blueGlow" cx="0" cy="0" r="1" gradientTransform="translate(465 401) rotate(-135) scale(280)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4fa6ff" stop-opacity=".19"/>
+      <stop offset="1" stop-color="#4fa6ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="148" y1="150" x2="374" y2="382" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#70f0aa"/>
+      <stop offset=".55" stop-color="#1fcf83"/>
+      <stop offset="1" stop-color="#4fa6ff"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="118" y1="92" x2="404" y2="430" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0d252d"/>
+      <stop offset="1" stop-color="#071820"/>
+    </linearGradient>
+    <filter id="softShadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="22" stdDeviation="26" flood-color="#000" flood-opacity=".42"/>
+    </filter>
+    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0V34" fill="none" stroke="#70f0aa" stroke-opacity=".035" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#greenGlow)"/>
+  <rect width="512" height="512" fill="url(#blueGlow)"/>
+  <rect width="512" height="512" fill="url(#grid)"/>
+
+  <g filter="url(#softShadow)">
+    <rect x="86" y="82" width="340" height="348" rx="106" fill="url(#tile)" stroke="#17343d" stroke-width="4"/>
+    <path d="M116 120C159 94 220 83 278 88c56 5 104 25 136 58" fill="none" stroke="#fff" stroke-opacity=".055" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <path d="M158 162h196c26 0 47 21 47 47v108c0 26-21 47-47 47h-88l-59 50v-50h-49c-26 0-47-21-47-47V209c0-26 21-47 47-47Z" fill="#06141b" fill-opacity=".93" stroke="url(#accent)" stroke-width="10" stroke-linejoin="round"/>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="225" y="205" width="62" height="101" rx="31" stroke="#f4fbf8" stroke-width="12"/>
+    <path d="M196 268v9c0 34 27 61 60 61s60-27 60-61v-9" stroke="url(#accent)" stroke-width="13"/>
+    <path d="M256 338v36M226 374h60" stroke="#f4fbf8" stroke-width="12"/>
+    <path d="M176 246v34M336 246v34" stroke="#70f0aa" stroke-width="9" opacity=".95"/>
+    <path d="M156 256v14M356 256v14" stroke="#4fa6ff" stroke-width="9" opacity=".95"/>
+  </g>
+</svg>

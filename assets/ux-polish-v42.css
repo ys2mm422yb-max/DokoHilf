@@ -1,0 +1,196 @@
+/* DokoHilf UX polish v42: calmer voice states and faster guide discovery. */
+
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] .voice-focus-instruction p{
+  white-space:pre-line!important;
+}
+
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] #voiceHint:empty{
+  display:none!important;
+}
+
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="listening"] .voice-focus-stage .voice-orb{
+  border-color:rgba(115,242,216,.42)!important;
+  background:
+    radial-gradient(circle at 37% 27%,rgba(219,255,247,.3),transparent 19%),
+    radial-gradient(circle at 50% 58%,#31d6ba 0%,#159987 42%,#0a665d 72%,#063933 100%)!important;
+  box-shadow:0 26px 86px rgba(38,199,169,.25),0 0 0 11px rgba(73,225,194,.06),0 0 74px rgba(54,217,187,.16)!important;
+}
+
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .voice-orb{
+  border-color:rgba(125,242,204,.46)!important;
+  background:
+    radial-gradient(circle at 36% 26%,rgba(223,255,243,.3),transparent 19%),
+    radial-gradient(circle at 50% 58%,#2bd89b 0%,#14936f 42%,#0b6253 72%,#073832 100%)!important;
+  box-shadow:
+    0 26px 86px rgba(39,203,151,.23),
+    0 0 0 10px rgba(71,227,173,.055),
+    0 0 60px rgba(139,112,231,.12)!important;
+}
+
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .orb-rings{
+  border-color:rgba(115,239,199,.28)!important;
+  box-shadow:0 0 28px rgba(151,125,236,.11)!important;
+  animation:v42ThinkingRing 2.35s ease-in-out infinite!important;
+}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .orb-rings:before{
+  border-color:rgba(84,222,183,.2)!important;
+  animation:v42ThinkingRing 2.35s .25s ease-in-out infinite!important;
+}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .orb-rings:after{
+  border-color:rgba(159,126,238,.14)!important;
+  animation:v42ThinkingRing 2.35s .5s ease-in-out infinite!important;
+}
+
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .mic-symbol{
+  opacity:0!important;
+  transform:scale(.72)!important;
+}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .voice-wave{
+  display:flex!important;
+  opacity:1!important;
+  align-items:center!important;
+}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .voice-wave i{
+  width:7px!important;
+  height:24px!important;
+  border-radius:999px!important;
+  background:linear-gradient(180deg,#d8fff0,#55e2ae)!important;
+  box-shadow:0 0 16px rgba(87,229,176,.28)!important;
+  animation:v42ThinkingWave 1.15s ease-in-out infinite!important;
+}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .voice-wave i:nth-child(2){animation-delay:.12s!important}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .voice-wave i:nth-child(3){animation-delay:.24s!important}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .voice-wave i:nth-child(4){animation-delay:.36s!important}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .voice-wave i:nth-child(5){animation-delay:.48s!important}
+
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="speaking"] .voice-focus-stage .voice-orb{
+  border-color:rgba(121,246,199,.45)!important;
+  background:
+    radial-gradient(circle at 37% 27%,rgba(222,255,242,.33),transparent 19%),
+    radial-gradient(circle at 50% 58%,#32dfa0 0%,#17ad78 42%,#0a6a50 72%,#05372f 100%)!important;
+}
+
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] .v42-voice-progress{
+  --v42-progress:0%;
+  display:block!important;
+  width:100%!important;
+  height:3px!important;
+  min-height:3px!important;
+  margin-top:5px!important;
+  overflow:hidden!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:rgba(116,188,169,.13)!important;
+  font-size:0!important;
+  line-height:0!important;
+  letter-spacing:0!important;
+}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] .v42-voice-progress>i{
+  display:block!important;
+  width:var(--v42-progress)!important;
+  height:100%!important;
+  border-radius:inherit!important;
+  background:linear-gradient(90deg,#36dd9b,#54e5ba)!important;
+  box-shadow:0 0 12px rgba(77,226,173,.24)!important;
+  transition:width .28s ease!important;
+}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] .v42-voice-progress.v42-empty{
+  opacity:0!important;
+}
+
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] .voice-focus-actions button[data-voice-command="ich finde das nicht"]{
+  display:grid!important;
+  place-content:center!important;
+  gap:2px!important;
+  padding:7px 9px!important;
+}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] .voice-focus-actions button[data-voice-command="ich finde das nicht"]>span{
+  display:block!important;
+  font:inherit!important;
+}
+html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] .voice-focus-actions button[data-voice-command="ich finde das nicht"]>small{
+  display:block!important;
+  color:#b9aa78!important;
+  font-size:9.5px!important;
+  font-weight:650!important;
+  line-height:1.18!important;
+}
+
+.examples[data-v29-guide-library="true"]>.v42-frequent-hint{
+  grid-column:1/-1!important;
+  display:block!important;
+  margin:-7px 0 2px!important;
+  color:#66867e!important;
+  font-size:10.5px!important;
+  font-weight:650!important;
+  line-height:1.25!important;
+}
+
+.v42-library-search{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-height:48px;
+  margin:0 0 16px;
+  padding:0 14px;
+  border:1px solid rgba(105,216,183,.16);
+  border-radius:16px;
+  background:linear-gradient(145deg,rgba(9,30,37,.92),rgba(5,20,27,.9));
+  box-shadow:0 11px 32px rgba(0,0,0,.16);
+}
+.v42-library-search svg{
+  width:20px;
+  height:20px;
+  flex:0 0 20px;
+  fill:none;
+  stroke:#72cbb0;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.v42-library-search input{
+  width:100%;
+  min-width:0;
+  min-height:46px;
+  padding:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#eef9f5;
+  font:inherit;
+  font-size:16px;
+  font-weight:650;
+  appearance:none;
+  -webkit-appearance:none;
+}
+.v42-library-search input::placeholder{color:#6f8d85;opacity:1}
+.v42-library-search:focus-within{
+  border-color:rgba(76,230,173,.35);
+  box-shadow:0 11px 32px rgba(0,0,0,.16),0 0 0 3px rgba(67,216,163,.06);
+}
+.v42-search-hidden{display:none!important}
+
+@keyframes v42ThinkingRing{
+  0%,100%{opacity:.34;transform:scale(.97)}
+  50%{opacity:.9;transform:scale(1.045)}
+}
+@keyframes v42ThinkingWave{
+  0%,100%{height:12px;opacity:.5;transform:translateY(0)}
+  50%{height:34px;opacity:1;transform:translateY(-2px)}
+}
+
+@media(max-width:620px){
+  .v42-library-search{margin-bottom:13px;border-radius:15px}
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] .voice-focus-actions button[data-voice-command="ich finde das nicht"]>small{font-size:9px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .orb-rings,
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .orb-rings:before,
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .orb-rings:after,
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"][data-voice-state="thinking"] .voice-focus-stage .voice-wave i{
+    animation:none!important;
+  }
+  html[data-dokohilf-ui="v29"] body .app-shell[data-mode="voice"] .v42-voice-progress>i{transition:none!important}
+}

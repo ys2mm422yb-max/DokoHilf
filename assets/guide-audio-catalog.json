@@ -1,0 +1,1285 @@
+{
+  "schemaVersion": 1,
+  "voice": "Supertonic-F1",
+  "generatedFrom": "41 approved dokohilf_guides / 133 unique approved step texts plus greeting",
+  "entries": [
+    {
+      "text": "Hey! Wobei brauchst du Hilfe?",
+      "file": "assets/audio/guides/000.wav"
+    },
+    {
+      "text": "„Notfallblatt_Allgemein“ ist normalerweise bereits vorausgewählt. Lasse diese Auswahl bestehen.",
+      "file": "assets/audio/guides/001.wav"
+    },
+    {
+      "text": "„Planung“ findest du ganz oben in der festen grünen Hauptleiste. Öffne dort „Planung“. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "file": "assets/audio/guides/002.wav"
+    },
+    {
+      "text": "„Wichtig für Schichtübergabe“ ist bei Bedarfsmedikation bereits automatisch ausgewählt. Lass den Haken so. In das Textfeld darunter trägst du kurz den Anlass der Gabe ein.",
+      "file": "assets/audio/guides/003.wav"
+    },
+    {
+      "text": "Beim geöffneten Bewohner öffnest du oben in der festen grünen Hauptleiste „Doku“. Im weißen Funktionsband direkt darunter wählst du „Bericht“. Danach ist der Bereich „Berichte“ geöffnet.",
+      "file": "assets/audio/guides/004.wav"
+    },
+    {
+      "text": "Bestätige das Pop-up zum Schluss unten mit „OK“.",
+      "file": "assets/audio/guides/005.wav"
+    },
+    {
+      "text": "Bestätige das Pop-up-Fenster unten mit „OK“.",
+      "file": "assets/audio/guides/006.wav"
+    },
+    {
+      "text": "Bestätige die Wirksamkeitskontrolle unten mit „OK“.",
+      "file": "assets/audio/guides/007.wav"
+    },
+    {
+      "text": "Bestätige mit „OK“ beziehungsweise „Speichern“ und kontrolliere die Werte in der Übersicht.",
+      "file": "assets/audio/guides/008.wav"
+    },
+    {
+      "text": "Bestätige mit „OK“ und kontrolliere den neuen Wert in der Übersicht.",
+      "file": "assets/audio/guides/009.wav"
+    },
+    {
+      "text": "Bestätige mit „OK“ und kontrolliere, ob der Folgebericht beim Bewohner sichtbar ist.",
+      "file": "assets/audio/guides/010.wav"
+    },
+    {
+      "text": "Bestätige mit „OK“.",
+      "file": "assets/audio/guides/011.wav"
+    },
+    {
+      "text": "Bestätige und kontrolliere die neuen Werte.",
+      "file": "assets/audio/guides/012.wav"
+    },
+    {
+      "text": "Bestätige unten mit „OK“.",
+      "file": "assets/audio/guides/013.wav"
+    },
+    {
+      "text": "Das Feld „Mitarbeiter“ bleibt immer auf „ohne Mitarbeiter“ beziehungsweise leer.",
+      "file": "assets/audio/guides/014.wav"
+    },
+    {
+      "text": "Den beim Bewohner hinterlegten durchführenden Arzt auswählen.",
+      "file": "assets/audio/guides/015.wav"
+    },
+    {
+      "text": "Dokumentiere kurz, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.",
+      "file": "assets/audio/guides/016.wav"
+    },
+    {
+      "text": "Doppelklicke in der Bewohnerübersicht auf den gewünschten Bewohner.",
+      "file": "assets/audio/guides/017.wav"
+    },
+    {
+      "text": "Ein Bericht wird nicht endgültig gelöscht. Öffne beim gewünschten Bewohner den Bereich „Berichte“.",
+      "file": "assets/audio/guides/018.wav"
+    },
+    {
+      "text": "Ergänze nur bei Bedarf vorhandene Angaben wie Messart, Qualität oder Bemerkung.",
+      "file": "assets/audio/guides/019.wav"
+    },
+    {
+      "text": "Ergänze nur die Angaben, die du wirklich brauchst, zum Beispiel Ziel, Begleitung, Grund oder Bemerkung.",
+      "file": "assets/audio/guides/020.wav"
+    },
+    {
+      "text": "Falls du zusätzlich eine Zeitangabe brauchst, kannst du sie oben rechts im Pop-up-Fenster ergänzen.",
+      "file": "assets/audio/guides/021.wav"
+    },
+    {
+      "text": "Falls tatsächlich eine geringere Bedarfsmenge verwendet wurde, trägst du rechts im Pop-up-Fenster die tatsächlich verwendete Menge ein. Die Verordnung selbst wird nicht verändert.",
+      "file": "assets/audio/guides/022.wav"
+    },
+    {
+      "text": "Fülle das geöffnete Formular wie gewohnt aus.",
+      "file": "assets/audio/guides/023.wav"
+    },
+    {
+      "text": "Für einen einzelnen Wert wählst du darunter „Vitalwerte“. Für mehrere Werte wählst du direkt „Vitalwerte Sammelerf.“.",
+      "file": "assets/audio/guides/024.wav"
+    },
+    {
+      "text": "Im Durchführungsnachweis findest du „Bedarfsmedikation“. Klicke auf den kleinen Pfeil links daneben, um die Bedarfsmedikation des ausgewählten Bewohners zu öffnen.",
+      "file": "assets/audio/guides/025.wav"
+    },
+    {
+      "text": "Im Durchführungsnachweis findest du „Maßnahmen ohne Zeitangabe“. Klicke auf den kleinen Pfeil links daneben, um den Bereich zu öffnen.",
+      "file": "assets/audio/guides/026.wav"
+    },
+    {
+      "text": "Klicke den Eintrag mit der rechten Maustaste an.",
+      "file": "assets/audio/guides/027.wav"
+    },
+    {
+      "text": "Klicke den ursprünglichen Bericht mit der rechten Maustaste an.",
+      "file": "assets/audio/guides/028.wav"
+    },
+    {
+      "text": "Klicke ganz oben links auf das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil.",
+      "file": "assets/audio/guides/029.wav"
+    },
+    {
+      "text": "Klicke oben in der Maske auf „Durchführen“. Dadurch wird die Visite als durchgeführt dokumentiert. Verwende niemals den Status „abgeschlossen“.",
+      "file": "assets/audio/guides/030.wav"
+    },
+    {
+      "text": "Klicke oben links auf „Alle anzeigen“.",
+      "file": "assets/audio/guides/031.wav"
+    },
+    {
+      "text": "Klicke oben links auf „Neu“.",
+      "file": "assets/audio/guides/032.wav"
+    },
+    {
+      "text": "Klicke oben links auf das grüne Plus beziehungsweise „Neu“.",
+      "file": "assets/audio/guides/033.wav"
+    },
+    {
+      "text": "Klicke oben links auf das grüne Plus beziehungsweise „Neu“. Danach öffnet sich das Pop-up-Fenster zur Auswahl des Vitalwerts.",
+      "file": "assets/audio/guides/034.wav"
+    },
+    {
+      "text": "Klicke oben links auf das grüne Plus, um einen neuen Berichtseintrag anzulegen.",
+      "file": "assets/audio/guides/035.wav"
+    },
+    {
+      "text": "Kontrolliere kurz, ob der neue Berichtseintrag im Berichteblatt sichtbar ist.",
+      "file": "assets/audio/guides/036.wav"
+    },
+    {
+      "text": "Kontrolliere, ob der Bericht sichtbar durchgestrichen ist. Soll der Inhalt korrekt neu dokumentiert werden, legst du anschließend einen neuen Bericht an. Ein Folgebericht korrigiert den ursprünglichen Bericht nicht.",
+      "file": "assets/audio/guides/037.wav"
+    },
+    {
+      "text": "Kontrolliere, ob die Durchführung als storniert beziehungsweise ungültig gekennzeichnet ist.",
+      "file": "assets/audio/guides/038.wav"
+    },
+    {
+      "text": "Nach dem Speichern wird die Wirksamkeitskontrolle automatisch vom System angelegt. Öffne sie erst, wenn sie zum vorgesehenen Zeitpunkt fällig ist.",
+      "file": "assets/audio/guides/039.wav"
+    },
+    {
+      "text": "Nach einer Bedarfsmedikationsgabe wird die zugehörige Wirksamkeitskontrolle automatisch vom System angelegt. Du musst keine neue Kontrolle selbst erstellen.",
+      "file": "assets/audio/guides/040.wav"
+    },
+    {
+      "text": "Nur bei „Kontakt – alles außer Arzt“ und „Sturzereignis“: Prüfe das automatisch zugeordnete Protokoll. Wird es nicht benötigt, klicke zuerst auf den Protokollnamen und danach oben rechts auf das kleine rote X. Das entfernt nur die Protokollverknüpfung, nicht den Bericht. Bei allen anderen Berichtskategorien überspringst du diesen Schritt.",
+      "file": "assets/audio/guides/041.wav"
+    },
+    {
+      "text": "Öffne „Doku-Erweitert“ und wähle „An-/Abwesenheiten“.",
+      "file": "assets/audio/guides/042.wav"
+    },
+    {
+      "text": "Öffne „Doku-Erweitert“ und wähle „Formulare“.",
+      "file": "assets/audio/guides/043.wav"
+    },
+    {
+      "text": "Öffne „Doku-Erweitert“ und wähle „Medikation“.",
+      "file": "assets/audio/guides/044.wav"
+    },
+    {
+      "text": "Öffne „Doku-Erweitert“ und wähle „Visiten“.",
+      "file": "assets/audio/guides/045.wav"
+    },
+    {
+      "text": "Öffne „Doku-Erweitert“ und wähle „Vitalwerte“.",
+      "file": "assets/audio/guides/046.wav"
+    },
+    {
+      "text": "Öffne „Doku-Erweitert“ und wähle direkt „Vitalwerte Sammelerf.“.",
+      "file": "assets/audio/guides/047.wav"
+    },
+    {
+      "text": "Öffne „Doku“.",
+      "file": "assets/audio/guides/048.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner den Bereich „Berichte“.",
+      "file": "assets/audio/guides/049.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“.",
+      "file": "assets/audio/guides/050.wav"
+    },
+    {
+      "text": "Öffne den „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/051.wav"
+    },
+    {
+      "text": "Öffne den Reiter „Doku“.",
+      "file": "assets/audio/guides/052.wav"
+    },
+    {
+      "text": "Öffne die Wirksamkeitskontrolle und hake sie als durchgeführt ab.",
+      "file": "assets/audio/guides/053.wav"
+    },
+    {
+      "text": "Suche im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ und klicke auf den kleinen Pfeil links daneben.",
+      "file": "assets/audio/guides/054.wav"
+    },
+    {
+      "text": "Öffne oben den Reiter „Analyse“.",
+      "file": "assets/audio/guides/055.wav"
+    },
+    {
+      "text": "Öffne zuerst „Berichte“ oder „Durchführungsnachweis“. Solange einer dieser Bereiche geöffnet ist, siehst du links die Bewohnerübersicht. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.",
+      "file": "assets/audio/guides/056.wav"
+    },
+    {
+      "text": "Öffne zuerst den Bereich „Berichte“ oder „Durchführungsnachweis“. Wenn du den Durchführungsnachweis nutzt, gehst du über „Doku“ → „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/057.wav"
+    },
+    {
+      "text": "Öffne die Stammdaten des gewünschten Bewohners.",
+      "file": "assets/audio/guides/058.wav"
+    },
+    {
+      "text": "Klicke in der grauen Leiste auf „Dateiablage“.",
+      "file": "assets/audio/guides/059.wav"
+    },
+    {
+      "text": "Unten mittig erscheint der Bereich „Dokumente“.",
+      "file": "assets/audio/guides/060.wav"
+    },
+    {
+      "text": "Suche dort das gewünschte vorhandene Dokument. Wenn es in der Dateiablage hinterlegt ist, wähle es aus.",
+      "file": "assets/audio/guides/061.wav"
+    },
+    {
+      "text": "Öffne das vorhandene Dokument per Doppelklick. Es kann kurz dauern, bis sich Word öffnet. Klicke nicht mehrfach doppelt.",
+      "file": "assets/audio/guides/062.wav"
+    },
+    {
+      "text": "Passe den Zeitraum nur bei Bedarf an und aktualisiere anschließend die Anzeige.",
+      "file": "assets/audio/guides/063.wav"
+    },
+    {
+      "text": "Prüfe Datum und Uhrzeit und ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht.",
+      "file": "assets/audio/guides/064.wav"
+    },
+    {
+      "text": "Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein. Je nach ausgewähltem Vitalwert erscheinen die passenden Eingabefelder. Bei Blutdruck sind zum Beispiel Systole und Diastole erforderlich.",
+      "file": "assets/audio/guides/065.wav"
+    },
+    {
+      "text": "Prüfe Datum und Uhrzeit und trage den Inhalt des Folgeberichts ein.",
+      "file": "assets/audio/guides/066.wav"
+    },
+    {
+      "text": "Prüfe Datum und Uhrzeit und trage die gemessenen Werte ein.",
+      "file": "assets/audio/guides/067.wav"
+    },
+    {
+      "text": "Prüfe Datum, Beginn und gegebenenfalls Ende der bereits durchgeführten Visite.",
+      "file": "assets/audio/guides/068.wav"
+    },
+    {
+      "text": "Prüfe im Pop-up-Fenster Datum und Uhrzeit. Ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht.",
+      "file": "assets/audio/guides/069.wav"
+    },
+    {
+      "text": "Prüfe im Pop-up-Fenster die Uhrzeit. Ändere sie nur, wenn der tatsächliche Zeitpunkt der Gabe abweicht.",
+      "file": "assets/audio/guides/070.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Analyse“. Direkt darunter erscheinen die zu „Analyse“ gehörenden Funktionen.",
+      "file": "assets/audio/guides/071.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Analyse“. Direkt darunter erscheinen die zu „Analyse“ gehörenden Funktionen. Wähle dort „Was war los?“, um die Übergabeansicht zu öffnen.",
+      "file": "assets/audio/guides/072.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „An-/Abwesenheiten“.",
+      "file": "assets/audio/guides/073.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Formulare“.",
+      "file": "assets/audio/guides/074.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Medikation“.",
+      "file": "assets/audio/guides/075.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Visiten“.",
+      "file": "assets/audio/guides/076.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Vitalwerte“.",
+      "file": "assets/audio/guides/077.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku“. Direkt darunter erscheinen die zu „Doku“ gehörenden Funktionen. Wähle dort „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/078.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste. Dort findest du „Doku-Erweitert“. Öffne „Doku-Erweitert“.",
+      "file": "assets/audio/guides/079.wav"
+    },
+    {
+      "text": "Schau ganz oben in die feste grüne Hauptleiste. Dort findest du „Doku“. Öffne „Doku“.",
+      "file": "assets/audio/guides/080.wav"
+    },
+    {
+      "text": "Sieh die Medikation ausschließlich an. Nimm hier keinerlei Änderungen vor.",
+      "file": "assets/audio/guides/081.wav"
+    },
+    {
+      "text": "Sobald die Wirksamkeitskontrolle zum vorgesehenen Zeitpunkt fällig ist, wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“.",
+      "file": "assets/audio/guides/082.wav"
+    },
+    {
+      "text": "Solange du in einem dieser beiden Bereiche bist, siehst du links die Bewohnerübersicht.",
+      "file": "assets/audio/guides/083.wav"
+    },
+    {
+      "text": "Speichere den Eintrag und prüfe kurz, ob er in der Übersicht erscheint.",
+      "file": "assets/audio/guides/084.wav"
+    },
+    {
+      "text": "Speichere und kontrolliere, ob die Visite unter den durchgeführten Visiten erscheint.",
+      "file": "assets/audio/guides/085.wav"
+    },
+    {
+      "text": "Suche den Bericht, zu dem du einen Folgebericht erstellen möchtest.",
+      "file": "assets/audio/guides/086.wav"
+    },
+    {
+      "text": "Suche den falschen Berichtseintrag und klicke ihn mit der rechten Maustaste an.",
+      "file": "assets/audio/guides/087.wav"
+    },
+    {
+      "text": "Suche die falsch abgezeichnete Durchführung.",
+      "file": "assets/audio/guides/088.wav"
+    },
+    {
+      "text": "Suche im Durchführungsnachweis „Bedarfsmedikation“ und klicke auf den kleinen Pfeil links daneben.",
+      "file": "assets/audio/guides/089.wav"
+    },
+    {
+      "text": "Trage bei „Anforderung“ ein, wer die Sprechstunde angefordert hat.",
+      "file": "assets/audio/guides/090.wav"
+    },
+    {
+      "text": "Trage bei „Bis“ nur dann Datum und Uhrzeit ein, wenn der Endzeitpunkt sicher feststeht. Wenn du den Endzeitpunkt noch nicht sicher kennst, lässt du „Bis“ einfach leer. Bitte nicht schätzen.",
+      "file": "assets/audio/guides/091.wav"
+    },
+    {
+      "text": "Trage bei „Von“ immer Datum und Uhrzeit ein.",
+      "file": "assets/audio/guides/092.wav"
+    },
+    {
+      "text": "Trage den Grund ein, zum Beispiel „Kontrollbesuch“, und wähle den Ort: Einrichtung, beim Arzt, telefonisch oder per Mail.",
+      "file": "assets/audio/guides/093.wav"
+    },
+    {
+      "text": "Trage einen Grund der Einweisung nur ein, wenn er für den Vorgang benötigt wird.",
+      "file": "assets/audio/guides/094.wav"
+    },
+    {
+      "text": "Trage einen nachvollziehbaren Stornogrund ein und bestätige mit „OK“.",
+      "file": "assets/audio/guides/095.wav"
+    },
+    {
+      "text": "Trage im Feld „Bemerkung zur Bearbeitung“ einen nachvollziehbaren Grund ein.",
+      "file": "assets/audio/guides/096.wav"
+    },
+    {
+      "text": "Trage rechts im Feld „Bemerkung“ den Inhalt und die wesentlichen Ergebnisse der Visite ein.",
+      "file": "assets/audio/guides/097.wav"
+    },
+    {
+      "text": "Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.",
+      "file": "assets/audio/guides/098.wav"
+    },
+    {
+      "text": "Wähle „Durchführung stornieren“.",
+      "file": "assets/audio/guides/099.wav"
+    },
+    {
+      "text": "Wähle „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/100.wav"
+    },
+    {
+      "text": "Wähle „Durchstreichen“.",
+      "file": "assets/audio/guides/101.wav"
+    },
+    {
+      "text": "Wähle „Eintrag bearbeiten“.",
+      "file": "assets/audio/guides/102.wav"
+    },
+    {
+      "text": "Wähle „Folgebericht erstellen“.",
+      "file": "assets/audio/guides/103.wav"
+    },
+    {
+      "text": "Wähle „Notfallblatt aufrufen“.",
+      "file": "assets/audio/guides/104.wav"
+    },
+    {
+      "text": "Wähle „Was war los?“.",
+      "file": "assets/audio/guides/105.wav"
+    },
+    {
+      "text": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“.",
+      "file": "assets/audio/guides/106.wav"
+    },
+    {
+      "text": "Wähle darunter „Durchführungsnachweis“ und suche dort die automatisch angelegte Wirksamkeitskontrolle zur Bedarfsmedikation.",
+      "file": "assets/audio/guides/107.wav"
+    },
+    {
+      "text": "Wähle darunter „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/108.wav"
+    },
+    {
+      "text": "Wähle das benötigte Formular aus, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.",
+      "file": "assets/audio/guides/109.wav"
+    },
+    {
+      "text": "Wähle das gewünschte Bedarfsmedikament aus und setze rechts im kleinen Kästchen den Haken.",
+      "file": "assets/audio/guides/110.wav"
+    },
+    {
+      "text": "Wähle den gewünschten Bewohner. Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü und wählst „Notfallblatt aufrufen“.",
+      "file": "assets/audio/guides/111.wav"
+    },
+    {
+      "text": "Wähle den passenden Status aus.",
+      "file": "assets/audio/guides/112.wav"
+    },
+    {
+      "text": "Wähle die benötigten Vitalwerte aus und trage die Werte ein.",
+      "file": "assets/audio/guides/113.wav"
+    },
+    {
+      "text": "Wähle die benötigten Vitalwerte für die gemeinsame Erfassung aus.",
+      "file": "assets/audio/guides/114.wav"
+    },
+    {
+      "text": "Wähle die gewünschte Maßnahme aus, zum Beispiel „Klienten-Team Sitzung“ oder „Krise“.",
+      "file": "assets/audio/guides/115.wav"
+    },
+    {
+      "text": "Wähle die passende Berichtskategorie aus. Das große Textfeld für den Bericht ist in dieser Maske bereits unten sichtbar; es öffnet sich durch die Kategorieauswahl nicht erst neu.",
+      "file": "assets/audio/guides/116.wav"
+    },
+    {
+      "text": "Wähle die passende Kategorie aus.",
+      "file": "assets/audio/guides/117.wav"
+    },
+    {
+      "text": "Wähle direkt darunter „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/118.wav"
+    },
+    {
+      "text": "Wähle direkt darunter „Visiten“.",
+      "file": "assets/audio/guides/119.wav"
+    },
+    {
+      "text": "Wähle direkt darunter „Vitalwerte“.",
+      "file": "assets/audio/guides/120.wav"
+    },
+    {
+      "text": "Wähle im Fenster „Klienten auswählen“ den Bewohner aus, für den du die bereits erfolgte Visite dokumentierst.",
+      "file": "assets/audio/guides/121.wav"
+    },
+    {
+      "text": "Wähle im Pop-up den Vitalwert aus, den du erfassen möchtest, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.",
+      "file": "assets/audio/guides/122.wav"
+    },
+    {
+      "text": "Wähle im Pop-up-Fenster den Vitalwert aus, den du erfassen möchtest.",
+      "file": "assets/audio/guides/123.wav"
+    },
+    {
+      "text": "Wähle zuerst den Bewohner aus, für den du das Notfallblatt benötigst.",
+      "file": "assets/audio/guides/124.wav"
+    },
+    {
+      "text": "Wähle zuerst den gewünschten Bewohner aus.",
+      "file": "assets/audio/guides/125.wav"
+    },
+    {
+      "text": "Warte, bis sich das Notfallblatt in Word öffnet. Das kann bis zu etwa drei Minuten dauern. Verhindere Standby und starte den Vorgang nicht mehrfach.",
+      "file": "assets/audio/guides/126.wav"
+    },
+    {
+      "text": "Wechsle innerhalb von „Doku-Erweitert“ zu „Vitalwerte Sammelerf.“.",
+      "file": "assets/audio/guides/127.wav"
+    },
+    {
+      "text": "Wenn der Bericht für die nächste Schicht wichtig ist, hake „Wichtig für Schichtübergabe“ an. Wenn nicht, lässt du den Haken frei. In das große Textfeld darunter trägst du ein, was dokumentiert werden soll.",
+      "file": "assets/audio/guides/128.wav"
+    },
+    {
+      "text": "Wenn die Maßnahme für die nächste Schicht wichtig ist, hake „Wichtig für Schichtübergabe“ an. Wenn nicht, lässt du den Haken frei. In das große Textfeld darunter schreibst du kurz, was passiert ist und was du gemacht beziehungsweise durchgeführt hast.",
+      "file": "assets/audio/guides/129.wav"
+    },
+    {
+      "text": "Wenn die Wirksamkeitskontrolle fällig ist, öffnest du sie im Durchführungsnachweis, hakst sie ab und trägst kurz ein, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.",
+      "file": "assets/audio/guides/130.wav"
+    },
+    {
+      "text": "Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste.",
+      "file": "assets/audio/guides/131.wav"
+    },
+    {
+      "text": "Wichtig: Setze die Visite niemals auf „abgeschlossen“. In eurer Arbeitsweise wird eine bearbeitete Visite immer auf den Status „durchgeführt“ gestellt.",
+      "file": "assets/audio/guides/132.wav"
+    },
+    {
+      "text": "Zum vorgesehenen Zeitpunkt findest du dort die automatisch angelegte Wirksamkeitskontrolle zur zuvor dokumentierten Bedarfsmedikation.",
+      "file": "assets/audio/guides/133.wav"
+    },
+    {
+      "text": "Okay. Schau oben in die grüne Reiterleiste. Siehst du Doku-Erweitert?",
+      "file": "assets/audio/guides/134.wav"
+    },
+    {
+      "text": "Suche in Doku-Erweitert nach Vitalwerte. Siehst du Vitalwerte?",
+      "file": "assets/audio/guides/135.wav"
+    },
+    {
+      "text": "Vitalwerte Sammelerfassung ist für mehrere Werte. Siehst du daneben auch Vitalwerte?",
+      "file": "assets/audio/guides/136.wav"
+    },
+    {
+      "text": "Der Menüpunkt ist dort nicht zu sehen. Prüfe den Einstieg noch einmal. Wenn er weiter fehlt, frag kurz eine Kollegin oder einen Kollegen.",
+      "file": "assets/audio/guides/137.wav"
+    },
+    {
+      "text": "Bei dir heißt der Punkt anders. Welche Bezeichnung siehst du?",
+      "file": "assets/audio/guides/138.wav"
+    },
+    {
+      "text": "Okay. Was siehst du gerade?",
+      "file": "assets/audio/guides/139.wav"
+    },
+    {
+      "text": "Perfekt. Öffne jetzt Vitalwerte. Wenn die Ansicht offen ist, tippe auf Weiter.",
+      "file": "assets/audio/guides/140.wav"
+    },
+    {
+      "text": "Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen.",
+      "file": "assets/audio/guides/141.wav"
+    },
+    {
+      "text": "Suche zuerst Doku-Erweitert. Hast du ihn gefunden?",
+      "file": "assets/audio/guides/142.wav"
+    },
+    {
+      "text": "Suche zuerst Vitalwerte. Hast du ihn gefunden?",
+      "file": "assets/audio/guides/143.wav"
+    },
+    {
+      "text": "Suche zuerst Analyse. Hast du ihn gefunden?",
+      "file": "assets/audio/guides/144.wav"
+    },
+    {
+      "text": "Wobei brauchst du Hilfe? Nenne bitte den Bereich oder die Funktion, zum Beispiel Vitalwerte, Berichte, Visiten, Formulare oder An-/Abwesenheiten.",
+      "file": "assets/audio/guides/145.wav"
+    },
+    {
+      "text": "Suche zuerst Doku. Hast du es gefunden?",
+      "file": "assets/audio/guides/146.wav"
+    },
+    {
+      "text": "Öffne oben in der festen grünen Hauptleiste Doku und wähle im weißen Funktionsband direkt darunter Bericht. Ist der Bereich Berichte geöffnet?",
+      "file": "assets/audio/guides/147.wav"
+    },
+    {
+      "text": "Möchtest du einen einzelnen Wert oder mehrere Werte über die Sammelerfassung eintragen?",
+      "file": "assets/audio/guides/148.wav"
+    },
+    {
+      "text": "Geht es um einen einzelnen Vitalwert oder um mehrere Werte gleichzeitig?",
+      "file": "assets/audio/guides/149.wav"
+    },
+    {
+      "text": "Hier geht es nur ums Nachsehen der Medikation. Ändere nichts.",
+      "file": "assets/audio/guides/150.wav"
+    },
+    {
+      "text": "Der Ablauf ist erledigt. Kontrolliere zum Schluss den Eintrag.",
+      "file": "assets/audio/guides/151.wav"
+    },
+    {
+      "text": "Ich habe die Antwort im Chat angezeigt.",
+      "file": "assets/audio/guides/152.wav"
+    },
+    {
+      "text": "Ganz oben in der festen grünen Hauptleiste befinden sich unter anderem Doku, Doku-Erweitert, Planung und Analyse. Wenn du einen Hauptbereich auswählst, erscheinen direkt darunter die dazugehörigen Funktionen im weißen Funktionsband.",
+      "file": "assets/audio/guides/153.wav"
+    },
+    {
+      "text": "Doku-Erweitert ist ein Hauptbereich ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch Doku, Planung und Analyse. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.",
+      "file": "assets/audio/guides/154.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku in der festen grünen Hauptleiste. Nach der Auswahl erscheint direkt darunter das weiße Funktionsband; dort findest du den Durchführungsnachweis.",
+      "file": "assets/audio/guides/155.wav"
+    },
+    {
+      "text": "Beim gewünschten Bewohner kannst du Vitalwerte entweder über Doku und danach Vitalwerte oder über Doku-Erweitert und danach Vitalwerte öffnen. Beide Wege führen zum selben Bereich.",
+      "file": "assets/audio/guides/156.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen grünen Hauptleiste. Direkt darunter findest du Visiten.",
+      "file": "assets/audio/guides/157.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen grünen Hauptleiste. Direkt darunter findest du Medikation.",
+      "file": "assets/audio/guides/158.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen grünen Hauptleiste. Direkt darunter findest du Formulare.",
+      "file": "assets/audio/guides/159.wav"
+    },
+    {
+      "text": "Beim gewünschten Bewohner kannst du An-/Abwesenheiten entweder über Doku oder über Doku-Erweitert öffnen. Beide Wege führen zum selben Bereich.",
+      "file": "assets/audio/guides/160.wav"
+    },
+    {
+      "text": "Bericht ist kein Hauptbereich der grünen Leiste. Öffne beim gewünschten Bewohner oben Doku und wähle im weißen Funktionsband direkt darunter Bericht.",
+      "file": "assets/audio/guides/161.wav"
+    },
+    {
+      "text": "Öffne oben zuerst Analyse. Analyse steht ganz oben in der festen grünen Leiste. Nach der Auswahl erscheinen darunter die zugehörigen Unterpunkte; dort findest du Was war los. Darüber öffnest du die Übergabeansicht.",
+      "file": "assets/audio/guides/162.wav"
+    },
+    {
+      "text": "Den Reiter Analyse findest du oben in der festen grünen Leiste. Nach der Auswahl erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "file": "assets/audio/guides/163.wav"
+    },
+    {
+      "text": "Bleibe beim gewünschten Bewohner. Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü und wählst Notfallblatt aufrufen.",
+      "file": "assets/audio/guides/164.wav"
+    },
+    {
+      "text": "Öffne zuerst unter Doku entweder Bericht oder den Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.",
+      "file": "assets/audio/guides/165.wav"
+    },
+    {
+      "text": "Doku ist ein Hauptbereich ganz oben in der festen grünen Hauptleiste und liegt zwischen Planung und Doku-Erweitert. Nach Auswahl von Doku erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.",
+      "file": "assets/audio/guides/166.wav"
+    },
+    {
+      "text": "„Vitalwerte Sammelerf.“ ist ein eigener Eintrag neben „Vitalwerte“.",
+      "file": "assets/audio/guides/167.wav"
+    },
+    {
+      "text": "„Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge unter „Doku-Erweitert“.",
+      "file": "assets/audio/guides/168.wav"
+    },
+    {
+      "text": "Bei „Kontakt – alles außer Arzt“ ist automatisch ein Fallgespräch verknüpft. Lasse es bestehen, wenn es benötigt wird. Andernfalls Protokollnamen anklicken und mit dem kleinen roten X entfernen.",
+      "file": "assets/audio/guides/169.wav"
+    },
+    {
+      "text": "Bei „Sturzereignis“ kann automatisch ein zusätzliches Protokoll verknüpft sein. Entferne es nur, wenn es nicht benötigt wird.",
+      "file": "assets/audio/guides/170.wav"
+    },
+    {
+      "text": "Bei „Von“ gehören Datum und Uhrzeit immer dazu.",
+      "file": "assets/audio/guides/171.wav"
+    },
+    {
+      "text": "Berichte werden zur Nachvollziehbarkeit durchgestrichen und nicht endgültig gelöscht.",
+      "file": "assets/audio/guides/172.wav"
+    },
+    {
+      "text": "Bis zu etwa drei Minuten warten, Standby verhindern und nicht mehrfach auf OK klicken.",
+      "file": "assets/audio/guides/173.wav"
+    },
+    {
+      "text": "Bleibe in der geöffneten Visite und suche nach der Statusauswahl. Die genaue Position kann je nach Ansicht und Berechtigung abweichen.",
+      "file": "assets/audio/guides/174.wav"
+    },
+    {
+      "text": "Das Feld „Mitarbeiter“ bleibt ohne Mitarbeiter beziehungsweise leer.",
+      "file": "assets/audio/guides/175.wav"
+    },
+    {
+      "text": "Das grüne Plus befindet sich oben links im Bereich „Berichte“.",
+      "file": "assets/audio/guides/176.wav"
+    },
+    {
+      "text": "Das kleine rote X entfernt ausschließlich die Verknüpfung des zusätzlichen Protokolls. Der Bericht bleibt erhalten.",
+      "file": "assets/audio/guides/177.wav"
+    },
+    {
+      "text": "Das rote Kreuz ist relativ klein und befindet sich ganz oben links.",
+      "file": "assets/audio/guides/178.wav"
+    },
+    {
+      "text": "Wenn du bei einem Feld unsicher bist, kläre die fachliche Angabe bitte im Team.",
+      "file": "assets/audio/guides/179.wav"
+    },
+    {
+      "text": "Die Bezeichnung lautet „Alle ausklappen“ und erscheint rechts neben „Alle anzeigen“.",
+      "file": "assets/audio/guides/180.wav"
+    },
+    {
+      "text": "Dieser Ablauf ist ausschließlich zum Ansehen. Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, ergänzen oder löschen.",
+      "file": "assets/audio/guides/181.wav"
+    },
+    {
+      "text": "Dieser Protokollschritt gilt nur für „Kontakt – alles außer Arzt“ und „Sturzereignis“. Das kleine rote X wird erst nutzbar, nachdem du den angezeigten Protokollnamen angeklickt hast.",
+      "file": "assets/audio/guides/182.wav"
+    },
+    {
+      "text": "Hier geht es nur um das Ansehen der Medikation. Änderungen klärst du bitte über den dafür vorgesehenen Weg.",
+      "file": "assets/audio/guides/183.wav"
+    },
+    {
+      "text": "Ein Bericht wird durchgestrichen. Eine falsch abgezeichnete Durchführung wird im Durchführungsnachweis storniert.",
+      "file": "assets/audio/guides/184.wav"
+    },
+    {
+      "text": "Falls versehentlich „abgeschlossen“ ausgewählt wurde, nicht so speichern. Stelle den Status auf „durchgeführt“ um.",
+      "file": "assets/audio/guides/185.wav"
+    },
+    {
+      "text": "Für mehrere Werte wird unter „Doku-Erweitert“ direkt „Vitalwerte Sammelerf.“ geöffnet. Es ist ein eigener Menüpunkt.",
+      "file": "assets/audio/guides/186.wav"
+    },
+    {
+      "text": "Klicke direkt auf den ursprünglichen Bericht und nicht auf eine freie Stelle in der Liste.",
+      "file": "assets/audio/guides/187.wav"
+    },
+    {
+      "text": "Nach „Neu“ beziehungsweise dem grünen Plus kommt zuerst „Klienten auswählen“. Erst danach öffnet sich „Neue Visite“.",
+      "file": "assets/audio/guides/188.wav"
+    },
+    {
+      "text": "Nach dem grünen Plus erscheint zuerst die Bewohnerauswahl. Die Visitenmaske öffnet sich erst nach dieser Auswahl.",
+      "file": "assets/audio/guides/189.wav"
+    },
+    {
+      "text": "Wähle im Pop-up-Fenster den Vitalwert aus, den du erfassen möchtest, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.",
+      "file": "assets/audio/guides/190.wav"
+    },
+    {
+      "text": "„Doku-Erweitert“ steht ganz oben in der festen grünen Leiste.",
+      "file": "assets/audio/guides/191.wav"
+    },
+    {
+      "text": "Nach Auswahl von „Doku-Erweitert“ findest du darunter „Visiten“.",
+      "file": "assets/audio/guides/192.wav"
+    },
+    {
+      "text": "Suche in der festen Leiste nach „Doku“.",
+      "file": "assets/audio/guides/193.wav"
+    },
+    {
+      "text": "Suche in der geöffneten Visite nach der Statusauswahl. Verwende ausschließlich „durchgeführt“ und nicht „abgeschlossen“.",
+      "file": "assets/audio/guides/194.wav"
+    },
+    {
+      "text": "Nach Auswahl von „Doku-Erweitert“ findest du darunter „Vitalwerte“.",
+      "file": "assets/audio/guides/195.wav"
+    },
+    {
+      "text": "Suche innerhalb von „Doku“ nach „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/196.wav"
+    },
+    {
+      "text": "Sonderfall: Nur wenn der durchführende Arzt beim Bewohner nicht hinterlegt ist, rechts neben der Arztauswahl das kleine Filtersymbol aktivieren. Danach stehen alle im System hinterlegten Ärzte zur Auswahl. Im Normalfall bleibt dieses Filtersymbol aus.",
+      "file": "assets/audio/guides/197.wav"
+    },
+    {
+      "text": "Suche oben nach dem Reiter „Analyse“.",
+      "file": "assets/audio/guides/198.wav"
+    },
+    {
+      "text": "Suche oben nach dem Reiter „Planung“.",
+      "file": "assets/audio/guides/199.wav"
+    },
+    {
+      "text": "Visiten werden bei euch erst nach der Durchführung dokumentiert und immer als durchgeführt erfasst, niemals als abgeschlossen.",
+      "file": "assets/audio/guides/200.wav"
+    },
+    {
+      "text": "Wähle zuerst den gewünschten Bewohner. Öffne oben in der festen grünen Hauptleiste „Doku“ und wähle im weißen Funktionsband direkt darunter „Bericht“.",
+      "file": "assets/audio/guides/201.wav"
+    },
+    {
+      "text": "Wechsle zurück zur Übersicht der Bewohner.",
+      "file": "assets/audio/guides/202.wav"
+    },
+    {
+      "text": "Wenn der Endzeitpunkt noch nicht sicher feststeht, lässt du „Bis“ leer. Bitte nicht schätzen.",
+      "file": "assets/audio/guides/203.wav"
+    },
+    {
+      "text": "„Doku“ ist ein Hauptbereich ganz oben in der festen grünen Leiste.",
+      "file": "assets/audio/guides/204.wav"
+    },
+    {
+      "text": "Nach Auswahl von „Doku“ erscheint darunter „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/205.wav"
+    },
+    {
+      "text": "Bleibe im Durchführungsnachweis und suche „Bedarfsmedikation“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen.",
+      "file": "assets/audio/guides/206.wav"
+    },
+    {
+      "text": "Suche das gewünschte Medikament und setze ganz rechts in der zugehörigen Zeile den Haken.",
+      "file": "assets/audio/guides/207.wav"
+    },
+    {
+      "text": "Hier wird nur die tatsächlich verwendete Bedarfsmenge dokumentiert. Die verordnete Dosierung wird in diesem Ablauf nicht geändert.",
+      "file": "assets/audio/guides/208.wav"
+    },
+    {
+      "text": "Du legst die Wirksamkeitskontrolle nicht selbst an. DokoHilf nennt keine erfundene Wartezeit.",
+      "file": "assets/audio/guides/209.wav"
+    },
+    {
+      "text": "Suche zum vorgesehenen Zeitpunkt im Durchführungsnachweis die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.",
+      "file": "assets/audio/guides/210.wav"
+    },
+    {
+      "text": "Die Wirksamkeitskontrolle wird automatisch zur Bedarfsmedikation erzeugt.",
+      "file": "assets/audio/guides/211.wav"
+    },
+    {
+      "text": "„Doku“ ist ein fester Hauptbereich ganz oben in der grünen Leiste.",
+      "file": "assets/audio/guides/212.wav"
+    },
+    {
+      "text": "Nach Auswahl von „Doku“ erscheint darunter „Durchführungsnachweis“. Dort wird die fällige Wirksamkeitskontrolle angezeigt.",
+      "file": "assets/audio/guides/213.wav"
+    },
+    {
+      "text": "Bestätige das Pop-up-Fenster zum Schluss unten mit „OK“.",
+      "file": "assets/audio/guides/214.wav"
+    },
+    {
+      "text": "„Doku“ findest du ganz oben in der festen grünen Leiste.",
+      "file": "assets/audio/guides/215.wav"
+    },
+    {
+      "text": "Die Wirksamkeitskontrolle erscheint erst zum vorgesehenen Zeitpunkt im Durchführungsnachweis. DokoHilf nennt keine erfundene Wartezeit.",
+      "file": "assets/audio/guides/216.wav"
+    },
+    {
+      "text": "Bleibe im Durchführungsnachweis und suche dort „Maßnahmen ohne Zeitangabe“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen.",
+      "file": "assets/audio/guides/217.wav"
+    },
+    {
+      "text": "Die feste grüne Hauptleiste ist ganz oben im Vivendi-Fenster. Diese feste grüne Leiste enthält unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt darunter befindet sich das weiße Funktionsband des ausgewählten Hauptbereichs. Bericht und Durchführungsnachweis gehören unter Doku zu diesem unteren Funktionsband; Bericht ist kein Hauptbereich der grünen Leiste.",
+      "file": "assets/audio/guides/218.wav"
+    },
+    {
+      "text": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.",
+      "file": "assets/audio/guides/219.wav"
+    },
+    {
+      "text": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du Bedarfsmedikation. Klicke auf den kleinen Pfeil links daneben, um sie zu öffnen.",
+      "file": "assets/audio/guides/220.wav"
+    },
+    {
+      "text": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du den Bereich Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um ihn zu öffnen.",
+      "file": "assets/audio/guides/221.wav"
+    },
+    {
+      "text": "Doku-Erweitert ist ein Hauptreiter in der grünen Hauptleiste ganz oben, direkt rechts von Doku. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.",
+      "file": "assets/audio/guides/222.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku in der grünen Hauptleiste ganz oben. Doku liegt zwischen Planung und Doku-Erweitert. Nach der Auswahl erscheint direkt darunter das weiße Funktionsband; dort findest du den Durchführungsnachweis.",
+      "file": "assets/audio/guides/223.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Vitalwerte: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Vitalwerte.",
+      "file": "assets/audio/guides/224.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Visiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Visiten.",
+      "file": "assets/audio/guides/225.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Medikation: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Medikation.",
+      "file": "assets/audio/guides/226.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Formulare: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Formulare.",
+      "file": "assets/audio/guides/227.wav"
+    },
+    {
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du An-/Abwesenheiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du An-/Abwesenheiten.",
+      "file": "assets/audio/guides/228.wav"
+    },
+    {
+      "text": "Bericht ist kein Hauptreiter in der grünen Leiste. Öffne oben in der grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband; dort findest du Bericht.",
+      "file": "assets/audio/guides/229.wav"
+    },
+    {
+      "text": "Planung ist ein Hauptbereich ganz oben in der festen grünen Leiste. Wähle dort Planung. Die zugehörigen Unterpunkte beziehungsweise Symbole erscheinen danach direkt darunter. Der genaue Easy-Plan-Ablauf bleibt vorerst offen.",
+      "file": "assets/audio/guides/230.wav"
+    },
+    {
+      "text": "Öffne zuerst Bericht oder den Durchführungsnachweis. Beides findest du unter Doku: Wähle ganz oben in der festen grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband mit Bericht und Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.",
+      "file": "assets/audio/guides/231.wav"
+    },
+    {
+      "text": "Doku ist ein Hauptreiter in der grünen Hauptleiste ganz oben im Vivendi-Fenster. Doku liegt zwischen Planung und Doku-Erweitert. Wenn du Doku auswählst, erscheint direkt darunter das weiße Funktionsband mit den zugehörigen Funktionen. Dort findest du den Durchführungsnachweis.",
+      "file": "assets/audio/guides/232.wav"
+    },
+    {
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Visiten“.",
+      "file": "assets/audio/guides/233.wav"
+    },
+    {
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „An-/Abwesenheiten“.",
+      "file": "assets/audio/guides/234.wav"
+    },
+    {
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Medikation“.",
+      "file": "assets/audio/guides/235.wav"
+    },
+    {
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Formulare“.",
+      "file": "assets/audio/guides/236.wav"
+    },
+    {
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Vitalwerte“.",
+      "file": "assets/audio/guides/237.wav"
+    },
+    {
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. „Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge; wähle für mehrere Werte „Vitalwerte Sammelerf.“.",
+      "file": "assets/audio/guides/238.wav"
+    },
+    {
+      "text": "„Doku“ ist ganz oben in der festen grünen Leiste. Wähle dort „Doku“; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "file": "assets/audio/guides/239.wav"
+    },
+    {
+      "text": "Wähle ganz oben in der festen grünen Leiste zuerst „Doku“. Danach erscheint darunter „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/240.wav"
+    },
+    {
+      "text": "„Analyse“ ist ganz oben in der festen grünen Leiste. Wähle dort „Analyse“; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "file": "assets/audio/guides/241.wav"
+    },
+    {
+      "text": "Wähle ganz oben in der festen grünen Leiste zuerst „Analyse“. Danach erscheint darunter „Was war los?“.",
+      "file": "assets/audio/guides/242.wav"
+    },
+    {
+      "text": "Alles klar, dann ist die Durchführung als storniert gekennzeichnet.",
+      "file": "assets/audio/guides/243.wav"
+    },
+    {
+      "text": "Alles klar. Dann kannst du den benötigten Nachweis im geöffneten Durchführungsnachweis ansehen.",
+      "file": "assets/audio/guides/244.wav"
+    },
+    {
+      "text": "Alles klar. Wenn du noch etwas brauchst, sag einfach Bescheid.",
+      "file": "assets/audio/guides/245.wav"
+    },
+    {
+      "text": "Bevor du das Formular anlegst: Ist der richtige Bewohner ausgewählt?",
+      "file": "assets/audio/guides/246.wav"
+    },
+    {
+      "text": "Bevor du den Vitalwert erfasst: Ist der richtige Bewohner ausgewählt?",
+      "file": "assets/audio/guides/247.wav"
+    },
+    {
+      "text": "Bevor du die An- oder Abwesenheit einträgst: Ist der richtige Bewohner ausgewählt?",
+      "file": "assets/audio/guides/248.wav"
+    },
+    {
+      "text": "Bevor du mehrere Vitalwerte erfasst: Ist der richtige Bewohner ausgewählt?",
+      "file": "assets/audio/guides/249.wav"
+    },
+    {
+      "text": "Der Durchführungsnachweis ist geöffnet. Sag mir einfach, was du dort machen möchtest.",
+      "file": "assets/audio/guides/250.wav"
+    },
+    {
+      "text": "Okay. Möchtest du einen einzelnen Vitalwert oder mehrere Werte gleichzeitig erfassen?",
+      "file": "assets/audio/guides/251.wav"
+    },
+    {
+      "text": "Perfekt, dann bist du bei den Berichten. Möchtest du jetzt einen neuen Bericht anlegen?",
+      "file": "assets/audio/guides/252.wav"
+    },
+    {
+      "text": "Perfekt, dann bist du bei den Visiten. Möchtest du jetzt eine Visite dokumentieren?",
+      "file": "assets/audio/guides/253.wav"
+    },
+    {
+      "text": "Perfekt, dann hast du An-/Abwesenheiten gefunden. Möchtest du dort jetzt eine An- oder Abwesenheit eintragen?",
+      "file": "assets/audio/guides/254.wav"
+    },
+    {
+      "text": "Perfekt, dann hast du die Bedarfsmedikation geöffnet. Möchtest du jetzt eine Bedarfsmedikationsgabe dokumentieren?",
+      "file": "assets/audio/guides/255.wav"
+    },
+    {
+      "text": "Perfekt, dann hast du die Formulare gefunden. Möchtest du jetzt ein Formular anlegen?",
+      "file": "assets/audio/guides/256.wav"
+    },
+    {
+      "text": "Perfekt, dann hast du die benötigte Information gefunden. Änderungen an der Medikation werden hier nicht angeleitet.",
+      "file": "assets/audio/guides/257.wav"
+    },
+    {
+      "text": "Perfekt, dann hast du „Maßnahmen ohne Zeitangabe“ geöffnet. Möchtest du jetzt eine Maßnahme dokumentieren?",
+      "file": "assets/audio/guides/258.wav"
+    },
+    {
+      "text": "Perfekt, dann hast du „Was war los?“ geöffnet. Möchtest du die Übergabe jetzt vollständig anzeigen?",
+      "file": "assets/audio/guides/259.wav"
+    },
+    {
+      "text": "Perfekt, dann ist das Fenster für das Notfallblatt geöffnet. Möchtest du das Notfallblatt jetzt erstellen und in Word öffnen?",
+      "file": "assets/audio/guides/260.wav"
+    },
+    {
+      "text": "Perfekt, dann ist das Notfallblatt in Word geöffnet.",
+      "file": "assets/audio/guides/261.wav"
+    },
+    {
+      "text": "Perfekt, dann ist der Bericht sichtbar durchgestrichen. Möchtest du den Inhalt jetzt korrekt als neuen Bericht dokumentieren?",
+      "file": "assets/audio/guides/262.wav"
+    },
+    {
+      "text": "Perfekt, dann ist die Medikamentenübersicht geöffnet. Dort kannst du die Medikation ansehen. Änderungen werden hier nicht angeleitet.",
+      "file": "assets/audio/guides/263.wav"
+    },
+    {
+      "text": "Perfekt, dann ist die Visite als „durchgeführt“ gespeichert.",
+      "file": "assets/audio/guides/264.wav"
+    },
+    {
+      "text": "Perfekt, dann ist die Wirksamkeitskontrolle gespeichert.",
+      "file": "assets/audio/guides/265.wav"
+    },
+    {
+      "text": "Perfekt, dann ist für die Visite der richtige Status „durchgeführt“ gesetzt.",
+      "file": "assets/audio/guides/266.wav"
+    },
+    {
+      "text": "Perfekt, dann siehst du die fällige Wirksamkeitskontrolle. Möchtest du sie jetzt dokumentieren?",
+      "file": "assets/audio/guides/267.wav"
+    },
+    {
+      "text": "Perfekt, dann sind die Stammdaten geöffnet.",
+      "file": "assets/audio/guides/268.wav"
+    },
+    {
+      "text": "Perfekt, dann sind die Vitalwerte geöffnet. Möchtest du jetzt einen einzelnen Vitalwert oder mehrere Werte gleichzeitig erfassen?",
+      "file": "assets/audio/guides/269.wav"
+    },
+    {
+      "text": "Sag mir bitte, was du im geöffneten Durchführungsnachweis machen möchtest.",
+      "file": "assets/audio/guides/270.wav"
+    },
+    {
+      "text": "Super, dann bist du bei „Analyse“. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "file": "assets/audio/guides/271.wav"
+    },
+    {
+      "text": "Super, dann bist du bei „Doku-Erweitert“. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "file": "assets/audio/guides/272.wav"
+    },
+    {
+      "text": "Super, dann bist du bei „Doku“. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "file": "assets/audio/guides/273.wav"
+    },
+    {
+      "text": "Super, dann bist du bei „Planung“. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "file": "assets/audio/guides/274.wav"
+    },
+    {
+      "text": "Super, dann ist das Formular gespeichert.",
+      "file": "assets/audio/guides/275.wav"
+    },
+    {
+      "text": "Super, dann ist der Folgebericht gespeichert und sichtbar.",
+      "file": "assets/audio/guides/276.wav"
+    },
+    {
+      "text": "Super, dann ist der neue Bericht gespeichert und sichtbar.",
+      "file": "assets/audio/guides/277.wav"
+    },
+    {
+      "text": "Super, dann ist der neue Vitalwert gespeichert und sichtbar.",
+      "file": "assets/audio/guides/278.wav"
+    },
+    {
+      "text": "Super, dann ist die An- oder Abwesenheit gespeichert und in der Übersicht sichtbar.",
+      "file": "assets/audio/guides/279.wav"
+    },
+    {
+      "text": "Super, dann ist die Maßnahme gespeichert.",
+      "file": "assets/audio/guides/280.wav"
+    },
+    {
+      "text": "Super, dann sind die neuen Vitalwerte gespeichert und sichtbar.",
+      "file": "assets/audio/guides/281.wav"
+    },
+    {
+      "text": "Super, dann zeigt die Übersicht den benötigten Zeitraum.",
+      "file": "assets/audio/guides/282.wav"
+    },
+    {
+      "text": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für das Formular ausgewählt ist.",
+      "file": "assets/audio/guides/283.wav"
+    },
+    {
+      "text": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für den Vitalwert ausgewählt ist.",
+      "file": "assets/audio/guides/284.wav"
+    },
+    {
+      "text": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für die An- oder Abwesenheit ausgewählt ist.",
+      "file": "assets/audio/guides/285.wav"
+    },
+    {
+      "text": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für die Vitalwerte ausgewählt ist.",
+      "file": "assets/audio/guides/286.wav"
+    },
+    {
+      "text": "„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“.",
+      "file": "assets/audio/guides/287.wav"
+    },
+    {
+      "text": "„Analyse“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku“, „Doku-Erweitert“ und „Planung“.",
+      "file": "assets/audio/guides/288.wav"
+    },
+    {
+      "text": "„Doku-Erweitert“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku“, „Planung“ und „Analyse“.",
+      "file": "assets/audio/guides/289.wav"
+    },
+    {
+      "text": "„Doku“ liegt oben in der festen grünen Hauptleiste zwischen „Planung“ und „Doku-Erweitert“. Öffne „Doku“ und wähle im weißen Funktionsband direkt darunter „Bericht“.",
+      "file": "assets/audio/guides/290.wav"
+    },
+    {
+      "text": "„Doku“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku-Erweitert“, „Planung“ und „Analyse“.",
+      "file": "assets/audio/guides/291.wav"
+    },
+    {
+      "text": "„Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge direkt unter „Doku-Erweitert“.",
+      "file": "assets/audio/guides/292.wav"
+    },
+    {
+      "text": "Bleibe im Durchführungsnachweis und suche „Maßnahmen ohne Zeitangabe“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen.",
+      "file": "assets/audio/guides/293.wav"
+    },
+    {
+      "text": "Bleibe in „Berichte“ oder „Durchführungsnachweis“; dort bleibt die Bewohnerübersicht links sichtbar.",
+      "file": "assets/audio/guides/294.wav"
+    },
+    {
+      "text": "Bleibe in „Dateiablage“. Der Bereich „Dokumente“ erscheint unten mittig.",
+      "file": "assets/audio/guides/295.wav"
+    },
+    {
+      "text": "Bleibe in den geöffneten Stammdaten. Suche in der grauen Leiste nach „Dateiablage“.",
+      "file": "assets/audio/guides/296.wav"
+    },
+    {
+      "text": "Das kleine rote Kreuz beziehungsweise der Pfeil sitzt ganz oben links.",
+      "file": "assets/audio/guides/297.wav"
+    },
+    {
+      "text": "Die Wirksamkeitskontrolle erscheint erst zum vorgesehenen Zeitpunkt im Durchführungsnachweis. Eine konkrete Wartezeit ist hier nicht festgelegt.",
+      "file": "assets/audio/guides/298.wav"
+    },
+    {
+      "text": "Du legst die Wirksamkeitskontrolle nicht selbst an. Eine konkrete Wartezeit ist hier nicht festgelegt.",
+      "file": "assets/audio/guides/299.wav"
+    },
+    {
+      "text": "Führe auf dem gewünschten Bewohner einen schnellen Doppelklick mit der linken Maustaste aus.",
+      "file": "assets/audio/guides/300.wav"
+    },
+    {
+      "text": "Für den Durchführungsnachweis: „Doku“ → „Durchführungsnachweis“. Danach bleibt links die Bewohnerübersicht sichtbar.",
+      "file": "assets/audio/guides/301.wav"
+    },
+    {
+      "text": "Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü. Darin wählst du „Notfallblatt aufrufen“.",
+      "file": "assets/audio/guides/302.wav"
+    },
+    {
+      "text": "Suche ganz oben in der festen grünen Hauptleiste nach „Planung“. Dort befinden sich auch „Doku“, „Doku-Erweitert“ und „Analyse“.",
+      "file": "assets/audio/guides/303.wav"
+    },
+    {
+      "text": "Bleibe in der Dateiablage. Wenn das gewünschte Dokument nicht angezeigt wird, frag bitte kurz im Team, ob und wo es abgelegt ist.",
+      "file": "assets/audio/guides/304.wav"
+    },
+    {
+      "text": "Warte kurz, bis sich Word öffnet, und führe den Doppelklick nicht mehrfach aus.",
+      "file": "assets/audio/guides/305.wav"
+    },
+    {
+      "text": "Wenn der durchführende Arzt beim Bewohner nicht hinterlegt ist, aktiviere rechts neben der Arztauswahl das kleine Filtersymbol. Dann stehen alle systemweit hinterlegten Ärzte zur Auswahl.",
+      "file": "assets/audio/guides/306.wav"
+    },
+    {
+      "text": "Wenn du den Durchführungsnachweis öffnen möchtest: „Doku“ → „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/307.wav"
+    },
+    {
+      "text": "Wenn du den Zeitraum geändert und die Anzeige aktualisiert hast, wähle danach erneut „Alle ausklappen“, damit alle Einträge wieder vollständig geöffnet sind.",
+      "file": "assets/audio/guides/308.wav"
+    },
+    {
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Analyse“ öffnen. Direkt darunter findest du „Was war los?“.",
+      "file": "assets/audio/guides/309.wav"
+    },
+    {
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „An-/Abwesenheiten“.",
+      "file": "assets/audio/guides/310.wav"
+    },
+    {
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Formulare“.",
+      "file": "assets/audio/guides/311.wav"
+    },
+    {
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Medikation“.",
+      "file": "assets/audio/guides/312.wav"
+    },
+    {
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Visiten“.",
+      "file": "assets/audio/guides/313.wav"
+    },
+    {
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du das Symbol beziehungsweise den Bereich „Vitalwerte“.",
+      "file": "assets/audio/guides/314.wav"
+    },
+    {
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku“ öffnen. Direkt darunter findest du „Durchführungsnachweis“.",
+      "file": "assets/audio/guides/315.wav"
+    }
+  ],
+  "generatedWith": "Supertonic 3 static GitHub build",
+  "sourceCounts": {
+    "base": 134,
+    "extra": 33,
+    "release": 49,
+    "workflow": 39,
+    "ui": 1,
+    "navigation": 17,
+    "context": 10
+  },
+  "completionSourceCount": 44,
+  "fileStorageSourceCount": 5,
+  "contextStuckSourceCount": 63,
+  "staticSpeechCount": 316
+}

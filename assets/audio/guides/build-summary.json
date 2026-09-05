@@ -1,0 +1,2551 @@
+{
+  "engine": "Supertonic 3",
+  "voice": "F1",
+  "language": "de",
+  "steps": 8,
+  "speed": 1.05,
+  "sourceCounts": {
+    "base": 134,
+    "extra": 33,
+    "release": 49,
+    "workflow": 39,
+    "ui": 1,
+    "navigation": 17,
+    "context": 10
+  },
+  "completionSourceCount": 44,
+  "fileStorageSourceCount": 5,
+  "contextStuckSourceCount": 63,
+  "staticSpeechCount": 316,
+  "count": 316,
+  "entries": [
+    {
+      "index": 0,
+      "file": "assets/audio/guides/000.wav",
+      "text": "Hey! Wobei brauchst du Hilfe?",
+      "synthesizedText": "Hey! Wobei brauchst du Hilfe?",
+      "bytes": 245804,
+      "duration": 2.751382350921631
+    },
+    {
+      "index": 1,
+      "file": "assets/audio/guides/001.wav",
+      "text": "„Notfallblatt_Allgemein“ ist normalerweise bereits vorausgewählt. Lasse diese Auswahl bestehen.",
+      "synthesizedText": "Notfallblatt Allgemein ist normalerweise bereits vorausgewählt. Lasse diese Auswahl bestehen.",
+      "bytes": 565292,
+      "duration": 6.3935089111328125
+    },
+    {
+      "index": 2,
+      "file": "assets/audio/guides/002.wav",
+      "text": "„Planung“ findest du ganz oben in der festen grünen Hauptleiste. Öffne dort „Planung“. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "synthesizedText": "Planung findest du ganz oben in der festen grünen Hauptleiste. Öffne dort Planung. Danach erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "bytes": 976940,
+      "duration": 11.063904762268066
+    },
+    {
+      "index": 3,
+      "file": "assets/audio/guides/003.wav",
+      "text": "„Wichtig für Schichtübergabe“ ist bei Bedarfsmedikation bereits automatisch ausgewählt. Lass den Haken so. In das Textfeld darunter trägst du kurz den Anlass der Gabe ein.",
+      "synthesizedText": "Wichtig für Schichtübergabe ist bei Bedarfsmedikation bereits automatisch ausgewählt. Lass den Haken so. In das Textfeld darunter trägst du kurz den Anlass der Gabe ein.",
+      "bytes": 1019948,
+      "duration": 11.520258903503418
+    },
+    {
+      "index": 4,
+      "file": "assets/audio/guides/004.wav",
+      "text": "Beim geöffneten Bewohner öffnest du oben in der festen grünen Hauptleiste „Doku“. Im weißen Funktionsband direkt darunter wählst du „Bericht“. Danach ist der Bereich „Berichte“ geöffnet.",
+      "synthesizedText": "Beim geöffneten Bewohner öffnest du oben in der festen grünen Hauptleiste Doku. Im weißen Funktionsband direkt darunter wählst du Bericht. Danach ist der Bereich Berichte geöffnet.",
+      "bytes": 1032236,
+      "duration": 11.651496887207031
+    },
+    {
+      "index": 5,
+      "file": "assets/audio/guides/005.wav",
+      "text": "Bestätige das Pop-up zum Schluss unten mit „OK“.",
+      "synthesizedText": "Bestätige das Pop-up zum Schluss unten mit OK.",
+      "bytes": 325676,
+      "duration": 3.639589309692383
+    },
+    {
+      "index": 6,
+      "file": "assets/audio/guides/006.wav",
+      "text": "Bestätige das Pop-up-Fenster unten mit „OK“.",
+      "synthesizedText": "Bestätige das Pop-up-Fenster unten mit OK.",
+      "bytes": 294956,
+      "duration": 3.3348019123077393
+    },
+    {
+      "index": 7,
+      "file": "assets/audio/guides/007.wav",
+      "text": "Bestätige die Wirksamkeitskontrolle unten mit „OK“.",
+      "synthesizedText": "Bestätige die Wirksamkeitskontrolle unten mit OK.",
+      "bytes": 331820,
+      "duration": 3.723998546600342
+    },
+    {
+      "index": 8,
+      "file": "assets/audio/guides/008.wav",
+      "text": "Bestätige mit „OK“ beziehungsweise „Speichern“ und kontrolliere die Werte in der Übersicht.",
+      "synthesizedText": "Bestätige mit OK beziehungsweise Speichern und kontrolliere die Werte in der Übersicht.",
+      "bytes": 553004,
+      "duration": 6.20285177230835
+    },
+    {
+      "index": 9,
+      "file": "assets/audio/guides/009.wav",
+      "text": "Bestätige mit „OK“ und kontrolliere den neuen Wert in der Übersicht.",
+      "synthesizedText": "Bestätige mit OK und kontrolliere den neuen Wert in der Übersicht.",
+      "bytes": 430124,
+      "duration": 4.813729286193848
+    },
+    {
+      "index": 10,
+      "file": "assets/audio/guides/010.wav",
+      "text": "Bestätige mit „OK“ und kontrolliere, ob der Folgebericht beim Bewohner sichtbar ist.",
+      "synthesizedText": "Bestätige mit OK und kontrolliere, ob der Folgebericht beim Bewohner sichtbar ist.",
+      "bytes": 528428,
+      "duration": 5.930871486663818
+    },
+    {
+      "index": 11,
+      "file": "assets/audio/guides/011.wav",
+      "text": "Bestätige mit „OK“.",
+      "synthesizedText": "Bestätige mit OK.",
+      "bytes": 159788,
+      "duration": 1.8066893815994263
+    },
+    {
+      "index": 12,
+      "file": "assets/audio/guides/012.wav",
+      "text": "Bestätige und kontrolliere die neuen Werte.",
+      "synthesizedText": "Bestätige und kontrolliere die neuen Werte.",
+      "bytes": 270380,
+      "duration": 3.0041751861572266
+    },
+    {
+      "index": 13,
+      "file": "assets/audio/guides/013.wav",
+      "text": "Bestätige unten mit „OK“.",
+      "synthesizedText": "Bestätige unten mit OK.",
+      "bytes": 184364,
+      "duration": 2.0488834381103516
+    },
+    {
+      "index": 14,
+      "file": "assets/audio/guides/014.wav",
+      "text": "Das Feld „Mitarbeiter“ bleibt immer auf „ohne Mitarbeiter“ beziehungsweise leer.",
+      "synthesizedText": "Das Feld Mitarbeiter bleibt immer auf ohne Mitarbeiter beziehungsweise leer.",
+      "bytes": 460844,
+      "duration": 5.223278999328613
+    },
+    {
+      "index": 15,
+      "file": "assets/audio/guides/015.wav",
+      "text": "Den beim Bewohner hinterlegten durchführenden Arzt auswählen.",
+      "synthesizedText": "Den beim Bewohner hinterlegten durchführenden Arzt auswählen.",
+      "bytes": 362540,
+      "duration": 4.042858123779297
+    },
+    {
+      "index": 16,
+      "file": "assets/audio/guides/016.wav",
+      "text": "Dokumentiere kurz, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.",
+      "synthesizedText": "Dokumentiere kurz, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.",
+      "bytes": 540716,
+      "duration": 6.104528427124023
+    },
+    {
+      "index": 17,
+      "file": "assets/audio/guides/017.wav",
+      "text": "Doppelklicke in der Bewohnerübersicht auf den gewünschten Bewohner.",
+      "synthesizedText": "Doppelklicke in der Bewohnerübersicht auf den gewünschten Bewohner.",
+      "bytes": 393260,
+      "duration": 4.429945468902588
+    },
+    {
+      "index": 18,
+      "file": "assets/audio/guides/018.wav",
+      "text": "Ein Bericht wird nicht endgültig gelöscht. Öffne beim gewünschten Bewohner den Bereich „Berichte“.",
+      "synthesizedText": "Ein Bericht wird nicht endgültig gelöscht. Öffne beim gewünschten Bewohner den Bereich Berichte.",
+      "bytes": 571436,
+      "duration": 6.444304943084717
+    },
+    {
+      "index": 19,
+      "file": "assets/audio/guides/019.wav",
+      "text": "Ergänze nur bei Bedarf vorhandene Angaben wie Messart, Qualität oder Bemerkung.",
+      "synthesizedText": "Ergänze nur bei Bedarf vorhandene Angaben wie Messart, Qualität oder Bemerkung.",
+      "bytes": 485420,
+      "duration": 5.443929195404053
+    },
+    {
+      "index": 20,
+      "file": "assets/audio/guides/020.wav",
+      "text": "Ergänze nur die Angaben, die du wirklich brauchst, zum Beispiel Ziel, Begleitung, Grund oder Bemerkung.",
+      "synthesizedText": "Ergänze nur die Angaben, die du wirklich brauchst, zum Beispiel Ziel, Begleitung, Grund oder Bemerkung.",
+      "bytes": 632876,
+      "duration": 7.125551223754883
+    },
+    {
+      "index": 21,
+      "file": "assets/audio/guides/021.wav",
+      "text": "Falls du zusätzlich eine Zeitangabe brauchst, kannst du sie oben rechts im Pop-up-Fenster ergänzen.",
+      "synthesizedText": "Falls du zusätzlich eine Zeitangabe brauchst, kannst du sie oben rechts im Pop-up-Fenster ergänzen.",
+      "bytes": 602156,
+      "duration": 6.819669723510742
+    },
+    {
+      "index": 22,
+      "file": "assets/audio/guides/022.wav",
+      "text": "Falls tatsächlich eine geringere Bedarfsmenge verwendet wurde, trägst du rechts im Pop-up-Fenster die tatsächlich verwendete Menge ein. Die Verordnung selbst wird nicht verändert.",
+      "synthesizedText": "Falls tatsächlich eine geringere Bedarfsmenge verwendet wurde, trägst du rechts im Pop-up-Fenster die tatsächlich verwendete Menge ein. Die Verordnung selbst wird nicht verändert.",
+      "bytes": 1019948,
+      "duration": 11.518006324768066
+    },
+    {
+      "index": 23,
+      "file": "assets/audio/guides/023.wav",
+      "text": "Fülle das geöffnete Formular wie gewohnt aus.",
+      "synthesizedText": "Fülle das geöffnete Formular wie gewohnt aus.",
+      "bytes": 270380,
+      "duration": 3.0583112239837646
+    },
+    {
+      "index": 24,
+      "file": "assets/audio/guides/024.wav",
+      "text": "Für einen einzelnen Wert wählst du darunter „Vitalwerte“. Für mehrere Werte wählst du direkt „Vitalwerte Sammelerf.“.",
+      "synthesizedText": "Für einen einzelnen Wert wählst du darunter Vitalwerte. Für mehrere Werte wählst du direkt Vitalwerte Sammelerf..",
+      "bytes": 675884,
+      "duration": 7.6122212409973145
+    },
+    {
+      "index": 25,
+      "file": "assets/audio/guides/025.wav",
+      "text": "Im Durchführungsnachweis findest du „Bedarfsmedikation“. Klicke auf den kleinen Pfeil links daneben, um die Bedarfsmedikation des ausgewählten Bewohners zu öffnen.",
+      "synthesizedText": "Im Durchführungsnachweis findest du Bedarfsmedikation. Klicke auf den kleinen Pfeil links daneben, um die Bedarfsmedikation des ausgewählten Bewohners zu öffnen.",
+      "bytes": 964652,
+      "duration": 10.884068489074707
+    },
+    {
+      "index": 26,
+      "file": "assets/audio/guides/026.wav",
+      "text": "Im Durchführungsnachweis findest du „Maßnahmen ohne Zeitangabe“. Klicke auf den kleinen Pfeil links daneben, um den Bereich zu öffnen.",
+      "synthesizedText": "Im Durchführungsnachweis findest du Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um den Bereich zu öffnen.",
+      "bytes": 780332,
+      "duration": 8.814269065856934
+    },
+    {
+      "index": 27,
+      "file": "assets/audio/guides/027.wav",
+      "text": "Klicke den Eintrag mit der rechten Maustaste an.",
+      "synthesizedText": "Klicke den Eintrag mit der rechten Maustaste an.",
+      "bytes": 294956,
+      "duration": 3.3022220134735107
+    },
+    {
+      "index": 28,
+      "file": "assets/audio/guides/028.wav",
+      "text": "Klicke den ursprünglichen Bericht mit der rechten Maustaste an.",
+      "synthesizedText": "Klicke den ursprünglichen Bericht mit der rechten Maustaste an.",
+      "bytes": 387116,
+      "duration": 4.328261852264404
+    },
+    {
+      "index": 29,
+      "file": "assets/audio/guides/029.wav",
+      "text": "Klicke ganz oben links auf das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil.",
+      "synthesizedText": "Klicke ganz oben links auf das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil.",
+      "bytes": 522284,
+      "duration": 5.875509738922119
+    },
+    {
+      "index": 30,
+      "file": "assets/audio/guides/030.wav",
+      "text": "Klicke oben in der Maske auf „Durchführen“. Dadurch wird die Visite als durchgeführt dokumentiert. Verwende niemals den Status „abgeschlossen“.",
+      "synthesizedText": "Klicke oben in der Maske auf Durchführen. Dadurch wird die Visite als durchgeführt dokumentiert. Verwende niemals den Status abgeschlossen.",
+      "bytes": 817196,
+      "duration": 9.212997436523438
+    },
+    {
+      "index": 31,
+      "file": "assets/audio/guides/031.wav",
+      "text": "Klicke oben links auf „Alle anzeigen“.",
+      "synthesizedText": "Klicke oben links auf Alle anzeigen.",
+      "bytes": 233516,
+      "duration": 2.6296255588531494
+    },
+    {
+      "index": 32,
+      "file": "assets/audio/guides/032.wav",
+      "text": "Klicke oben links auf „Neu“.",
+      "synthesizedText": "Klicke oben links auf Neu.",
+      "bytes": 184364,
+      "duration": 2.046501874923706
+    },
+    {
+      "index": 33,
+      "file": "assets/audio/guides/033.wav",
+      "text": "Klicke oben links auf das grüne Plus beziehungsweise „Neu“.",
+      "synthesizedText": "Klicke oben links auf das grüne Plus beziehungsweise Neu.",
+      "bytes": 356396,
+      "duration": 3.9746909141540527
+    },
+    {
+      "index": 34,
+      "file": "assets/audio/guides/034.wav",
+      "text": "Klicke oben links auf das grüne Plus beziehungsweise „Neu“. Danach öffnet sich das Pop-up-Fenster zur Auswahl des Vitalwerts.",
+      "synthesizedText": "Klicke oben links auf das grüne Plus beziehungsweise Neu. Danach öffnet sich das Pop-up-Fenster zur Auswahl des Vitalwerts.",
+      "bytes": 743468,
+      "duration": 8.36113452911377
+    },
+    {
+      "index": 35,
+      "file": "assets/audio/guides/035.wav",
+      "text": "Klicke oben links auf das grüne Plus, um einen neuen Berichtseintrag anzulegen.",
+      "synthesizedText": "Klicke oben links auf das grüne Plus, um einen neuen Berichtseintrag anzulegen.",
+      "bytes": 497708,
+      "duration": 5.598346710205078
+    },
+    {
+      "index": 36,
+      "file": "assets/audio/guides/036.wav",
+      "text": "Kontrolliere kurz, ob der neue Berichtseintrag im Berichteblatt sichtbar ist.",
+      "synthesizedText": "Kontrolliere kurz, ob der neue Berichtseintrag im Berichteblatt sichtbar ist.",
+      "bytes": 491564,
+      "duration": 5.523021697998047
+    },
+    {
+      "index": 37,
+      "file": "assets/audio/guides/037.wav",
+      "text": "Kontrolliere, ob der Bericht sichtbar durchgestrichen ist. Soll der Inhalt korrekt neu dokumentiert werden, legst du anschließend einen neuen Bericht an. Ein Folgebericht korrigiert den ursprünglichen Bericht nicht.",
+      "synthesizedText": "Kontrolliere, ob der Bericht sichtbar durchgestrichen ist. Soll der Inhalt korrekt neu dokumentiert werden, legst du anschließend einen neuen Bericht an. Ein Folgebericht korrigiert den ursprünglichen Bericht nicht.",
+      "bytes": 1216556,
+      "duration": 13.779128074645996
+    },
+    {
+      "index": 38,
+      "file": "assets/audio/guides/038.wav",
+      "text": "Kontrolliere, ob die Durchführung als storniert beziehungsweise ungültig gekennzeichnet ist.",
+      "synthesizedText": "Kontrolliere, ob die Durchführung als storniert beziehungsweise ungültig gekennzeichnet ist.",
+      "bytes": 546860,
+      "duration": 6.185944080352783
+    },
+    {
+      "index": 39,
+      "file": "assets/audio/guides/039.wav",
+      "text": "Nach dem Speichern wird die Wirksamkeitskontrolle automatisch vom System angelegt. Öffne sie erst, wenn sie zum vorgesehenen Zeitpunkt fällig ist.",
+      "synthesizedText": "Nach dem Speichern wird die Wirksamkeitskontrolle automatisch vom System angelegt. Öffne sie erst, wenn sie zum vorgesehenen Zeitpunkt fällig ist.",
+      "bytes": 872492,
+      "duration": 9.857056617736816
+    },
+    {
+      "index": 40,
+      "file": "assets/audio/guides/040.wav",
+      "text": "Nach einer Bedarfsmedikationsgabe wird die zugehörige Wirksamkeitskontrolle automatisch vom System angelegt. Du musst keine neue Kontrolle selbst erstellen.",
+      "synthesizedText": "Nach einer Bedarfsmedikationsgabe wird die zugehörige Wirksamkeitskontrolle automatisch vom System angelegt. Du musst keine neue Kontrolle selbst erstellen.",
+      "bytes": 921644,
+      "duration": 10.396284103393555
+    },
+    {
+      "index": 41,
+      "file": "assets/audio/guides/041.wav",
+      "text": "Nur bei „Kontakt – alles außer Arzt“ und „Sturzereignis“: Prüfe das automatisch zugeordnete Protokoll. Wird es nicht benötigt, klicke zuerst auf den Protokollnamen und danach oben rechts auf das kleine rote X. Das entfernt nur die Protokollverknüpfung, nicht den Bericht. Bei allen anderen Berichtskategorien überspringst du diesen Schritt.",
+      "synthesizedText": "Nur bei Kontakt - alles außer Arzt und Sturzereignis: Prüfe das automatisch zugeordnete Protokoll. Wird es nicht benötigt, klicke zuerst auf den Protokollnamen und danach oben rechts auf das kleine rote X. Das entfernt nur die Protokollverknüpfung, nicht den Bericht. Bei allen anderen Berichtskategorien überspringst du diesen Schritt.",
+      "bytes": 2078600,
+      "duration": 23.482772827148438
+    },
+    {
+      "index": 42,
+      "file": "assets/audio/guides/042.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „An-/Abwesenheiten“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle An- oder Abwesenheiten.",
+      "bytes": 350252,
+      "duration": 3.9064741134643555
+    },
+    {
+      "index": 43,
+      "file": "assets/audio/guides/043.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „Formulare“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle Formulare.",
+      "bytes": 270380,
+      "duration": 3.01355242729187
+    },
+    {
+      "index": 44,
+      "file": "assets/audio/guides/044.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „Medikation“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle Medikation.",
+      "bytes": 276524,
+      "duration": 3.065763235092163
+    },
+    {
+      "index": 45,
+      "file": "assets/audio/guides/045.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „Visiten“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle Visiten.",
+      "bytes": 258092,
+      "duration": 2.900784492492676
+    },
+    {
+      "index": 46,
+      "file": "assets/audio/guides/046.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle „Vitalwerte“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle Vitalwerte.",
+      "bytes": 270380,
+      "duration": 3.055048942565918
+    },
+    {
+      "index": 47,
+      "file": "assets/audio/guides/047.wav",
+      "text": "Öffne „Doku-Erweitert“ und wähle direkt „Vitalwerte Sammelerf.“.",
+      "synthesizedText": "Öffne Doku-Erweitert und wähle direkt Vitalwerte Sammelerf..",
+      "bytes": 393260,
+      "duration": 4.453949451446533
+    },
+    {
+      "index": 48,
+      "file": "assets/audio/guides/048.wav",
+      "text": "Öffne „Doku“.",
+      "synthesizedText": "Öffne Doku.",
+      "bytes": 122924,
+      "duration": 1.3855957984924316
+    },
+    {
+      "index": 49,
+      "file": "assets/audio/guides/049.wav",
+      "text": "Öffne beim gewünschten Bewohner den Bereich „Berichte“.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner den Bereich Berichte.",
+      "bytes": 319532,
+      "duration": 3.5853867530822754
+    },
+    {
+      "index": 50,
+      "file": "assets/audio/guides/050.wav",
+      "text": "Öffne beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku-Erweitert“.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku-Erweitert.",
+      "bytes": 503852,
+      "duration": 5.704681873321533
+    },
+    {
+      "index": 51,
+      "file": "assets/audio/guides/051.wav",
+      "text": "Öffne den „Durchführungsnachweis“.",
+      "synthesizedText": "Öffne den Durchführungsnachweis.",
+      "bytes": 215084,
+      "duration": 2.3779549598693848
+    },
+    {
+      "index": 52,
+      "file": "assets/audio/guides/052.wav",
+      "text": "Öffne den Reiter „Doku“.",
+      "synthesizedText": "Öffne den Reiter Doku.",
+      "bytes": 165932,
+      "duration": 1.849830985069275
+    },
+    {
+      "index": 53,
+      "file": "assets/audio/guides/053.wav",
+      "text": "Öffne die Wirksamkeitskontrolle und hake sie als durchgeführt ab.",
+      "synthesizedText": "Öffne die Wirksamkeitskontrolle und hake sie als durchgeführt ab.",
+      "bytes": 405548,
+      "duration": 4.558302879333496
+    },
+    {
+      "index": 54,
+      "file": "assets/audio/guides/054.wav",
+      "text": "Suche im Durchführungsnachweis „Maßnahmen ohne Zeitangabe“ und klicke auf den kleinen Pfeil links daneben.",
+      "synthesizedText": "Suche im Durchführungsnachweis Maßnahmen ohne Zeitangabe und klicke auf den kleinen Pfeil links daneben.",
+      "bytes": 596012,
+      "duration": 6.725557327270508
+    },
+    {
+      "index": 55,
+      "file": "assets/audio/guides/055.wav",
+      "text": "Öffne oben den Reiter „Analyse“.",
+      "synthesizedText": "Öffne oben den Reiter Analyse.",
+      "bytes": 202796,
+      "duration": 2.2570934295654297
+    },
+    {
+      "index": 56,
+      "file": "assets/audio/guides/056.wav",
+      "text": "Öffne zuerst „Berichte“ oder „Durchführungsnachweis“. Solange einer dieser Bereiche geöffnet ist, siehst du links die Bewohnerübersicht. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.",
+      "synthesizedText": "Öffne zuerst Berichte oder Durchführungsnachweis. Solange einer dieser Bereiche geöffnet ist, siehst du links die Bewohnerübersicht. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.",
+      "bytes": 1173548,
+      "duration": 13.278031349182129
+    },
+    {
+      "index": 57,
+      "file": "assets/audio/guides/057.wav",
+      "text": "Öffne zuerst den Bereich „Berichte“ oder „Durchführungsnachweis“. Wenn du den Durchführungsnachweis nutzt, gehst du über „Doku“ → „Durchführungsnachweis“.",
+      "synthesizedText": "Öffne zuerst den Bereich Berichte oder Durchführungsnachweis. Wenn du den Durchführungsnachweis nutzt, gehst du über Doku zu Durchführungsnachweis.",
+      "bytes": 847916,
+      "duration": 9.555110931396484
+    },
+    {
+      "index": 58,
+      "file": "assets/audio/guides/058.wav",
+      "text": "Öffne die Stammdaten des gewünschten Bewohners.",
+      "synthesizedText": "Öffne die Stammdaten des gewünschten Bewohners.",
+      "bytes": 294956,
+      "duration": 3.295337677001953
+    },
+    {
+      "index": 59,
+      "file": "assets/audio/guides/059.wav",
+      "text": "Klicke in der grauen Leiste auf „Dateiablage“.",
+      "synthesizedText": "Klicke in der grauen Leiste auf Dateiablage.",
+      "bytes": 270380,
+      "duration": 3.0390260219573975
+    },
+    {
+      "index": 60,
+      "file": "assets/audio/guides/060.wav",
+      "text": "Unten mittig erscheint der Bereich „Dokumente“.",
+      "synthesizedText": "Unten mittig erscheint der Bereich Dokumente.",
+      "bytes": 264236,
+      "duration": 2.9893572330474854
+    },
+    {
+      "index": 61,
+      "file": "assets/audio/guides/061.wav",
+      "text": "Suche dort das gewünschte vorhandene Dokument. Wenn es in der Dateiablage hinterlegt ist, wähle es aus.",
+      "synthesizedText": "Suche dort das gewünschte vorhandene Dokument. Wenn es in der Dateiablage hinterlegt ist, wähle es aus.",
+      "bytes": 608300,
+      "duration": 6.844772815704346
+    },
+    {
+      "index": 62,
+      "file": "assets/audio/guides/062.wav",
+      "text": "Öffne das vorhandene Dokument per Doppelklick. Es kann kurz dauern, bis sich Word öffnet. Klicke nicht mehrfach doppelt.",
+      "synthesizedText": "Öffne das vorhandene Dokument per Doppelklick. Es kann kurz dauern, bis sich Word öffnet. Klicke nicht mehrfach doppelt.",
+      "bytes": 700460,
+      "duration": 7.8837761878967285
+    },
+    {
+      "index": 63,
+      "file": "assets/audio/guides/063.wav",
+      "text": "Passe den Zeitraum nur bei Bedarf an und aktualisiere anschließend die Anzeige.",
+      "synthesizedText": "Passe den Zeitraum nur bei Bedarf an und aktualisiere anschließend die Anzeige.",
+      "bytes": 503852,
+      "duration": 5.690246105194092
+    },
+    {
+      "index": 64,
+      "file": "assets/audio/guides/064.wav",
+      "text": "Prüfe Datum und Uhrzeit und ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht.",
+      "synthesizedText": "Prüfe Datum und Uhrzeit und ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht.",
+      "bytes": 602156,
+      "duration": 6.8003058433532715
+    },
+    {
+      "index": 65,
+      "file": "assets/audio/guides/065.wav",
+      "text": "Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein. Je nach ausgewähltem Vitalwert erscheinen die passenden Eingabefelder. Bei Blutdruck sind zum Beispiel Systole und Diastole erforderlich.",
+      "synthesizedText": "Prüfe Datum und Uhrzeit und trage den gemessenen Wert ein. Je nach ausgewähltem Vitalwert erscheinen die passenden Eingabefelder. Bei Blutdruck sind zum Beispiel Systole und Diastole erforderlich.",
+      "bytes": 1173548,
+      "duration": 13.303686141967773
+    },
+    {
+      "index": 66,
+      "file": "assets/audio/guides/066.wav",
+      "text": "Prüfe Datum und Uhrzeit und trage den Inhalt des Folgeberichts ein.",
+      "synthesizedText": "Prüfe Datum und Uhrzeit und trage den Inhalt des Folgeberichts ein.",
+      "bytes": 417836,
+      "duration": 4.730837345123291
+    },
+    {
+      "index": 67,
+      "file": "assets/audio/guides/067.wav",
+      "text": "Prüfe Datum und Uhrzeit und trage die gemessenen Werte ein.",
+      "synthesizedText": "Prüfe Datum und Uhrzeit und trage die gemessenen Werte ein.",
+      "bytes": 368684,
+      "duration": 4.164433002471924
+    },
+    {
+      "index": 68,
+      "file": "assets/audio/guides/068.wav",
+      "text": "Prüfe Datum, Beginn und gegebenenfalls Ende der bereits durchgeführten Visite.",
+      "synthesizedText": "Prüfe Datum, Beginn und gegebenenfalls Ende der bereits durchgeführten Visite.",
+      "bytes": 491564,
+      "duration": 5.536575794219971
+    },
+    {
+      "index": 69,
+      "file": "assets/audio/guides/069.wav",
+      "text": "Prüfe im Pop-up-Fenster Datum und Uhrzeit. Ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht.",
+      "synthesizedText": "Prüfe im Pop-up-Fenster Datum und Uhrzeit. Ändere sie nur, wenn der tatsächliche Dokumentationszeitpunkt abweicht.",
+      "bytes": 706604,
+      "duration": 8.008880615234375
+    },
+    {
+      "index": 70,
+      "file": "assets/audio/guides/070.wav",
+      "text": "Prüfe im Pop-up-Fenster die Uhrzeit. Ändere sie nur, wenn der tatsächliche Zeitpunkt der Gabe abweicht.",
+      "synthesizedText": "Prüfe im Pop-up-Fenster die Uhrzeit. Ändere sie nur, wenn der tatsächliche Zeitpunkt der Gabe abweicht.",
+      "bytes": 632876,
+      "duration": 7.140008926391602
+    },
+    {
+      "index": 71,
+      "file": "assets/audio/guides/071.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Analyse“. Direkt darunter erscheinen die zu „Analyse“ gehörenden Funktionen.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste und öffne Analyse. Direkt darunter erscheinen die zu Analyse gehörenden Funktionen.",
+      "bytes": 749612,
+      "duration": 8.455567359924316
+    },
+    {
+      "index": 72,
+      "file": "assets/audio/guides/072.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Analyse“. Direkt darunter erscheinen die zu „Analyse“ gehörenden Funktionen. Wähle dort „Was war los?“, um die Übergabeansicht zu öffnen.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste und öffne Analyse. Direkt darunter erscheinen die zu Analyse gehörenden Funktionen. Wähle dort Was war los?, um die Übergabeansicht zu öffnen.",
+      "bytes": 1124396,
+      "duration": 12.725387573242188
+    },
+    {
+      "index": 73,
+      "file": "assets/audio/guides/073.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „An-/Abwesenheiten“.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste und öffne Doku-Erweitert. Direkt darunter erscheinen die zu Doku-Erweitert gehörenden Symbole. Wähle dort An- oder Abwesenheiten.",
+      "bytes": 1032236,
+      "duration": 11.668365478515625
+    },
+    {
+      "index": 74,
+      "file": "assets/audio/guides/074.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Formulare“.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste und öffne Doku-Erweitert. Direkt darunter erscheinen die zu Doku-Erweitert gehörenden Symbole. Wähle dort Formulare.",
+      "bytes": 952364,
+      "duration": 10.766769409179688
+    },
+    {
+      "index": 75,
+      "file": "assets/audio/guides/075.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Medikation“.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste und öffne Doku-Erweitert. Direkt darunter erscheinen die zu Doku-Erweitert gehörenden Symbole. Wähle dort Medikation.",
+      "bytes": 964652,
+      "duration": 10.871440887451172
+    },
+    {
+      "index": 76,
+      "file": "assets/audio/guides/076.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Visiten“.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste und öffne Doku-Erweitert. Direkt darunter erscheinen die zu Doku-Erweitert gehörenden Symbole. Wähle dort Visiten.",
+      "bytes": 946220,
+      "duration": 10.69395923614502
+    },
+    {
+      "index": 77,
+      "file": "assets/audio/guides/077.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku-Erweitert“. Direkt darunter erscheinen die zu „Doku-Erweitert“ gehörenden Symbole. Wähle dort „Vitalwerte“.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste und öffne Doku-Erweitert. Direkt darunter erscheinen die zu Doku-Erweitert gehörenden Symbole. Wähle dort Vitalwerte.",
+      "bytes": 958508,
+      "duration": 10.844600677490234
+    },
+    {
+      "index": 78,
+      "file": "assets/audio/guides/078.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste und öffne „Doku“. Direkt darunter erscheinen die zu „Doku“ gehörenden Funktionen. Wähle dort „Durchführungsnachweis“.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste und öffne Doku. Direkt darunter erscheinen die zu Doku gehörenden Funktionen. Wähle dort Durchführungsnachweis.",
+      "bytes": 933932,
+      "duration": 10.549208641052246
+    },
+    {
+      "index": 79,
+      "file": "assets/audio/guides/079.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste. Dort findest du „Doku-Erweitert“. Öffne „Doku-Erweitert“.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste. Dort findest du Doku-Erweitert. Öffne Doku-Erweitert.",
+      "bytes": 632876,
+      "duration": 7.128147125244141
+    },
+    {
+      "index": 80,
+      "file": "assets/audio/guides/080.wav",
+      "text": "Schau ganz oben in die feste grüne Hauptleiste. Dort findest du „Doku“. Öffne „Doku“.",
+      "synthesizedText": "Schau ganz oben in die feste grüne Hauptleiste. Dort findest du Doku. Öffne Doku.",
+      "bytes": 534572,
+      "duration": 6.027622222900391
+    },
+    {
+      "index": 81,
+      "file": "assets/audio/guides/081.wav",
+      "text": "Sieh die Medikation ausschließlich an. Nimm hier keinerlei Änderungen vor.",
+      "synthesizedText": "Sieh die Medikation ausschließlich an. Nimm hier keinerlei Änderungen vor.",
+      "bytes": 491564,
+      "duration": 5.520780086517334
+    },
+    {
+      "index": 82,
+      "file": "assets/audio/guides/082.wav",
+      "text": "Sobald die Wirksamkeitskontrolle zum vorgesehenen Zeitpunkt fällig ist, wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“.",
+      "synthesizedText": "Sobald die Wirksamkeitskontrolle zum vorgesehenen Zeitpunkt fällig ist, wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku.",
+      "bytes": 829484,
+      "duration": 9.367257118225098
+    },
+    {
+      "index": 83,
+      "file": "assets/audio/guides/083.wav",
+      "text": "Solange du in einem dieser beiden Bereiche bist, siehst du links die Bewohnerübersicht.",
+      "synthesizedText": "Solange du in einem dieser beiden Bereiche bist, siehst du links die Bewohnerübersicht.",
+      "bytes": 509996,
+      "duration": 5.777045249938965
+    },
+    {
+      "index": 84,
+      "file": "assets/audio/guides/084.wav",
+      "text": "Speichere den Eintrag und prüfe kurz, ob er in der Übersicht erscheint.",
+      "synthesizedText": "Speichere den Eintrag und prüfe kurz, ob er in der Übersicht erscheint.",
+      "bytes": 454700,
+      "duration": 5.089358329772949
+    },
+    {
+      "index": 85,
+      "file": "assets/audio/guides/085.wav",
+      "text": "Speichere und kontrolliere, ob die Visite unter den durchgeführten Visiten erscheint.",
+      "synthesizedText": "Speichere und kontrolliere, ob die Visite unter den durchgeführten Visiten erscheint.",
+      "bytes": 522284,
+      "duration": 5.915117263793945
+    },
+    {
+      "index": 86,
+      "file": "assets/audio/guides/086.wav",
+      "text": "Suche den Bericht, zu dem du einen Folgebericht erstellen möchtest.",
+      "synthesizedText": "Suche den Bericht, zu dem du einen Folgebericht erstellen möchtest.",
+      "bytes": 405548,
+      "duration": 4.5708746910095215
+    },
+    {
+      "index": 87,
+      "file": "assets/audio/guides/087.wav",
+      "text": "Suche den falschen Berichtseintrag und klicke ihn mit der rechten Maustaste an.",
+      "synthesizedText": "Suche den falschen Berichtseintrag und klicke ihn mit der rechten Maustaste an.",
+      "bytes": 473132,
+      "duration": 5.360929012298584
+    },
+    {
+      "index": 88,
+      "file": "assets/audio/guides/088.wav",
+      "text": "Suche die falsch abgezeichnete Durchführung.",
+      "synthesizedText": "Suche die falsch abgezeichnete Durchführung.",
+      "bytes": 270380,
+      "duration": 3.0034964084625244
+    },
+    {
+      "index": 89,
+      "file": "assets/audio/guides/089.wav",
+      "text": "Suche im Durchführungsnachweis „Bedarfsmedikation“ und klicke auf den kleinen Pfeil links daneben.",
+      "synthesizedText": "Suche im Durchführungsnachweis Bedarfsmedikation und klicke auf den kleinen Pfeil links daneben.",
+      "bytes": 565292,
+      "duration": 6.362264156341553
+    },
+    {
+      "index": 90,
+      "file": "assets/audio/guides/090.wav",
+      "text": "Trage bei „Anforderung“ ein, wer die Sprechstunde angefordert hat.",
+      "synthesizedText": "Trage bei Anforderung ein, wer die Sprechstunde angefordert hat.",
+      "bytes": 393260,
+      "duration": 4.452548027038574
+    },
+    {
+      "index": 91,
+      "file": "assets/audio/guides/091.wav",
+      "text": "Trage bei „Bis“ nur dann Datum und Uhrzeit ein, wenn der Endzeitpunkt sicher feststeht. Wenn du den Endzeitpunkt noch nicht sicher kennst, lässt du „Bis“ einfach leer. Bitte nicht schätzen.",
+      "synthesizedText": "Trage bei Bis nur dann Datum und Uhrzeit ein, wenn der Endzeitpunkt sicher feststeht. Wenn du den Endzeitpunkt noch nicht sicher kennst, lässt du Bis einfach leer. Bitte nicht schätzen.",
+      "bytes": 1069100,
+      "duration": 12.073980331420898
+    },
+    {
+      "index": 92,
+      "file": "assets/audio/guides/092.wav",
+      "text": "Trage bei „Von“ immer Datum und Uhrzeit ein.",
+      "synthesizedText": "Trage bei Von immer Datum und Uhrzeit ein.",
+      "bytes": 276524,
+      "duration": 3.111262559890747
+    },
+    {
+      "index": 93,
+      "file": "assets/audio/guides/093.wav",
+      "text": "Trage den Grund ein, zum Beispiel „Kontrollbesuch“, und wähle den Ort: Einrichtung, beim Arzt, telefonisch oder per Mail.",
+      "synthesizedText": "Trage den Grund ein, zum Beispiel Kontrollbesuch, und wähle den Ort: Einrichtung, beim Arzt, telefonisch oder per Mail.",
+      "bytes": 737324,
+      "duration": 8.29755687713623
+    },
+    {
+      "index": 94,
+      "file": "assets/audio/guides/094.wav",
+      "text": "Trage einen Grund der Einweisung nur ein, wenn er für den Vorgang benötigt wird.",
+      "synthesizedText": "Trage einen Grund der Einweisung nur ein, wenn er für den Vorgang benötigt wird.",
+      "bytes": 485420,
+      "duration": 5.471006870269775
+    },
+    {
+      "index": 95,
+      "file": "assets/audio/guides/095.wav",
+      "text": "Trage einen nachvollziehbaren Stornogrund ein und bestätige mit „OK“.",
+      "synthesizedText": "Trage einen nachvollziehbaren Stornogrund ein und bestätige mit OK.",
+      "bytes": 442412,
+      "duration": 4.98270845413208
+    },
+    {
+      "index": 96,
+      "file": "assets/audio/guides/096.wav",
+      "text": "Trage im Feld „Bemerkung zur Bearbeitung“ einen nachvollziehbaren Grund ein.",
+      "synthesizedText": "Trage im Feld Bemerkung zur Bearbeitung einen nachvollziehbaren Grund ein.",
+      "bytes": 466988,
+      "duration": 5.294004917144775
+    },
+    {
+      "index": 97,
+      "file": "assets/audio/guides/097.wav",
+      "text": "Trage rechts im Feld „Bemerkung“ den Inhalt und die wesentlichen Ergebnisse der Visite ein.",
+      "synthesizedText": "Trage rechts im Feld Bemerkung den Inhalt und die wesentlichen Ergebnisse der Visite ein.",
+      "bytes": 540716,
+      "duration": 6.0658464431762695
+    },
+    {
+      "index": 98,
+      "file": "assets/audio/guides/098.wav",
+      "text": "Wähle „Alle ausklappen“, damit sämtliche Einträge vollständig sichtbar werden.",
+      "synthesizedText": "Wähle Alle ausklappen, damit sämtliche Einträge vollständig sichtbar werden.",
+      "bytes": 466988,
+      "duration": 5.2249908447265625
+    },
+    {
+      "index": 99,
+      "file": "assets/audio/guides/099.wav",
+      "text": "Wähle „Durchführung stornieren“.",
+      "synthesizedText": "Wähle Durchführung stornieren.",
+      "bytes": 196652,
+      "duration": 2.2085258960723877
+    },
+    {
+      "index": 100,
+      "file": "assets/audio/guides/100.wav",
+      "text": "Wähle „Durchführungsnachweis“.",
+      "synthesizedText": "Wähle Durchführungsnachweis.",
+      "bytes": 190508,
+      "duration": 2.1524109840393066
+    },
+    {
+      "index": 101,
+      "file": "assets/audio/guides/101.wav",
+      "text": "Wähle „Durchstreichen“.",
+      "synthesizedText": "Wähle Durchstreichen.",
+      "bytes": 159788,
+      "duration": 1.7770291566848755
+    },
+    {
+      "index": 102,
+      "file": "assets/audio/guides/102.wav",
+      "text": "Wähle „Eintrag bearbeiten“.",
+      "synthesizedText": "Wähle Eintrag bearbeiten.",
+      "bytes": 178220,
+      "duration": 2.0056450366973877
+    },
+    {
+      "index": 103,
+      "file": "assets/audio/guides/103.wav",
+      "text": "Wähle „Folgebericht erstellen“.",
+      "synthesizedText": "Wähle Folgebericht erstellen.",
+      "bytes": 196652,
+      "duration": 2.1823291778564453
+    },
+    {
+      "index": 104,
+      "file": "assets/audio/guides/104.wav",
+      "text": "Wähle „Notfallblatt aufrufen“.",
+      "synthesizedText": "Wähle Notfallblatt aufrufen.",
+      "bytes": 190508,
+      "duration": 2.113227367401123
+    },
+    {
+      "index": 105,
+      "file": "assets/audio/guides/105.wav",
+      "text": "Wähle „Was war los?“.",
+      "synthesizedText": "Wähle Was war los?.",
+      "bytes": 172076,
+      "duration": 1.8977879285812378
+    },
+    {
+      "index": 106,
+      "file": "assets/audio/guides/106.wav",
+      "text": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste „Doku“.",
+      "synthesizedText": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku.",
+      "bytes": 442412,
+      "duration": 4.976106643676758
+    },
+    {
+      "index": 107,
+      "file": "assets/audio/guides/107.wav",
+      "text": "Wähle darunter „Durchführungsnachweis“ und suche dort die automatisch angelegte Wirksamkeitskontrolle zur Bedarfsmedikation.",
+      "synthesizedText": "Wähle darunter Durchführungsnachweis und suche dort die automatisch angelegte Wirksamkeitskontrolle zur Bedarfsmedikation.",
+      "bytes": 718892,
+      "duration": 8.119353294372559
+    },
+    {
+      "index": 108,
+      "file": "assets/audio/guides/108.wav",
+      "text": "Wähle darunter „Durchführungsnachweis“.",
+      "synthesizedText": "Wähle darunter Durchführungsnachweis.",
+      "bytes": 233516,
+      "duration": 2.624823570251465
+    },
+    {
+      "index": 109,
+      "file": "assets/audio/guides/109.wav",
+      "text": "Wähle das benötigte Formular aus, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.",
+      "synthesizedText": "Wähle das benötigte Formular aus, zum Beispiel Anfallsprotokoll, Fallgespräch, Gesprächsprotokoll oder Sturzprotokoll.",
+      "bytes": 737324,
+      "duration": 8.32972526550293
+    },
+    {
+      "index": 110,
+      "file": "assets/audio/guides/110.wav",
+      "text": "Wähle das gewünschte Bedarfsmedikament aus und setze rechts im kleinen Kästchen den Haken.",
+      "synthesizedText": "Wähle das gewünschte Bedarfsmedikament aus und setze rechts im kleinen Kästchen den Haken.",
+      "bytes": 528428,
+      "duration": 5.979348659515381
+    },
+    {
+      "index": 111,
+      "file": "assets/audio/guides/111.wav",
+      "text": "Wähle den gewünschten Bewohner. Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü und wählst „Notfallblatt aufrufen“.",
+      "synthesizedText": "Wähle den gewünschten Bewohner. Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü und wählst Notfallblatt aufrufen.",
+      "bytes": 958508,
+      "duration": 10.852054595947266
+    },
+    {
+      "index": 112,
+      "file": "assets/audio/guides/112.wav",
+      "text": "Wähle den passenden Status aus.",
+      "synthesizedText": "Wähle den passenden Status aus.",
+      "bytes": 215084,
+      "duration": 2.383052110671997
+    },
+    {
+      "index": 113,
+      "file": "assets/audio/guides/113.wav",
+      "text": "Wähle die benötigten Vitalwerte aus und trage die Werte ein.",
+      "synthesizedText": "Wähle die benötigten Vitalwerte aus und trage die Werte ein.",
+      "bytes": 368684,
+      "duration": 4.125253200531006
+    },
+    {
+      "index": 114,
+      "file": "assets/audio/guides/114.wav",
+      "text": "Wähle die benötigten Vitalwerte für die gemeinsame Erfassung aus.",
+      "synthesizedText": "Wähle die benötigten Vitalwerte für die gemeinsame Erfassung aus.",
+      "bytes": 399404,
+      "duration": 4.466974258422852
+    },
+    {
+      "index": 115,
+      "file": "assets/audio/guides/115.wav",
+      "text": "Wähle die gewünschte Maßnahme aus, zum Beispiel „Klienten-Team Sitzung“ oder „Krise“.",
+      "synthesizedText": "Wähle die gewünschte Maßnahme aus, zum Beispiel Klienten-Team Sitzung oder Krise.",
+      "bytes": 509996,
+      "duration": 5.727312088012695
+    },
+    {
+      "index": 116,
+      "file": "assets/audio/guides/116.wav",
+      "text": "Wähle die passende Berichtskategorie aus. Das große Textfeld für den Bericht ist in dieser Maske bereits unten sichtbar; es öffnet sich durch die Kategorieauswahl nicht erst neu.",
+      "synthesizedText": "Wähle die passende Berichtskategorie aus. Das große Textfeld für den Bericht ist in dieser Maske bereits unten sichtbar; es öffnet sich durch die Kategorieauswahl nicht erst neu.",
+      "bytes": 1032236,
+      "duration": 11.639461517333984
+    },
+    {
+      "index": 117,
+      "file": "assets/audio/guides/117.wav",
+      "text": "Wähle die passende Kategorie aus.",
+      "synthesizedText": "Wähle die passende Kategorie aus.",
+      "bytes": 221228,
+      "duration": 2.4504969120025635
+    },
+    {
+      "index": 118,
+      "file": "assets/audio/guides/118.wav",
+      "text": "Wähle direkt darunter „Durchführungsnachweis“.",
+      "synthesizedText": "Wähle direkt darunter Durchführungsnachweis.",
+      "bytes": 270380,
+      "duration": 3.010739803314209
+    },
+    {
+      "index": 119,
+      "file": "assets/audio/guides/119.wav",
+      "text": "Wähle direkt darunter „Visiten“.",
+      "synthesizedText": "Wähle direkt darunter Visiten.",
+      "bytes": 202796,
+      "duration": 2.2588281631469727
+    },
+    {
+      "index": 120,
+      "file": "assets/audio/guides/120.wav",
+      "text": "Wähle direkt darunter „Vitalwerte“.",
+      "synthesizedText": "Wähle direkt darunter Vitalwerte.",
+      "bytes": 215084,
+      "duration": 2.3971307277679443
+    },
+    {
+      "index": 121,
+      "file": "assets/audio/guides/121.wav",
+      "text": "Wähle im Fenster „Klienten auswählen“ den Bewohner aus, für den du die bereits erfolgte Visite dokumentierst.",
+      "synthesizedText": "Wähle im Fenster Klienten auswählen den Bewohner aus, für den du die bereits erfolgte Visite dokumentierst.",
+      "bytes": 632876,
+      "duration": 7.115670680999756
+    },
+    {
+      "index": 122,
+      "file": "assets/audio/guides/122.wav",
+      "text": "Wähle im Pop-up den Vitalwert aus, den du erfassen möchtest, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.",
+      "synthesizedText": "Wähle im Pop-up den Vitalwert aus, den du erfassen möchtest, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.",
+      "bytes": 995372,
+      "duration": 11.24448013305664
+    },
+    {
+      "index": 123,
+      "file": "assets/audio/guides/123.wav",
+      "text": "Wähle im Pop-up-Fenster den Vitalwert aus, den du erfassen möchtest.",
+      "synthesizedText": "Wähle im Pop-up-Fenster den Vitalwert aus, den du erfassen möchtest.",
+      "bytes": 436268,
+      "duration": 4.9296345710754395
+    },
+    {
+      "index": 124,
+      "file": "assets/audio/guides/124.wav",
+      "text": "Wähle zuerst den Bewohner aus, für den du das Notfallblatt benötigst.",
+      "synthesizedText": "Wähle zuerst den Bewohner aus, für den du das Notfallblatt benötigst.",
+      "bytes": 423980,
+      "duration": 4.793042182922363
+    },
+    {
+      "index": 125,
+      "file": "assets/audio/guides/125.wav",
+      "text": "Wähle zuerst den gewünschten Bewohner aus.",
+      "synthesizedText": "Wähle zuerst den gewünschten Bewohner aus.",
+      "bytes": 258092,
+      "duration": 2.9175398349761963
+    },
+    {
+      "index": 126,
+      "file": "assets/audio/guides/126.wav",
+      "text": "Warte, bis sich das Notfallblatt in Word öffnet. Das kann bis zu etwa drei Minuten dauern. Verhindere Standby und starte den Vorgang nicht mehrfach.",
+      "synthesizedText": "Warte, bis sich das Notfallblatt in Word öffnet. Das kann bis zu etwa drei Minuten dauern. Verhindere Standby und starte den Vorgang nicht mehrfach.",
+      "bytes": 872492,
+      "duration": 9.83326244354248
+    },
+    {
+      "index": 127,
+      "file": "assets/audio/guides/127.wav",
+      "text": "Wechsle innerhalb von „Doku-Erweitert“ zu „Vitalwerte Sammelerf.“.",
+      "synthesizedText": "Wechsle innerhalb von Doku-Erweitert zu Vitalwerte Sammelerf..",
+      "bytes": 405548,
+      "duration": 4.5339179039001465
+    },
+    {
+      "index": 128,
+      "file": "assets/audio/guides/128.wav",
+      "text": "Wenn der Bericht für die nächste Schicht wichtig ist, hake „Wichtig für Schichtübergabe“ an. Wenn nicht, lässt du den Haken frei. In das große Textfeld darunter trägst du ein, was dokumentiert werden soll.",
+      "synthesizedText": "Wenn der Bericht für die nächste Schicht wichtig ist, hake Wichtig für Schichtübergabe an. Wenn nicht, lässt du den Haken frei. In das große Textfeld darunter trägst du ein, was dokumentiert werden soll.",
+      "bytes": 1148972,
+      "duration": 13.00420093536377
+    },
+    {
+      "index": 129,
+      "file": "assets/audio/guides/129.wav",
+      "text": "Wenn die Maßnahme für die nächste Schicht wichtig ist, hake „Wichtig für Schichtübergabe“ an. Wenn nicht, lässt du den Haken frei. In das große Textfeld darunter schreibst du kurz, was passiert ist und was du gemacht beziehungsweise durchgeführt hast.",
+      "synthesizedText": "Wenn die Maßnahme für die nächste Schicht wichtig ist, hake Wichtig für Schichtübergabe an. Wenn nicht, lässt du den Haken frei. In das große Textfeld darunter schreibst du kurz, was passiert ist und was du gemacht beziehungsweise durchgeführt hast.",
+      "bytes": 1400876,
+      "duration": 15.835290908813477
+    },
+    {
+      "index": 130,
+      "file": "assets/audio/guides/130.wav",
+      "text": "Wenn die Wirksamkeitskontrolle fällig ist, öffnest du sie im Durchführungsnachweis, hakst sie ab und trägst kurz ein, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.",
+      "synthesizedText": "Wenn die Wirksamkeitskontrolle fällig ist, öffnest du sie im Durchführungsnachweis, hakst sie ab und trägst kurz ein, ob und wie die Bedarfsmedikation gewirkt beziehungsweise geholfen hat.",
+      "bytes": 1087532,
+      "duration": 12.287954330444336
+    },
+    {
+      "index": 131,
+      "file": "assets/audio/guides/131.wav",
+      "text": "Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste.",
+      "synthesizedText": "Wenn du das Formular fertig bearbeitet hast, speicherst du es oben links in der Leiste.",
+      "bytes": 516140,
+      "duration": 5.840422630310059
+    },
+    {
+      "index": 132,
+      "file": "assets/audio/guides/132.wav",
+      "text": "Wichtig: Setze die Visite niemals auf „abgeschlossen“. In eurer Arbeitsweise wird eine bearbeitete Visite immer auf den Status „durchgeführt“ gestellt.",
+      "synthesizedText": "Wichtig: Setze die Visite niemals auf abgeschlossen. In eurer Arbeitsweise wird eine bearbeitete Visite immer auf den Status durchgeführt gestellt.",
+      "bytes": 927788,
+      "duration": 10.500733375549316
+    },
+    {
+      "index": 133,
+      "file": "assets/audio/guides/133.wav",
+      "text": "Zum vorgesehenen Zeitpunkt findest du dort die automatisch angelegte Wirksamkeitskontrolle zur zuvor dokumentierten Bedarfsmedikation.",
+      "synthesizedText": "Zum vorgesehenen Zeitpunkt findest du dort die automatisch angelegte Wirksamkeitskontrolle zur zuvor dokumentierten Bedarfsmedikation.",
+      "bytes": 792620,
+      "duration": 8.982756614685059
+    },
+    {
+      "index": 134,
+      "file": "assets/audio/guides/134.wav",
+      "text": "Okay. Schau oben in die grüne Reiterleiste. Siehst du Doku-Erweitert?",
+      "synthesizedText": "Okay. Schau oben in die grüne Reiterleiste. Siehst du Doku-Erweitert?",
+      "bytes": 491564,
+      "duration": 5.53321647644043
+    },
+    {
+      "index": 135,
+      "file": "assets/audio/guides/135.wav",
+      "text": "Suche in Doku-Erweitert nach Vitalwerte. Siehst du Vitalwerte?",
+      "synthesizedText": "Suche in Doku-Erweitert nach Vitalwerte. Siehst du Vitalwerte?",
+      "bytes": 411692,
+      "duration": 4.600667476654053
+    },
+    {
+      "index": 136,
+      "file": "assets/audio/guides/136.wav",
+      "text": "Vitalwerte Sammelerfassung ist für mehrere Werte. Siehst du daneben auch Vitalwerte?",
+      "synthesizedText": "Vitalwerte Sammelerfassung ist für mehrere Werte. Siehst du daneben auch Vitalwerte?",
+      "bytes": 516140,
+      "duration": 5.847232341766357
+    },
+    {
+      "index": 137,
+      "file": "assets/audio/guides/137.wav",
+      "text": "Der Menüpunkt ist dort nicht zu sehen. Prüfe den Einstieg noch einmal. Wenn er weiter fehlt, frag kurz eine Kollegin oder einen Kollegen.",
+      "synthesizedText": "Der Menüpunkt ist dort nicht zu sehen. Prüfe den Einstieg noch einmal. Wenn er weiter fehlt, frag kurz eine Kollegin oder einen Kollegen.",
+      "bytes": 804908,
+      "duration": 9.107442855834961
+    },
+    {
+      "index": 138,
+      "file": "assets/audio/guides/138.wav",
+      "text": "Bei dir heißt der Punkt anders. Welche Bezeichnung siehst du?",
+      "synthesizedText": "Bei dir heißt der Punkt anders. Welche Bezeichnung siehst du?",
+      "bytes": 380972,
+      "duration": 4.301084041595459
+    },
+    {
+      "index": 139,
+      "file": "assets/audio/guides/139.wav",
+      "text": "Okay. Was siehst du gerade?",
+      "synthesizedText": "Okay. Was siehst du gerade?",
+      "bytes": 233516,
+      "duration": 2.6420605182647705
+    },
+    {
+      "index": 140,
+      "file": "assets/audio/guides/140.wav",
+      "text": "Perfekt. Öffne jetzt Vitalwerte. Wenn die Ansicht offen ist, tippe auf Weiter.",
+      "synthesizedText": "Perfekt. Öffne jetzt Vitalwerte. Wenn die Ansicht offen ist, tippe auf Weiter.",
+      "bytes": 522284,
+      "duration": 5.863840579986572
+    },
+    {
+      "index": 141,
+      "file": "assets/audio/guides/141.wav",
+      "text": "Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen.",
+      "synthesizedText": "Dazu habe ich keine passende Anleitung. Frag bitte kurz eine Kollegin oder einen Kollegen.",
+      "bytes": 559148,
+      "duration": 6.3281331062316895
+    },
+    {
+      "index": 142,
+      "file": "assets/audio/guides/142.wav",
+      "text": "Suche zuerst Doku-Erweitert. Hast du ihn gefunden?",
+      "synthesizedText": "Suche zuerst Doku-Erweitert. Hast du ihn gefunden?",
+      "bytes": 319532,
+      "duration": 3.561673641204834
+    },
+    {
+      "index": 143,
+      "file": "assets/audio/guides/143.wav",
+      "text": "Suche zuerst Vitalwerte. Hast du ihn gefunden?",
+      "synthesizedText": "Suche zuerst Vitalwerte. Hast du ihn gefunden?",
+      "bytes": 301100,
+      "duration": 3.3764915466308594
+    },
+    {
+      "index": 144,
+      "file": "assets/audio/guides/144.wav",
+      "text": "Suche zuerst Analyse. Hast du ihn gefunden?",
+      "synthesizedText": "Suche zuerst Analyse. Hast du ihn gefunden?",
+      "bytes": 276524,
+      "duration": 3.1082117557525635
+    },
+    {
+      "index": 145,
+      "file": "assets/audio/guides/145.wav",
+      "text": "Wobei brauchst du Hilfe? Nenne bitte den Bereich oder die Funktion, zum Beispiel Vitalwerte, Berichte, Visiten, Formulare oder An-/Abwesenheiten.",
+      "synthesizedText": "Wobei brauchst du Hilfe? Nenne bitte den Bereich oder die Funktion, zum Beispiel Vitalwerte, Berichte, Visiten, Formulare oder An- oder Abwesenheiten.",
+      "bytes": 933932,
+      "duration": 10.524554252624512
+    },
+    {
+      "index": 146,
+      "file": "assets/audio/guides/146.wav",
+      "text": "Suche zuerst Doku. Hast du es gefunden?",
+      "synthesizedText": "Suche zuerst Doku. Hast du es gefunden?",
+      "bytes": 270380,
+      "duration": 3.0029537677764893
+    },
+    {
+      "index": 147,
+      "file": "assets/audio/guides/147.wav",
+      "text": "Öffne oben in der festen grünen Hauptleiste Doku und wähle im weißen Funktionsband direkt darunter Bericht. Ist der Bereich Berichte geöffnet?",
+      "synthesizedText": "Öffne oben in der festen grünen Hauptleiste Doku und wähle im weißen Funktionsband direkt darunter Bericht. Ist der Bereich Berichte geöffnet?",
+      "bytes": 798764,
+      "duration": 9.019832611083984
+    },
+    {
+      "index": 148,
+      "file": "assets/audio/guides/148.wav",
+      "text": "Möchtest du einen einzelnen Wert oder mehrere Werte über die Sammelerfassung eintragen?",
+      "synthesizedText": "Möchtest du einen einzelnen Wert oder mehrere Werte über die Sammelerfassung eintragen?",
+      "bytes": 497708,
+      "duration": 5.6409735679626465
+    },
+    {
+      "index": 149,
+      "file": "assets/audio/guides/149.wav",
+      "text": "Geht es um einen einzelnen Vitalwert oder um mehrere Werte gleichzeitig?",
+      "synthesizedText": "Geht es um einen einzelnen Vitalwert oder um mehrere Werte gleichzeitig?",
+      "bytes": 442412,
+      "duration": 4.98915958404541
+    },
+    {
+      "index": 150,
+      "file": "assets/audio/guides/150.wav",
+      "text": "Hier geht es nur ums Nachsehen der Medikation. Ändere nichts.",
+      "synthesizedText": "Hier geht es nur ums Nachsehen der Medikation. Ändere nichts.",
+      "bytes": 417836,
+      "duration": 4.711041450500488
+    },
+    {
+      "index": 151,
+      "file": "assets/audio/guides/151.wav",
+      "text": "Der Ablauf ist erledigt. Kontrolliere zum Schluss den Eintrag.",
+      "synthesizedText": "Der Ablauf ist erledigt. Kontrolliere zum Schluss den Eintrag.",
+      "bytes": 411692,
+      "duration": 4.620576858520508
+    },
+    {
+      "index": 152,
+      "file": "assets/audio/guides/152.wav",
+      "text": "Ich habe die Antwort im Chat angezeigt.",
+      "synthesizedText": "Ich habe die Antwort im Chat angezeigt.",
+      "bytes": 251948,
+      "duration": 2.8511300086975098
+    },
+    {
+      "index": 153,
+      "file": "assets/audio/guides/153.wav",
+      "text": "Ganz oben in der festen grünen Hauptleiste befinden sich unter anderem Doku, Doku-Erweitert, Planung und Analyse. Wenn du einen Hauptbereich auswählst, erscheinen direkt darunter die dazugehörigen Funktionen im weißen Funktionsband.",
+      "synthesizedText": "Ganz oben in der festen grünen Hauptleiste befinden sich unter anderem Doku, Doku-Erweitert, Planung und Analyse. Wenn du einen Hauptbereich auswählst, erscheinen direkt darunter die dazugehörigen Funktionen im weißen Funktionsband.",
+      "bytes": 1327148,
+      "duration": 15.037320137023926
+    },
+    {
+      "index": 154,
+      "file": "assets/audio/guides/154.wav",
+      "text": "Doku-Erweitert ist ein Hauptbereich ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch Doku, Planung und Analyse. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.",
+      "synthesizedText": "Doku-Erweitert ist ein Hauptbereich ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch Doku, Planung und Analyse. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.",
+      "bytes": 1388588,
+      "duration": 15.693099975585938
+    },
+    {
+      "index": 155,
+      "file": "assets/audio/guides/155.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku in der festen grünen Hauptleiste. Nach der Auswahl erscheint direkt darunter das weiße Funktionsband; dort findest du den Durchführungsnachweis.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku in der festen grünen Hauptleiste. Nach der Auswahl erscheint direkt darunter das weiße Funktionsband; dort findest du den Durchführungsnachweis.",
+      "bytes": 1056812,
+      "duration": 11.927443504333496
+    },
+    {
+      "index": 156,
+      "file": "assets/audio/guides/156.wav",
+      "text": "Beim gewünschten Bewohner kannst du Vitalwerte entweder über Doku und danach Vitalwerte oder über Doku-Erweitert und danach Vitalwerte öffnen. Beide Wege führen zum selben Bereich.",
+      "synthesizedText": "Beim gewünschten Bewohner kannst du Vitalwerte entweder über Doku und danach Vitalwerte oder über Doku-Erweitert und danach Vitalwerte öffnen. Beide Wege führen zum selben Bereich.",
+      "bytes": 1026092,
+      "duration": 11.606446266174316
+    },
+    {
+      "index": 157,
+      "file": "assets/audio/guides/157.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen grünen Hauptleiste. Direkt darunter findest du Visiten.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen grünen Hauptleiste. Direkt darunter findest du Visiten.",
+      "bytes": 718892,
+      "duration": 8.114043235778809
+    },
+    {
+      "index": 158,
+      "file": "assets/audio/guides/158.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen grünen Hauptleiste. Direkt darunter findest du Medikation.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen grünen Hauptleiste. Direkt darunter findest du Medikation.",
+      "bytes": 737324,
+      "duration": 8.30141830444336
+    },
+    {
+      "index": 159,
+      "file": "assets/audio/guides/159.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen grünen Hauptleiste. Direkt darunter findest du Formulare.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen grünen Hauptleiste. Direkt darunter findest du Formulare.",
+      "bytes": 731180,
+      "duration": 8.2352876663208
+    },
+    {
+      "index": 160,
+      "file": "assets/audio/guides/160.wav",
+      "text": "Beim gewünschten Bewohner kannst du An-/Abwesenheiten entweder über Doku oder über Doku-Erweitert öffnen. Beide Wege führen zum selben Bereich.",
+      "synthesizedText": "Beim gewünschten Bewohner kannst du An- oder Abwesenheiten entweder über Doku oder über Doku-Erweitert öffnen. Beide Wege führen zum selben Bereich.",
+      "bytes": 841772,
+      "duration": 9.529972076416016
+    },
+    {
+      "index": 161,
+      "file": "assets/audio/guides/161.wav",
+      "text": "Bericht ist kein Hauptbereich der grünen Leiste. Öffne beim gewünschten Bewohner oben Doku und wähle im weißen Funktionsband direkt darunter Bericht.",
+      "synthesizedText": "Bericht ist kein Hauptbereich der grünen Leiste. Öffne beim gewünschten Bewohner oben Doku und wähle im weißen Funktionsband direkt darunter Bericht.",
+      "bytes": 860204,
+      "duration": 9.703478813171387
+    },
+    {
+      "index": 162,
+      "file": "assets/audio/guides/162.wav",
+      "text": "Öffne oben zuerst Analyse. Analyse steht ganz oben in der festen grünen Leiste. Nach der Auswahl erscheinen darunter die zugehörigen Unterpunkte; dort findest du Was war los. Darüber öffnest du die Übergabeansicht.",
+      "synthesizedText": "Öffne oben zuerst Analyse. Analyse steht ganz oben in der festen grünen Leiste. Nach der Auswahl erscheinen darunter die zugehörigen Unterpunkte; dort findest du Was war los. Darüber öffnest du die Übergabeansicht.",
+      "bytes": 1234988,
+      "duration": 13.949847221374512
+    },
+    {
+      "index": 163,
+      "file": "assets/audio/guides/163.wav",
+      "text": "Den Reiter Analyse findest du oben in der festen grünen Leiste. Nach der Auswahl erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "synthesizedText": "Den Reiter Analyse findest du oben in der festen grünen Leiste. Nach der Auswahl erscheinen direkt darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "bytes": 927788,
+      "duration": 10.498046875
+    },
+    {
+      "index": 164,
+      "file": "assets/audio/guides/164.wav",
+      "text": "Bleibe beim gewünschten Bewohner. Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü und wählst Notfallblatt aufrufen.",
+      "synthesizedText": "Bleibe beim gewünschten Bewohner. Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü und wählst Notfallblatt aufrufen.",
+      "bytes": 964652,
+      "duration": 10.87692928314209
+    },
+    {
+      "index": 165,
+      "file": "assets/audio/guides/165.wav",
+      "text": "Öffne zuerst unter Doku entweder Bericht oder den Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.",
+      "synthesizedText": "Öffne zuerst unter Doku entweder Bericht oder den Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.",
+      "bytes": 1130540,
+      "duration": 12.77303695678711
+    },
+    {
+      "index": 166,
+      "file": "assets/audio/guides/166.wav",
+      "text": "Doku ist ein Hauptbereich ganz oben in der festen grünen Hauptleiste und liegt zwischen Planung und Doku-Erweitert. Nach Auswahl von Doku erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.",
+      "synthesizedText": "Doku ist ein Hauptbereich ganz oben in der festen grünen Hauptleiste und liegt zwischen Planung und Doku-Erweitert. Nach Auswahl von Doku erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.",
+      "bytes": 1234988,
+      "duration": 13.953632354736328
+    },
+    {
+      "index": 167,
+      "file": "assets/audio/guides/167.wav",
+      "text": "„Vitalwerte Sammelerf.“ ist ein eigener Eintrag neben „Vitalwerte“.",
+      "synthesizedText": "Vitalwerte Sammelerf. ist ein eigener Eintrag neben Vitalwerte.",
+      "bytes": 411692,
+      "duration": 4.647861480712891
+    },
+    {
+      "index": 168,
+      "file": "assets/audio/guides/168.wav",
+      "text": "„Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge unter „Doku-Erweitert“.",
+      "synthesizedText": "Vitalwerte und Vitalwerte Sammelerf. sind zwei getrennte Einträge unter Doku-Erweitert.",
+      "bytes": 546860,
+      "duration": 6.197211265563965
+    },
+    {
+      "index": 169,
+      "file": "assets/audio/guides/169.wav",
+      "text": "Bei „Kontakt – alles außer Arzt“ ist automatisch ein Fallgespräch verknüpft. Lasse es bestehen, wenn es benötigt wird. Andernfalls Protokollnamen anklicken und mit dem kleinen roten X entfernen.",
+      "synthesizedText": "Bei Kontakt - alles außer Arzt ist automatisch ein Fallgespräch verknüpft. Lasse es bestehen, wenn es benötigt wird. Andernfalls Protokollnamen anklicken und mit dem kleinen roten X entfernen.",
+      "bytes": 1136684,
+      "duration": 12.821977615356445
+    },
+    {
+      "index": 170,
+      "file": "assets/audio/guides/170.wav",
+      "text": "Bei „Sturzereignis“ kann automatisch ein zusätzliches Protokoll verknüpft sein. Entferne es nur, wenn es nicht benötigt wird.",
+      "synthesizedText": "Bei Sturzereignis kann automatisch ein zusätzliches Protokoll verknüpft sein. Entferne es nur, wenn es nicht benötigt wird.",
+      "bytes": 743468,
+      "duration": 8.409666061401367
+    },
+    {
+      "index": 171,
+      "file": "assets/audio/guides/171.wav",
+      "text": "Bei „Von“ gehören Datum und Uhrzeit immer dazu.",
+      "synthesizedText": "Bei Von gehören Datum und Uhrzeit immer dazu.",
+      "bytes": 301100,
+      "duration": 3.3635871410369873
+    },
+    {
+      "index": 172,
+      "file": "assets/audio/guides/172.wav",
+      "text": "Berichte werden zur Nachvollziehbarkeit durchgestrichen und nicht endgültig gelöscht.",
+      "synthesizedText": "Berichte werden zur Nachvollziehbarkeit durchgestrichen und nicht endgültig gelöscht.",
+      "bytes": 503852,
+      "duration": 5.683129787445068
+    },
+    {
+      "index": 173,
+      "file": "assets/audio/guides/173.wav",
+      "text": "Bis zu etwa drei Minuten warten, Standby verhindern und nicht mehrfach auf OK klicken.",
+      "synthesizedText": "Bis zu etwa drei Minuten warten, Standby verhindern und nicht mehrfach auf OK klicken.",
+      "bytes": 540716,
+      "duration": 6.090816020965576
+    },
+    {
+      "index": 174,
+      "file": "assets/audio/guides/174.wav",
+      "text": "Bleibe in der geöffneten Visite und suche nach der Statusauswahl. Die genaue Position kann je nach Ansicht und Berechtigung abweichen.",
+      "synthesizedText": "Bleibe in der geöffneten Visite und suche nach der Statusauswahl. Die genaue Position kann je nach Ansicht und Berechtigung abweichen.",
+      "bytes": 768044,
+      "duration": 8.668206214904785
+    },
+    {
+      "index": 175,
+      "file": "assets/audio/guides/175.wav",
+      "text": "Das Feld „Mitarbeiter“ bleibt ohne Mitarbeiter beziehungsweise leer.",
+      "synthesizedText": "Das Feld Mitarbeiter bleibt ohne Mitarbeiter beziehungsweise leer.",
+      "bytes": 411692,
+      "duration": 4.60605525970459
+    },
+    {
+      "index": 176,
+      "file": "assets/audio/guides/176.wav",
+      "text": "Das grüne Plus befindet sich oben links im Bereich „Berichte“.",
+      "synthesizedText": "Das grüne Plus befindet sich oben links im Bereich Berichte.",
+      "bytes": 368684,
+      "duration": 4.1382975578308105
+    },
+    {
+      "index": 177,
+      "file": "assets/audio/guides/177.wav",
+      "text": "Das kleine rote X entfernt ausschließlich die Verknüpfung des zusätzlichen Protokolls. Der Bericht bleibt erhalten.",
+      "synthesizedText": "Das kleine rote X entfernt ausschließlich die Verknüpfung des zusätzlichen Protokolls. Der Bericht bleibt erhalten.",
+      "bytes": 688172,
+      "duration": 7.79128885269165
+    },
+    {
+      "index": 178,
+      "file": "assets/audio/guides/178.wav",
+      "text": "Das rote Kreuz ist relativ klein und befindet sich ganz oben links.",
+      "synthesizedText": "Das rote Kreuz ist relativ klein und befindet sich ganz oben links.",
+      "bytes": 423980,
+      "duration": 4.793290615081787
+    },
+    {
+      "index": 179,
+      "file": "assets/audio/guides/179.wav",
+      "text": "Wenn du bei einem Feld unsicher bist, kläre die fachliche Angabe bitte im Team.",
+      "synthesizedText": "Wenn du bei einem Feld unsicher bist, kläre die fachliche Angabe bitte im Team.",
+      "bytes": 479276,
+      "duration": 5.381701946258545
+    },
+    {
+      "index": 180,
+      "file": "assets/audio/guides/180.wav",
+      "text": "Die Bezeichnung lautet „Alle ausklappen“ und erscheint rechts neben „Alle anzeigen“.",
+      "synthesizedText": "Die Bezeichnung lautet Alle ausklappen und erscheint rechts neben Alle anzeigen.",
+      "bytes": 479276,
+      "duration": 5.426599025726318
+    },
+    {
+      "index": 181,
+      "file": "assets/audio/guides/181.wav",
+      "text": "Dieser Ablauf ist ausschließlich zum Ansehen. Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, ergänzen oder löschen.",
+      "synthesizedText": "Dieser Ablauf ist ausschließlich zum Ansehen. Keine Dosierung ändern, nichts pausieren, fortsetzen, absetzen, korrigieren, ergänzen oder löschen.",
+      "bytes": 884780,
+      "duration": 10.017633438110352
+    },
+    {
+      "index": 182,
+      "file": "assets/audio/guides/182.wav",
+      "text": "Dieser Protokollschritt gilt nur für „Kontakt – alles außer Arzt“ und „Sturzereignis“. Das kleine rote X wird erst nutzbar, nachdem du den angezeigten Protokollnamen angeklickt hast.",
+      "synthesizedText": "Dieser Protokollschritt gilt nur für Kontakt - alles außer Arzt und Sturzereignis. Das kleine rote X wird erst nutzbar, nachdem du den angezeigten Protokollnamen angeklickt hast.",
+      "bytes": 1056812,
+      "duration": 11.943594932556152
+    },
+    {
+      "index": 183,
+      "file": "assets/audio/guides/183.wav",
+      "text": "Hier geht es nur um das Ansehen der Medikation. Änderungen klärst du bitte über den dafür vorgesehenen Weg.",
+      "synthesizedText": "Hier geht es nur um das Ansehen der Medikation. Änderungen klärst du bitte über den dafür vorgesehenen Weg.",
+      "bytes": 651308,
+      "duration": 7.363821506500244
+    },
+    {
+      "index": 184,
+      "file": "assets/audio/guides/184.wav",
+      "text": "Ein Bericht wird durchgestrichen. Eine falsch abgezeichnete Durchführung wird im Durchführungsnachweis storniert.",
+      "synthesizedText": "Ein Bericht wird durchgestrichen. Eine falsch abgezeichnete Durchführung wird im Durchführungsnachweis storniert.",
+      "bytes": 675884,
+      "duration": 7.630579471588135
+    },
+    {
+      "index": 185,
+      "file": "assets/audio/guides/185.wav",
+      "text": "Falls versehentlich „abgeschlossen“ ausgewählt wurde, nicht so speichern. Stelle den Status auf „durchgeführt“ um.",
+      "synthesizedText": "Falls versehentlich abgeschlossen ausgewählt wurde, nicht so speichern. Stelle den Status auf durchgeführt um.",
+      "bytes": 669740,
+      "duration": 7.523765563964844
+    },
+    {
+      "index": 186,
+      "file": "assets/audio/guides/186.wav",
+      "text": "Für mehrere Werte wird unter „Doku-Erweitert“ direkt „Vitalwerte Sammelerf.“ geöffnet. Es ist ein eigener Menüpunkt.",
+      "synthesizedText": "Für mehrere Werte wird unter Doku-Erweitert direkt Vitalwerte Sammelerf. geöffnet. Es ist ein eigener Menüpunkt.",
+      "bytes": 669740,
+      "duration": 7.54381799697876
+    },
+    {
+      "index": 187,
+      "file": "assets/audio/guides/187.wav",
+      "text": "Klicke direkt auf den ursprünglichen Bericht und nicht auf eine freie Stelle in der Liste.",
+      "synthesizedText": "Klicke direkt auf den ursprünglichen Bericht und nicht auf eine freie Stelle in der Liste.",
+      "bytes": 522284,
+      "duration": 5.909377098083496
+    },
+    {
+      "index": 188,
+      "file": "assets/audio/guides/188.wav",
+      "text": "Nach „Neu“ beziehungsweise dem grünen Plus kommt zuerst „Klienten auswählen“. Erst danach öffnet sich „Neue Visite“.",
+      "synthesizedText": "Nach Neu beziehungsweise dem grünen Plus kommt zuerst Klienten auswählen. Erst danach öffnet sich Neue Visite.",
+      "bytes": 669740,
+      "duration": 7.547389507293701
+    },
+    {
+      "index": 189,
+      "file": "assets/audio/guides/189.wav",
+      "text": "Nach dem grünen Plus erscheint zuerst die Bewohnerauswahl. Die Visitenmaske öffnet sich erst nach dieser Auswahl.",
+      "synthesizedText": "Nach dem grünen Plus erscheint zuerst die Bewohnerauswahl. Die Visitenmaske öffnet sich erst nach dieser Auswahl.",
+      "bytes": 663596,
+      "duration": 7.470857620239258
+    },
+    {
+      "index": 190,
+      "file": "assets/audio/guides/190.wav",
+      "text": "Wähle im Pop-up-Fenster den Vitalwert aus, den du erfassen möchtest, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.",
+      "synthesizedText": "Wähle im Pop-up-Fenster den Vitalwert aus, den du erfassen möchtest, zum Beispiel Blutdruck, Puls, Sauerstoffsättigung, Blutzucker, Temperatur, Atemfrequenz oder Atemalkohol.",
+      "bytes": 1044524,
+      "duration": 11.83294677734375
+    },
+    {
+      "index": 191,
+      "file": "assets/audio/guides/191.wav",
+      "text": "„Doku-Erweitert“ steht ganz oben in der festen grünen Leiste.",
+      "synthesizedText": "Doku-Erweitert steht ganz oben in der festen grünen Leiste.",
+      "bytes": 368684,
+      "duration": 4.139011859893799
+    },
+    {
+      "index": 192,
+      "file": "assets/audio/guides/192.wav",
+      "text": "Nach Auswahl von „Doku-Erweitert“ findest du darunter „Visiten“.",
+      "synthesizedText": "Nach Auswahl von Doku-Erweitert findest du darunter Visiten.",
+      "bytes": 387116,
+      "duration": 4.345755100250244
+    },
+    {
+      "index": 193,
+      "file": "assets/audio/guides/193.wav",
+      "text": "Suche in der festen Leiste nach „Doku“.",
+      "synthesizedText": "Suche in der festen Leiste nach Doku.",
+      "bytes": 233516,
+      "duration": 2.5813982486724854
+    },
+    {
+      "index": 194,
+      "file": "assets/audio/guides/194.wav",
+      "text": "Suche in der geöffneten Visite nach der Statusauswahl. Verwende ausschließlich „durchgeführt“ und nicht „abgeschlossen“.",
+      "synthesizedText": "Suche in der geöffneten Visite nach der Statusauswahl. Verwende ausschließlich durchgeführt und nicht abgeschlossen.",
+      "bytes": 675884,
+      "duration": 7.619569301605225
+    },
+    {
+      "index": 195,
+      "file": "assets/audio/guides/195.wav",
+      "text": "Nach Auswahl von „Doku-Erweitert“ findest du darunter „Vitalwerte“.",
+      "synthesizedText": "Nach Auswahl von Doku-Erweitert findest du darunter Vitalwerte.",
+      "bytes": 399404,
+      "duration": 4.501794338226318
+    },
+    {
+      "index": 196,
+      "file": "assets/audio/guides/196.wav",
+      "text": "Suche innerhalb von „Doku“ nach „Durchführungsnachweis“.",
+      "synthesizedText": "Suche innerhalb von Doku nach Durchführungsnachweis.",
+      "bytes": 307244,
+      "duration": 3.4651222229003906
+    },
+    {
+      "index": 197,
+      "file": "assets/audio/guides/197.wav",
+      "text": "Sonderfall: Nur wenn der durchführende Arzt beim Bewohner nicht hinterlegt ist, rechts neben der Arztauswahl das kleine Filtersymbol aktivieren. Danach stehen alle im System hinterlegten Ärzte zur Auswahl. Im Normalfall bleibt dieses Filtersymbol aus.",
+      "synthesizedText": "Sonderfall: Nur wenn der durchführende Arzt beim Bewohner nicht hinterlegt ist, rechts neben der Arztauswahl das kleine Filtersymbol aktivieren. Danach stehen alle im System hinterlegten Ärzte zur Auswahl. Im Normalfall bleibt dieses Filtersymbol aus.",
+      "bytes": 1474604,
+      "duration": 16.709707260131836
+    },
+    {
+      "index": 198,
+      "file": "assets/audio/guides/198.wav",
+      "text": "Suche oben nach dem Reiter „Analyse“.",
+      "synthesizedText": "Suche oben nach dem Reiter Analyse.",
+      "bytes": 221228,
+      "duration": 2.5039966106414795
+    },
+    {
+      "index": 199,
+      "file": "assets/audio/guides/199.wav",
+      "text": "Suche oben nach dem Reiter „Planung“.",
+      "synthesizedText": "Suche oben nach dem Reiter Planung.",
+      "bytes": 221228,
+      "duration": 2.475431442260742
+    },
+    {
+      "index": 200,
+      "file": "assets/audio/guides/200.wav",
+      "text": "Visiten werden bei euch erst nach der Durchführung dokumentiert und immer als durchgeführt erfasst, niemals als abgeschlossen.",
+      "synthesizedText": "Visiten werden bei euch erst nach der Durchführung dokumentiert und immer als durchgeführt erfasst, niemals als abgeschlossen.",
+      "bytes": 731180,
+      "duration": 8.235513687133789
+    },
+    {
+      "index": 201,
+      "file": "assets/audio/guides/201.wav",
+      "text": "Wähle zuerst den gewünschten Bewohner. Öffne oben in der festen grünen Hauptleiste „Doku“ und wähle im weißen Funktionsband direkt darunter „Bericht“.",
+      "synthesizedText": "Wähle zuerst den gewünschten Bewohner. Öffne oben in der festen grünen Hauptleiste Doku und wähle im weißen Funktionsband direkt darunter Bericht.",
+      "bytes": 860204,
+      "duration": 9.69786262512207
+    },
+    {
+      "index": 202,
+      "file": "assets/audio/guides/202.wav",
+      "text": "Wechsle zurück zur Übersicht der Bewohner.",
+      "synthesizedText": "Wechsle zurück zur Übersicht der Bewohner.",
+      "bytes": 270380,
+      "duration": 3.0603272914886475
+    },
+    {
+      "index": 203,
+      "file": "assets/audio/guides/203.wav",
+      "text": "Wenn der Endzeitpunkt noch nicht sicher feststeht, lässt du „Bis“ leer. Bitte nicht schätzen.",
+      "synthesizedText": "Wenn der Endzeitpunkt noch nicht sicher feststeht, lässt du Bis leer. Bitte nicht schätzen.",
+      "bytes": 559148,
+      "duration": 6.277108669281006
+    },
+    {
+      "index": 204,
+      "file": "assets/audio/guides/204.wav",
+      "text": "„Doku“ ist ein Hauptbereich ganz oben in der festen grünen Leiste.",
+      "synthesizedText": "Doku ist ein Hauptbereich ganz oben in der festen grünen Leiste.",
+      "bytes": 387116,
+      "duration": 4.365262508392334
+    },
+    {
+      "index": 205,
+      "file": "assets/audio/guides/205.wav",
+      "text": "Nach Auswahl von „Doku“ erscheint darunter „Durchführungsnachweis“.",
+      "synthesizedText": "Nach Auswahl von Doku erscheint darunter Durchführungsnachweis.",
+      "bytes": 387116,
+      "duration": 4.346460819244385
+    },
+    {
+      "index": 206,
+      "file": "assets/audio/guides/206.wav",
+      "text": "Bleibe im Durchführungsnachweis und suche „Bedarfsmedikation“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen.",
+      "synthesizedText": "Bleibe im Durchführungsnachweis und suche Bedarfsmedikation. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen.",
+      "bytes": 731180,
+      "duration": 8.22386646270752
+    },
+    {
+      "index": 207,
+      "file": "assets/audio/guides/207.wav",
+      "text": "Suche das gewünschte Medikament und setze ganz rechts in der zugehörigen Zeile den Haken.",
+      "synthesizedText": "Suche das gewünschte Medikament und setze ganz rechts in der zugehörigen Zeile den Haken.",
+      "bytes": 528428,
+      "duration": 5.9404520988464355
+    },
+    {
+      "index": 208,
+      "file": "assets/audio/guides/208.wav",
+      "text": "Hier wird nur die tatsächlich verwendete Bedarfsmenge dokumentiert. Die verordnete Dosierung wird in diesem Ablauf nicht geändert.",
+      "synthesizedText": "Hier wird nur die tatsächlich verwendete Bedarfsmenge dokumentiert. Die verordnete Dosierung wird in diesem Ablauf nicht geändert.",
+      "bytes": 761900,
+      "duration": 8.581406593322754
+    },
+    {
+      "index": 209,
+      "file": "assets/audio/guides/209.wav",
+      "text": "Du legst die Wirksamkeitskontrolle nicht selbst an. DokoHilf nennt keine erfundene Wartezeit.",
+      "synthesizedText": "Du legst die Wirksamkeitskontrolle nicht selbst an. DokoHilf nennt keine erfundene Wartezeit.",
+      "bytes": 553004,
+      "duration": 6.2444305419921875
+    },
+    {
+      "index": 210,
+      "file": "assets/audio/guides/210.wav",
+      "text": "Suche zum vorgesehenen Zeitpunkt im Durchführungsnachweis die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.",
+      "synthesizedText": "Suche zum vorgesehenen Zeitpunkt im Durchführungsnachweis die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.",
+      "bytes": 749612,
+      "duration": 8.469050407409668
+    },
+    {
+      "index": 211,
+      "file": "assets/audio/guides/211.wav",
+      "text": "Die Wirksamkeitskontrolle wird automatisch zur Bedarfsmedikation erzeugt.",
+      "synthesizedText": "Die Wirksamkeitskontrolle wird automatisch zur Bedarfsmedikation erzeugt.",
+      "bytes": 473132,
+      "duration": 5.30742883682251
+    },
+    {
+      "index": 212,
+      "file": "assets/audio/guides/212.wav",
+      "text": "„Doku“ ist ein fester Hauptbereich ganz oben in der grünen Leiste.",
+      "synthesizedText": "Doku ist ein fester Hauptbereich ganz oben in der grünen Leiste.",
+      "bytes": 387116,
+      "duration": 4.370706558227539
+    },
+    {
+      "index": 213,
+      "file": "assets/audio/guides/213.wav",
+      "text": "Nach Auswahl von „Doku“ erscheint darunter „Durchführungsnachweis“. Dort wird die fällige Wirksamkeitskontrolle angezeigt.",
+      "synthesizedText": "Nach Auswahl von Doku erscheint darunter Durchführungsnachweis. Dort wird die fällige Wirksamkeitskontrolle angezeigt.",
+      "bytes": 700460,
+      "duration": 7.897824287414551
+    },
+    {
+      "index": 214,
+      "file": "assets/audio/guides/214.wav",
+      "text": "Bestätige das Pop-up-Fenster zum Schluss unten mit „OK“.",
+      "synthesizedText": "Bestätige das Pop-up-Fenster zum Schluss unten mit OK.",
+      "bytes": 380972,
+      "duration": 4.293028354644775
+    },
+    {
+      "index": 215,
+      "file": "assets/audio/guides/215.wav",
+      "text": "„Doku“ findest du ganz oben in der festen grünen Leiste.",
+      "synthesizedText": "Doku findest du ganz oben in der festen grünen Leiste.",
+      "bytes": 331820,
+      "duration": 3.717318058013916
+    },
+    {
+      "index": 216,
+      "file": "assets/audio/guides/216.wav",
+      "text": "Die Wirksamkeitskontrolle erscheint erst zum vorgesehenen Zeitpunkt im Durchführungsnachweis. DokoHilf nennt keine erfundene Wartezeit.",
+      "synthesizedText": "Die Wirksamkeitskontrolle erscheint erst zum vorgesehenen Zeitpunkt im Durchführungsnachweis. DokoHilf nennt keine erfundene Wartezeit.",
+      "bytes": 786476,
+      "duration": 8.847397804260254
+    },
+    {
+      "index": 217,
+      "file": "assets/audio/guides/217.wav",
+      "text": "Bleibe im Durchführungsnachweis und suche dort „Maßnahmen ohne Zeitangabe“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen.",
+      "synthesizedText": "Bleibe im Durchführungsnachweis und suche dort Maßnahmen ohne Zeitangabe. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen.",
+      "bytes": 780332,
+      "duration": 8.821690559387207
+    },
+    {
+      "index": 218,
+      "file": "assets/audio/guides/218.wav",
+      "text": "Die feste grüne Hauptleiste ist ganz oben im Vivendi-Fenster. Diese feste grüne Leiste enthält unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt darunter befindet sich das weiße Funktionsband des ausgewählten Hauptbereichs. Bericht und Durchführungsnachweis gehören unter Doku zu diesem unteren Funktionsband; Bericht ist kein Hauptbereich der grünen Leiste.",
+      "synthesizedText": "Die feste grüne Hauptleiste ist ganz oben im Vivendi-Fenster. Diese feste grüne Leiste enthält unter anderem Doku, Doku-Erweitert, Planung und Analyse. Doku liegt zwischen Planung und Doku-Erweitert. Direkt darunter befindet sich das weiße Funktionsband des ausgewählten Hauptbereichs. Bericht und Durchführungsnachweis gehören unter Doku zu diesem unteren Funktionsband; Bericht ist kein Hauptbereich der grünen Leiste.",
+      "bytes": 2410376,
+      "duration": 27.256179809570312
+    },
+    {
+      "index": 219,
+      "file": "assets/audio/guides/219.wav",
+      "text": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.",
+      "synthesizedText": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Nach der dafür vorgesehenen Zeit findest du dort die automatisch erzeugte Wirksamkeitskontrolle zur Bedarfsmedikation.",
+      "bytes": 1388588,
+      "duration": 15.735647201538086
+    },
+    {
+      "index": 220,
+      "file": "assets/audio/guides/220.wav",
+      "text": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du Bedarfsmedikation. Klicke auf den kleinen Pfeil links daneben, um sie zu öffnen.",
+      "synthesizedText": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du Bedarfsmedikation. Klicke auf den kleinen Pfeil links daneben, um sie zu öffnen.",
+      "bytes": 1265708,
+      "duration": 14.287687301635742
+    },
+    {
+      "index": 221,
+      "file": "assets/audio/guides/221.wav",
+      "text": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du den Bereich Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um ihn zu öffnen.",
+      "synthesizedText": "Wähle beim gewünschten Bewohner ganz oben in der festen grünen Leiste Doku. Darunter erscheint der Durchführungsnachweis. Dort findest du den Bereich Maßnahmen ohne Zeitangabe. Klicke auf den kleinen Pfeil links daneben, um ihn zu öffnen.",
+      "bytes": 1345580,
+      "duration": 15.226231575012207
+    },
+    {
+      "index": 222,
+      "file": "assets/audio/guides/222.wav",
+      "text": "Doku-Erweitert ist ein Hauptreiter in der grünen Hauptleiste ganz oben, direkt rechts von Doku. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.",
+      "synthesizedText": "Doku-Erweitert ist ein Hauptreiter in der grünen Hauptleiste ganz oben, direkt rechts von Doku. Nach Auswahl von Doku-Erweitert erscheinen direkt darunter die zugehörigen Funktionen im weißen Funktionsband.",
+      "bytes": 1210412,
+      "duration": 13.669922828674316
+    },
+    {
+      "index": 223,
+      "file": "assets/audio/guides/223.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku in der grünen Hauptleiste ganz oben. Doku liegt zwischen Planung und Doku-Erweitert. Nach der Auswahl erscheint direkt darunter das weiße Funktionsband; dort findest du den Durchführungsnachweis.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku in der grünen Hauptleiste ganz oben. Doku liegt zwischen Planung und Doku-Erweitert. Nach der Auswahl erscheint direkt darunter das weiße Funktionsband; dort findest du den Durchführungsnachweis.",
+      "bytes": 1333292,
+      "duration": 15.07913875579834
+    },
+    {
+      "index": 224,
+      "file": "assets/audio/guides/224.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Vitalwerte: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Vitalwerte.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Vitalwerte: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Vitalwerte.",
+      "bytes": 1665068,
+      "duration": 18.868362426757812
+    },
+    {
+      "index": 225,
+      "file": "assets/audio/guides/225.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Visiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Visiten.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Visiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Visiten.",
+      "bytes": 1646636,
+      "duration": 18.65673828125
+    },
+    {
+      "index": 226,
+      "file": "assets/audio/guides/226.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Medikation: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Medikation.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Medikation: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Medikation.",
+      "bytes": 1677356,
+      "duration": 18.979536056518555
+    },
+    {
+      "index": 227,
+      "file": "assets/audio/guides/227.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Formulare: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Formulare.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du Formulare: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du Formulare.",
+      "bytes": 1658924,
+      "duration": 18.749784469604492
+    },
+    {
+      "index": 228,
+      "file": "assets/audio/guides/228.wav",
+      "text": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du An-/Abwesenheiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du An-/Abwesenheiten.",
+      "synthesizedText": "Öffne beim gewünschten Bewohner zuerst Doku-Erweitert in der festen Leiste. Doku-Erweitert steht ganz oben in der grünen Leiste. Innerhalb von Doku-Erweitert findest du An- oder Abwesenheiten: Nach der Auswahl erscheinen darunter die Unterpunkte beziehungsweise Symbole, dort wählst du An- oder Abwesenheiten.",
+      "bytes": 1894280,
+      "duration": 21.375381469726562
+    },
+    {
+      "index": 229,
+      "file": "assets/audio/guides/229.wav",
+      "text": "Bericht ist kein Hauptreiter in der grünen Leiste. Öffne oben in der grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband; dort findest du Bericht.",
+      "synthesizedText": "Bericht ist kein Hauptreiter in der grünen Leiste. Öffne oben in der grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband; dort findest du Bericht.",
+      "bytes": 989228,
+      "duration": 11.179323196411133
+    },
+    {
+      "index": 230,
+      "file": "assets/audio/guides/230.wav",
+      "text": "Planung ist ein Hauptbereich ganz oben in der festen grünen Leiste. Wähle dort Planung. Die zugehörigen Unterpunkte beziehungsweise Symbole erscheinen danach direkt darunter. Der genaue Easy-Plan-Ablauf bleibt vorerst offen.",
+      "synthesizedText": "Planung ist ein Hauptbereich ganz oben in der festen grünen Leiste. Wähle dort Planung. Die zugehörigen Unterpunkte beziehungsweise Symbole erscheinen danach direkt darunter. Der genaue Easy-Plan-Ablauf bleibt vorerst offen.",
+      "bytes": 1284140,
+      "duration": 14.48973274230957
+    },
+    {
+      "index": 231,
+      "file": "assets/audio/guides/231.wav",
+      "text": "Öffne zuerst Bericht oder den Durchführungsnachweis. Beides findest du unter Doku: Wähle ganz oben in der festen grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband mit Bericht und Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.",
+      "synthesizedText": "Öffne zuerst Bericht oder den Durchführungsnachweis. Beides findest du unter Doku: Wähle ganz oben in der festen grünen Hauptleiste Doku. Direkt darunter erscheint das weiße Funktionsband mit Bericht und Durchführungsnachweis. Dann bleibt links die Bewohnerübersicht sichtbar. Doppelklicke dort auf den gewünschten Bewohner, um die Stammdaten zu öffnen.",
+      "bytes": 2176904,
+      "duration": 24.595745086669922
+    },
+    {
+      "index": 232,
+      "file": "assets/audio/guides/232.wav",
+      "text": "Doku ist ein Hauptreiter in der grünen Hauptleiste ganz oben im Vivendi-Fenster. Doku liegt zwischen Planung und Doku-Erweitert. Wenn du Doku auswählst, erscheint direkt darunter das weiße Funktionsband mit den zugehörigen Funktionen. Dort findest du den Durchführungsnachweis.",
+      "synthesizedText": "Doku ist ein Hauptreiter in der grünen Hauptleiste ganz oben im Vivendi-Fenster. Doku liegt zwischen Planung und Doku-Erweitert. Wenn du Doku auswählst, erscheint direkt darunter das weiße Funktionsband mit den zugehörigen Funktionen. Dort findest du den Durchführungsnachweis.",
+      "bytes": 1591340,
+      "duration": 17.974044799804688
+    },
+    {
+      "index": 233,
+      "file": "assets/audio/guides/233.wav",
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Visiten“.",
+      "synthesizedText": "Doku-Erweitert ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort Visiten.",
+      "bytes": 958508,
+      "duration": 10.856583595275879
+    },
+    {
+      "index": 234,
+      "file": "assets/audio/guides/234.wav",
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „An-/Abwesenheiten“.",
+      "synthesizedText": "Doku-Erweitert ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort An- oder Abwesenheiten.",
+      "bytes": 1044524,
+      "duration": 11.82209300994873
+    },
+    {
+      "index": 235,
+      "file": "assets/audio/guides/235.wav",
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Medikation“.",
+      "synthesizedText": "Doku-Erweitert ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort Medikation.",
+      "bytes": 976940,
+      "duration": 11.038228988647461
+    },
+    {
+      "index": 236,
+      "file": "assets/audio/guides/236.wav",
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Formulare“.",
+      "synthesizedText": "Doku-Erweitert ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort Formulare.",
+      "bytes": 964652,
+      "duration": 10.936540603637695
+    },
+    {
+      "index": 237,
+      "file": "assets/audio/guides/237.wav",
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort „Vitalwerte“.",
+      "synthesizedText": "Doku-Erweitert ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Wähle dort Vitalwerte.",
+      "bytes": 976940,
+      "duration": 11.006290435791016
+    },
+    {
+      "index": 238,
+      "file": "assets/audio/guides/238.wav",
+      "text": "„Doku-Erweitert“ ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. „Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge; wähle für mehrere Werte „Vitalwerte Sammelerf.“.",
+      "synthesizedText": "Doku-Erweitert ist ganz oben in der festen grünen Leiste. Wähle es dort; danach erscheinen darunter die Unterpunkte beziehungsweise Symbole. Vitalwerte und Vitalwerte Sammelerf. sind zwei getrennte Einträge; wähle für mehrere Werte Vitalwerte Sammelerf..",
+      "bytes": 1468460,
+      "duration": 16.583843231201172
+    },
+    {
+      "index": 239,
+      "file": "assets/audio/guides/239.wav",
+      "text": "„Doku“ ist ganz oben in der festen grünen Leiste. Wähle dort „Doku“; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "synthesizedText": "Doku ist ganz oben in der festen grünen Leiste. Wähle dort Doku; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "bytes": 835628,
+      "duration": 9.46639347076416
+    },
+    {
+      "index": 240,
+      "file": "assets/audio/guides/240.wav",
+      "text": "Wähle ganz oben in der festen grünen Leiste zuerst „Doku“. Danach erscheint darunter „Durchführungsnachweis“.",
+      "synthesizedText": "Wähle ganz oben in der festen grünen Leiste zuerst Doku. Danach erscheint darunter Durchführungsnachweis.",
+      "bytes": 632876,
+      "duration": 7.1475510597229
+    },
+    {
+      "index": 241,
+      "file": "assets/audio/guides/241.wav",
+      "text": "„Analyse“ ist ganz oben in der festen grünen Leiste. Wähle dort „Analyse“; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "synthesizedText": "Analyse ist ganz oben in der festen grünen Leiste. Wähle dort Analyse; danach erscheinen darunter die zugehörigen Unterpunkte beziehungsweise Symbole.",
+      "bytes": 872492,
+      "duration": 9.822111129760742
+    },
+    {
+      "index": 242,
+      "file": "assets/audio/guides/242.wav",
+      "text": "Wähle ganz oben in der festen grünen Leiste zuerst „Analyse“. Danach erscheint darunter „Was war los?“.",
+      "synthesizedText": "Wähle ganz oben in der festen grünen Leiste zuerst Analyse. Danach erscheint darunter Was war los?.",
+      "bytes": 614444,
+      "duration": 6.957812786102295
+    },
+    {
+      "index": 243,
+      "file": "assets/audio/guides/243.wav",
+      "text": "Alles klar, dann ist die Durchführung als storniert gekennzeichnet.",
+      "synthesizedText": "Alles klar, dann ist die Durchführung als storniert gekennzeichnet.",
+      "bytes": 405548,
+      "duration": 4.5967559814453125
+    },
+    {
+      "index": 244,
+      "file": "assets/audio/guides/244.wav",
+      "text": "Alles klar. Dann kannst du den benötigten Nachweis im geöffneten Durchführungsnachweis ansehen.",
+      "synthesizedText": "Alles klar. Dann kannst du den benötigten Nachweis im geöffneten Durchführungsnachweis ansehen.",
+      "bytes": 571436,
+      "duration": 6.4172892570495605
+    },
+    {
+      "index": 245,
+      "file": "assets/audio/guides/245.wav",
+      "text": "Alles klar. Wenn du noch etwas brauchst, sag einfach Bescheid.",
+      "synthesizedText": "Alles klar. Wenn du noch etwas brauchst, sag einfach Bescheid.",
+      "bytes": 405548,
+      "duration": 4.5892438888549805
+    },
+    {
+      "index": 246,
+      "file": "assets/audio/guides/246.wav",
+      "text": "Bevor du das Formular anlegst: Ist der richtige Bewohner ausgewählt?",
+      "synthesizedText": "Bevor du das Formular anlegst: Ist der richtige Bewohner ausgewählt?",
+      "bytes": 417836,
+      "duration": 4.710361003875732
+    },
+    {
+      "index": 247,
+      "file": "assets/audio/guides/247.wav",
+      "text": "Bevor du den Vitalwert erfasst: Ist der richtige Bewohner ausgewählt?",
+      "synthesizedText": "Bevor du den Vitalwert erfasst: Ist der richtige Bewohner ausgewählt?",
+      "bytes": 417836,
+      "duration": 4.721804618835449
+    },
+    {
+      "index": 248,
+      "file": "assets/audio/guides/248.wav",
+      "text": "Bevor du die An- oder Abwesenheit einträgst: Ist der richtige Bewohner ausgewählt?",
+      "synthesizedText": "Bevor du die An- oder Abwesenheit einträgst: Ist der richtige Bewohner ausgewählt?",
+      "bytes": 497708,
+      "duration": 5.583264350891113
+    },
+    {
+      "index": 249,
+      "file": "assets/audio/guides/249.wav",
+      "text": "Bevor du mehrere Vitalwerte erfasst: Ist der richtige Bewohner ausgewählt?",
+      "synthesizedText": "Bevor du mehrere Vitalwerte erfasst: Ist der richtige Bewohner ausgewählt?",
+      "bytes": 442412,
+      "duration": 5.008786201477051
+    },
+    {
+      "index": 250,
+      "file": "assets/audio/guides/250.wav",
+      "text": "Der Durchführungsnachweis ist geöffnet. Sag mir einfach, was du dort machen möchtest.",
+      "synthesizedText": "Der Durchführungsnachweis ist geöffnet. Sag mir einfach, was du dort machen möchtest.",
+      "bytes": 497708,
+      "duration": 5.623343467712402
+    },
+    {
+      "index": 251,
+      "file": "assets/audio/guides/251.wav",
+      "text": "Okay. Möchtest du einen einzelnen Vitalwert oder mehrere Werte gleichzeitig erfassen?",
+      "synthesizedText": "Okay. Möchtest du einen einzelnen Vitalwert oder mehrere Werte gleichzeitig erfassen?",
+      "bytes": 534572,
+      "duration": 6.023862361907959
+    },
+    {
+      "index": 252,
+      "file": "assets/audio/guides/252.wav",
+      "text": "Perfekt, dann bist du bei den Berichten. Möchtest du jetzt einen neuen Bericht anlegen?",
+      "synthesizedText": "Perfekt, dann bist du bei den Berichten. Möchtest du jetzt einen neuen Bericht anlegen?",
+      "bytes": 516140,
+      "duration": 5.84588623046875
+    },
+    {
+      "index": 253,
+      "file": "assets/audio/guides/253.wav",
+      "text": "Perfekt, dann bist du bei den Visiten. Möchtest du jetzt eine Visite dokumentieren?",
+      "synthesizedText": "Perfekt, dann bist du bei den Visiten. Möchtest du jetzt eine Visite dokumentieren?",
+      "bytes": 516140,
+      "duration": 5.817242622375488
+    },
+    {
+      "index": 254,
+      "file": "assets/audio/guides/254.wav",
+      "text": "Perfekt, dann hast du An-/Abwesenheiten gefunden. Möchtest du dort jetzt eine An- oder Abwesenheit eintragen?",
+      "synthesizedText": "Perfekt, dann hast du An- oder Abwesenheiten gefunden. Möchtest du dort jetzt eine An- oder Abwesenheit eintragen?",
+      "bytes": 675884,
+      "duration": 7.612170219421387
+    },
+    {
+      "index": 255,
+      "file": "assets/audio/guides/255.wav",
+      "text": "Perfekt, dann hast du die Bedarfsmedikation geöffnet. Möchtest du jetzt eine Bedarfsmedikationsgabe dokumentieren?",
+      "synthesizedText": "Perfekt, dann hast du die Bedarfsmedikation geöffnet. Möchtest du jetzt eine Bedarfsmedikationsgabe dokumentieren?",
+      "bytes": 663596,
+      "duration": 7.476910591125488
+    },
+    {
+      "index": 256,
+      "file": "assets/audio/guides/256.wav",
+      "text": "Perfekt, dann hast du die Formulare gefunden. Möchtest du jetzt ein Formular anlegen?",
+      "synthesizedText": "Perfekt, dann hast du die Formulare gefunden. Möchtest du jetzt ein Formular anlegen?",
+      "bytes": 516140,
+      "duration": 5.807704925537109
+    },
+    {
+      "index": 257,
+      "file": "assets/audio/guides/257.wav",
+      "text": "Perfekt, dann hast du die benötigte Information gefunden. Änderungen an der Medikation werden hier nicht angeleitet.",
+      "synthesizedText": "Perfekt, dann hast du die benötigte Information gefunden. Änderungen an der Medikation werden hier nicht angeleitet.",
+      "bytes": 682028,
+      "duration": 7.670215606689453
+    },
+    {
+      "index": 258,
+      "file": "assets/audio/guides/258.wav",
+      "text": "Perfekt, dann hast du „Maßnahmen ohne Zeitangabe“ geöffnet. Möchtest du jetzt eine Maßnahme dokumentieren?",
+      "synthesizedText": "Perfekt, dann hast du Maßnahmen ohne Zeitangabe geöffnet. Möchtest du jetzt eine Maßnahme dokumentieren?",
+      "bytes": 589868,
+      "duration": 6.667656898498535
+    },
+    {
+      "index": 259,
+      "file": "assets/audio/guides/259.wav",
+      "text": "Perfekt, dann hast du „Was war los?“ geöffnet. Möchtest du die Übergabe jetzt vollständig anzeigen?",
+      "synthesizedText": "Perfekt, dann hast du Was war los? geöffnet. Möchtest du die Übergabe jetzt vollständig anzeigen?",
+      "bytes": 596012,
+      "duration": 6.738836765289307
+    },
+    {
+      "index": 260,
+      "file": "assets/audio/guides/260.wav",
+      "text": "Perfekt, dann ist das Fenster für das Notfallblatt geöffnet. Möchtest du das Notfallblatt jetzt erstellen und in Word öffnen?",
+      "synthesizedText": "Perfekt, dann ist das Fenster für das Notfallblatt geöffnet. Möchtest du das Notfallblatt jetzt erstellen und in Word öffnen?",
+      "bytes": 718892,
+      "duration": 8.097360610961914
+    },
+    {
+      "index": 261,
+      "file": "assets/audio/guides/261.wav",
+      "text": "Perfekt, dann ist das Notfallblatt in Word geöffnet.",
+      "synthesizedText": "Perfekt, dann ist das Notfallblatt in Word geöffnet.",
+      "bytes": 325676,
+      "duration": 3.675934076309204
+    },
+    {
+      "index": 262,
+      "file": "assets/audio/guides/262.wav",
+      "text": "Perfekt, dann ist der Bericht sichtbar durchgestrichen. Möchtest du den Inhalt jetzt korrekt als neuen Bericht dokumentieren?",
+      "synthesizedText": "Perfekt, dann ist der Bericht sichtbar durchgestrichen. Möchtest du den Inhalt jetzt korrekt als neuen Bericht dokumentieren?",
+      "bytes": 718892,
+      "duration": 8.123927116394043
+    },
+    {
+      "index": 263,
+      "file": "assets/audio/guides/263.wav",
+      "text": "Perfekt, dann ist die Medikamentenübersicht geöffnet. Dort kannst du die Medikation ansehen. Änderungen werden hier nicht angeleitet.",
+      "synthesizedText": "Perfekt, dann ist die Medikamentenübersicht geöffnet. Dort kannst du die Medikation ansehen. Änderungen werden hier nicht angeleitet.",
+      "bytes": 761900,
+      "duration": 8.614484786987305
+    },
+    {
+      "index": 264,
+      "file": "assets/audio/guides/264.wav",
+      "text": "Perfekt, dann ist die Visite als „durchgeführt“ gespeichert.",
+      "synthesizedText": "Perfekt, dann ist die Visite als durchgeführt gespeichert.",
+      "bytes": 356396,
+      "duration": 4.00966215133667
+    },
+    {
+      "index": 265,
+      "file": "assets/audio/guides/265.wav",
+      "text": "Perfekt, dann ist die Wirksamkeitskontrolle gespeichert.",
+      "synthesizedText": "Perfekt, dann ist die Wirksamkeitskontrolle gespeichert.",
+      "bytes": 350252,
+      "duration": 3.926151990890503
+    },
+    {
+      "index": 266,
+      "file": "assets/audio/guides/266.wav",
+      "text": "Perfekt, dann ist für die Visite der richtige Status „durchgeführt“ gesetzt.",
+      "synthesizedText": "Perfekt, dann ist für die Visite der richtige Status durchgeführt gesetzt.",
+      "bytes": 442412,
+      "duration": 4.988531112670898
+    },
+    {
+      "index": 267,
+      "file": "assets/audio/guides/267.wav",
+      "text": "Perfekt, dann siehst du die fällige Wirksamkeitskontrolle. Möchtest du sie jetzt dokumentieren?",
+      "synthesizedText": "Perfekt, dann siehst du die fällige Wirksamkeitskontrolle. Möchtest du sie jetzt dokumentieren?",
+      "bytes": 565292,
+      "duration": 6.383237361907959
+    },
+    {
+      "index": 268,
+      "file": "assets/audio/guides/268.wav",
+      "text": "Perfekt, dann sind die Stammdaten geöffnet.",
+      "synthesizedText": "Perfekt, dann sind die Stammdaten geöffnet.",
+      "bytes": 270380,
+      "duration": 3.0447912216186523
+    },
+    {
+      "index": 269,
+      "file": "assets/audio/guides/269.wav",
+      "text": "Perfekt, dann sind die Vitalwerte geöffnet. Möchtest du jetzt einen einzelnen Vitalwert oder mehrere Werte gleichzeitig erfassen?",
+      "synthesizedText": "Perfekt, dann sind die Vitalwerte geöffnet. Möchtest du jetzt einen einzelnen Vitalwert oder mehrere Werte gleichzeitig erfassen?",
+      "bytes": 725036,
+      "duration": 8.161527633666992
+    },
+    {
+      "index": 270,
+      "file": "assets/audio/guides/270.wav",
+      "text": "Sag mir bitte, was du im geöffneten Durchführungsnachweis machen möchtest.",
+      "synthesizedText": "Sag mir bitte, was du im geöffneten Durchführungsnachweis machen möchtest.",
+      "bytes": 442412,
+      "duration": 4.967186450958252
+    },
+    {
+      "index": 271,
+      "file": "assets/audio/guides/271.wav",
+      "text": "Super, dann bist du bei „Analyse“. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "synthesizedText": "Super, dann bist du bei Analyse. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "bytes": 571436,
+      "duration": 6.441601753234863
+    },
+    {
+      "index": 272,
+      "file": "assets/audio/guides/272.wav",
+      "text": "Super, dann bist du bei „Doku-Erweitert“. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "synthesizedText": "Super, dann bist du bei Doku-Erweitert. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "bytes": 608300,
+      "duration": 6.842458248138428
+    },
+    {
+      "index": 273,
+      "file": "assets/audio/guides/273.wav",
+      "text": "Super, dann bist du bei „Doku“. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "synthesizedText": "Super, dann bist du bei Doku. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "bytes": 565292,
+      "duration": 6.357950210571289
+    },
+    {
+      "index": 274,
+      "file": "assets/audio/guides/274.wav",
+      "text": "Super, dann bist du bei „Planung“. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "synthesizedText": "Super, dann bist du bei Planung. Wenn du dort etwas Bestimmtes suchst, sag mir einfach, was.",
+      "bytes": 571436,
+      "duration": 6.465717315673828
+    },
+    {
+      "index": 275,
+      "file": "assets/audio/guides/275.wav",
+      "text": "Super, dann ist das Formular gespeichert.",
+      "synthesizedText": "Super, dann ist das Formular gespeichert.",
+      "bytes": 276524,
+      "duration": 3.090083122253418
+    },
+    {
+      "index": 276,
+      "file": "assets/audio/guides/276.wav",
+      "text": "Super, dann ist der Folgebericht gespeichert und sichtbar.",
+      "synthesizedText": "Super, dann ist der Folgebericht gespeichert und sichtbar.",
+      "bytes": 374828,
+      "duration": 4.207484722137451
+    },
+    {
+      "index": 277,
+      "file": "assets/audio/guides/277.wav",
+      "text": "Super, dann ist der neue Bericht gespeichert und sichtbar.",
+      "synthesizedText": "Super, dann ist der neue Bericht gespeichert und sichtbar.",
+      "bytes": 368684,
+      "duration": 4.15691614151001
+    },
+    {
+      "index": 278,
+      "file": "assets/audio/guides/278.wav",
+      "text": "Super, dann ist der neue Vitalwert gespeichert und sichtbar.",
+      "synthesizedText": "Super, dann ist der neue Vitalwert gespeichert und sichtbar.",
+      "bytes": 387116,
+      "duration": 4.324066162109375
+    },
+    {
+      "index": 279,
+      "file": "assets/audio/guides/279.wav",
+      "text": "Super, dann ist die An- oder Abwesenheit gespeichert und in der Übersicht sichtbar.",
+      "synthesizedText": "Super, dann ist die An- oder Abwesenheit gespeichert und in der Übersicht sichtbar.",
+      "bytes": 516140,
+      "duration": 5.796990394592285
+    },
+    {
+      "index": 280,
+      "file": "assets/audio/guides/280.wav",
+      "text": "Super, dann ist die Maßnahme gespeichert.",
+      "synthesizedText": "Super, dann ist die Maßnahme gespeichert.",
+      "bytes": 270380,
+      "duration": 3.0074474811553955
+    },
+    {
+      "index": 281,
+      "file": "assets/audio/guides/281.wav",
+      "text": "Super, dann sind die neuen Vitalwerte gespeichert und sichtbar.",
+      "synthesizedText": "Super, dann sind die neuen Vitalwerte gespeichert und sichtbar.",
+      "bytes": 399404,
+      "duration": 4.510916233062744
+    },
+    {
+      "index": 282,
+      "file": "assets/audio/guides/282.wav",
+      "text": "Super, dann zeigt die Übersicht den benötigten Zeitraum.",
+      "synthesizedText": "Super, dann zeigt die Übersicht den benötigten Zeitraum.",
+      "bytes": 356396,
+      "duration": 4.025374412536621
+    },
+    {
+      "index": 283,
+      "file": "assets/audio/guides/283.wav",
+      "text": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für das Formular ausgewählt ist.",
+      "synthesizedText": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für das Formular ausgewählt ist.",
+      "bytes": 620588,
+      "duration": 6.978402614593506
+    },
+    {
+      "index": 284,
+      "file": "assets/audio/guides/284.wav",
+      "text": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für den Vitalwert ausgewählt ist.",
+      "synthesizedText": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für den Vitalwert ausgewählt ist.",
+      "bytes": 620588,
+      "duration": 6.970090389251709
+    },
+    {
+      "index": 285,
+      "file": "assets/audio/guides/285.wav",
+      "text": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für die An- oder Abwesenheit ausgewählt ist.",
+      "synthesizedText": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für die An- oder Abwesenheit ausgewählt ist.",
+      "bytes": 682028,
+      "duration": 7.696673393249512
+    },
+    {
+      "index": 286,
+      "file": "assets/audio/guides/286.wav",
+      "text": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für die Vitalwerte ausgewählt ist.",
+      "synthesizedText": "Wähle zuerst den gewünschten Bewohner aus. Sag mir Bescheid, wenn er für die Vitalwerte ausgewählt ist.",
+      "bytes": 626732,
+      "duration": 7.046472549438477
+    },
+    {
+      "index": 287,
+      "file": "assets/audio/guides/287.wav",
+      "text": "„Alle ausklappen“ befindet sich rechts neben „Alle anzeigen“.",
+      "synthesizedText": "Alle ausklappen befindet sich rechts neben Alle anzeigen.",
+      "bytes": 350252,
+      "duration": 3.9463539123535156
+    },
+    {
+      "index": 288,
+      "file": "assets/audio/guides/288.wav",
+      "text": "„Analyse“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku“, „Doku-Erweitert“ und „Planung“.",
+      "synthesizedText": "Analyse steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch Doku, Doku-Erweitert und Planung.",
+      "bytes": 669740,
+      "duration": 7.548121929168701
+    },
+    {
+      "index": 289,
+      "file": "assets/audio/guides/289.wav",
+      "text": "„Doku-Erweitert“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku“, „Planung“ und „Analyse“.",
+      "synthesizedText": "Doku-Erweitert steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch Doku, Planung und Analyse.",
+      "bytes": 675884,
+      "duration": 7.656704425811768
+    },
+    {
+      "index": 290,
+      "file": "assets/audio/guides/290.wav",
+      "text": "„Doku“ liegt oben in der festen grünen Hauptleiste zwischen „Planung“ und „Doku-Erweitert“. Öffne „Doku“ und wähle im weißen Funktionsband direkt darunter „Bericht“.",
+      "synthesizedText": "Doku liegt oben in der festen grünen Hauptleiste zwischen Planung und Doku-Erweitert. Öffne Doku und wähle im weißen Funktionsband direkt darunter Bericht.",
+      "bytes": 903212,
+      "duration": 10.188125610351562
+    },
+    {
+      "index": 291,
+      "file": "assets/audio/guides/291.wav",
+      "text": "„Doku“ steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch „Doku-Erweitert“, „Planung“ und „Analyse“.",
+      "synthesizedText": "Doku steht ganz oben in der festen grünen Hauptleiste. Dort befinden sich auch Doku-Erweitert, Planung und Analyse.",
+      "bytes": 675884,
+      "duration": 7.594099044799805
+    },
+    {
+      "index": 292,
+      "file": "assets/audio/guides/292.wav",
+      "text": "„Vitalwerte“ und „Vitalwerte Sammelerf.“ sind zwei getrennte Einträge direkt unter „Doku-Erweitert“.",
+      "synthesizedText": "Vitalwerte und Vitalwerte Sammelerf. sind zwei getrennte Einträge direkt unter Doku-Erweitert.",
+      "bytes": 583724,
+      "duration": 6.578619480133057
+    },
+    {
+      "index": 293,
+      "file": "assets/audio/guides/293.wav",
+      "text": "Bleibe im Durchführungsnachweis und suche „Maßnahmen ohne Zeitangabe“. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen.",
+      "synthesizedText": "Bleibe im Durchführungsnachweis und suche Maßnahmen ohne Zeitangabe. Direkt links daneben befindet sich der kleine Pfeil zum Öffnen.",
+      "bytes": 755756,
+      "duration": 8.505810737609863
+    },
+    {
+      "index": 294,
+      "file": "assets/audio/guides/294.wav",
+      "text": "Bleibe in „Berichte“ oder „Durchführungsnachweis“; dort bleibt die Bewohnerübersicht links sichtbar.",
+      "synthesizedText": "Bleibe in Berichte oder Durchführungsnachweis; dort bleibt die Bewohnerübersicht links sichtbar.",
+      "bytes": 546860,
+      "duration": 6.186963081359863
+    },
+    {
+      "index": 295,
+      "file": "assets/audio/guides/295.wav",
+      "text": "Bleibe in „Dateiablage“. Der Bereich „Dokumente“ erscheint unten mittig.",
+      "synthesizedText": "Bleibe in Dateiablage. Der Bereich Dokumente erscheint unten mittig.",
+      "bytes": 417836,
+      "duration": 4.678882598876953
+    },
+    {
+      "index": 296,
+      "file": "assets/audio/guides/296.wav",
+      "text": "Bleibe in den geöffneten Stammdaten. Suche in der grauen Leiste nach „Dateiablage“.",
+      "synthesizedText": "Bleibe in den geöffneten Stammdaten. Suche in der grauen Leiste nach Dateiablage.",
+      "bytes": 497708,
+      "duration": 5.6280975341796875
+    },
+    {
+      "index": 297,
+      "file": "assets/audio/guides/297.wav",
+      "text": "Das kleine rote Kreuz beziehungsweise der Pfeil sitzt ganz oben links.",
+      "synthesizedText": "Das kleine rote Kreuz beziehungsweise der Pfeil sitzt ganz oben links.",
+      "bytes": 436268,
+      "duration": 4.9077630043029785
+    },
+    {
+      "index": 298,
+      "file": "assets/audio/guides/298.wav",
+      "text": "Die Wirksamkeitskontrolle erscheint erst zum vorgesehenen Zeitpunkt im Durchführungsnachweis. Eine konkrete Wartezeit ist hier nicht festgelegt.",
+      "synthesizedText": "Die Wirksamkeitskontrolle erscheint erst zum vorgesehenen Zeitpunkt im Durchführungsnachweis. Eine konkrete Wartezeit ist hier nicht festgelegt.",
+      "bytes": 829484,
+      "duration": 9.377697944641113
+    },
+    {
+      "index": 299,
+      "file": "assets/audio/guides/299.wav",
+      "text": "Du legst die Wirksamkeitskontrolle nicht selbst an. Eine konkrete Wartezeit ist hier nicht festgelegt.",
+      "synthesizedText": "Du legst die Wirksamkeitskontrolle nicht selbst an. Eine konkrete Wartezeit ist hier nicht festgelegt.",
+      "bytes": 602156,
+      "duration": 6.784191608428955
+    },
+    {
+      "index": 300,
+      "file": "assets/audio/guides/300.wav",
+      "text": "Führe auf dem gewünschten Bewohner einen schnellen Doppelklick mit der linken Maustaste aus.",
+      "synthesizedText": "Führe auf dem gewünschten Bewohner einen schnellen Doppelklick mit der linken Maustaste aus.",
+      "bytes": 522284,
+      "duration": 5.911031723022461
+    },
+    {
+      "index": 301,
+      "file": "assets/audio/guides/301.wav",
+      "text": "Für den Durchführungsnachweis: „Doku“ → „Durchführungsnachweis“. Danach bleibt links die Bewohnerübersicht sichtbar.",
+      "synthesizedText": "Für den Durchführungsnachweis: Doku zu Durchführungsnachweis. Danach bleibt links die Bewohnerübersicht sichtbar.",
+      "bytes": 712748,
+      "duration": 8.076600074768066
+    },
+    {
+      "index": 302,
+      "file": "assets/audio/guides/302.wav",
+      "text": "Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü. Darin wählst du „Notfallblatt aufrufen“.",
+      "synthesizedText": "Ganz oben links öffnest du über das kleine rote Kreuz beziehungsweise den zugehörigen Pfeil das Menü. Darin wählst du Notfallblatt aufrufen.",
+      "bytes": 817196,
+      "duration": 9.21188735961914
+    },
+    {
+      "index": 303,
+      "file": "assets/audio/guides/303.wav",
+      "text": "Suche ganz oben in der festen grünen Hauptleiste nach „Planung“. Dort befinden sich auch „Doku“, „Doku-Erweitert“ und „Analyse“.",
+      "synthesizedText": "Suche ganz oben in der festen grünen Hauptleiste nach Planung. Dort befinden sich auch Doku, Doku-Erweitert und Analyse.",
+      "bytes": 694316,
+      "duration": 7.870603561401367
+    },
+    {
+      "index": 304,
+      "file": "assets/audio/guides/304.wav",
+      "text": "Bleibe in der Dateiablage. Wenn das gewünschte Dokument nicht angezeigt wird, frag bitte kurz im Team, ob und wo es abgelegt ist.",
+      "synthesizedText": "Bleibe in der Dateiablage. Wenn das gewünschte Dokument nicht angezeigt wird, frag bitte kurz im Team, ob und wo es abgelegt ist.",
+      "bytes": 768044,
+      "duration": 8.68834400177002
+    },
+    {
+      "index": 305,
+      "file": "assets/audio/guides/305.wav",
+      "text": "Warte kurz, bis sich Word öffnet, und führe den Doppelklick nicht mehrfach aus.",
+      "synthesizedText": "Warte kurz, bis sich Word öffnet, und führe den Doppelklick nicht mehrfach aus.",
+      "bytes": 473132,
+      "duration": 5.3337578773498535
+    },
+    {
+      "index": 306,
+      "file": "assets/audio/guides/306.wav",
+      "text": "Wenn der durchführende Arzt beim Bewohner nicht hinterlegt ist, aktiviere rechts neben der Arztauswahl das kleine Filtersymbol. Dann stehen alle systemweit hinterlegten Ärzte zur Auswahl.",
+      "synthesizedText": "Wenn der durchführende Arzt beim Bewohner nicht hinterlegt ist, aktiviere rechts neben der Arztauswahl das kleine Filtersymbol. Dann stehen alle systemweit hinterlegten Ärzte zur Auswahl.",
+      "bytes": 1062956,
+      "duration": 12.03581428527832
+    },
+    {
+      "index": 307,
+      "file": "assets/audio/guides/307.wav",
+      "text": "Wenn du den Durchführungsnachweis öffnen möchtest: „Doku“ → „Durchführungsnachweis“.",
+      "synthesizedText": "Wenn du den Durchführungsnachweis öffnen möchtest: Doku zu Durchführungsnachweis.",
+      "bytes": 479276,
+      "duration": 5.401192665100098
+    },
+    {
+      "index": 308,
+      "file": "assets/audio/guides/308.wav",
+      "text": "Wenn du den Zeitraum geändert und die Anzeige aktualisiert hast, wähle danach erneut „Alle ausklappen“, damit alle Einträge wieder vollständig geöffnet sind.",
+      "synthesizedText": "Wenn du den Zeitraum geändert und die Anzeige aktualisiert hast, wähle danach erneut Alle ausklappen, damit alle Einträge wieder vollständig geöffnet sind.",
+      "bytes": 903212,
+      "duration": 10.170802116394043
+    },
+    {
+      "index": 309,
+      "file": "assets/audio/guides/309.wav",
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Analyse“ öffnen. Direkt darunter findest du „Was war los?“.",
+      "synthesizedText": "Zuerst ganz oben in der grünen Hauptleiste Analyse öffnen. Direkt darunter findest du Was war los?.",
+      "bytes": 608300,
+      "duration": 6.894264221191406
+    },
+    {
+      "index": 310,
+      "file": "assets/audio/guides/310.wav",
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „An-/Abwesenheiten“.",
+      "synthesizedText": "Zuerst ganz oben in der grünen Hauptleiste Doku-Erweitert öffnen. Direkt darunter findest du An- oder Abwesenheiten.",
+      "bytes": 688172,
+      "duration": 7.793076515197754
+    },
+    {
+      "index": 311,
+      "file": "assets/audio/guides/311.wav",
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Formulare“.",
+      "synthesizedText": "Zuerst ganz oben in der grünen Hauptleiste Doku-Erweitert öffnen. Direkt darunter findest du Formulare.",
+      "bytes": 620588,
+      "duration": 6.9916157722473145
+    },
+    {
+      "index": 312,
+      "file": "assets/audio/guides/312.wav",
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Medikation“.",
+      "synthesizedText": "Zuerst ganz oben in der grünen Hauptleiste Doku-Erweitert öffnen. Direkt darunter findest du Medikation.",
+      "bytes": 626732,
+      "duration": 7.050815105438232
+    },
+    {
+      "index": 313,
+      "file": "assets/audio/guides/313.wav",
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du „Visiten“.",
+      "synthesizedText": "Zuerst ganz oben in der grünen Hauptleiste Doku-Erweitert öffnen. Direkt darunter findest du Visiten.",
+      "bytes": 608300,
+      "duration": 6.874027252197266
+    },
+    {
+      "index": 314,
+      "file": "assets/audio/guides/314.wav",
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku-Erweitert“ öffnen. Direkt darunter findest du das Symbol beziehungsweise den Bereich „Vitalwerte“.",
+      "synthesizedText": "Zuerst ganz oben in der grünen Hauptleiste Doku-Erweitert öffnen. Direkt darunter findest du das Symbol beziehungsweise den Bereich Vitalwerte.",
+      "bytes": 835628,
+      "duration": 9.404464721679688
+    },
+    {
+      "index": 315,
+      "file": "assets/audio/guides/315.wav",
+      "text": "Zuerst ganz oben in der grünen Hauptleiste „Doku“ öffnen. Direkt darunter findest du „Durchführungsnachweis“.",
+      "synthesizedText": "Zuerst ganz oben in der grünen Hauptleiste Doku öffnen. Direkt darunter findest du Durchführungsnachweis.",
+      "bytes": 614444,
+      "duration": 6.905091285705566
+    }
+  ]
+}
