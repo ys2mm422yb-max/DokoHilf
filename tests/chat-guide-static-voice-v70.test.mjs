@@ -16,6 +16,10 @@ test('v70 priorisiert nur den bereits bestätigten Doku-Erweitert-Ortstext', () 
   assert.equal(navigation.voice, 'Supertonic-F1');
   assert.ok(texts.includes(expected));
   assert.ok(orientationSource.includes(`return '${expected}'`));
-  assert.match(uxSource, /api\.responseFor\?\.\(parsed, text\)/);
+  assert.match(uxSource, /const api = window\.DokoHilfOrientationHelpV29/);
+  assert.match(uxSource, /api\.isLocationQuestion\?\.\(text\) === true/);
+  assert.match(uxSource, /const orientationText = isLocationQuestion \? text : 'Wo ist Doku-Erweitert'/);
+  assert.match(uxSource, /api\.responseFor\?\.\(parsed, orientationText\)/);
+  assert.match(uxSource, /source: 'confirmed-guide-orientation-v70'/);
   assert.doesNotMatch(uxSource, /speechSynthesis|SpeechSynthesisUtterance|cloud.*tts|elevenlabs/i);
 });
