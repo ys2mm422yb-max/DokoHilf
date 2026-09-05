@@ -1,8 +1,9 @@
 # Aktiver Arbeitsstand – Chat-Kontext, Schritt zurück und Diktat v70
 
 **Stand:** 5. September 2026  
-**Status:** Umsetzung auf eigenem Branch; noch nicht gemergt oder veröffentlicht  
+**Status:** PR #191 offen; noch nicht gemergt oder veröffentlicht  
 **Branch:** `feature/chat-guide-back-dictation-v70-20260905`  
+**PR:** #191 – Fix guide context, step back and chat dictation v70  
 **Basis:** `main` `7b40bfcc4572cac9b7f78fd1aa63f394ccea641c`  
 **Release-Ziel:** App-Version `v36`, Build `20260905-44`, Release `chat-guide-back-dictation-v70`
 
@@ -60,11 +61,14 @@ Neu beziehungsweise angepasst:
 
 ## Release-Prozess
 
+Erledigt:
+
+1. PR #191 wurde aus dem eigenen Branch gegen `main` eröffnet.
+
 Noch offen und verpflichtend:
 
-1. PR erstellen.
-2. Alle tatsächlich ausgelösten Pflichtprüfungen auf exakt demselben finalen PR-Head erfolgreich abschließen, einschließlich iOS-/Android-Prüfungen und statischer Sprache.
-3. Erst danach manueller Merge mit erwartetem Head-SHA; kein Auto-Merge und keine Branch-Löschung.
-4. Keine Supabase-Migration und kein Edge-Function-Deploy vorgesehen, solange die Prüfungen keinen serverseitigen Änderungsbedarf zeigen.
-5. Nach Merge den exakten Main-Deploy, `gh-pages`, GitHub Pages und die öffentliche App prüfen.
-6. Erst nach dieser Prüfung den Release als veröffentlicht/fertig dokumentieren.
+1. Alle tatsächlich ausgelösten Pflichtprüfungen auf exakt demselben finalen PR-Head erfolgreich abschließen, einschließlich iOS-/Android-Prüfungen und statischer Sprache.
+2. Erst danach manueller Merge mit erwartetem Head-SHA; kein Auto-Merge und keine Branch-Löschung.
+3. Keine Supabase-Migration und kein Edge-Function-Deploy vorgesehen, solange die Prüfungen keinen serverseitigen Änderungsbedarf zeigen.
+4. Nach Merge den exakten Main-Deploy, `gh-pages`, GitHub Pages und die öffentliche App prüfen.
+5. Erst nach dieser Prüfung den Release als veröffentlicht/fertig dokumentieren.
