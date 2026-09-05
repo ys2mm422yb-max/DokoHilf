@@ -183,16 +183,16 @@ test('Diktat zeigt verständliche Fehler statt eines wirkungslosen Mikrofons', (
   assert.match(api.dictationErrorMessage('network'), /Spracheingabe.*nicht verfügbar/);
 });
 
-test('v36/v70 ist versions- und offline-sicher eingebunden', () => {
+test('v70 bleibt im aktuellen v36/v71-Build versions- und offline-sicher eingebunden', () => {
   assert.equal(version.appVersion, 'v36');
-  assert.equal(version.buildId, '20260905-44');
-  assert.equal(version.release, 'chat-guide-back-dictation-v70');
+  assert.equal(version.buildId, '20260905-45');
+  assert.equal(version.release, 'context-help-availability-v71');
   assert.match(releaseSource, /const VERSION_LABEL = 'v36'/);
   assert.match(releaseSource, /CHAT_GUIDE_UX_REVISION = '20260905-chat-guide-back-dictation-v70-1'/);
   assert.match(releaseSource, /assets\/chat-guide-ux-v70\.js/);
   const featureLoader = releaseSource.match(/async function loadV54Features\(\) \{[\s\S]*?\n  \}/)?.[0] || '';
   assert.ok(featureLoader.indexOf('assets/chat-guide-ux-v70.js') > featureLoader.indexOf('assets/step-help-v54.js'));
-  assert.match(workerSource, /BUILD_ID = '20260905-44'/);
+  assert.match(workerSource, /BUILD_ID = '20260905-45'/);
   assert.match(workerSource, /chat-guide-ux-v70\.js\?v=20260905-chat-guide-back-dictation-v70-1/);
   assert.match(workerSource, /chat-guide-back-dictation-v70/);
 });
