@@ -3,6 +3,50 @@
 
   const STYLE_ID = 'dokohilf-mobile-polish-v29';
   const CHAT_VIEWPORT_REVISION = '20260810-mobile-chat-viewport-v38-1';
+  const STEP_HELP_AVAILABILITY_REVISION = '20260905-contextual-step-help-button-v71-1';
+  const STEP_HELP_STEPS = Object.freeze({
+    'analyse-finden': [1],
+    anwesenheit: [2],
+    'anwesenheiten-finden': [1],
+    'bedarfsmedikation-finden': [1, 2],
+    'bedarfsmedikation-gabe': [1, 2, 3, 4, 7, 9, 10],
+    'bedarfsmedikation-wirksamkeitskontrolle': [1, 2, 3],
+    'bedarfsmedikation-wirksamkeitskontrolle-finden': [3],
+    'bericht-durchstreichen': [1],
+    'bericht-folgebericht': [1],
+    'bericht-neu': [1, 2, 4],
+    'berichte-finden': [1],
+    dateiablage: [1, 2, 3, 4, 5],
+    'doku-erweitert-finden': [1],
+    'doku-finden': [1],
+    'durchfuehrung-storno': [1, 2],
+    'durchfuehrungsnachweis-finden': [2],
+    'durchfuehrungsnachweis-oeffnen': [1, 2],
+    'formulare-anlegen': [2],
+    'formulare-finden': [1],
+    'massnahmen-ohne-zeitangabe': [1, 2, 3],
+    'massnahmen-ohne-zeitangabe-finden': [3],
+    'medikation-ansehen': [2],
+    'medikation-finden': [1],
+    notfallblatt: [2, 3],
+    'notfallblatt-finden': [1],
+    'planung-finden': [1],
+    stammdaten: [1, 2, 3],
+    'stammdaten-finden': [1],
+    'uebergabe-finden': [1],
+    uebergabeformular: [1, 2, 4, 5],
+    'visite-anlegen': [1, 3, 6],
+    'visite-status-durchgefuehrt': [1],
+    'visiten-finden': [1],
+    'visiten-oeffnen': [1, 2],
+    vitalwerte: [1, 2],
+    'vitalwerte-einzelwert': [2],
+    'vitalwerte-einzelwert-fortsetzen': [],
+    'vitalwerte-erfassen': [1, 2],
+    'vitalwerte-finden': [1],
+    'vitalwerte-sammelerfassung': [2],
+    'vitalwerte-sammelerfassung-fortsetzen': [1],
+  });
   let previousMode = '';
   let lastMessageCount = 0;
   const css = `
@@ -154,6 +198,36 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
     return /^Hallo!\s*Schreib einfach,?\s*was du in der Dokumentation machen möchtest\.?$/i.test(text);
   }
 
+  function currentGuide() {
+    try { return window.DokoHilfGuideProgress?.getCurrentGuide?.() || null; }
+    catch { return null; }
+  }
+
+  function hasAlternativeStepHelp(guide = currentGuide()) {
+    const slug = String(guide?.guideSlug || '').trim();
+    const step = Number(guide?.guideStep || 0);
+    const helpSteps = STEP_HELP_STEPS[slug];
+    return Number.isInteger(step) && step >= 1 && Array.isArray(helpSteps) && helpSteps.includes(step);
+  }
+
+  function syncStepHelpButton(commandRow) {
+    const help = commandRow?.querySelector('[data-command="ich finde das nicht"]');
+    if (!help) return;
+    const available = hasAlternativeStepHelp();
+    if (help.textContent !== 'Ich finde es nicht') help.textContent = 'Ich finde es nicht';
+    help.disabled = !available;
+    help.dataset.stepHelpAvailable = available ? 'true' : 'false';
+    help.setAttribute(
+      'aria-label',
+      available
+        ? 'Andere bestätigte Erklärung für diesen Schritt anzeigen'
+        : 'Für diesen Schritt ist keine zusätzliche bestätigte Erklärung verfügbar',
+    );
+    help.title = available
+      ? 'Andere bestätigte Erklärung anzeigen'
+      : 'Für diesen Schritt gibt es keine zusätzliche bestätigte Erklärung.';
+  }
+
   function syncChatViewport() {
     const shell = document.getElementById('appShell');
     if (!shell) return;
@@ -169,9 +243,8 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
   function polishCommandCopy() {
     const commandRow = document.getElementById('commandRow');
     const next = commandRow?.querySelector('[data-command="weiter"]');
-    const help = commandRow?.querySelector('[data-command="ich finde das nicht"]');
     if (next && next.textContent !== 'Erledigt, weiter') next.textContent = 'Erledigt, weiter';
-    if (help && help.textContent !== 'Hilfe zum Schritt') help.textContent = 'Hilfe zum Schritt';
+    syncStepHelpButton(commandRow);
     const input = document.getElementById('chatInput');
     if (input && input.getAttribute('enterkeyhint') !== 'send') input.setAttribute('enterkeyhint', 'send');
   }
@@ -240,6 +313,7 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
     window.addEventListener('resize', syncChatViewport);
     window.addEventListener('orientationchange', () => window.setTimeout(syncChatViewport, 100));
     window.addEventListener('pageshow', syncChatViewport);
+    window.addEventListener('dokohilf:guide-state', polishChat);
   }
 
   installStyle();
@@ -252,6 +326,11 @@ html[data-dokohilf-ui="v29"] .workspace[hidden]{display:none!important}
   window.DokoHilfMobilePolishV29 = {
     sync: polishChat,
     syncChatViewport,
+    polishCommandCopy,
+    syncStepHelpButton,
+    hasAlternativeStepHelp,
     revision: CHAT_VIEWPORT_REVISION,
+    stepHelpAvailabilityRevision: STEP_HELP_AVAILABILITY_REVISION,
+    stepHelpGuideCount: Object.keys(STEP_HELP_STEPS).length,
   };
 })();
