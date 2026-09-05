@@ -98,7 +98,7 @@
     if (!(button instanceof HTMLElement)) return;
     const step = guideStep();
     button.dataset.v70StepBack = 'true';
-    button.textContent = 'Schritt zurück';
+    if (button.textContent !== 'Schritt zurück') button.textContent = 'Schritt zurück';
     button.setAttribute('aria-label', 'Einen Schritt zurück');
     button.title = step === 1 ? 'Du bist bereits beim ersten Schritt.' : 'Zum vorherigen Schritt';
     button.disabled = step === 1;
